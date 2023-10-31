@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.viewmodel.OrderConfirmationViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -83,11 +84,13 @@ class OrderConfirmationFragment :
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
+    private var isEndlessAisleJourney: Boolean? = false
     private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isEndlessAisleJourney = arguments?.getBoolean(BundleKeysConstants.IS_ENDLESS_AISLE_JOURNEY)
         getOrderDetails()
         addFragmentResultListener()
     }
@@ -825,22 +828,31 @@ class OrderConfirmationFragment :
         )
     }
 
+    /**
+     * This function will help us the update the layout if endless aisle feature is enabled
+     * @param response submitted Order API response
+     * @param deliveringToCollectionFromBinding layout which hold the information for fulfilment
+     * type standard and C&C
+     */
     private fun updateLayoutForPayInStore(response: SubmittedOrderResponse?,
                                           deliveringToCollectionFromBinding: DeliveringToCollectionFromBinding
     ) {
-        response?.barcodeNumber = "80069123812960"
-        if(response?.barcodeNumber.isNullOrEmpty()){
-            deliveringToCollectionFromBinding.standardAndCncItemsGroup.visibility = VISIBLE
-            deliveringToCollectionFromBinding.payInStoreBarcodeItemsGroup.visibility = GONE
-        }else{
-            deliveringToCollectionFromBinding.standardAndCncItemsGroup.visibility = GONE
-            deliveringToCollectionFromBinding.payInStoreBarcodeItemsGroup.visibility = VISIBLE
-            deliveringToCollectionFromBinding.barcodeNumber.text = response?.barcodeNumber
-            deliveringToCollectionFromBinding.barcodeMessage.text = getBarcodeMessage()
-            try {
-                deliveringToCollectionFromBinding.barcodeImage.setImageBitmap(Utils.encodeAsBitmap(response?.barcodeNumber, BarcodeFormat.CODE_128, deliveringToCollectionFromBinding.barcodeImage.width, 60));
-            } catch (e: WriterException) {
-                FirebaseManager.Companion.logException(e);
+        deliveringToCollectionFromBinding.apply {
+            if(isEndlessAisleJourney == true && response?.orderSummary?.endlessAisleOrder == true){
+                endlessAisleOrderConfirmationLayout.apply {
+                    standardAndCncItemsGroup.visibility = GONE
+                    this.root.visibility = VISIBLE
+                    orderNumber.text = resources.getString(R.string.order_with_hash)+response?.orderSummary?.orderId
+                    barcodeNumber.text = response?.orderSummary?.endlessAisleBarcode
+                    barcodeMessage.text = getBarcodeMessage()
+                    try {
+                        barcodeImage.setImageBitmap(Utils.encodeAsBitmap(
+                            response?.orderSummary?.endlessAisleBarcode,
+                            BarcodeFormat.CODE_128, barcodeImage.width, 60));
+                    } catch (e: WriterException) {
+                        FirebaseManager.Companion.logException(e);
+                    }
+                }
             }
         }
     }

@@ -108,7 +108,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             var paymentUrl = if(isEndlessAisleJourney == false)
                     AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
                 else
-                    AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+                    AppConfigSingleton.nativeCheckout?.checkoutPaymentURL   //TODO replace following commented line one API done
                     //AppConfigSingleton.nativeCheckout?.checkoutPaymentUrlPayInStore
             val webTokens =
                 arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
@@ -146,8 +146,10 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         binding.paymentSuccessConfirmationLayout?.root?.visibility = View.VISIBLE
         Handler(Looper.getMainLooper()).postDelayed({
             binding.paymentSuccessConfirmationLayout?.root?.visibility = View.GONE
+            val bundle = Bundle()
+            bundle.putBoolean(IS_ENDLESS_AISLE_JOURNEY, isEndlessAisleJourney == true)
             view?.let {
-                GeoUtils.navigateSafe(it, R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment, null)
+                GeoUtils.navigateSafe(it, R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment, bundle)
             }
         }, AppConstant.DELAY_1500_MS)
     }
