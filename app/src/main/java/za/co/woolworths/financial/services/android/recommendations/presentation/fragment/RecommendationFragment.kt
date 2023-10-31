@@ -17,6 +17,7 @@ import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -25,13 +26,11 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.Enhance
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
-import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductCategoryAdapter
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductListRecommendationAdapter
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
@@ -53,7 +52,7 @@ import java.util.*
 @AndroidEntryPoint
 class RecommendationFragment :
     BaseFragmentBinding<RecommendationsLayoutBinding>(RecommendationsLayoutBinding::inflate),
-    RecommendationsProductListingListener {
+    IProductListing {
 
     companion object {
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
@@ -119,7 +118,7 @@ class RecommendationFragment :
         }
     }
 
-    private fun showRecProductsList(productsList: List<Product>?) {
+    private fun showRecProductsList(productsList: List<ProductList>?) {
         if (productsList.isNullOrEmpty()) {
             recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.GONE
@@ -207,7 +206,7 @@ class RecommendationFragment :
         super.onDestroyView()
     }
 
-    override fun openProductDetailView(productList: Product) {
+    override fun openProductDetailView(productList: ProductList) {
         if(isConnectedToNetwork() == true) {
             WoolworthsApplication.getInstance().recommendationAnalytics.submitRecClicks(products = listOf(productList))
         }
@@ -600,10 +599,6 @@ class RecommendationFragment :
     }
 
     override fun openBrandLandingPage() {
-        // No implementation is required for now
-    }
-
-    override fun openProductDetailView(productList: ProductList) {
         // No implementation is required for now
     }
 
