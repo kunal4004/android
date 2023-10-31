@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.AddA
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmSelectionRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.checkout.utils.NativeCheckoutResource
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationRequestBody
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.network.Event
@@ -95,5 +96,7 @@ class CheckoutAddAddressNewUserViewModel @Inject constructor
     fun getConfirmLocationDetails(body: ConfirmLocationRequest): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.getConfirmLocationDetails(body)
     }
-
+    fun verifyUserIsInStore(body: UserLocationRequestBody): LiveData<Any> {
+        return checkoutAddAddressNewUserInteractor.verifyUserIsInStore(body)
+    }
 }

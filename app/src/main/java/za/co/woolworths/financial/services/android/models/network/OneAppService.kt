@@ -135,6 +135,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationRequestBody
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
@@ -1379,6 +1381,13 @@ open class OneAppService(
             getSessionToken(),
             getDeviceIdentityToken(),
             dyPrepareChangeAttributeRequestEvent
+        )
+    }
+
+    fun verifyUserIsInStore(body: UserLocationRequestBody): Call<UserLocationResponse> {
+        return mApiInterface.verifyUserIsInStore(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), body
         )
     }
 }
