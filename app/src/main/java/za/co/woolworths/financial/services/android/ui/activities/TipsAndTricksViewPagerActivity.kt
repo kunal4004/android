@@ -12,29 +12,35 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivityTipsAndTricsViewPagerBinding
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.APPLY_NOW_STATE
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.DEEP_LINKING_PARAMS
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.MY_ACCOUNT_RESPONSE
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import kotlin.properties.Delegates
 
  class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener, ViewPager.OnPageChangeListener {
 
-    private lateinit var binding: ActivityTipsAndTricsViewPagerBinding
-    private var tricksViewPagerAdapter: TipsAndTricksViewPagerAdapter? = null
-    private var titles: Array<String>? = null
-    private var descriptions: Array<String>? = null
-    private var actionButtonTexts: Array<String>? = null
-    private var icons: TypedArray by Delegates.notNull()
-    private var mCurrentItem: Int = 0
-    private var accountsResponse: AccountsResponse? = null
-    private var availableAccounts: ArrayList<String> = arrayListOf()
+     private lateinit var binding: ActivityTipsAndTricsViewPagerBinding
+     private var tricksViewPagerAdapter: TipsAndTricksViewPagerAdapter? = null
+     private var titles: Array<String>? = null
+     private var descriptions: Array<String>? = null
+     private var actionButtonTexts: Array<String>? = null
+     private var icons: TypedArray by Delegates.notNull()
+     private var mCurrentItem: Int = 0
+     private var accountsResponse: AccountsResponse? = null
+     private var availableAccounts: ArrayList<String> = arrayListOf()
+     private val statementCCRedirect = "{\"productGroupCode\":\"CC\",\"feature\":\"Accounts Product Statement\"}"
 
     companion object {
         const val RESULT_OK_PRODUCTS = 123
@@ -87,7 +93,7 @@ import kotlin.properties.Delegates
     private fun ActivityTipsAndTricsViewPagerBinding.bindDataToViews() {
         mCurrentItem = intent.getIntExtra("position", 0)
         if (intent.hasExtra("accounts"))
-            accountsResponse = Gson().fromJson(intent.extras!!.getString("accounts"), AccountsResponse::class.java)
+            accountsResponse = Gson().fromJson(intent.extras?.getString("accounts"), AccountsResponse::class.java)
         tricksViewPagerAdapter = TipsAndTricksViewPagerAdapter(this@TipsAndTricksViewPagerActivity)
         viewPager.adapter = tricksViewPagerAdapter
         viewPager.currentItem = mCurrentItem
@@ -264,8 +270,9 @@ import kotlin.properties.Delegates
     }
 
      private fun presentAccountStatements() {
+         val productGroupCode = AccountsProductGroupCode.getEnum(availableAccounts[0])
          availableAccounts = getAvailableAccounts()
-         redirectToAccountSignInActivity( when(AccountsProductGroupCode.getEnum(availableAccounts[0])){
+         redirectToStatement( when(productGroupCode){
              AccountsProductGroupCode.STORE_CARD -> ApplyNowState.STORE_CARD
              AccountsProductGroupCode.PERSONAL_LOAN -> ApplyNowState.PERSONAL_LOAN
              else -> ApplyNowState.STORE_CARD
@@ -285,7 +292,7 @@ import kotlin.properties.Delegates
     private fun getAvailableAccounts(): ArrayList<String> {
         availableAccounts.clear()
         accountsResponse?.accountList?.forEach {
-            it.productGroupCode?.toUpperCase()?.let { it1 -> availableAccounts.add(it1) }
+            it.productGroupCode?.uppercase()?.let { it1 -> availableAccounts.add(it1) }
         }
         return availableAccounts
     }
@@ -300,12 +307,76 @@ import kotlin.properties.Delegates
          overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
      }
 
-     private fun redirectToAccountSignInActivity(applyNowState: ApplyNowState) {
-         val intent = Intent(this@TipsAndTricksViewPagerActivity, AccountSignedInActivity::class.java)
-         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState)
-         intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(accountsResponse))
-         startActivity(intent)
+     private fun redirectToStatement(applyNowState: ApplyNowState) {
+        when(applyNowState){
+            ApplyNowState.STORE_CARD -> navigateToStatementActivity(product = null, applyNowState = applyNowState)
+            ApplyNowState.PERSONAL_LOAN -> navigateToStatementActivity(applyNowState = applyNowState)
+            else -> {
+                val intent = Intent(this@TipsAndTricksViewPagerActivity, AccountSignedInActivity::class.java)
+                intent.putExtra(APPLY_NOW_STATE, applyNowState)
+                intent.putExtra(DEEP_LINKING_PARAMS, statementCCRedirect)
+                intent.putExtra(MY_ACCOUNT_RESPONSE, Utils.objectToJson(accountsResponse))
+                startActivity(intent)
+             }
+         }
+ }
+
+ private fun navigateToStatementActivity(product: Account?, applyNowState:ApplyNowState) {
+     statementsEvent(this,applyNowState)
+         //TODO:: getStatement using offerid from WoolworthsApplication class, so we follow same approach to avoid impact of changing.
+         // to be changed when we refactor statements activity and fragment
+     val account = account(applyNowState)
+     product?.let { WoolworthsApplication.getInstance().setProductOfferingId(it.productOfferingId) }
+         val mAccountPair: Pair<ApplyNowState, Account?> = Pair(applyNowState,account)
+         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS, this)
+         val openStatement = Intent(this, StatementActivity::class.java)
+         openStatement.putExtra(ChatFragment.ACCOUNTS, Gson().toJson(mAccountPair))
+         startActivity(openStatement)
+         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+ }
+
+     private fun account(applyNowState: ApplyNowState): Account? {
+         val account = accountsResponse?.accountList?.let {
+             it.firstOrNull { account ->
+                 account.productGroupCode?.equals(
+                     applyNowState.name,
+                     ignoreCase = true
+                 ) == true
+             }
+         }
+         return account
+     }
+
+     fun navigateToStatementActivity(applyNowState:ApplyNowState) {
+         val product = account(applyNowState = applyNowState)
+         val openStatement = Intent(this, StatementActivity::class.java)
+         openStatement.putExtra(ChatFragment.ACCOUNTS, Gson().toJson(Pair(applyNowState, product)))
+         startActivity(openStatement)
          overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
      }
+ private fun statementsEvent(activity: Activity?,applyNowState: ApplyNowState) {
+     when (applyNowState) {
+         ApplyNowState.STORE_CARD -> {
+             activity?.apply {
+                 Utils.triggerFireBaseEvents(
+                     FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS,
+                     this
+                 )
+             }
+
+         }
+
+         ApplyNowState.PERSONAL_LOAN -> {
+             activity?.apply {
+                 Utils.triggerFireBaseEvents(
+                     FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS,
+                     this
+                 )
+             }
+         }
+
+         else -> Unit
+     }
+ }
 
  }
