@@ -58,6 +58,8 @@ import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuth
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
@@ -2359,5 +2361,12 @@ interface ApiInterface {
         @Path("id") id: String,
         @Body removeItemApiRequest: RemoveItemApiRequest
     ): retrofit2.Response<ShoppingListItemsResponse>
+
+    @POST("wfs/app/v4/list/multi-list-add")
+    suspend fun copyItemsFromList(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body copyItemToListRequest: CopyItemToListRequest,
+    ): retrofit2.Response<CopyListResponse>
 
 }

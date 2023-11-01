@@ -80,6 +80,8 @@ class AppConstant {
         const val REQUEST_KEY_CONFIRMATION_DIALOG = "REQUEST_KEY_CONFIRMATION_DIALOG"
         const val RESULT_DELETE_LIST_CONFIRMED =
             "RESULT_DELETE_LIST_CONFIRMED"
+        const val RESULT_DELETE_ITEM_CONFIRMED =
+            "RESULT_DELETE_ITEM_CONFIRMED"
 
         /*****************************************************************************************
          * Miscellaneous
@@ -157,6 +159,7 @@ class AppConstant {
 
         const val SCREEN_NAME_DELETE_LIST_CONFIRMATION = "Delete List Confirmation Screen"
         const val SCREEN_NAME_DELETE_LIST_PROGRESS_BAR = "Delete List Progress Bar Screen"
+        const val SCREEN_NAME_DELETE_ITEM_CONFIRMATION = "Delete Item Confirmation Screen"
     }
 
     class Keys {

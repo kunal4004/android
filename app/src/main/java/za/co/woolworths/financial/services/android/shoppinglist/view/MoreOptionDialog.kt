@@ -37,7 +37,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFami
 
 @SuppressLint("UseCompatLoadingForDrawables")
 @Composable
-fun MoreOptionDialog(selectedItemCount:Int, itemMove:()->Unit,itemCopy:()->Unit,itemRemove:()->Unit) {
+fun MoreOptionDialog(selectedItemCount:Int, itemCopy:()->Unit, itemMove:()->Unit,itemRemove:()->Unit) {
 
     val list = ArrayList<MoreOptionsElement>()
     val context = LocalContext.current
