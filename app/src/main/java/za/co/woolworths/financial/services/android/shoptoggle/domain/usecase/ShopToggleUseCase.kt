@@ -1,17 +1,26 @@
 package za.co.woolworths.financial.services.android.shoptoggle.domain.usecase
 
+import android.content.Context
 import com.awfs.coordination.R
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.common.ResourcesProvider
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.shoptoggle.data.dto.ShopToggleData
 import za.co.woolworths.financial.services.android.shoptoggle.data.mapper.toDomain
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.ToggleModel
 import za.co.woolworths.financial.services.android.shoptoggle.domain.repository.ShopToggleRepository
+import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -20,9 +29,10 @@ import javax.inject.Inject
 
 class ShopToggleUseCase @Inject constructor(
     private val resourcesProvider: ResourcesProvider,
-    private val shopToggleRepository: ShopToggleRepository
-
+    private val shopToggleRepository: ShopToggleRepository,
+    private val geoLocationApiHelper: GeoLocationApiHelper
 ) {
+    private var validateLocationResponse: ValidateLocationResponse? = null
 
     companion object {
         const val STANDARD_DELIVERY_ID = 1
@@ -30,20 +40,16 @@ class ShopToggleUseCase @Inject constructor(
         const val CNC_DELIVERY_ID = 3
     }
 
-//    operator fun invoke(): List<ToggleModel> {
-//        return shopToggleRepository.getShopToggleList().map { it.toDomain() }
-//    }
-
-    fun getValidateLocationDetails1(placeId: String?) = flow {
+    fun getValidateLocationDetails(placeId: String?) = flow {
         if (placeId.isNullOrEmpty()) {
             emit(Resource.Success(data = getFailureData()))
         } else {
             try {
                 emit(Resource.Loading())
-                val validateResponse = shopToggleRepository.getValidateLocation(placeId)
-                when (validateResponse.httpCode) {
+                validateLocationResponse = shopToggleRepository.getValidateLocation(placeId)
+                when (validateLocationResponse?.httpCode) {
                     AppConstant.HTTP_OK -> {
-                        val validatePlace = validateResponse.validatePlace
+                        val validatePlace = validateLocationResponse?.validatePlace
                         KotlinUtils.placeId = validatePlace?.placeDetails?.placeId
                         val nickname = validatePlace?.placeDetails?.nickname
                         val fulfillmentDeliveryLocation = Utils.getPreferredDeliveryLocation()
@@ -141,6 +147,7 @@ class ShopToggleUseCase @Inject constructor(
         dashModel.dataFailure = true
         val foodQuantity = 30
         dashModel.deliveryCost = "R 35"
+        dashModel.foodQuantity = foodQuantity
         ///////////////CNC///////////////////////
         val cncModel = getCncData()
         cncModel.dataFailure = true
@@ -219,13 +226,105 @@ class ShopToggleUseCase @Inject constructor(
         deliveryType = Delivery.CNC.type,
         isDashDelivery = false
     ).toDomain()
+
+    suspend fun postConfirmAddress(confirmLocationRequest: ConfirmLocationRequest) =
+        geoLocationApiHelper.postConfirmLocation(confirmLocationRequest)
+
+    fun isConnectedToInternet(context: Context) =
+        geoLocationApiHelper.isConnectedToInternet(context)
+
+    private fun getUnsellableItems(deliveryType: Delivery): List<UnSellableCommerceItem>? {
+        var unSellableCommerceItems: List<UnSellableCommerceItem>? = emptyList()
+        when (deliveryType.name) {
+            Delivery.STANDARD.name -> {
+                unSellableCommerceItems =
+                    validateLocationResponse?.validatePlace?.unSellableCommerceItems
+            }
+
+            Delivery.CNC.name -> {
+            //TODO, fix this later on
+            /*validateLocationResponse?.validatePlace?.stores?.forEach {
+                    if (it.storeId.equals(mStoreId)) {
+                        unSellableCommerceItems = it.unSellableCommerceItems
+                    }
+                }
+                currentDeliveryType = Delivery.CNC*/
+            }
+
+            Delivery.DASH.name -> {
+                unSellableCommerceItems =
+                    validateLocationResponse?.validatePlace?.onDemand?.unSellableCommerceItems
+            }
+        }
+        return unSellableCommerceItems
+    }
+
+    fun sendConfirmLocation(deliveryType: Delivery) =
+        flow<Resource<List<UnSellableCommerceItem>>> {
+            if (isConnectedToNetwork() != true) {
+                emit(Resource.Error(message = "No internet"))
+                return@flow
+            }
+            val unsellableItems = getUnsellableItems(deliveryType)
+            if (!unsellableItems.isNullOrEmpty() && SessionUtilities.getInstance().isUserAuthenticated) {
+                emit(Resource.Success(data = unsellableItems))
+            } else {
+                emit(Resource.Loading())
+                try {
+                    val confirmLocationRequest = KotlinUtils.getConfirmLocationRequest(deliveryType)
+                    if (confirmLocationRequest.address.placeId.isNullOrEmpty()) {
+                        emit(Resource.Error(message = "Place id is null"))
+                        return@flow
+                    }
+                    val confirmLocationResponse = postConfirmAddress(confirmLocationRequest)
+
+                    when (confirmLocationResponse.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
+                            saveResponse(confirmLocationResponse, confirmLocationRequest)
+                            emit(Resource.Success(data = null))
+                        }
+
+                        else -> {
+                            emit(Resource.Error(message = "some error occurred, try again"))
+                        }
+                    }
+                } catch (e: Exception) {
+                    FirebaseManager.logException(e)
+                    emit(Resource.Error(message = "some error occurred, try again"))
+                }
+            }
+        }
+
+    private fun saveResponse(
+        confirmLocationResponse: ConfirmDeliveryAddressResponse,
+        confirmLocationRequest: ConfirmLocationRequest
+    ) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.savePreferredDeliveryLocation(
+                ShoppingDeliveryLocation(
+                    confirmLocationResponse.orderSummary?.fulfillmentDetails
+                )
+            )
+            if (KotlinUtils.getAnonymousUserLocationDetails() != null) KotlinUtils.clearAnonymousUserLocationDetails()
+        } else {
+            KotlinUtils.saveAnonymousUserLocationDetails(
+                ShoppingDeliveryLocation(
+                    confirmLocationResponse.orderSummary?.fulfillmentDetails
+                )
+            )
+        }
+        val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
+        KotlinUtils.apply {
+            this.placeId = confirmLocationRequest.address.placeId
+            isLocationPlaceIdSame = confirmLocationRequest.address.placeId?.equals(
+                savedPlaceId
+            )
+        }
+    }
 }
 
 sealed class Resource<T>(val data: T? = null, val message: String? = null) {
     class Loading<T>(data: T? = null) : Resource<T>(data)
-    class Success<T>(data: T) : Resource<T>(data)
+    class Success<T>(data: T?) : Resource<T>(data)
     class Error<T>(message: String, data: T? = null) : Resource<T>(data, message)
 }
-
-
-

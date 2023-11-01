@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.shoptoggle.data.pref.ShopTogglePrefStore
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.LearnMore
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.ToggleModel
@@ -32,6 +33,9 @@ class ShopToggleViewModel @Inject constructor(
     private val _state = mutableStateOf(ToggleScreenState())
     val state: State<ToggleScreenState> = _state
 
+    private val _confirmAddressState = mutableStateOf(ConfirmAddressState())
+    val confirmAddressState: State<ConfirmAddressState> = _confirmAddressState
+
     private val _expandedItemId = mutableStateOf<Int?>(null)
     val expandedItemId get() = _expandedItemId.value
 
@@ -46,9 +50,7 @@ class ShopToggleViewModel @Inject constructor(
         shopTogglePrefStore.isShopToggleScreenFirstTime().filter {
             it
         }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            true
+            viewModelScope, SharingStarted.WhileSubscribed(), true
         )
 
 
@@ -57,8 +59,34 @@ class ShopToggleViewModel @Inject constructor(
         getToggleScreenData(placeId)
     }
 
+    fun confirmAddress(delivery: Delivery) {
+        shopToggleUseCase.sendConfirmLocation(delivery).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _confirmAddressState.value = ConfirmAddressState(
+                        isLoading = true
+                    )
+                }
+
+                is Resource.Error -> {
+                    _confirmAddressState.value = ConfirmAddressState(
+                        hasError = true
+                    )
+                }
+
+                is Resource.Success -> {
+                    _confirmAddressState.value = ConfirmAddressState(
+                        unsellableItems = result.data,
+                        isSuccess = true
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
     private fun getToggleScreenData(placeId: String?) {
-        shopToggleUseCase.getValidateLocationDetails1(placeId).onEach { result ->
+        shopToggleUseCase.getValidateLocationDetails(placeId).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = ToggleScreenState(isLoading = true)
@@ -114,4 +142,12 @@ class ShopToggleViewModel @Inject constructor(
 
 data class ToggleScreenState(
     val isLoading: Boolean = false, val data: List<ToggleModel> = emptyList()
+)
+
+data class ConfirmAddressState(
+    val isLoading: Boolean = false,
+    val unsellableItems: List<UnSellableCommerceItem>? = emptyList(),
+    val isSuccess: Boolean = false,
+    val hasError: Boolean = false,
+    val errorMessage: String? = null
 )

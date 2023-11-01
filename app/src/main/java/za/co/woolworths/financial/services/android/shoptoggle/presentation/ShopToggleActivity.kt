@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
@@ -21,6 +22,10 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
 @AndroidEntryPoint
 class ShopToggleActivity : ComponentActivity() {
+
+    companion object {
+        const val REQUEST_DELIVERY_TYPE = 105
+    }
 
     private val viewModel by viewModels<ShopToggleViewModel>()
 
@@ -52,6 +57,7 @@ class ShopToggleActivity : ComponentActivity() {
                             })
 
                         val state = viewModel.state.value
+                        val confirmAddressState = viewModel.confirmAddressState.value
 
                         if (state.isLoading) {
                             Box(
@@ -64,6 +70,31 @@ class ShopToggleActivity : ComponentActivity() {
                             ShopToggleScreen(viewModel, state.data) { delivery ->
                                 if (delivery != null) {
                                     // TODO, add the confirm address API call
+                                    viewModel.confirmAddress(delivery)
+                                }
+                            }
+                            if (confirmAddressState.isLoading) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(color = Color.Transparent)
+                                ) {
+                                    CircularProgressIndicator(color = Color.Black)
+                                }
+                            }
+
+                            if (confirmAddressState.hasError) {
+                                //TODO, display error message to user
+                            }
+
+                            if (confirmAddressState.isSuccess) {
+                                if (!confirmAddressState.unsellableItems.isNullOrEmpty()) {
+                                    //TODO, navigate back to the previous page & display unsellable dialog
+                                } else {
+                                    //TODO, navigate back to the previous page
+                                    setResult(REQUEST_DELIVERY_TYPE)
+                                    finish()
                                 }
                             }
                         }

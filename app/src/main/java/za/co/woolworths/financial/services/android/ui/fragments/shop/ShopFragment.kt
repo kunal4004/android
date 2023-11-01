@@ -211,7 +211,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             shopToolbar.setOnClickListener {
                 hideTooltipIfVisible()
                 Intent(requireActivity(), ShopToggleActivity::class.java).apply {
-                    startActivity(this)
+                    startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
                 }
             }
 
@@ -710,6 +710,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     it.pushFragment(fragment)
                 }
             }
+        }
+
+        if (requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE) {
+            updateCurrentTab(getDeliveryType()?.deliveryType)
+            setDeliveryView()
         }
     }
 
