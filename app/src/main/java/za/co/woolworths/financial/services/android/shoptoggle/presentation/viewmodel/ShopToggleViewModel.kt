@@ -35,6 +35,9 @@ class ShopToggleViewModel @Inject constructor(
     private val _expandedItemId = mutableStateOf<Int?>(null)
     val expandedItemId get() = _expandedItemId.value
 
+    private val _selectedDeliveryTypeItemId = mutableStateOf<Int?>(null)
+    val selectedDeliveryTypeItemId get() = _selectedDeliveryTypeItemId.value
+
     private val _listItemLearnMore = mutableStateOf<List<LearnMore>>(emptyList())
     val listItemLearnMore: State<List<LearnMore>> = _listItemLearnMore
 
@@ -68,7 +71,7 @@ class ShopToggleViewModel @Inject constructor(
                 is Resource.Success -> {
                     _state.value =
                         ToggleScreenState(data = result.data ?: shopToggleUseCase.getFailureData())
-                    _expandedItemId.value = shopToggleUseCase.getSelectedDeliveryId()
+                    _selectedDeliveryTypeItemId.value = shopToggleUseCase.getSelectedDeliveryId()
                 }
             }
         }.launchIn(viewModelScope)

@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 @Composable
 fun ExpandedData(
     isExpanded: Boolean,
+    isSelected: Boolean,
     item: ToggleModel,
     viewModel: ShopToggleViewModel,
     onSelectDeliveryType: (Delivery?) -> Unit
@@ -104,20 +105,22 @@ fun ExpandedData(
 
         Spacer(modifier = Modifier.height(Dimens.sixteen_dp))
 
-        BlackButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(Dimens.fifty_dp),
-            text = item.deliveryButtonText.uppercase(),
-            enabled = true,
-        ) {
-            val placeId = KotlinUtils.getDeliveryType()?.address?.placeId
-            if (placeId.isNullOrEmpty()) {
-                showSetLocationBottomSheet = true
-            } else {
-                // Call the confirm location API
-                val deliveryType = Delivery.getType(item.deliveryType)
-                onSelectDeliveryType(deliveryType)
+        if (!isSelected) {
+            BlackButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.fifty_dp),
+                text = item.deliveryButtonText.uppercase(),
+                enabled = true,
+            ) {
+                val placeId = KotlinUtils.getDeliveryType()?.address?.placeId
+                if (placeId.isNullOrEmpty()) {
+                    showSetLocationBottomSheet = true
+                } else {
+                    // Call the confirm location API
+                    val deliveryType = Delivery.getType(item.deliveryType)
+                    onSelectDeliveryType(deliveryType)
+                }
             }
         }
     }

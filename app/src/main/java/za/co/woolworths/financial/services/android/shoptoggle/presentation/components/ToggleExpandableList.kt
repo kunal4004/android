@@ -36,7 +36,8 @@ fun ToggleExpandableList(
         items(item) { item ->
             ExpandableListItem(
                 item = item,
-                isExpanded = viewModel.expandedItemId == item.id ,
+                expandedId = viewModel.expandedItemId,
+                defaultSelectionId = viewModel.selectedDeliveryTypeItemId,
                 onItemClick = {
 
                     if (viewModel.expandedItemId == item.id) {

@@ -28,7 +28,8 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 @Composable
 fun ExpandableListItem(
     item: ToggleModel,
-    isExpanded: Boolean,
+    expandedId: Int?,
+    defaultSelectionId: Int?,
     onItemClick: () -> Unit,
     onSelectDeliveryType: (Delivery?) -> Unit,
     viewModel: ShopToggleViewModel,
@@ -42,8 +43,8 @@ fun ExpandableListItem(
         modifier = Modifier
             .fillMaxSize()
             .border(
-                BorderStroke(if (isExpanded) Dimens.oneDp else Dimens.point_five_dp,
-                    color = if (isExpanded) Color.Black else ColorD8D8D8),
+                BorderStroke(if (showBorder(expandedId, defaultSelectionId, item)) Dimens.oneDp else Dimens.point_five_dp,
+                    color = if (showBorder(expandedId, defaultSelectionId, item)) Color.Black else ColorD8D8D8),
                 shape = RoundedCornerShape(Dimens.four_dp)
             )
             .shadow(
@@ -63,16 +64,23 @@ fun ExpandableListItem(
         }
 
     ) {
-        ExpandableCard(item, isExpanded,viewModel, onSelectDeliveryType)
-
+        ExpandableCard(item, isExpanded(expandedId, item), defaultSelectionId == item.id, viewModel, onSelectDeliveryType)
     }
+}
 
+private fun showBorder(isExpandedId: Int?, lastSelectionId: Int?, item: ToggleModel): Boolean {
+    return isExpanded(isExpandedId, item = item) || (lastSelectionId == item.id && (isExpandedId == null || isExpandedId == lastSelectionId))
+}
+
+private fun isExpanded(expandedId: Int?, item: ToggleModel): Boolean {
+    return  expandedId == item.id
 }
 
 @Composable
 private fun ExpandableCard(
     item: ToggleModel,
     isExpanded: Boolean,
+    isSelected: Boolean,
     viewModel: ShopToggleViewModel,
     onSelectDeliveryType: (Delivery?) -> Unit
 ) {
@@ -163,7 +171,7 @@ private fun ExpandableCard(
 
         }
 
-        ExpandedData(isExpanded, item,viewModel, onSelectDeliveryType)
+        ExpandedData(isExpanded, isSelected, item,viewModel, onSelectDeliveryType)
 
     }
 
