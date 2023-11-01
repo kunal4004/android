@@ -17,9 +17,7 @@ import za.co.woolworths.financial.services.android.presentation.common.confirmat
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationDialogUiState
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationUiState
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ProgressViewUiState
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_DELETE_ITEM_CONFIRMED
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_DELETE_LIST_CONFIRMED
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SCREEN_NAME_DELETE_ITEM_CONFIRMATION
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SCREEN_NAME_DELETE_LIST_CONFIRMATION
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SCREEN_NAME_DELETE_LIST_PROGRESS_BAR
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.BUNDLE_KEY
@@ -74,16 +72,6 @@ class ConfirmationViewModel @Inject constructor(
                         ConfirmationDialogUiState.StateDeleteProgress
                     }
 
-                    SCREEN_NAME_DELETE_ITEM_CONFIRMATION -> {
-                        deleteListConfirmationUiState.value =
-                            deleteListConfirmationUiState.value.copy(
-                                title = R.string.delete_item_title,
-                                desc = R.string.delete_item_desc,
-                                showCheckBox = true
-                            )
-                        ConfirmationDialogUiState.StateDeleteListConfirmation
-                    }
-
                     else -> ConfirmationDialogUiState.None
                 }
             )
@@ -119,13 +107,6 @@ class ConfirmationViewModel @Inject constructor(
                         BUNDLE_KEY_POSITION,
                         savedStateHandle.get<Int>(BUNDLE_KEY_POSITION) ?: -1
                     )
-                    it.putBoolean(
-                        BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED,
-                        deleteListConfirmationUiState.value.isChecked
-                    )
-                }
-
-                RESULT_DELETE_ITEM_CONFIRMED -> {
                     it.putBoolean(
                         BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED,
                         deleteListConfirmationUiState.value.isChecked
