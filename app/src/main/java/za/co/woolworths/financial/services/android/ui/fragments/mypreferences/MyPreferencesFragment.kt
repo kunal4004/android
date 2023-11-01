@@ -552,11 +552,12 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
     }
 
     private fun showHuaweiToken() {
-        if (BuildConfig.DEBUG && BuildConfig.FLAVOR == AppConstant.HUAWEI_FLAVOR) {
+        //need to un comment before merging the code
+        // if (BuildConfig.DEBUG && BuildConfig.FLAVOR == AppConstant.HUAWEI_FLAVOR) {
             binding.apply {
                 huaweiTokenLayout.visibility = View.VISIBLE
                 huaweiTokenTv.text = WoolworthsApplication.getInstance().userManager.huaweiPushToken
             }
-        }
+       // }
     }
 }
