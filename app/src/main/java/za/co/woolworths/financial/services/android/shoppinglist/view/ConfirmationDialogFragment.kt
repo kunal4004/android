@@ -5,12 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.DeleteListConfirmationView
+import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationUiState
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -19,15 +24,16 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
 @AndroidEntryPoint
-class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
+class ConfirmationDialogFragment : WBottomSheetDialogFragment() {
 
-    private var selectedItemCount = 0
+
     companion object {
         var listener : MyShoppingListItemClickListener? = null
-        const val ITEM_COUNT = "ITEM_COUNT"
-        fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener, itemCount:Int) = MoreOptionDialogFragment().withArgs {
-            listener = shoppingListItemClickListener
-            putInt(ITEM_COUNT, itemCount)
+        fun newInstance(
+            shoppingListItemClickListener: MyShoppingListItemClickListener?): ConfirmationDialogFragment {
+            return ConfirmationDialogFragment().withArgs {
+                listener = shoppingListItemClickListener
+            }
         }
     }
 
@@ -37,28 +43,33 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
     ) = contentView(
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
+
+
         OneAppTheme {
-            MoreOptionDialog(
-                selectedItemCount,
-                {
-                    //todo item copy
-                }, {
-                    //todo item move
-                }) {
-                dialog?.dismiss()
-                val fragment = ConfirmationDialogFragment.newInstance(listener)
-                fragment.show(parentFragmentManager, ConfirmationDialogFragment::class.simpleName)
-            }
+            DeleteListConfirmationView(
+                modifier = Modifier
+                    .padding(top = 25.dp),
+                ConfirmationUiState(
+                    title = R.string.remove_dialog_title,
+                    desc = R.string.remove_desc
+                ),
+                onCheckBoxChange = {
+
+                },
+                onConfirmClick = {
+                    dialog?.dismiss()
+                    listener?.itemRemoveClick()
+                },
+                onCancelClick = {
+                    dialog?.dismiss()
+                }
+            )
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.apply {
-
-            arguments?.apply {
-                selectedItemCount = getInt(ITEM_COUNT, 0)
-            }
 
             setOnShowListener { dialog ->
                 val bottomSheet =
