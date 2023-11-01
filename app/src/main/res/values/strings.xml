@@ -3114,4 +3114,45 @@
     <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
 
     <string name="order_with_hash">Order #</string>
+    <!--  Write a Review Details -->
+    <string name="write_a_review">Write a Review</string>
+    <string name="leave_us_a_review">Leave us a review</string>
+    <string name="subtitle_leave_us_a_review">Share with us your experience with this product.</string>
+    <string name="write_a_review_success_screen_text_view2">It is currently being moderated and we will notify you when it is published.</string>
+    <string name="share_this_product"><u>SHARE THIS PRODUCT</u></string>
+    <string name="add_a_review">Add A Review</string>
+    <string name="organic_banana">Organic Banana</string>
+    <string name="how_much_did_you_like_this_product_overall">How much did you like this product overall?</string>
+    <string name="rating_star">Rating: *</string>
+    <string name="rating_value">Value :</string>
+    <string name="zero">0</string>
+    <string name="box_1">1</string>
+    <string name="box_2">2</string>
+    <string name="box_3">3</string>
+    <string name="box_4">4</string>
+    <string name="box_5">5</string>
+    <string name="Would_you_recommend_this_product_to_a_friend">Would you recommend this product to a friend? *</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="write_a_review2">Write a review</string>
+    <string name="review_title">Review Title: *</string>
+    <string name="review_title_hint">Review Title</string>
+    <string name="review_title_edit_counter">/150</string>
+    <string name="review_desc">Review Description: *</string>
+    <string name="please_enter_your_full_review">Please enter your full review</string>
+    <string name="min_ten_char">Min 10 Characters,</string>
+    <string name="fifteen_hundred">1500</string>
+    <string name="characters_left">Characters Left</string>
+    <string name="display_name">Display name: *</string>
+    <string name="add_photos">Add Photos</string>
+    <string name="optional">Optional</string>
+    <string name="submit_review">Submit Review</string>
+    <string name="tips_For_writing_great_reviews">Tips For Writing Great Reviews</string>
+    <string name="close">CLOSE</string>
+    <string name="please_select_a_rating">Please select a rating.</string>
+    <string name="please_select_an_option.">Please select an option.</string>
+    <string name="please_enter_a_review_title.">Please enter a review title.</string>
+    <string name="please_enter_a_display_name.">Please enter a display name.</string>
+    <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
+
 </resources>

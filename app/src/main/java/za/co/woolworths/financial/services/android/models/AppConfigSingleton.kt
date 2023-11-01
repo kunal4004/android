@@ -244,6 +244,7 @@ object AppConfigSingleton {
 
             appConfig.ratingsAndReviews?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                enableWriteReview = this.enableWriteReview
                 ratingsAndReviews = this
             }
 
