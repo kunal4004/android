@@ -95,7 +95,7 @@ class SearchResultShopAdapter(
                      * food item type can still be selected.
                      */
                     val productList: ProductList? =
-                        this@SearchResultShopAdapter.productList?.get(holder.adapterPosition)
+                        this@SearchResultShopAdapter.productList?.getOrNull(holder.adapterPosition)
                             ?: null
                     val productType = productList?.productType ?: ""
                     if (!productType.equals(FOOD_PRODUCT, ignoreCase = true)) {

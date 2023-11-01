@@ -33,11 +33,16 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddToListScreenEvents
 import za.co.woolworths.financial.services.android.presentation.common.ProgressView
 import za.co.woolworths.financial.services.android.presentation.createlist.CreateListScreen
 import za.co.woolworths.financial.services.android.presentation.createlist.components.CreateListScreenEvent
+import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
+import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
+import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment.Companion.COPY_LIST_ID
 import za.co.woolworths.financial.services.android.ui.compose.contentView
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -52,9 +57,21 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Compani
 class AddToListFragment : WBottomSheetDialogFragment() {
 
     companion object {
+        var listener : MyShoppingListItemClickListener? = null
+        var copyItemToList:Boolean = false
+
         const val ADD_TO_SHOPPING_LIST_REQUEST_CODE = 1209
+        fun newInstance(
+            shoppingListItemClickListener: MyShoppingListItemClickListener?,
+            listId: String?
+        ) = AddToListFragment().withArgs {
+            listener = shoppingListItemClickListener
+            copyItemToList = true
+            putString(COPY_LIST_ID, listId)
+        }
     }
 
+    private var copyListId: String? = ""
     private val viewModel: AddToListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,6 +124,10 @@ class AddToListFragment : WBottomSheetDialogFragment() {
     ) {
 
         OneAppTheme {
+
+            arguments?.apply {
+                copyListId = getString(COPY_LIST_ID, "")
+            }
 
             val listState = viewModel.getListState()
             val listName =
@@ -175,9 +196,19 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                             .background(Color.White)
                             .wrapContentHeight()
                             .heightIn(max = 600.dp),
-                        listUiState = listState
+                        listUiState = listState,
+                        copyListId = copyListId,
+                        copyItemToList = copyItemToList
                     ) { event ->
                         when (event) {
+                            AddToListScreenEvents.CopyConfirmClick -> {
+                                val list = ArrayList<ShoppingList>()
+                                viewModel.getListState().selectedListItem.forEach {
+                                    list.add(it)
+                                }
+                                dialog?.dismiss()
+                                listener?.itemEditOptionsClick(EditOptionType.CopyItemFromList(list))
+                            }
                             AddToListScreenEvents.CancelClick -> dismiss()
                             else -> viewModel.onEvent(event)
                         }
