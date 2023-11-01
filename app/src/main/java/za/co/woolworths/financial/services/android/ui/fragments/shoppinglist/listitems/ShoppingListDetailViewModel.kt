@@ -33,6 +33,8 @@ class ShoppingListDetailViewModel @Inject constructor(
 
     var listId: String = ""
 
+    private var isCheckedDontAskAgain: Boolean = false
+
     private val _shoppingListDetails = MutableLiveData<Event<Resource<ShoppingListItemsResponse>>>()
     val shoppListDetails: LiveData<Event<Resource<ShoppingListItemsResponse>>> =
         _shoppingListDetails
@@ -230,4 +232,10 @@ class ShoppingListDetailViewModel @Inject constructor(
             _copyItemsToList.value = Event(response)
         }
     }
+
+    fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {
+        isCheckedDontAskAgain = checkedDontAskAgain
+    }
+
+    fun isCheckedDontAskAgain() = isCheckedDontAskAgain
 }

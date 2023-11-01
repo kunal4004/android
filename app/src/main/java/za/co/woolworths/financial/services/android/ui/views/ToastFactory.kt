@@ -142,7 +142,7 @@ class ToastFactory {
             return popupWindow
         }
 
-        fun showToast(activity: Activity, viewLocation: View, message: String, buttonIsVisible: Boolean = false): PopupWindow? {
+        fun showToast(activity: Activity, viewLocation: View, message: String, buttonIsVisible: Boolean = false, listId:String? = "", listName: String? = ""): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
             // inflate your xml layout
             val inflater =

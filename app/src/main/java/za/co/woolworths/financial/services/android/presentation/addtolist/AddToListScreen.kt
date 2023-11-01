@@ -47,6 +47,7 @@ fun AddToListScreen(
     modifier: Modifier = Modifier,
     listUiState: AddToListUiState = AddToListUiState(),
     copyItemToList: Boolean = false,
+    copyListId: String? ="",
     onEvent: (event: AddToListScreenEvents) -> Unit
 ) {
     Box(
@@ -95,7 +96,10 @@ fun AddToListScreen(
                     modifier = Modifier
                         .weight(1f)
                         .background(Color.White),
-                    list = listUiState.list,
+                    list = if (copyItemToList)
+                        listUiState.list.filter {
+                            it.listId != copyListId
+                        } else listUiState.list,
                     selectedItemsList = listUiState.selectedListItem
                 ) {
                     onEvent(AddToListScreenEvents.OnItemClick(it))
