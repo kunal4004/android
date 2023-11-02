@@ -122,8 +122,8 @@ class AddToListViewModel @Inject constructor(
         if (name.isEmpty()) {
             return
         }
-        val isListNamePresent = listState.value.list.any { it.listName.equals(name, ignoreCase =
-        false) }
+        val isListNamePresent = listState.value.list.any { it.listName.equals(name.trim(), ignoreCase =
+        true) }
 
         if(isListNamePresent) {
             createNewListState.value = createNewListState.value.copy(
@@ -298,6 +298,7 @@ class AddToListViewModel @Inject constructor(
             session,
             user
         )
+        //return reportEventRequest
         prepareDyAddToWishListViewModel(prepareAddToWishListRequestEvent)
 
     }

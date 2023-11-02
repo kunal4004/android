@@ -375,7 +375,6 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation"
-            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/bottomNavigationStyle"
             android:windowSoftInputMode="adjustNothing" />
