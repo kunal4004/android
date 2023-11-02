@@ -564,6 +564,7 @@ class CartProductAdapter(
                         giftListId = commerceItemInfo.catalogRefId
                         quantity = "1"
                         isGWP = commerceItemInfo.isGWP || hasGiftProduct
+                        size = commerceItemInfo.size
                     }
                     addToListRequests.add(listItem)
                 }
