@@ -1259,6 +1259,7 @@ class CheckoutReturningUserCollectionFragment :
                             }
                             return@observe
                         }
+                        // TODO: Verify user in store by API call
                         navigateToPaymentWebpage(response)
                     }
 

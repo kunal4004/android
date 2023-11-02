@@ -2339,7 +2339,7 @@ interface ApiInterface {
         @Path("multipleSku") multipleSku: String,
         @Query("substitution") substitution: Boolean): retrofit2.Response<SkusInventoryForStoreResponse>
 
-    // TODO: Need to verify the endpoint latter
+    // TODO: Need to verify the endpoint latter also verify UserLocationRequestBody, UserLocationResponse
     @POST("wfs/app/v4/cart/checkout/verifyUserIsInStore")
     fun verifyUserIsInStore(
         @Header("userAgent") userAgent: String,

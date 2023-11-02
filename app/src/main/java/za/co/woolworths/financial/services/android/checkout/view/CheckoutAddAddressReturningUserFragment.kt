@@ -1153,6 +1153,7 @@ class CheckoutAddAddressReturningUserFragment :
                             )
                             return@observe
                         }
+                        // TODO: Verify user in store by API call
                         navigateToPaymentWebpage(response)
                     }
 
@@ -1359,7 +1360,6 @@ class CheckoutAddAddressReturningUserFragment :
                 CART_ITEM_LIST to cartItemList,
                 IS_ENDLESS_AISLE_JOURNEY to (isEndlessAisleAvailable() && isMixedBasket == false)
             )
-
         )
     }
 
