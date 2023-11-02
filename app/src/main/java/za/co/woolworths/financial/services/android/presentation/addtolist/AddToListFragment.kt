@@ -71,7 +71,6 @@ class AddToListFragment : WBottomSheetDialogFragment() {
         }
     }
 
-    private var copyListId: String? = ""
     private val viewModel: AddToListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -124,10 +123,6 @@ class AddToListFragment : WBottomSheetDialogFragment() {
     ) {
 
         OneAppTheme {
-
-            arguments?.apply {
-                copyListId = getString(COPY_LIST_ID, "")
-            }
 
             val listState = viewModel.getListState()
             val listName =
@@ -197,7 +192,7 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                             .wrapContentHeight()
                             .heightIn(max = 600.dp),
                         listUiState = listState,
-                        copyListId = copyListId,
+                        copyListId = viewModel.getCopyListID(),
                         copyItemToList = copyItemToList
                     ) { event ->
                         when (event) {
