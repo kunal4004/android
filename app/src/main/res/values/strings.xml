@@ -539,7 +539,7 @@
     <string name="tips_tricks_titles_refine_search">Filter Your Search</string>
     <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store before they expire.</string>
     <string name="tips_tricks_desc_stores">Track down the product you’re looking for in the app – save yourself a drive to the wrong store!</string>
-    <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlesslyc.</string>
     <string name="tips_tricks_desc_refine">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, carb clever.</string>
     <string name="tips_tricks_desc_delivery">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="tips_tricks_desc_navigation">Tap the cart icon in the bottom menu to see the items you’ve added to your cart.</string>
@@ -2706,7 +2706,7 @@
 
     <!-- Feature Walkthrough : Barcode Scanning  -->
     <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
-    <string name="feature_barcode_scanning_desc">Scan a product\'s barcode to view it\'s information or add it straight to your shopping list.</string>
+    <string name="feature_barcode_scanning_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
     <string name="feature_barcode_scanning_action_text">SCAN A PRODUCT</string>
 
     <!-- Feature Walkthrough : MY List  -->
