@@ -166,6 +166,10 @@ class ToastFactory {
             tvBoldTitle?.text = message
             popupWindow.isFocusable = false
 
+            tvButtonClick?.setOnClickListener {
+                ScreenManager.presentShoppingListDetailActivity(activity, listId, listName)
+            }
+
             // dismiss the popup window after 3sec
             Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
             popupWindow.showAtLocation(
