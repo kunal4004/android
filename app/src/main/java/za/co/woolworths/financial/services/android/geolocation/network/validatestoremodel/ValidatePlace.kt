@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.geolocation.network.validate
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 
 
 @Parcelize
@@ -19,7 +20,7 @@ data class ValidatePlace(
     var links: ArrayList<String> = arrayListOf(),
     var liquorDeliverable: Boolean? = null,
     var placeDetails: PlaceDetails? = PlaceDetails(),
-    var unSellableCommerceItems: ArrayList<String> = arrayListOf(),
+    var unSellableCommerceItems: ArrayList<UnSellableCommerceItem> = arrayListOf(),
     var deliveryStatus: DeliveryStatus? = DeliveryStatus(),
 
     ) : Parcelable

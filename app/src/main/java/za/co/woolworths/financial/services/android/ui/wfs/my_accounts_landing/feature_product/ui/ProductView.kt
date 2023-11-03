@@ -25,10 +25,10 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.ex
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.createLocator
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_pet_insurance.ui.columnRef
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.ProductProperties
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.ProductTransformer
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.RetryOptions
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Margin
 
 @Composable
@@ -49,7 +49,8 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
                         isRetryInProgress = isRetryButtonEnabled
                     )
                 )
-                onProductClick(productGroups) }
+                onProductClick(productGroups)
+            }
         )
 
         is AccountProductCardsGroup.GoldCreditCard -> ProductViewItem(
@@ -64,7 +65,8 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
                         isRetryInProgress = isRetryButtonEnabled
                     )
                 )
-                onProductClick(productGroups) }
+                onProductClick(productGroups)
+            }
         )
 
         is AccountProductCardsGroup.SilverCreditCard -> ProductViewItem(
@@ -79,7 +81,8 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
                         isRetryInProgress = isRetryButtonEnabled
                     )
                 )
-                onProductClick(productGroups) }
+                onProductClick(productGroups)
+            }
         )
 
         is AccountProductCardsGroup.PersonalLoan -> ProductViewItem(
@@ -94,7 +97,8 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
                         isRetryInProgress = isRetryButtonEnabled
                     )
                 )
-                onProductClick(productGroups) }
+                onProductClick(productGroups)
+            }
         )
 
         is AccountProductCardsGroup.StoreCard -> ProductViewItem(
@@ -109,7 +113,8 @@ fun ProductContainerSwitcher(productGroup: AccountProductCardsGroup,
                         isRetryInProgress = isRetryButtonEnabled
                     )
                 )
-                onProductClick(productGroups) }
+                onProductClick(productGroups)
+            }
         )
 
         else -> Unit

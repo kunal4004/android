@@ -1,11 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -13,10 +20,20 @@ import androidx.lifecycle.lifecycleScope
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManager
 import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.AppLifeCycleObserver
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.LifecycleTransitionType
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.BiometricSingleton
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.CurrentScreenType
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.conditional
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.AccountLandingEventLauncherImpl
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.FragmentResultType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen.UserAccountsLandingScene
@@ -32,9 +49,13 @@ class UserAccountsLandingFragment : Fragment() {
     val viewModel: UserAccountLandingViewModel by activityViewModels()
     private var deepLinkParams: JsonObject? = null
 
+    private val appInstance  by lazy { WoolworthsApplication.getInstance()?.biometricSingleton }
+
     private val mRegisterActivityForResult = BetterActivityResult.registerActivityForResult(this)
 
     @Inject lateinit var navigation: AccountLandingEventLauncherImpl
+
+    @Inject lateinit var biometricManager: WfsBiometricManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,18 +65,30 @@ class UserAccountsLandingFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
     = contentView(ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)) {
+
         OneAppTheme {
-            UserAccountsLandingScene(viewModel, onProductClick = { productGroup ->
-                viewModel.accountProductCardsGroup = productGroup
-                navigation.onProductClicked(
-                    productGroup = productGroup,
-                    viewModel = viewModel,
-                    activityLauncher = mRegisterActivityForResult) })
-            { view ->
-                navigation.onItemSelectedListener(
-                    event = view,
-                    viewModel = viewModel,
-                    activityLauncher = mRegisterActivityForResult)
+            Box (modifier = Modifier
+                .background(Color.White)
+                .conditional(
+                    viewModel.isBiometricScreenEnabled,
+                    ifTrue = { blur(30.dp) },
+                    ifFalse = null
+                )) {
+                UserAccountsLandingScene(viewModel, onProductClick = { productGroup ->
+                    viewModel.accountProductCardsGroup = productGroup
+                    navigation.onProductClicked(
+                        productGroup = productGroup,
+                        viewModel = viewModel,
+                        activityLauncher = mRegisterActivityForResult
+                    )
+                })
+                { view ->
+                    navigation.onItemSelectedListener(
+                        event = view,
+                        viewModel = viewModel,
+                        activityLauncher = mRegisterActivityForResult
+                    )
+                }
             }
         }
     }
@@ -64,6 +97,7 @@ class UserAccountsLandingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         saveFirebaseDeviceId()
         setupListeners()
+        viewLifecycleOwner.lifecycle.addObserver(appLifecycleObserver)
     }
 
     private fun saveFirebaseDeviceId() {
@@ -121,17 +155,71 @@ class UserAccountsLandingFragment : Fragment() {
         }
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        with(viewModel) { // Move to bin later
-            isAccountFragmentVisible(isVisible = !hidden)
+    override fun onStart() {
+        super.onStart()
+        enableBiometric()
+    }
+
+    private fun enableBiometric() {
+        val bottomNavigationActivity = (requireActivity() as? BottomNavigationActivity)
+        if (viewModel.wasActivityOpened) {
+        if (bottomNavigationActivity?.bottomNavigationById?.currentItem == BottomNavigationActivity.INDEX_ACCOUNT && biometricManager.isBiometricInMyPreferencesEnabled(requireContext())) {
+            viewModel.setOnTapActivated()
+            viewModel.setBiometricEnabled()
+            }
+        }
+        viewModel.setOnTapActivated()
+    }
+
+    override fun onHiddenChanged(isHidden: Boolean) {
+        super.onHiddenChanged(isHidden)
+        val bottomNavigationActivity = (requireActivity() as? BottomNavigationActivity)
+        val bottomNavigationById = bottomNavigationActivity?.bottomNavigationById
+        val isAccountTab = bottomNavigationById?.currentItem == BottomNavigationActivity.INDEX_ACCOUNT
+
+        if (isHidden) {
+            if (isAccountTab) {
+                viewModel.setOnTapNotActivated()
+                viewModel.setBiometricDisabled()
+            }
+        }
+
+        if (!isHidden) {
+            viewModel.setOnTapActivated()
+            enableBiometric()
+        }
+
+        with(viewModel) {
+            isAccountFragmentVisible(isVisible = !isHidden)
             setUserAuthentication()
-        if (!hidden) {
-            navigation.setScreenNameMyAccount()
-            navigation.hideToolbar()
+            if (!isHidden) {
+                navigation.setScreenNameMyAccount()
+                navigation.hideToolbar()
                 if (isUserAuthenticated.value == Authenticated) {
                     queryAccountLandingService(isApiUpdateForced = !fetchAccountDidLoadOnce)
                 }
+            }
+        }
+
+        if(!isHidden && isAccountTab  && !AppInstanceObject.get().isBiometricWalkthroughPresented) {
+            viewModel.isBiometricPopupEnabled = true
+        }
+    }
+
+    private val appLifecycleObserver = AppLifeCycleObserver(biometricSingleton = appInstance) { transitionType ->
+        if (transitionType == LifecycleTransitionType.BACKGROUND_TO_FOREGROUND) {
+            viewModel.apply {
+                if (wasActivityOpened) {
+                    setOnTapActivated()
+                    setBiometricEnabled()
+                }
+                setOnTapActivated()
+                biometricManager.setupBiometricAuthenticationForAccountLanding(
+                    biometricSingleton = appInstance,
+                    this@UserAccountsLandingFragment,
+                    (requireActivity() as? AppCompatActivity),
+                    this
+                )
             }
         }
     }
@@ -141,6 +229,20 @@ class UserAccountsLandingFragment : Fragment() {
         const val ACCOUNT_CARD_REQUEST_CODE = 2043
         const val RELOAD_ACCOUNT_RESULT_CODE = 55555
         const val PET_INSURANCE_REQUEST_CODE = 1212
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (requireActivity() is MyAccountActivity) {
+            viewModel.queryAccountLandingService(isApiUpdateForced = false)
+        }
+    }
+
+    override fun onDestroy() {
+        if (requireActivity() is MyAccountActivity) {
+            appInstance?.clear()
+        }
+        super.onDestroy()
     }
 
 }

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.annotation.NonNull
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.*
 import com.awfs.coordination.databinding.ItemLayoutOnDemandCategoryBinding
 import com.awfs.coordination.databinding.ItemLayoutProductCarouselBinding
@@ -22,7 +23,8 @@ class DashDeliveryAdapter(
     val onDemandNavigationListener: OnDemandNavigationListener,
     val dashLandingNavigationListener: OnDashLandingNavigationListener,
     val onDataUpdateListener: OnDataUpdateListener? = null,
-    val iProductListing: IProductListing
+    val iProductListing: IProductListing,
+    private val activity: FragmentActivity?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -32,6 +34,8 @@ class DashDeliveryAdapter(
         const val TYPE_NAME_LONG_BANNER_CAROUSEL = "Long Banners Carousel"
         const val TYPE_NAME_LONG_BANNER_LIST = "Long Banners List"
         const val TYPE_NAME_BANNER_FULL_WIDTH = "Banner FullWidth"
+        const val TYPE_NAME_LONG_BANNER_FULL_WIDTH = "Single Slot Banner"
+        const val TYPE_NAME_RECOMMENDATION_SLOT = "Recommendation Slot"
 
         const val TYPE_EMPTY = 0
         const val TYPE_ON_DEMAND_CATEGORIES = 1
@@ -40,6 +44,8 @@ class DashDeliveryAdapter(
         const val TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL = 4
         const val TYPE_DASH_CATEGORIES_LONG_BANNER_CAROUSEL = 5
         const val TYPE_DASH_CATEGORIES_LONG_BANNER_LIST = 6
+        const val TYPE_DASH_TODAY_WITH_WOOLIES = 7
+        const val TYPE_DASH_RECOMMENDATION_SLOT = 8
     }
 
     private val diffCallback = object : DiffUtil.ItemCallback<Any?>() {
@@ -131,6 +137,23 @@ class DashDeliveryAdapter(
                     )
                 )
             }
+            TYPE_DASH_RECOMMENDATION_SLOT -> {
+                RecommendationLayoutViewHolder(
+                    itemBinding = ItemLayoutProductCarouselBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent, false
+                    ), iProductListing = iProductListing, activity = activity
+                )
+            }
+
+            TYPE_DASH_TODAY_WITH_WOOLIES -> {
+                TodayWooliesLayoutViewHolder(
+                    ItemLayoutProductCarouselBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false)
+                )
+            }
 
             else -> EmptyViewHolder(View(context))
         }
@@ -188,6 +211,18 @@ class DashDeliveryAdapter(
                     dashLandingNavigationListener
                 )
             }
+            is  TodayWooliesLayoutViewHolder -> {
+                holder.bindView(
+                    context,
+                    position,
+                    categoryList[position] as ProductCatalogue,
+                    dashLandingNavigationListener
+                )
+            }
+            is RecommendationLayoutViewHolder -> {
+                holder.bindView(productCatalogue = categoryList[position] as ProductCatalogue)
+            }
+
         }
     }
 
@@ -214,6 +249,12 @@ class DashDeliveryAdapter(
                     TYPE_NAME_LONG_BANNER_LIST.lowercase() -> {
                         TYPE_DASH_CATEGORIES_LONG_BANNER_LIST
                     }
+                    TYPE_NAME_LONG_BANNER_FULL_WIDTH.lowercase() -> {
+                        TYPE_DASH_TODAY_WITH_WOOLIES
+                    }
+                    TYPE_NAME_RECOMMENDATION_SLOT.lowercase() -> {
+                        TYPE_DASH_RECOMMENDATION_SLOT
+                    }
                     else -> TYPE_EMPTY
                 }
             }
@@ -226,9 +267,24 @@ class DashDeliveryAdapter(
         return categoryList.size
     }
 
+    private fun mergeRecommendations(itemList: ArrayList<Any?>?, recommendedProducts: ProductCatalogue? = null) {
+        if (recommendedProducts?.products.isNullOrEmpty() || itemList.isNullOrEmpty()) {
+            return
+        }
+        val index = itemList.indexOfFirst { item -> item is ProductCatalogue && item.name == TYPE_NAME_RECOMMENDATION_SLOT }
+        if (index >= 0) {
+            itemList[index] = recommendedProducts
+        }
+    }
+
+    private fun removeEmptyRecommendationCarousel(itemList: ArrayList<Any?>?) {
+        itemList?.removeAll { item -> item is ProductCatalogue && item.name == TYPE_NAME_RECOMMENDATION_SLOT && item.products.isNullOrEmpty() }
+    }
+
     fun setData(
         onDemandCategories: List<RootCategory>?,
-        dashCategories: ArrayList<ProductCatalogue>?
+        dashCategories: ArrayList<ProductCatalogue>?,
+        recommendedProducts: ProductCatalogue? = null
     ) {
         val list = ArrayList<Any?>(0)
         list.apply {
@@ -239,6 +295,8 @@ class DashDeliveryAdapter(
                 addAll(it)
             }
         }
+        mergeRecommendations(list, recommendedProducts)
+        removeEmptyRecommendationCarousel(list)
         categoryList = list
         onDataUpdateListener?.onProductCatalogueUpdate(productCatalogues = dashCategories)
     }
@@ -388,6 +446,47 @@ class LongBannerListLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselB
             adapter = longBannerListAdapter
             productCatalogue?.let {
                 longBannerListAdapter.setData(it)
+            }
+        }
+    }
+}
+
+class TodayWooliesLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
+
+    fun bindView(
+        context: Context,
+        position: Int,
+        productCatalogue: ProductCatalogue?,
+        dashLandingNavigationListener: OnDashLandingNavigationListener,
+    ) {
+        itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
+        itemBinding.rvDashCategories?.apply {
+            val longBannerCarouselAdapter =
+                DashCategoryAdapter(context, dashLandingNavigationListener, null)
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            adapter = longBannerCarouselAdapter
+            productCatalogue?.let {
+                longBannerCarouselAdapter.setData(it)
+            }
+        }
+    }
+}
+
+class RecommendationLayoutViewHolder(
+    val itemBinding: ItemLayoutProductCarouselBinding,
+    private val iProductListing: IProductListing?,
+    val activity: FragmentActivity?) :
+    RecyclerView.ViewHolder(itemBinding.root) {
+
+    fun bindView(productCatalogue: ProductCatalogue?) {
+        itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
+        itemBinding.rvDashCategories.apply {
+            val productCarouselAdapter = DashCategoryAdapter(context, null, iProductListing)
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            adapter = productCarouselAdapter
+            productCatalogue?.let {
+                productCarouselAdapter.setData(it)
             }
         }
     }
