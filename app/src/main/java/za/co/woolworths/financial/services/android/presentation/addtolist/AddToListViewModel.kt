@@ -377,6 +377,14 @@ class AddToListViewModel @Inject constructor(
         }
     }
 
+    fun getSelectedListForCopyItem():ArrayList<ShoppingList> {
+        val list = ArrayList<ShoppingList>()
+         getListState().selectedListItem.forEach {
+            list.add(it)
+        }
+        return list
+    }
+
     fun getListState(): AddToListUiState {
         return listState.value
     }

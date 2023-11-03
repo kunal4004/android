@@ -197,12 +197,8 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                     ) { event ->
                         when (event) {
                             AddToListScreenEvents.CopyConfirmClick -> {
-                                val list = ArrayList<ShoppingList>()
-                                viewModel.getListState().selectedListItem.forEach {
-                                    list.add(it)
-                                }
                                 dialog?.dismiss()
-                                listener?.itemEditOptionsClick(EditOptionType.CopyItemFromList(list))
+                                listener?.itemEditOptionsClick(EditOptionType.CopyItemFromList(viewModel.getSelectedListForCopyItem()))
                             }
                             AddToListScreenEvents.CancelClick -> dismiss()
                             else -> viewModel.onEvent(event)
