@@ -1044,6 +1044,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         super.onHiddenChanged(hidden)
         if (!hidden) {
             (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
+            arguments?.apply {
+                listName = getString(ARG_LIST_NAME, "")
+                openFromMyList = getBoolean(ARG_OPEN_FROM_MY_LIST, false)
+            }
+            setUpToolbar(listName)
         }
     }
 
