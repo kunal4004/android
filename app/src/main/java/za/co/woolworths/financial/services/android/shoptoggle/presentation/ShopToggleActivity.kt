@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.shoptoggle.presentation
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,6 +21,8 @@ import za.co.woolworths.financial.services.android.shoptoggle.presentation.compo
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
 class ShopToggleActivity : ComponentActivity() {
@@ -69,8 +73,11 @@ class ShopToggleActivity : ComponentActivity() {
                         } else {
                             ShopToggleScreen(viewModel, state.data) { delivery ->
                                 if (delivery != null) {
-                                    // TODO, add the confirm address API call
-                                    viewModel.confirmAddress(delivery)
+                                    if (delivery == Delivery.CNC) {
+                                        launchStoreSelection()
+                                    } else {
+                                        viewModel.confirmAddress(delivery)
+                                    }
                                 }
                             }
                             if (confirmAddressState.isLoading) {
@@ -100,6 +107,30 @@ class ShopToggleActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun launchStoreSelection() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            this,
+            REQUEST_DELIVERY_TYPE,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.CNC,
+            needStoreSelection = true,
+            validateLocationResponse = viewModel.validateLocationResponse()
+        )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_DELIVERY_TYPE) {
+                setResult(REQUEST_DELIVERY_TYPE)
+                finish()
             }
         }
     }

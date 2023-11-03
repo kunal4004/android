@@ -40,6 +40,10 @@ class ShopToggleUseCase @Inject constructor(
         const val CNC_DELIVERY_ID = 3
     }
 
+    fun validateLocationResponse(): ValidateLocationResponse? {
+        return validateLocationResponse
+    }
+
     fun getValidateLocationDetails(placeId: String?) = flow {
         if (placeId.isNullOrEmpty()) {
             emit(Resource.Success(data = getFailureData()))

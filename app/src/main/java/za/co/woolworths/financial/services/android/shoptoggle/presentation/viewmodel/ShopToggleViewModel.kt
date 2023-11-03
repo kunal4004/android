@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.shoptoggle.data.pref.ShopTogglePrefStore
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.LearnMore
@@ -137,6 +138,10 @@ class ShopToggleViewModel @Inject constructor(
         viewModelScope.launch {
             shopTogglePrefStore.disableShopToggleScreenFirstTime(isToggleScreenDisable)
         }
+    }
+
+    fun validateLocationResponse(): ValidateLocationResponse? {
+        return shopToggleUseCase.validateLocationResponse()
     }
 }
 
