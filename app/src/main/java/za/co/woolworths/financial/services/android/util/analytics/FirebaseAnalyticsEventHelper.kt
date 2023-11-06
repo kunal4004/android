@@ -7,7 +7,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.analytics.dto.*
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -218,7 +217,7 @@ object FirebaseAnalyticsEventHelper {
     }
 
     fun viewItemListRecommendations(
-        products: List<Product>?, category: String?
+        products: List<ProductList>?, category: String?
     ) {
         if (products.isNullOrEmpty()) {
             return
