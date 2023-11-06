@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -38,6 +39,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEED_STORE_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragmentBinding
@@ -58,6 +60,7 @@ class ClickAndCollectStoresFragment :
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
     private var isComingFromNewToggleFulfilment: Boolean? = false
+    private var needStoreSelection: Boolean? = false
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -78,6 +81,7 @@ class ClickAndCollectStoresFragment :
         bundle?.apply {
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromNewToggleFulfilment = this.getBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
+            needStoreSelection = this.getBoolean(NEED_STORE_SELECTION, false)
             isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD, false)
             if (containsKey(VALIDATE_RESPONSE)) {
                 getSerializable(VALIDATE_RESPONSE)?.let {
@@ -241,7 +245,11 @@ class ClickAndCollectStoresFragment :
     }
 
     private fun navigateToFulfillmentScreen() {
-        if (IS_FROM_STORE_LOCATOR) {
+        if (isComingFromNewToggleFulfilment == true) {
+            if (mValidateLocationResponse != null) {
+                confirmSetAddress(mValidateLocationResponse!!)
+            }
+        } else if (IS_FROM_STORE_LOCATOR) {
             dataStore?.let {
                 bundle?.putString(
                     KEY_PLACE_ID, placeId
@@ -256,10 +264,6 @@ class ClickAndCollectStoresFragment :
                 R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment,
                 bundleOf(BUNDLE to bundle)
             )
-        } else if (isComingFromNewToggleFulfilment == true) {
-            if (mValidateLocationResponse != null) {
-                confirmSetAddress(mValidateLocationResponse!!)
-            }
         } else {
             dataStore?.let {
                 setFragmentResult(
@@ -268,6 +272,13 @@ class ClickAndCollectStoresFragment :
                 )
             }
             dismiss()
+        }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (needStoreSelection == true) {
+            activity?.finish()
         }
     }
 
