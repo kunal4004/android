@@ -1264,7 +1264,7 @@ class CheckoutReturningUserCollectionFragment :
                             }
                             return@observe
                         }
-                        // TODO: Verify user in store by API call
+
                         if(isEndlessAisleAvailable() && isMixedBasket == false) {
                             locator.getCurrentLocationSilently { event ->
                                 when (event) {
