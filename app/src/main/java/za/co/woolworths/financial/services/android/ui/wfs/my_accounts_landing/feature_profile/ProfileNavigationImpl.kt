@@ -18,6 +18,7 @@ class ProfileNavigationImpl @Inject constructor(private val profile: ProfileInte
         MyProfile.Detail -> profile.createDetailIntent()
         MyProfile.Message -> profile.createMessageIntent(activityLauncher, viewModel)
         MyProfile.Order -> profile.createOrderIntent()
+        MyProfile.OrderAgain -> profile.createOrderAgainIntent()
         MyProfile.ShoppingList -> profile.createShoppingListIntent()
     }
 

@@ -124,6 +124,7 @@ class AutomationTestScreenLocator {
         const val my_shopping_lists: String = "my_shopping_lists"
         const val my_message_key: String = "my_message"
         const val my_orders_key: String = "my_orders"
+        const val my_order_again_key: String = "my_order_again"
         const val my_detail_key: String = "my_detail"
         const val my_preferences_key: String = "my_preferences"
         const val update_password_key: String = "update_password"

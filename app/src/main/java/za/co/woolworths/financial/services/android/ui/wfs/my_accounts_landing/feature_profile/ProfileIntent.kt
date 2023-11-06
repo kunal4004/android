@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.uti
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AccountLandingFirebaseManagerImpl
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.OrderAgainFragment
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import javax.inject.Inject
@@ -22,6 +23,7 @@ interface IProfileIntent {
     )
     fun createDetailIntent()
     fun createOrderIntent()
+    fun createOrderAgainIntent()
     fun createShoppingListIntent()
     fun getBottomNavigationActivity(): BottomNavigationActivity?
 }
@@ -66,6 +68,18 @@ class ProfileIntent @Inject constructor(private val activity : Activity?,
                     MyOrdersAccountFragment()
                 )
                 is MyAccountActivity -> replaceFragment(MyOrdersAccountFragment())
+            }
+        }
+    }
+
+    override fun createOrderAgainIntent() {
+        activity?.apply {
+//            analytics.onMyOrderItem()
+            when (this) {
+                is BottomNavigationActivity -> getBottomNavigationActivity()?.pushFragment(
+                    OrderAgainFragment()
+                )
+                is MyAccountActivity -> replaceFragment(OrderAgainFragment())
             }
         }
     }
