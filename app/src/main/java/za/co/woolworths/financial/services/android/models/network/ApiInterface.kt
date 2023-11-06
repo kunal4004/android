@@ -2349,8 +2349,7 @@ interface ApiInterface {
         @Body prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent
     ) : retrofit2.Response<WriteAReviewFormResponse>
 
-    // TODO: Need to verify the endpoint latter also verify UserLocationRequestBody, UserLocationResponse
-    @POST("wfs/app/v4/cart/checkout/verifyUserIsInStore")
+    @POST("wfs/app/v4/user/locations/payinstore")
     fun verifyUserIsInStore(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
