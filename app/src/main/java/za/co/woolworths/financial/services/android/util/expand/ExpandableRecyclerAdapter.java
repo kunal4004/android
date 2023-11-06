@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.util.AppConstant;
+
 public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, OAVH extends OrderAgainViewHolder, PVH extends ParentViewHolder, CVH extends ChildViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ParentViewHolder.ParentListItemExpandCollapseListener {
 
 	private static final String EXPANDED_STATE_MAP = "ExpandableRecyclerAdapter.ExpandedStateMap";
@@ -116,10 +118,9 @@ public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, OA
 					ParentWrapper item = (ParentWrapper) listItem;
 					ParentListItem parentListItem = item.getParentListItem();
 					if (parentListItem instanceof SubCategoryModel) {
-						String categoryName = ((SubCategoryModel) parentListItem).getName();
 						String categoryId = ((SubCategoryModel) parentListItem).getCategoryId();
-						//Verify if Root category is FOOD either by ID or name
-						if ("FOOD".equals(categoryName) || "1".equals(categoryId))
+						//Verify if Root category is FOOD either by ID
+						if (AppConstant.FOOD_CATEGORY_ID.equals(categoryId))
 							type = TYPE_ORDER_AGAIN_HEADER;
 					}
 					return type;

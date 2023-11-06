@@ -317,7 +317,7 @@ class SubCategoryFragment :
         mSubCategories = ArrayList(subCategories)
 
         // Order Again Header
-        if("1".equals(mRootCategory?.categoryId) || "FOOD".equals(mRootCategory?.categoryName, true)) {
+        if (AppConstant.FOOD_CATEGORY_ID.equals(mRootCategory?.categoryId)) {
             val subHeaderOrderAgainCategory = SubCategory().apply {
                 setCategoryId(mRootCategory?.categoryId)
                 setCategoryName(mRootCategory?.categoryName)
@@ -378,7 +378,7 @@ class SubCategoryFragment :
     }
 
     private fun notifyOrderAgainUpdate() {
-        if("1".equals(mRootCategory?.categoryId) || "FOOD".equals(mRootCategory?.categoryName, true)) {
+        if (AppConstant.FOOD_CATEGORY_ID.equals(mRootCategory?.categoryId)) {
             // 1: Index Position for Order Again
             mAdapter?.notifyItemChanged(1)
         }
@@ -393,8 +393,9 @@ class SubCategoryFragment :
                 activity.onBackPressed()
                 activity.reloadDepartmentFragment()
             }
-        } else if(requestCode == REQUEST_CODE_ORDER_AGAIN_LOGIN
-            && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+        } else if (requestCode == REQUEST_CODE_ORDER_AGAIN_LOGIN
+            && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()
+        ) {
             notifyOrderAgainUpdate()
             // TODO: Implement and navigate user to Order Again List screen.
         }
