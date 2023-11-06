@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Response
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationRequestBody
 import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
@@ -177,12 +176,12 @@ class CheckoutAddAddressNewUserApiHelper @Inject constructor() : RetrofitConfig 
         return confirmDeliveryAddress
     }
 
-    fun verifyUserIsInStore(body: UserLocationRequestBody): LiveData<Any> {
+    fun verifyUserIsInStore(latitude: Double, longitude: Double): LiveData<Any> {
         val userLocationResponse = MutableLiveData<Any>()
-        OneAppService().verifyUserIsInStore(body).enqueue(CompletionHandler(object :
+        OneAppService().verifyUserIsInStore(latitude, longitude).enqueue(CompletionHandler(object :
             IResponseListener<UserLocationResponse> {
-            override fun onSuccess(shippingDetailsResponse: UserLocationResponse?) {
-                userLocationResponse.value = shippingDetailsResponse ?: null
+            override fun onSuccess(response: UserLocationResponse?) {
+                userLocationResponse.value = response ?: null
             }
 
             override fun onFailure(error: Throwable?) {

@@ -8,7 +8,6 @@ import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
-import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationRequestBody
 import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
@@ -2357,7 +2356,8 @@ interface ApiInterface {
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body userLocationRequestBody: UserLocationRequestBody,
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double
     ): Call<UserLocationResponse>
 
 }

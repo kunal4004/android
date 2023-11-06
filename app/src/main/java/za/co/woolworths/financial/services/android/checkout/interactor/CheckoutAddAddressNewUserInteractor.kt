@@ -5,7 +5,6 @@ import za.co.woolworths.financial.services.android.checkout.service.network.AddA
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmSelectionRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
-import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationRequestBody
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import javax.inject.Inject
@@ -43,7 +42,7 @@ class CheckoutAddAddressNewUserInteractor @Inject constructor(
     fun getConfirmLocationDetails(body: ConfirmLocationRequest) =
         checkoutAddAddressNewUserApiHelper.getConfirmLocationDetails(body = body)
 
-    fun verifyUserIsInStore(body: UserLocationRequestBody) =
-        checkoutAddAddressNewUserApiHelper.verifyUserIsInStore(body = body)
+    fun verifyUserIsInStore(latitude: Double, longitude: Double) =
+        checkoutAddAddressNewUserApiHelper.verifyUserIsInStore(latitude, longitude)
 
 }
