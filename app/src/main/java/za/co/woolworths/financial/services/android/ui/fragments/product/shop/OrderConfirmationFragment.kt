@@ -126,7 +126,6 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
-                                    updateLayoutForPayInStore(response, binding.deliveryCollectionDetailsConstraintLayout)
                                     if (!isPurchaseEventTriggered)
                                     {
                                         showPurchaseEvent(response)
@@ -140,6 +139,12 @@ class OrderConfirmationFragment :
                                             prepareDYConfirmationPageViewRequest(response)
                                             prepareDYPurchaseOrderRequest(response)
                                         }
+                                    }
+                                    // Update Layout depending on endless aisle journey is enabled or not
+                                    if(isEndlessAisleJourney == true &&
+                                        response?.orderSummary?.endlessAisleOrder == true &&
+                                        !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()){
+                                        updateLayoutForEndlessAisleJourney(response)
                                     }
                                 }
                                 else -> {
@@ -831,27 +836,23 @@ class OrderConfirmationFragment :
     /**
      * This function will help us the update the layout if endless aisle feature is enabled
      * @param response submitted Order API response
-     * @param deliveringToCollectionFromBinding layout which hold the information for fulfilment
      * type standard and C&C
      */
-    private fun updateLayoutForPayInStore(response: SubmittedOrderResponse?,
-                                          deliveringToCollectionFromBinding: DeliveringToCollectionFromBinding
-    ) {
-        deliveringToCollectionFromBinding.apply {
-            if(isEndlessAisleJourney == true && response?.orderSummary?.endlessAisleOrder == true){
-                endlessAisleOrderConfirmationLayout.apply {
-                    standardAndCncItemsGroup.visibility = GONE
-                    this.root.visibility = VISIBLE
-                    orderNumber.text = resources.getString(R.string.order_with_hash)+response?.orderSummary?.orderId
-                    barcodeNumber.text = response?.orderSummary?.endlessAisleBarcode
-                    barcodeMessage.text = getBarcodeMessage()
-                    try {
-                        barcodeImage.setImageBitmap(Utils.encodeAsBitmap(
-                            response?.orderSummary?.endlessAisleBarcode,
-                            BarcodeFormat.CODE_128, barcodeImage.width, 60));
-                    } catch (e: WriterException) {
-                        FirebaseManager.Companion.logException(e);
-                    }
+    private fun updateLayoutForEndlessAisleJourney(response: SubmittedOrderResponse?) {
+        binding.deliveryCollectionDetailsConstraintLayout.apply {
+            endlessAisleOrderConfirmationLayout.apply {
+                standardAndCncItemsGroup.visibility = GONE
+                this.root.visibility = VISIBLE
+                orderNumber.text = resources.getString(R.string.order_id,
+                    response?.orderSummary?.orderId)
+                barcodeNumber.text = response?.orderSummary?.endlessAisleBarcode
+                barcodeMessage.text = getBarcodeMessage()
+                try {
+                    barcodeImage.setImageBitmap(Utils.encodeAsBitmap(
+                        response?.orderSummary?.endlessAisleBarcode,
+                        BarcodeFormat.CODE_128, barcodeImage.width, 60));
+                } catch (e: WriterException) {
+                    FirebaseManager.Companion.logException(e);
                 }
             }
         }
