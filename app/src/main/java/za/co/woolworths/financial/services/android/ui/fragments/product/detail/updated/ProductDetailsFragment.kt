@@ -700,7 +700,7 @@ class ProductDetailsFragment :
             ScreenManager.presentSSOSigninActivity(activity,
                 SSO_REQUEST_WRITE_A_REVIEW,
                 isUserBrowsing)
-            return
+
         } else {
             (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productName, imagePath, productId)
         }
@@ -2866,6 +2866,9 @@ class ProductDetailsFragment :
                     }
                     SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION -> {
                         updateStockAvailability(true)
+                    }
+                    SSO_REQUEST_WRITE_A_REVIEW -> {
+                        (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productDetails?.productName,productDetails?.externalImageRefV2, productDetails?.productId)
                     }
                 }
             }

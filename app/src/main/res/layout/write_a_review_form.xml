@@ -128,14 +128,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv" />
 
-                <RatingBar
+                <za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.CustomRatingBar
                     android:id="@+id/ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:numStars="5"
-                    android:progressTint="@color/black"
                     android:rating="0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rating" />
@@ -359,9 +358,9 @@
                     android:layout_marginTop="@dimen/_20sdp"
                     android:fontFamily="@font/opensans_regular"
                     android:text="@string/Would_you_recommend_this_product_to_a_friend"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/_13ssp"
                     android:textStyle="normal"
-                    android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/viewSec" />
 
@@ -477,42 +476,60 @@
 
                     <EditText
                         android:id="@+id/reviewTitleEdit"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/opensans_regular"
                         android:hint="@string/review_title_hint"
+                        android:inputType="textCapSentences|textMultiLine"
                         android:maxLength="150"
+                        android:maxLines="4"
                         android:padding="@dimen/_12sdp"
+                        android:scrollHorizontally="false"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/_14ssp" />
+                        android:textSize="@dimen/_14ssp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/reviewTitleEditCounter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_60sdp"
-                        android:contentDescription="@string/write_a_review2"
-                        android:text="@string/zero"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_11ssp"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.514" />
+                        app:layout_constraintVertical_bias="0.822">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_32sdp"
-                        android:contentDescription="@string/write_a_review2"
-                        android:text="@string/review_title_edit_counter"
-                        android:textColor="@color/color_9D9D9D"
-                        android:textSize="@dimen/_11ssp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.514" />
+                        <TextView
+                            android:id="@+id/reviewTitleEditCounter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginStart="220dp"
+                            android:layout_marginEnd="@dimen/_60sdp"
+                            android:layout_marginBottom="0dp"
+                            android:contentDescription="@string/write_a_review2"
+                            android:text="@string/zero"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_11ssp" />
+
+                        <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginEnd="46dp"
+                            android:layout_marginBottom="0dp"
+                            android:contentDescription="@string/write_a_review2"
+                            android:text="@string/review_title_edit_counter"
+                            android:textColor="@color/color_9D9D9D"
+                            android:textSize="@dimen/_11ssp" />
+
+                    </RelativeLayout>
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -785,7 +802,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/photInp"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:orientation="vertical">
 
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -800,6 +818,31 @@
                         android:text="@string/submit_review"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12sdp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                       >
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="By submitting, you agree to our"
+                            android:textSize="@dimen/_11ssp"
+                            android:fontFamily="@font/opensans_regular"
+                            android:textColor="@color/color_666666"/>
+
+                        <TextView
+                            android:id="@+id/terms_and_condition"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Terms and Conditions."
+                            android:textSize="@dimen/_11ssp"
+                            android:fontFamily="@font/opensans_bold"
+                            android:textColor="@color/color_666666"/>
+                    </LinearLayout>
 
                 </LinearLayout>
 

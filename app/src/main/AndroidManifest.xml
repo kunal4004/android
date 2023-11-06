@@ -643,6 +643,10 @@
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewTermsAndConditionActivity"
+            android:theme="@style/SSOActivity" />
+
         <!--Glassbox SDK for recording screen session-->
         <service android:name="com.clarisite.mobile.GlassboxJobX"
             android:exported="false"
