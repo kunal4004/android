@@ -1172,7 +1172,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
-        val dataOther = DataOther(null,null,ZAR,"",orderTotalValue)
+        val dataOther = DataOther(null,null,ZAR,"",orderTotalValue,null)
         val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
         dataOtherArray?.add(dataOther)
         val page = Page(null, PAYMENT_PAGE, OTHER, null, dataOtherArray)
