@@ -39,6 +39,7 @@ data class ProductList(
     var otherSkus: List<OtherSkus>? = null,
 
     var promotions: ArrayList<Promotions>? = null,
+    val recToken: String? = null, //To be used for the recommendations analytics
 
     @JvmField
     var saveText: String? = null,

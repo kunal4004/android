@@ -175,7 +175,6 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.get
 import kotlin.collections.set
 
 
@@ -210,6 +209,7 @@ class ProductDetailsFragment :
     private var productColorSelectorAdapter: ProductColorSelectorAdapter? = null
     private var selectedQuantity: Int? = 1
     private val SSO_REQUEST_ADD_TO_CART = 1010
+    private val SSO_REQUEST_WRITE_A_REVIEW = 1020
     private val REQUEST_SUBURB_CHANGE = 153
     private val REQUEST_SUBURB_CHANGE_FOR_STOCK = 155
     private val REQUEST_SUBURB_CHANGE_FOR_LIQUOR = 156
@@ -541,6 +541,7 @@ class ProductDetailsFragment :
             allergensInformation?.setOnClickListener(this@ProductDetailsFragment)
             btViewMoreReview.setOnClickListener(this@ProductDetailsFragment)
             tvRatingDetails.setOnClickListener(this@ProductDetailsFragment)
+            writeAReviewLink.root.setOnClickListener(this@ProductDetailsFragment)
         }
         deliveryLocationLayout.apply {
             editDeliveryLocation?.setOnClickListener(this@ProductDetailsFragment)
@@ -690,8 +691,21 @@ class ProductDetailsFragment :
             R.id.tvReport -> navigateToReportReviewScreen()
             R.id.iv_like -> likeButtonClicked()
             R.id.txt_substitution_edit -> substitutionEditButtonClick()
+            R.id.writeAReviewLink -> openWriteAReviewFragment(productDetails?.productName,productDetails?.externalImageRefV2, productDetails?.productId)
         }
     }
+
+    private fun openWriteAReviewFragment(productName: String?, imagePath: String?, productId: String?) {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSigninActivity(activity,
+                SSO_REQUEST_WRITE_A_REVIEW,
+                isUserBrowsing)
+            return
+        } else {
+            (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productName, imagePath, productId)
+        }
+    }
+
 
     private fun savePhoto(bitmap: Bitmap) {
         ImageResultContract.saveImageToStorage(requireContext(), bitmap)
@@ -1721,7 +1735,7 @@ class ProductDetailsFragment :
                     onlinePromotionalTextView2?.visibility = View.GONE
                     onlinePromotionalTextView3?.visibility = View.GONE
                 }
-                if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
+                if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel() ) {
                     ratingLayout.apply {
                         ratingBarTop?.rating = it.averageRating
                         tvTotalReviews?.text = resources.getQuantityString(
@@ -1734,8 +1748,13 @@ class ProductDetailsFragment :
                         prodId = it.productId
                         tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
+                    if (RatingAndReviewUtil.isFoodItemAvailable() ||
+                        RatingAndReviewUtil.isFashionItemAvailable() ||
+                        RatingAndReviewUtil.isHomeItemAvailable() ||
+                        RatingAndReviewUtil.isBeautyItemAvailable()) ShowWriteAReview() else  hideWriteAReview()
                 } else {
                     hideRatingAndReview()
+                    hideWriteAReview()
                 }
             }
 
@@ -1863,6 +1882,20 @@ class ProductDetailsFragment :
 
     private fun hideSubstitutionLayout() {
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
+    }
+
+    private fun ProductDetailsFragmentBinding.hideWriteAReview() {
+        productDetailOptionsAndInformation.apply {
+            leaveUsReview?.visibility = View.GONE
+            writeAReviewLink.root.visibility = View.GONE
+        }
+    }
+
+    private fun ProductDetailsFragmentBinding.ShowWriteAReview() {
+        productDetailOptionsAndInformation.apply {
+            leaveUsReview?.visibility = View.VISIBLE
+            writeAReviewLink.root.visibility = View.VISIBLE
+        }
     }
 
     private fun ProductDetailsFragmentBinding.hideRatingAndReview() {
@@ -2671,6 +2704,7 @@ class ProductDetailsFragment :
                         it.toAddToListRequest().apply {
                             quantity = "1"
                             isGWP = !productDetails?.freeGift.isNullOrEmpty()
+                            size = getSelectedSku()?.size
                         }
                     )
                 }

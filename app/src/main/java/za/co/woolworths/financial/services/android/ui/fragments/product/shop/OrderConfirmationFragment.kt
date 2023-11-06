@@ -14,8 +14,6 @@ import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,7 +47,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.viewmodel.OrderConfirmationViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -160,10 +157,8 @@ class OrderConfirmationFragment :
         val context = Context(device, null, DY_CHANNEL)
         val cartValue: MutableList<Cart> = arrayListOf()
         itemsOrder?.forEach {
-            cartValue.addAll(itemsOrder!!.map {
-                Cart(it.productId,it.quantity,it.priceInfo?.amount.toString())
-            }
-            )
+            val cart = Cart(it.commerceItemInfo?.catalogRefId,it.commerceItemInfo?.quantity,it.priceInfo?.amount.toString())
+            cartValue.add(cart)
         }
         val properties = Properties(null,null,PURCHASE_V1,null,response.orderSummary?.total.toString(),ZAR,null,null,null,null, null,null,null,null,null,null,response.orderSummary?.orderId,cartValue)
         val eventsDyPurchase = Event(null,null,null,null,null,null,null,null,null,null,null,null,PURCHASE,properties)
@@ -182,7 +177,7 @@ class OrderConfirmationFragment :
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
-        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null)
+        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null,null)
         val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
         dataOtherArray?.add(dataOther)
         val page = Page(null, ORDER_CONFIRMATION_PAGE, OTHER, null, dataOtherArray)
@@ -306,8 +301,7 @@ class OrderConfirmationFragment :
                             optionTitle.text = it.getString(R.string.collecting_from)
                             setUpCncOrderDetailsLayout(response)
                             continueBrowsingStandardLinearLayout.setOnClickListener {
-                                requireActivity().setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                                requireActivity().finish()
+                                startShopping()
                             }
                         }
                 }
@@ -334,8 +328,7 @@ class OrderConfirmationFragment :
                         optionLocation.text = formattedNickNameWithAddress
                         optionTitle.text = it.getString(R.string.delivering_to)
                         continueBrowsingStandardLinearLayout.setOnClickListener {
-                            requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                            requireActivity()?.finish()
+                            startShopping()
                         }
                         standardEnroutetextView.text = it.getText(R.string.dash_status_en_route)
                         collectedOrDeliveredTextView.text =
@@ -374,8 +367,7 @@ class OrderConfirmationFragment :
                                 ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                         )
                         continueBrowsingLinearLayout.setOnClickListener {
-                            requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                            requireActivity()?.finish()
+                            startShopping()
                         }
                     }
                     setUpDashOrderDetailsLayout(response)
@@ -423,6 +415,13 @@ class OrderConfirmationFragment :
                     }
                 }
             }
+        }
+    }
+
+    private fun startShopping() {
+        requireActivity().apply {
+            setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+            finish()
         }
     }
 
