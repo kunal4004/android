@@ -95,7 +95,6 @@ class CheckoutAddAddressNewUserViewModel @Inject constructor
     fun getConfirmLocationDetails(body: ConfirmLocationRequest): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.getConfirmLocationDetails(body)
     }
-    //TODO: need to call once it is ready
     fun verifyUserIsInStore(latitude: Double, longitude: Double): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.verifyUserIsInStore(latitude, longitude)
     }
