@@ -320,6 +320,8 @@
     <string name="cd_checkout_delivery_instruction_value">checkoutSpecialDeliveryInstructionsText</string>
 
     <!-- Unique Ids for need help-->
+    <string name="next_title">next</string>
+    <string name="previous_title">previous</string>
     <string name="page_number">pageNumber</string>
     <string name="tipsAndTricks">tipsAndTricks</string>
     <string name="tipsAndTricksImage">tipsAndTricksImage</string>
