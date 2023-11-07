@@ -3143,8 +3143,8 @@
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
 
     <plurals name="remove_list">
-        <item quantity="one">%d ITEM REMOVE FROM</item>
-        <item quantity="other">%d ITEMS REMOVE FROM </item>
+        <item quantity="one">%d ITEM REMOVED FROM</item>
+        <item quantity="other">%d ITEMS REMOVED FROM </item>
     </plurals>
 
 
@@ -3159,8 +3159,8 @@
     </plurals>
 
     <plurals name="copy_item_msg">
-        <item quantity="one">item copied to</item>
-        <item quantity="other">items copied to </item>
+        <item quantity="one">ITEM COPIED TO</item>
+        <item quantity="other">ITEMS COPIED TO</item>
     </plurals>
 
 </resources>
