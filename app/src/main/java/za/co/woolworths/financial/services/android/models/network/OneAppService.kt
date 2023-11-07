@@ -132,6 +132,7 @@ import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuth
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
@@ -1383,5 +1384,8 @@ open class OneAppService(
 
     suspend fun removeItemFromShoppingItemList (listId: String, removeItemApiRequest: RemoveItemApiRequest) =
         mApiInterface.removeItemsFromShoppingItem(super.getSessionToken(), super.getDeviceIdentityToken(), listId, removeItemApiRequest)
+
+    suspend fun copyItemFromList (copyItemApiRequest: CopyItemToListRequest) =
+        mApiInterface.copyItemsFromList(super.getSessionToken(), super.getDeviceIdentityToken(), copyItemApiRequest)
 
 }

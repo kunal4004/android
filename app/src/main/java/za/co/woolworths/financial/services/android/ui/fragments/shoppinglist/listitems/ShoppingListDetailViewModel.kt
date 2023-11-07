@@ -16,6 +16,8 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -31,6 +33,8 @@ class ShoppingListDetailViewModel @Inject constructor(
 
     var listId: String = ""
 
+    private var isCheckedDontAskAgain: Boolean = false
+
     private val _shoppingListDetails = MutableLiveData<Event<Resource<ShoppingListItemsResponse>>>()
     val shoppListDetails: LiveData<Event<Resource<ShoppingListItemsResponse>>> =
         _shoppingListDetails
@@ -38,6 +42,10 @@ class ShoppingListDetailViewModel @Inject constructor(
     private val _shoppingListDetailsAfterDelete = MutableLiveData<Event<Resource<ShoppingListItemsResponse>>>()
     val shoppingListDetailsAfterDelete: LiveData<Event<Resource<ShoppingListItemsResponse>>> =
         _shoppingListDetailsAfterDelete
+
+    private val _copyItemsToList = MutableLiveData<Event<Resource<CopyListResponse>>>()
+    val copyItemsToList: LiveData<Event<Resource<CopyListResponse>>> =
+        _copyItemsToList
 
     init {
         listId = savedStateHandle[ARG_LIST_ID] ?: ""
@@ -214,4 +222,20 @@ class ShoppingListDetailViewModel @Inject constructor(
             _shoppingListDetailsAfterDelete.value = Event(response)
         }
     }
+
+
+    fun copyMultipleItemsFromList(copyItemToListRequest: CopyItemToListRequest) {
+        _copyItemsToList.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response =
+                shoppingListDetailRepository.copyMultipleItemsFromList(copyItemToListRequest)
+            _copyItemsToList.value = Event(response)
+        }
+    }
+
+    fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {
+        isCheckedDontAskAgain = checkedDontAskAgain
+    }
+
+    fun isCheckedDontAskAgain() = isCheckedDontAskAgain
 }
