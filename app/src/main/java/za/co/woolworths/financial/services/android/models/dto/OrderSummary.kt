@@ -51,6 +51,6 @@ data class OrderSummary(
     var hasMinimumBasketAmount: Boolean = false,
     var minimumBasketAmount: Double = 0.0,
     var cashVoucherApplied: Double = 0.0,
-    var endlessAisleOrder:Boolean = true,
-    var endlessAisleBarcode:String = "28004100000070154000"
+    var endlessAisleOrder:Boolean = false,
+    var endlessAisleBarcode:String = ""
 ) : Parcelable
