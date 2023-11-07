@@ -20,6 +20,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.validatestoremodel.ValidateStoreResponse
@@ -286,11 +288,12 @@ class ClickAndCollectStoresFragment :
         if (placeId.isNullOrEmpty())
             return
 
-        //make confirm Location call
-        val confirmLocationRequest = KotlinUtils.getConfirmLocationRequest(Delivery.CNC)
-        if (!dataStore?.storeId.isNullOrEmpty()) {
-            confirmLocationRequest.storeId = dataStore?.storeId
-        }
+        val confirmAddress = ConfirmLocationAddress(placeId = placeId)
+        val confirmLocationRequest = ConfirmLocationRequest(
+            deliveryType = BundleKeysConstants.CNC,
+            storeId = dataStore?.storeId,
+            address = confirmAddress
+        )
 
         lifecycleScope.launch {
             binding.clickCollectProgress?.visibility = View.VISIBLE

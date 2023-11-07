@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewm
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color666666
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @Composable
@@ -55,9 +56,10 @@ fun ToggleExpandableList(
 
     }
 
-   if (viewModel.isShopToggleScreenFirstTime.value) {
+    val placeId = KotlinUtils.getDeliveryType()?.address?.placeId
+    if (placeId.isNullOrEmpty()) {
         JustBrowsing(viewModel)
-      }
+    }
 
 
 }
@@ -71,7 +73,11 @@ fun JustBrowsing(viewModel: ShopToggleViewModel) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(true) {
-                activity?.finish()
+                ShopToggleActivity.sendResultBack(
+                    activity,
+                    delivery = viewModel.deliveryType().type,
+                    needRefresh = false
+                )
             },
         text = stringResource(id = R.string.just_browsing).uppercase(),
         textAlign = TextAlign.Center,

@@ -120,8 +120,12 @@ class ShopToggleViewModel @Inject constructor(
                 Delivery.DASH
             }
 
-            else -> {
+            ShopToggleUseCase.CNC_DELIVERY_ID -> {
                 Delivery.CNC
+            }
+
+            else -> {
+                Delivery.STANDARD
             }
         }
     }

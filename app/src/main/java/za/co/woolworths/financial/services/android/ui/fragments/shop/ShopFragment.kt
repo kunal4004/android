@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.text.Spannable
@@ -12,22 +13,17 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentShopBinding
 import com.google.gson.JsonSyntaxException
-import com.perfectcorp.common.utility.Log
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentResult
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -104,6 +101,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var userNavigatedFromFulfilmentTooltip = false
+    private var isScreenRefreshing = false
     private val fragmentResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != RESULT_OK) {
@@ -199,7 +197,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         activity?.apply {
             permissionUtils = PermissionUtils(this, this@ShopFragment)
             permissions.add(Manifest.permission.CAMERA)
@@ -409,6 +406,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         super.onResume()
         if (isVisible) {
             if (((KotlinUtils.isLocationPlaceIdSame == false || KotlinUtils.isNickNameChanged == true) && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
+                if (isScreenRefreshing) {
+                    isScreenRefreshing = false
+                    return
+                }
                 executeValidateSuburb()
                 return
             } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
@@ -712,9 +713,30 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             }
         }
 
-        if (requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE) {
-            updateCurrentTab(getDeliveryType()?.deliveryType)
-            setDeliveryView()
+        if (resultCode == RESULT_OK && requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE) {
+            val toggleFulfilmentResult = getToggleFulfilmentResult(data)
+            if (toggleFulfilmentResult != null) {
+                if (toggleFulfilmentResult.needRefresh) {
+                    val placeId = getDeliveryType()?.address?.placeId
+                    if (!placeId.isNullOrEmpty()) {
+                        isScreenRefreshing = true
+                        executeValidateSuburb()
+                        //TODO, display tooltip if required here after the API call finishes
+                    }
+                } else {
+                    //TODO, display tooltip if required here
+                    //DO nothing here, will keep the standard selected by default
+                    //Just Browsing or Not Now for set location
+                }
+            }
+        }
+    }
+
+    private fun getToggleFulfilmentResult(intent: Intent?): ToggleFulfilmentResult? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT, ToggleFulfilmentResult::class.java)
+        } else {
+            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT)
         }
     }
 
@@ -1013,7 +1035,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             if (feature == TooltipDialog.Feature.SHOP_FULFILMENT) {
                 showLocationTooltip()
             }
-
         }
 
         override fun onPromptDismiss(feature: TooltipDialog.Feature?) {

@@ -59,6 +59,13 @@ fun SetLocationBottomSheetMain(
                 scope.launch { sheetState.hide() }.invokeOnCompletion {
                     if (!sheetState.isVisible) {
                         onDismissRequest()
+                        if (delivery == Delivery.STANDARD) {
+                            ShopToggleActivity.sendResultBack(
+                                activity,
+                                delivery = Delivery.STANDARD.type,
+                                needRefresh = false
+                            )
+                        }
                     }
                 }
             })
@@ -138,7 +145,6 @@ private fun onEditDeliveryLocation(activity: ShopToggleActivity?, delivery: Deli
         isFromNewToggleFulfilmentScreen = true,
         newDelivery = delivery
     )
-    activity?.finish()
 }
 
 private fun icon(delivery: Delivery): Int {
