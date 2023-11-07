@@ -181,6 +181,7 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
         val dataList = arrayListOf<OrderDetailsItem>()
 
         dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_STATUS))
+        dataList.add(OrderDetailsItem(ordersResponse.orderSummary, OrderDetailsItem.ViewType.ENDLESS_AISLE_BARCODE))
 
         ordersResponse.orderSummary?.apply {
             if (!taxNoteNumbers.isNullOrEmpty())
