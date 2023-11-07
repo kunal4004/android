@@ -3112,6 +3112,8 @@
     <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
     <string name="digital_product_type">digitalProducts</string>
     <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
+
+    <string name="order_with_hash">Order #</string>
     <!--  Write a Review Details -->
     <string name="write_a_review">Write a Review</string>
     <string name="leave_us_a_review">Leave us a review</string>

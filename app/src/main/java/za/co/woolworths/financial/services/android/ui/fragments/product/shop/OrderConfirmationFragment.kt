@@ -18,13 +18,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.DeliveringToCollectionFromBinding
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.endlessaisle.utils.getBarcodeMessage
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -50,12 +54,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.viewmodel.OrderConfirmationViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -78,11 +84,13 @@ class OrderConfirmationFragment :
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
+    private var isEndlessAisleJourney: Boolean? = false
     private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isEndlessAisleJourney = arguments?.getBoolean(BundleKeysConstants.IS_ENDLESS_AISLE_JOURNEY)
         getOrderDetails()
         addFragmentResultListener()
     }
@@ -118,6 +126,7 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
+                                    updateLayoutForPayInStore(response, binding.deliveryCollectionDetailsConstraintLayout)
                                     if (!isPurchaseEventTriggered)
                                     {
                                         showPurchaseEvent(response)
@@ -815,5 +824,34 @@ class OrderConfirmationFragment :
             listOfItems,
             eventData = addToWishListEventData
         )
+    }
+
+    /**
+     * This function will help us the update the layout if endless aisle feature is enabled
+     * @param response submitted Order API response
+     * @param deliveringToCollectionFromBinding layout which hold the information for fulfilment
+     * type standard and C&C
+     */
+    private fun updateLayoutForPayInStore(response: SubmittedOrderResponse?,
+                                          deliveringToCollectionFromBinding: DeliveringToCollectionFromBinding
+    ) {
+        deliveringToCollectionFromBinding.apply {
+            if(isEndlessAisleJourney == true && response?.orderSummary?.endlessAisleOrder == true){
+                endlessAisleOrderConfirmationLayout.apply {
+                    standardAndCncItemsGroup.visibility = GONE
+                    this.root.visibility = VISIBLE
+                    orderNumber.text = resources.getString(R.string.order_with_hash)+response?.orderSummary?.orderId
+                    barcodeNumber.text = response?.orderSummary?.endlessAisleBarcode
+                    barcodeMessage.text = getBarcodeMessage()
+                    try {
+                        barcodeImage.setImageBitmap(Utils.encodeAsBitmap(
+                            response?.orderSummary?.endlessAisleBarcode,
+                            BarcodeFormat.CODE_128, barcodeImage.width, 60));
+                    } catch (e: WriterException) {
+                        FirebaseManager.Companion.logException(e);
+                    }
+                }
+            }
+        }
     }
 }

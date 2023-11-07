@@ -63,6 +63,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.endlessaisle.utils.isEndlessAisleAvailable
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -84,6 +85,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Che
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_ENDLESS_AISLE_JOURNEY
 import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
 import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
@@ -160,6 +162,7 @@ class CheckoutAddAddressReturningUserFragment :
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
+    private var isMixedBasket: Boolean? = false
     private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     enum class FoodSubstitution(val rgb: String) {
@@ -198,7 +201,10 @@ class CheckoutAddAddressReturningUserFragment :
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+
         cartItemList = arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
+        isMixedBasket = arguments?.getBoolean(Constant.IS_MIXED_BASKET, false)
+
         initViews()
     }
 
@@ -1350,7 +1356,8 @@ class CheckoutAddAddressReturningUserFragment :
             R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutPaymentWebFragment,
             bundleOf(
                 KEY_ARGS_WEB_TOKEN to webTokens,
-                CART_ITEM_LIST to cartItemList
+                CART_ITEM_LIST to cartItemList,
+                IS_ENDLESS_AISLE_JOURNEY to (isEndlessAisleAvailable() && isMixedBasket == false)
             )
 
         )

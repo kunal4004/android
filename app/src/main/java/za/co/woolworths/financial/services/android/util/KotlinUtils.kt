@@ -1141,6 +1141,10 @@ class KotlinUtils {
             return getPreferredDeliveryType() == Delivery.DASH
         }
 
+        fun isDeliveryOptionStandard(): Boolean {
+            return getPreferredDeliveryType() == Delivery.STANDARD
+        }
+
         @SuppressLint("MissingPermission")
         @JvmStatic
         fun setUserPropertiesToNull() {
