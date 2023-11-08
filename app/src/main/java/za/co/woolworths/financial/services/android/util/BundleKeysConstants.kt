@@ -19,6 +19,7 @@ class BundleKeysConstants {
 
         //geo location
         const val IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN = "new_toggle"
+        const val LOCATION_UPDATE_REQUEST = "location_update_request"
         const val NEED_STORE_SELECTION = "store_selection"
         const val KEY_PLACE_ID = "placeId"
         const val KEY_LATITUDE = "latitude"
@@ -34,6 +35,7 @@ class BundleKeysConstants {
         const val IS_COMING_CONFIRM_ADD = "conform_add"
         var IS_FROM_STORE_LOCATOR = false
         const val REQUEST_CODE = 1515
+        const val UPDATE_LOCATION_REQUEST = 106
         const val DASH_SET_ADDRESS_REQUEST_CODE = 1516
         const val CNC_SET_ADDRESS_REQUEST_CODE = 1517
         const val DELIVERY_TYPE = "DELIVERY_TYPE"

@@ -126,6 +126,7 @@ class ConfirmAddressMapFragment :
     private lateinit var locationBroadcastReceiver : LocationProviderBroadcastReceiver
     private val unIndexedLiveData = MutableLiveData<Boolean>()
     private var isComingFromNewToggleFulfilment: Boolean? = false
+    private var isLocationUpdateRequest: Boolean? = false
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
@@ -150,6 +151,7 @@ class ConfirmAddressMapFragment :
         isFromDashTab = args.mapData.isFromDashTab
         deliveryType = args.mapData.deliveryType
         isComingFromNewToggleFulfilment = args.mapData.isFromNewFulfilmentScreen
+        isLocationUpdateRequest = args.mapData.isLocationUpdateRequest
         newDeliveryType = args.mapData.newDeliveryType
         clearAddress()
         confirmAddressClick()
@@ -346,7 +348,7 @@ class ConfirmAddressMapFragment :
                                         validateLocationResponse?.validatePlace
                                     )
                                     activity?.finish()
-                                } else if (isComingFromNewToggleFulfilment == true && !newDeliveryType.isNullOrEmpty()) {
+                                } else if ((isComingFromNewToggleFulfilment == true && !newDeliveryType.isNullOrEmpty()) || (isLocationUpdateRequest == true)) {
                                     // New user journey flow from the new toggle fulfilment screen when there is no place id available initially
                                     validateDeliverableAndNavigate(place)
                                     return@let
@@ -536,7 +538,7 @@ class ConfirmAddressMapFragment :
         )
     }
 
-    private fun getConfirmAddressRequest(delivery: String): ConfirmLocationRequest {
+    private fun getConfirmAddressRequest(delivery: String?): ConfirmLocationRequest {
         val confirmLocationAddress = ConfirmLocationAddress(placeId, null, address2)
         return if (delivery == Delivery.DASH.type) {
             val storeId = validateLocationResponse.validatePlace?.onDemand?.storeId
@@ -553,8 +555,8 @@ class ConfirmAddressMapFragment :
         //make confirm Location call
         val confirmLocationAddress = ConfirmLocationAddress(placeId)
         val confirmLocationRequest =
-        if (isComingFromNewToggleFulfilment == true && !newDeliveryType.isNullOrEmpty()) {
-            getConfirmAddressRequest(newDeliveryType!!)
+        if ((isComingFromNewToggleFulfilment == true && !newDeliveryType.isNullOrEmpty()) || (isLocationUpdateRequest == true)) {
+            getConfirmAddressRequest(newDeliveryType)
         } else {
             ConfirmLocationRequest(
                 BundleKeysConstants.DASH,

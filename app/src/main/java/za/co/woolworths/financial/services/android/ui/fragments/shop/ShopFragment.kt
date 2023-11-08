@@ -71,6 +71,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.UPDATE_LOCATION_REQUEST
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
@@ -211,9 +212,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding?.apply {
             tvSearchProduct.setOnClickListener { navigateToProductSearch() }
             imBarcodeScanner.setOnClickListener { checkCameraPermission() }
-            shopToolbar.setOnClickListener {
-                hideTooltipIfVisible()
+            fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener {
                 launchShopToggleScreen()
+            }
+
+            fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener {
+                launchGeoLocationFlow()
             }
 
             shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this@ShopFragment)
@@ -388,21 +392,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    private fun onEditDeliveryLocation() {
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.SHOP_DELIVERY_CLICK_COLLECT,
-            hashMapOf(
-                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY_CLICK_COLLECT
-            ),
-            activity
-        )
-
+    private fun launchGeoLocationFlow() {
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
-            requireActivity(),
-            REQUEST_CODE,
+            activity,
+            UPDATE_LOCATION_REQUEST,
             Delivery.getType(getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
-            getDeliveryType()?.address?.placeId ?: ""
+            getDeliveryType()?.address?.placeId ?: "",
+            isLocationUpdateRequest = true,
+            newDelivery = Delivery.getType(getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType
         )
     }
 
@@ -740,6 +737,10 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     //Just Browsing or Not Now for set location
                 }
             }
+        }
+
+        if (resultCode == RESULT_OK && requestCode == UPDATE_LOCATION_REQUEST) {
+            setDeliveryView()
         }
     }
 

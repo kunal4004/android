@@ -12,5 +12,6 @@ data class MapData(
     val isFromDashTab: Boolean?,
     val deliveryType: String?,
     val isFromNewFulfilmentScreen: Boolean?,
+    val isLocationUpdateRequest: Boolean?,
     val newDeliveryType: String?
 ) : Parcelable

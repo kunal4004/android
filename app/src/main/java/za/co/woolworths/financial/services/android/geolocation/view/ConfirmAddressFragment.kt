@@ -87,6 +87,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     private var bundle: Bundle? = null
     private var isComingFromCheckout: Boolean = false
     private var isComingFromNewToggleFulfilment: Boolean = false
+    private var isLocationUpdateRequest: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
     private var isFromDashTab: Boolean = false
     private var deliveryType: String? = null
@@ -113,6 +114,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             isFromDashTab = this.getBoolean(IS_FROM_DASH_TAB, false)
             deliveryType = this.getString(DELIVERY_TYPE, "")
             isComingFromNewToggleFulfilment = this.getBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
+            isLocationUpdateRequest = this.getBoolean(BundleKeysConstants.LOCATION_UPDATE_REQUEST, false)
             newDeliveryType = this.getString(BundleKeysConstants.NEW_DELIVERY_TYPE, null)
         }
         hideBottomNav()
@@ -461,6 +463,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             isFromDashTab = isFromDashTab,
                             deliveryType = deliveryType,
                             isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+                            isLocationUpdateRequest = isLocationUpdateRequest,
                             newDeliveryType = newDeliveryType
                         )
                     val directions =
@@ -480,6 +483,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             isFromDashTab = false,
                             deliveryType = deliveryType,
                             isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+                            isLocationUpdateRequest = isLocationUpdateRequest,
                             newDeliveryType = newDeliveryType
                         )
                     val directions =
@@ -534,6 +538,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             isFromDashTab = isFromDashTab,
                             deliveryType = deliveryType,
                             isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+                            isLocationUpdateRequest = isLocationUpdateRequest,
                             newDeliveryType = newDeliveryType
                         )
                     val directions =
@@ -551,6 +556,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             isFromDashTab = false,
                             deliveryType = deliveryType,
                             isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+                            isLocationUpdateRequest = isLocationUpdateRequest,
                             newDeliveryType = newDeliveryType
                         )
                     val directions =
@@ -618,7 +624,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                                             CustomBottomSheetDialogFragment::class.java.simpleName
                                         )
                                     }
-                                } else if (isComingFromNewToggleFulfilment && !newDeliveryType.isNullOrEmpty()) {
+                                } else if ((isComingFromNewToggleFulfilment && !newDeliveryType.isNullOrEmpty()) || isLocationUpdateRequest) {
                                     // New user journey flow from the new toggle fulfilment screen when there is no place id available initially
                                     validateDeliverableAndNavigate(place, address.placesId!!, validateLocationResponse)
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
@@ -746,7 +752,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         )
     }
 
-    private fun getConfirmAddressRequest(delivery: String, validateLocationResponse: ValidateLocationResponse, placeId: String, address: String? = ""): ConfirmLocationRequest {
+    private fun getConfirmAddressRequest(delivery: String?, validateLocationResponse: ValidateLocationResponse, placeId: String, address: String? = ""): ConfirmLocationRequest {
         val confirmLocationAddress = ConfirmLocationAddress(placeId, null, address)
         return if (delivery == Delivery.DASH.type) {
             val storeId = validateLocationResponse.validatePlace?.onDemand?.storeId
@@ -768,8 +774,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         //make confirm Location call
         val confirmLocationAddress = ConfirmLocationAddress(placeId)
         val confirmLocationRequest =
-            if (isComingFromNewToggleFulfilment && !newDeliveryType.isNullOrEmpty()) {
-                getConfirmAddressRequest(newDeliveryType!!, validateLocationResponse, placeId, address?.address2)
+            if ((isComingFromNewToggleFulfilment && !newDeliveryType.isNullOrEmpty()) || isLocationUpdateRequest) {
+                getConfirmAddressRequest(newDeliveryType, validateLocationResponse, placeId, address?.address2)
             } else {
                 ConfirmLocationRequest(
                     currentDeliveryType,
@@ -907,6 +913,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             isFromDashTab = false,
             deliveryType = confirmAddressStoreLocator.deliveryType,
             isFromNewFulfilmentScreen = isComingFromNewToggleFulfilment,
+            isLocationUpdateRequest = isLocationUpdateRequest,
             newDeliveryType = newDeliveryType
         )
         val directions =
