@@ -377,7 +377,7 @@
             android:label="@string/title_activity_bottom_navigation"
             android:screenOrientation="portrait"
             android:theme="@style/bottomNavigationStyle"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity"
             android:screenOrientation="portrait"

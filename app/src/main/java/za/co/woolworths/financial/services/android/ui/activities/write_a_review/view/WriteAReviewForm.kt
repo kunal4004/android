@@ -189,16 +189,20 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
     }
 
     private fun validateSubmitForm() {
-        var rating: Int? = null
+        var rating: Double? = null
         var ratingQualityValue: Int? = null
         var ratingValueBox: Int? = null
         var reviewText: String? = null
         var title: String? = null
         var nickName: String? = null
         if (binding.ratingBar.rating == 0f) {
+            CustomRatingBar.clicked = true
+            binding.ratingBar.drawBoundingBox()
             binding.errorMsgOfRatingbar.visibility = View.VISIBLE
         } else {
-            rating = binding.ratingBar.rating.toInt()
+            CustomRatingBar.clicked = false
+            binding.ratingBar.drawBoundingBox()
+            rating = binding.ratingBar.rating.toDouble()
         }
         if (!binding.yesButton.isSelected && !binding.noButton.isSelected) {
             binding.yesButton.background =
@@ -239,9 +243,9 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         }
         ratingQualityValue = ratingQuality?.toInt()
         ratingValueBox = ratingValue?.toInt()
-        if ((rating != 0) && (title != null) && (reviewText != null) && (nickName != null) && (isrecommended == true || isrecommended == false)) {
+        if ((rating != null) && (title != null) && (reviewText != null) && (nickName != null) && (isrecommended == true || isrecommended == false)) {
             submitForm(
-                rating,
+                rating?.toInt(),
                 title,
                 reviewText,
                 nickName,
@@ -325,7 +329,8 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
 
     private fun editable() {
         binding.ratingBar?.setOnRatingBarChangeListener { p0, p1, p2 ->
-            binding.rating?.setTextColor(resources.getColor(R.color.text_colors))
+            CustomRatingBar.clicked = true
+            binding.ratingBar.drawBoundingBox()
             binding.errorMsgOfRatingbar.visibility = View.GONE
         }
         binding.reviewTitleEdit?.addTextChangedListener(object : TextWatcher {
