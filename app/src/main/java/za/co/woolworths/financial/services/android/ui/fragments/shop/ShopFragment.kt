@@ -55,6 +55,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragmen
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.DASH_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.STANDARD_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
+import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ShopLandingAutoNavigateChecker
+import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ShopLandingAutoNavigateCheckerImpl
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
@@ -82,6 +84,8 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
+import java.util.Timer
+import kotlin.concurrent.timerTask
 
 
 @AndroidEntryPoint
@@ -90,7 +94,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     OnChildFragmentEvents {
 
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
-
+    private var toggleScreenTimer: Timer? = null
+    private val shopLandingAutoNavigator: ShopLandingAutoNavigateChecker by lazy { ShopLandingAutoNavigateCheckerImpl() }
     private var mTabTitle: MutableList<String>? = null
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
@@ -131,6 +136,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
         private const val DASH_DIVIDER = 1.25
         private const val TIME_SLOT_SEPARATOR = "\t\u2022\t "
+        private const val TOGGLE_SCREEN_DELAY = 2000L
     }
 
     enum class SelectedTabIndex(val index: Int) {
@@ -207,9 +213,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             imBarcodeScanner.setOnClickListener { checkCameraPermission() }
             shopToolbar.setOnClickListener {
                 hideTooltipIfVisible()
-                Intent(requireActivity(), ShopToggleActivity::class.java).apply {
-                    startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
-                }
+                launchShopToggleScreen()
             }
 
             shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this@ShopFragment)
@@ -582,7 +586,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             }
             binding.viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
             setDeliveryView()
+        } else {
+            toggleScreenTimer?.cancel()
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        toggleScreenTimer?.cancel()
     }
 
     override fun permissionGranted(requestCode: Int) {
@@ -917,9 +928,21 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private fun textToolTip(text:Int): Spanned{
        return HtmlCompat.fromHtml(getString(text),HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
+    fun showToggleFulfilmentScreen() {
+        if (!shopLandingAutoNavigator.isShopLandingVisited()) {
+            toggleScreenTimer = Timer()
+            toggleScreenTimer?.schedule(timerTask {
+                shopLandingAutoNavigator.markShopLandingVisited()
+                launchShopToggleScreen()
+            }, TOGGLE_SCREEN_DELAY)
+        }
+    }
 
-
-
+    private fun launchShopToggleScreen() {
+        Intent(requireActivity(), ShopToggleActivity::class.java).apply {
+            startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
+        }
+    }
 
     fun showFulfilmentTooltip() {
         // Prevent dialog to display in other section when fragment is not visible

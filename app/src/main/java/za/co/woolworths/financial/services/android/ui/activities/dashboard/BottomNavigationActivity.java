@@ -805,12 +805,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
 
        if(getCurrentFragment() instanceof ShopFragment) {
-            ShopFragment fragment1 = (ShopFragment) getCurrentFragment();
-           fragment1.showFulfilmentTooltip();
-           // Check for location permission. if permission is rejected then never ask again.
-           if(Utils.isLocationEnabled(this)) {
-               fragment1.checkRunTimePermissionForLocation();
-           }
+           ShopFragment fragment1 = (ShopFragment) getCurrentFragment();
+           fragment1.showToggleFulfilmentScreen();
         }
     }
 
