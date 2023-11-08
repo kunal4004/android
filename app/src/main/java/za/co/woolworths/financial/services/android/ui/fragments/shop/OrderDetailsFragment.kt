@@ -181,8 +181,20 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
         val dataList = arrayListOf<OrderDetailsItem>()
 
         dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_STATUS))
-        dataList.add(OrderDetailsItem(ordersResponse.orderSummary, OrderDetailsItem.ViewType.ENDLESS_AISLE_BARCODE))
-
+        // Endless Aisle Barcode
+        ordersResponse.orderSummary?.let {
+            if (it.endlessAisleOrder && it.state?.contains(
+                    requireContext().getString(R.string.cancelled)
+                ) == false
+            ) {
+                dataList.add(
+                    OrderDetailsItem(
+                        ordersResponse.orderSummary,
+                        OrderDetailsItem.ViewType.ENDLESS_AISLE_BARCODE
+                    )
+                )
+            }
+        }
         ordersResponse.orderSummary?.apply {
             if (!taxNoteNumbers.isNullOrEmpty())
                 dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
