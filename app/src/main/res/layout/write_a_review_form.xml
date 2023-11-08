@@ -463,29 +463,29 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/valEdit" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:id="@+id/reviewInput"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_50sdp"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:background="@drawable/bg_input_edittext"
                     android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
                     app:layout_constraintTop_toBottomOf="@+id/product">
 
                     <EditText
                         android:id="@+id/reviewTitleEdit"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="4"
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/opensans_regular"
                         android:hint="@string/review_title_hint"
-                        android:inputType="textCapSentences|textMultiLine"
                         android:maxLength="150"
-                        android:maxLines="4"
+                        android:maxLines="1"
                         android:padding="@dimen/_12sdp"
-                        android:scrollHorizontally="false"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_14ssp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -493,37 +493,26 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.822">
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/reviewTitleEditCounter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentBottom="true"
-                            android:layout_marginStart="220dp"
-                            android:layout_marginEnd="@dimen/_60sdp"
-                            android:layout_marginBottom="0dp"
                             android:contentDescription="@string/write_a_review2"
                             android:text="@string/zero"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_11ssp" />
 
                         <TextView
-                            android:id="@+id/textView5"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:layout_alignParentBottom="true"
-                            android:layout_marginEnd="46dp"
-                            android:layout_marginBottom="0dp"
                             android:contentDescription="@string/write_a_review2"
+                            android:layout_marginEnd="@dimen/_15sdp"
                             android:text="@string/review_title_edit_counter"
                             android:textColor="@color/color_9D9D9D"
                             android:textSize="@dimen/_11ssp" />
@@ -531,7 +520,7 @@
                     </RelativeLayout>
 
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/error_msg_of_review_title"
@@ -574,21 +563,20 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:id="@+id/descInput"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_250sdp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:background="@drawable/bg_input_edittext"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:orientation="vertical"
+                    android:padding="8dp"
                     app:layout_constraintTop_toBottomOf="@+id/product">
 
                     <EditText
                         android:id="@+id/descrEdt"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/_250sdp"
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/opensans_regular"
                         android:gravity="start"
@@ -597,47 +585,46 @@
                         android:padding="@dimen/_12sdp"
                         android:textAlignment="viewStart"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/_14ssp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="@dimen/_14ssp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_128sdp"
-                        android:layout_marginBottom="@dimen/_12sdp"
-                        android:text="@string/min_ten_char"
-                        android:textColor="@color/color_9D9D9D"
-                        android:textSize="@dimen/_11ssp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/descrEdtCounter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_100sdp"
-                        android:layout_marginBottom="@dimen/_12sdp"
-                        android:text="@string/fifteen_hundred"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_11ssp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:maxLines="1"
+                            android:text="@string/min_ten_char"
+                            android:textColor="@color/color_9D9D9D"
+                            android:textSize="@dimen/_11ssp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_16sdp"
-                        android:layout_marginBottom="@dimen/_12sdp"
-                        android:text="@string/characters_left"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_11ssp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        <TextView
+                            android:id="@+id/descrEdtCounter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:maxLines="1"
+                            android:text="@string/fifteen_hundred"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_11ssp" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:gravity="end"
+                            android:maxLines="1"
+                            android:text="@string/characters_left"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_11ssp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/error_msg_of_review_desc"
@@ -818,31 +805,6 @@
                         android:text="@string/submit_review"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12sdp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                       >
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="By submitting, you agree to our"
-                            android:textSize="@dimen/_11ssp"
-                            android:fontFamily="@font/opensans_regular"
-                            android:textColor="@color/color_666666"/>
-
-                        <TextView
-                            android:id="@+id/terms_and_condition"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Terms and Conditions."
-                            android:textSize="@dimen/_11ssp"
-                            android:fontFamily="@font/opensans_bold"
-                            android:textColor="@color/color_666666"/>
-                    </LinearLayout>
 
                 </LinearLayout>
 

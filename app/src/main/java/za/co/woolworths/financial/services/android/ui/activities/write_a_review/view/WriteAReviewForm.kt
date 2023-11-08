@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.write_a_review.view
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -102,7 +101,6 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         recyclerView?.layoutManager = gridLayout
 
         binding.backArrow.setOnClickListener(this@WriteAReviewForm)
-        binding.termsAndCondition.setOnClickListener(this@WriteAReviewForm)
         getUserNickName()
         configureDefaultUI()
         editable()
@@ -197,8 +195,6 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         var reviewText: String? = null
         var title: String? = null
         var nickName: String? = null
-        var const = 0
-        var doubleConst = const.toDouble()
         if (binding.ratingBar.rating == 0f) {
             CustomRatingBar.clicked = true
             binding.ratingBar.drawBoundingBox()
@@ -441,11 +437,6 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                     ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
                 binding.noButton.background =
                     ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
-            }
-
-            R.id.terms_and_condition -> {
-                val intent = Intent(this@WriteAReviewForm.requireContext(), WriteAReviewTermsAndConditionActivity::class.java)
-                startActivity(intent)
             }
 
         }
