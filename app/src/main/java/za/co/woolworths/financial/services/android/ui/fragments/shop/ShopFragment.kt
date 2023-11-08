@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.UPDATE_LOCATION_REQUEST
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.UPDATE_STORE_REQUEST
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
@@ -217,7 +218,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             }
 
             fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener {
-                launchGeoLocationFlow()
+                launchStoreOrLocationSelection()
             }
 
             shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this@ShopFragment)
@@ -390,6 +391,28 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 }
             }
         }
+    }
+
+    private fun launchStoreOrLocationSelection() {
+        val delivery = Delivery.getType(getDeliveryType()?.deliveryType)
+        if (delivery == Delivery.CNC) {
+            launchStoreSelection()
+        } else {
+            launchGeoLocationFlow()
+        }
+    }
+    private fun launchStoreSelection() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            UPDATE_STORE_REQUEST,
+            Delivery.getType(getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType,
+            getDeliveryType()?.address?.placeId ?: "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.CNC,
+            needStoreSelection = true,
+            validateLocationResponse = validateLocationResponse
+        )
     }
 
     private fun launchGeoLocationFlow() {
@@ -739,7 +762,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             }
         }
 
-        if (resultCode == RESULT_OK && requestCode == UPDATE_LOCATION_REQUEST) {
+        if (resultCode == RESULT_OK && (requestCode == UPDATE_LOCATION_REQUEST || requestCode == UPDATE_STORE_REQUEST)) {
             setDeliveryView()
         }
     }
