@@ -68,6 +68,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
+import za.co.woolworths.financial.services.android.ui.adapters.SelectQuantityAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
@@ -1094,6 +1095,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             // Use Case: If first user does not have any order, Second user should update Last order details
             viewModel.getLastDashOrderDetails()
         }
+    }
+
+    override fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems) {
+        TODO("Not yet implemented")
     }
 
     override fun queryInventoryForStore(

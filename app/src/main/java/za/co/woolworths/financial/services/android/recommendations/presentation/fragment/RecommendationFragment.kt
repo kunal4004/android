@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.adapters.SelectQuantityAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
@@ -48,6 +49,7 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
+import javax.annotation.Nullable
 
 @AndroidEntryPoint
 class RecommendationFragment :
@@ -237,6 +239,9 @@ class RecommendationFragment :
         ScreenManager.openProductDetailFragment(requireActivity(), productName, strProductList)
     }
 
+    override fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems) {
+        TODO("Not yet implemented")
+    }
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
         addItemToCart: AddItemToCart?,

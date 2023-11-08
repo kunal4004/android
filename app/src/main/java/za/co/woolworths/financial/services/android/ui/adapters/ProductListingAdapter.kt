@@ -1,9 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.LayoutParams
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.BottomProgressBarBinding
 import com.awfs.coordination.databinding.ItemFoundLayoutBinding
@@ -18,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.*
 import za.co.woolworths.financial.services.android.util.Utils
 
+
 class ProductListingAdapter(
     private val navigator: IProductListing?,
     private val mProductListItems: List<ProductList>?,
@@ -26,22 +31,40 @@ class ProductListingAdapter(
     val mBannerImage: String?,
     val mIsComingFromBLP: Boolean,
     val promotionalRichText: String?,
-    val listener:OnTapIcon
+    val listener: OnTapIcon,
 ) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
+
+    private var selectQuantityViewAdapter: SelectQuantityAdapter? = null
+    private var addItemToCartData: AddItemToCart? = null
+    private var lastSelectedItemPosition = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewViewHolder {
         return when (ProductListingViewType.values()[viewType]) {
             ProductListingViewType.HEADER ->
                 RecyclerViewViewHolderHeader(
-                    ItemFoundLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    ItemFoundLayoutBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
                 )
+
             ProductListingViewType.FOOTER ->
                 RecyclerViewViewHolderFooter(
-                    BottomProgressBarBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    BottomProgressBarBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
                 )
+
             else ->
                 RecyclerViewViewHolderItems(
-                    ProductListingPageRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    ProductListingPageRowBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
                 )
         }
     }
@@ -58,9 +81,11 @@ class ProductListingAdapter(
                     (holder as? RecyclerViewViewHolderHeader)?.setChanelBanner(
                         mBannerLabel, mBannerImage, mIsComingFromBLP, navigator
                     )
-                    (holder as? RecyclerViewViewHolderHeader)?.setPromotionalBanner(promotionalRichText
+                    (holder as? RecyclerViewViewHolderHeader)?.setPromotionalBanner(
+                        promotionalRichText
                     )
                 }
+
                 ProductListingViewType.FOOTER -> (holder as? RecyclerViewViewHolderFooter)?.loadMoreProductProgressBarVisibility()
                 else -> (holder as? RecyclerViewViewHolderItems)?.let { view ->
                     navigator?.let {
@@ -72,37 +97,77 @@ class ProductListingAdapter(
                         )
                     }
                     view.itemBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
-                        if (!productList.quickShopButtonWasTapped) {
-                            var fulfilmentTypeId  = ""
-                            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this) }
-                            activity?.apply {
-                                productList?.apply {
-                                    when (productType) {
-                                        getString(R.string.food_product_type) -> {
-                                            fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId.toString()
-                                        }
-                                        getString(R.string.digital_product_type) -> {
-                                            fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.digitalProductsFulfilmentTypeId.toString()
+                        when (lastSelectedItemPosition) {
+                            position -> {
+                                view.bindingAdapter?.notifyItemChanged(position)
+                                lastSelectedItemPosition = -1 // reset the value.
+                                return@setOnClickListener
+                            }
+
+                            else -> {
+                                if (lastSelectedItemPosition != -1) {
+                                    notifyItemChanged(lastSelectedItemPosition)
+                                }
+                                lastSelectedItemPosition = position
+
+                                if (!productList.quickShopButtonWasTapped) {
+                                    var fulfilmentTypeId = ""
+                                    activity?.apply {
+                                        Utils.triggerFireBaseEvents(
+                                            FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART,
+                                            this
+                                        )
+                                    }
+                                    activity?.apply {
+                                        productList?.apply {
+                                            when (productType) {
+                                                getString(R.string.food_product_type) -> {
+                                                    fulfilmentTypeId =
+                                                        AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId.toString()
+                                                }
+
+                                                getString(R.string.digital_product_type) -> {
+                                                    fulfilmentTypeId =
+                                                        AppConfigSingleton.quickShopDefaultValues?.digitalProductsFulfilmentTypeId.toString()
+                                                }
+                                            }
                                         }
                                     }
+
+                                    fulfilmentTypeId?.let { id ->
+                                        selectQuantityViewAdapter =
+                                            SelectQuantityAdapter { selectedQuantity: Int ->
+                                                quantityItemClicked(selectedQuantity)
+                                            }
+                                        addItemToCartData =
+                                            if (isEnhanceSubstitutionFeatureAvailable()) {
+                                                AddItemToCart(
+                                                    productList.productId,
+                                                    productList.sku,
+                                                    0,
+                                                    SubstitutionChoice.SHOPPER_CHOICE.name,
+                                                    ""
+                                                )
+                                            } else {
+                                                AddItemToCart(
+                                                    productList.productId,
+                                                    productList.sku,
+                                                    0
+                                                )
+                                            }
+                                        navigator?.setRecyclerViewHolderView(view)
+                                        navigator?.queryInventoryForStore(
+                                            id,
+                                            addItemToCartData,
+                                            productList
+                                        )
+                                    }
                                 }
-                            }
-                            val storeId = fulfilmentTypeId?.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
-                            fulfilmentTypeId?.let { id ->
-                                navigator?.queryInventoryForStore(
-                                    id,
-                                    if (isEnhanceSubstitutionFeatureAvailable()) {
-                                        AddItemToCart(productList.productId, productList.sku, 0, SubstitutionChoice.SHOPPER_CHOICE.name, "")
-                                    } else {
-                                        AddItemToCart(productList.productId, productList.sku, 0)
-                                    },
-                                    productList
-                                )
                             }
                         }
                     }
                     view.itemBinding.imAddToList?.setOnClickListener {
-                       listener.onAddToListClicked(productList)
+                        listener.onAddToListClicked(productList)
                     }
                 }
             }
@@ -130,5 +195,95 @@ class ProductListingAdapter(
         }
         notifyDataSetChanged()
     }
-    interface OnTapIcon { fun onAddToListClicked(productList: ProductList) }
+
+    fun showQuantitySelector(
+        recyclerViewViewHolderItems: RecyclerViewViewHolderItems?,
+        addItemToCart: AddItemToCart?,
+    ) {
+        if (selectQuantityViewAdapter != null && addItemToCart != null) {
+            addItemToCartData = addItemToCart
+            val quantityInStock = addItemToCart.quantity
+            if (quantityInStock > 0) {
+                // replace quickshop button image to cross button image
+                activity?.let {
+                    recyclerViewViewHolderItems?.itemBinding?.includeProductListingPriceLayout?.imQuickShopAddToCartIcon?.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            it,
+                            R.drawable.cross_button_bg
+                        )
+                    )
+                }
+            }
+            recyclerViewViewHolderItems?.itemBinding?.quantitySelectorView?.apply {
+                layoutManager = activity?.let { activity ->
+                    LinearLayoutManager(
+                        activity,
+                        LinearLayoutManager.VERTICAL,
+                        false
+                    )
+                }
+                val imageViewHeight = recyclerViewViewHolderItems.itemBinding.imProductImage.height
+                if (quantityInStock >= 4) {
+                    layoutParams?.height = imageViewHeight
+                } else {
+                    layoutParams?.height = LayoutParams.WRAP_CONTENT
+                }
+                adapter = selectQuantityViewAdapter
+
+
+                val mScrollTouchListener: RecyclerView.OnItemTouchListener =
+                    object : RecyclerView.OnItemTouchListener {
+                        override fun onInterceptTouchEvent(
+                            rv: RecyclerView,
+                            e: MotionEvent,
+                        ): Boolean {
+                            val action = e.action
+                            when (action) {
+                                MotionEvent.ACTION_MOVE -> rv.parent.requestDisallowInterceptTouchEvent(
+                                    true
+                                )
+                            }
+                            return false
+                        }
+
+                        override fun onTouchEvent(
+                            rv: RecyclerView,
+                            e: MotionEvent,
+                        ) {
+                        }
+
+                        override fun onRequestDisallowInterceptTouchEvent(
+                            disallowIntercept: Boolean,
+                        ) {
+                        }
+                    }
+
+                addOnItemTouchListener(mScrollTouchListener)
+            }
+            selectQuantityViewAdapter?.setItem(quantityInStock)
+        }
+    }
+
+    private fun quantityItemClicked(quantity: Int) {
+        addItemToCartData?.apply {
+            navigator?.addFoodProductTypeToCart(
+                if (isEnhanceSubstitutionFeatureAvailable()) {
+                    AddItemToCart(
+                        productId,
+                        catalogRefId,
+                        quantity,
+                        SubstitutionChoice.SHOPPER_CHOICE.name,
+                        ""
+                    )
+                } else {
+                    AddItemToCart(productId, catalogRefId, quantity)
+                }
+            )
+        }
+        notifyDataSetChanged()
+    }
+
+    interface OnTapIcon {
+        fun onAddToListClicked(productList: ProductList)
+    }
 }
