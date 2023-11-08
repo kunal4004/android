@@ -243,8 +243,9 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                             else -> Color4ABB77
                         }
                         val finalState = orderStatus.ifEmpty {
-                            if (it.endlessAisleOrder) state
-                            else state.drop(6)
+                            if(state.contains(context.getString(R.string.order_text), ignoreCase = true)) {
+                                state.drop(6)
+                            } else state
                         }
 
                         orderState.setContent {
