@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.write_a_review.view
 
+import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -101,6 +102,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         recyclerView?.layoutManager = gridLayout
 
         binding.backArrow.setOnClickListener(this@WriteAReviewForm)
+        CustomRatingBar.clicked = false
         getUserNickName()
         configureDefaultUI()
         editable()
@@ -196,6 +198,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         var title: String? = null
         var nickName: String? = null
         if (binding.ratingBar.rating == 0f) {
+            requestRatingBar()
             CustomRatingBar.clicked = true
             binding.ratingBar.drawBoundingBox()
             binding.errorMsgOfRatingbar.visibility = View.VISIBLE
@@ -205,6 +208,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
             rating = binding.ratingBar.rating.toDouble()
         }
         if (!binding.yesButton.isSelected && !binding.noButton.isSelected) {
+            requestToogleButton()
             binding.yesButton.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
             binding.noButton.background =
@@ -214,6 +218,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
 
         }
         if (binding.reviewTitleEdit.text.isNullOrEmpty() || (binding.reviewTitleEdit.text.length <= 1)) {
+            requestReviewTitle()
             binding.reviewInput.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
             startShakeAnimation(binding.reviewInput)
@@ -439,6 +444,30 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                     ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
             }
 
+        }
+    }
+
+    private fun requestRatingBar() {
+        resources.displayMetrics.let {
+            val mid: Int =
+                it.heightPixels / 2 - binding.errorMsgOfRatingbar.height
+            ObjectAnimator.ofInt(binding.scrollView, "scrollY", mid).setDuration(500).start()
+        }
+    }
+
+    private fun requestToogleButton() {
+        resources.displayMetrics.let {
+            val mid: Int =
+                it.heightPixels / 2 - binding.errorMsgOfToggleBtn.height
+            ObjectAnimator.ofInt(binding.scrollView, "scrollY", mid).setDuration(500).start()
+        }
+    }
+
+    private fun requestReviewTitle() {
+        resources.displayMetrics.let {
+            val mid: Int =
+                it.heightPixels / 2 - binding.errorMsgOfReviewTitle.height
+            ObjectAnimator.ofInt(binding.scrollView, "scrollY", mid).setDuration(500).start()
         }
     }
 
