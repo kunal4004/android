@@ -1,10 +1,9 @@
 package za.co.woolworths.financial.services.android.models.dto.order_again
 
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-class Data {
-    @SerializedName("responses")
-    @Expose
-    var responses: List<Response>? = null
-}
+@Parcelize
+data class Data(
+     val responses: List<Response>? = null
+) : Parcelable

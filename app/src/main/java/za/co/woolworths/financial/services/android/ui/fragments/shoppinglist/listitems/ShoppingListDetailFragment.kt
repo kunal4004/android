@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Spannable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -87,6 +88,7 @@ import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.EmptyCartView
 import za.co.woolworths.financial.services.android.util.EmptyCartView.EmptyCartInterface
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
@@ -952,6 +954,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     else
                         hideBlackToolTip()
                     viewModel.getShoppingListDetails()
+                    Log.e("nikesh", "plist >> ${KotlinUtils.extractPlistFromDeliveryDetails()} ")
                 }
             }
         }

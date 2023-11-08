@@ -8,10 +8,10 @@ import za.co.woolworths.financial.services.android.ui.activities.MessagesActivit
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
+import za.co.woolworths.financial.services.android.ui.fragments.order_again.OrderAgainFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AccountLandingFirebaseManagerImpl
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.OrderAgainFragment
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import javax.inject.Inject

@@ -1,34 +1,15 @@
 package za.co.woolworths.financial.services.android.models.dto.order_again
 
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-class Action {
-    @SerializedName("impressionReporting")
-    @Expose
-    var impressionReporting: List<ImpressionReporting>? = null
-
-    @SerializedName("actionType")
-    @Expose
-    var actionType: String? = null
-
-    @SerializedName("actionId")
-    @Expose
-    var actionId: Int? = null
-
-    @SerializedName("isControl")
-    @Expose
-    var isControl: Boolean? = null
-
-    @SerializedName("items")
-    @Expose
-    var items: List<Item>? = null
-
-    @SerializedName("actionEvents")
-    @Expose
-    var actionEvents: List<String>? = null
-
-    @SerializedName("component")
-    @Expose
-    var component: String? = null
-}
+@Parcelize
+data class Action(
+    val impressionReporting: List<ImpressionReporting>? = null,
+    val actionType: String? = null,
+    val actionId: Int? = null,
+    val isControl: Boolean? = null,
+    val items: List<Item>? = null,
+    val actionEvents: List<String>? = null,
+    val component: String? = null
+) : Parcelable
