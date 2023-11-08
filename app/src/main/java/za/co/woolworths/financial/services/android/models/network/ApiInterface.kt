@@ -2349,7 +2349,7 @@ interface ApiInterface {
         @Body prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent
     ) : retrofit2.Response<WriteAReviewFormResponse>
 
-    @POST("wfs/app/v4/user/locations/payinstore")
+    @GET("wfs/app/v4/user/locations/payinstore")
     fun verifyUserIsInStore(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
