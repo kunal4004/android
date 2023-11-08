@@ -242,20 +242,15 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                             it.endlessAisleOrder -> ColorD85C11
                             else -> Color4ABB77
                         }
-                        val finalState = orderStatus.ifEmpty {
-                            if(state.contains(context.getString(R.string.order_text), ignoreCase = true)) {
-                                state.drop(6)
-                            } else state
-                        }
 
                         orderState.setContent {
                             OneAppTheme {
                                 val background by remember { mutableStateOf(bgColor) }
-                                val status by remember { mutableStateOf(finalState) }
+                                val status by remember { mutableStateOf(orderStatus.ifEmpty { state }) }
                                 val error by remember { mutableStateOf(errorLabel) }
                                 OrderState(
                                     stringResource(R.string.order_id, it.orderId?.replaceFirstChar { it.uppercase() } ?: ""),
-                                    status,
+                                    status.replace(context.getString(R.string.order), "").uppercase(),
                                     error,
                                     background
                                 )
