@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -73,6 +74,11 @@ class ProductListingAdapter(
         mProductListItems?.get(position)?.let { productList ->
             holder.itemView.invalidate()
             holder.itemView.requestLayout()
+            holder.itemView.setOnClickListener {
+                if (lastSelectedItemPosition != -1) {
+                    updateRecyclerView()
+                }
+            }
             when (productList.rowType) {
                 ProductListingViewType.HEADER -> {
                     (holder as? RecyclerViewViewHolderHeader)?.setNumberOfItems(
@@ -96,20 +102,24 @@ class ProductListingAdapter(
                             if (position % 2 == 0) mProductListItems.getOrNull(position - 1) else null
                         )
                     }
+                    view.itemView.setOnClickListener {
+                        if (lastSelectedItemPosition != -1) {
+                            updateRecyclerView()
+                        }
+                    }
                     view.itemBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
                         when (lastSelectedItemPosition) {
                             position -> {
-                                view.bindingAdapter?.notifyItemChanged(position)
-                                lastSelectedItemPosition = -1 // reset the value.
+                                updateRecyclerView()
                                 return@setOnClickListener
                             }
 
                             else -> {
                                 if (lastSelectedItemPosition != -1) {
-                                    notifyItemChanged(lastSelectedItemPosition)
+                                    updateRecyclerView()
+                                    return@setOnClickListener
                                 }
                                 lastSelectedItemPosition = position
-
                                 if (!productList.quickShopButtonWasTapped) {
                                     var fulfilmentTypeId = ""
                                     activity?.apply {
@@ -215,6 +225,7 @@ class ProductListingAdapter(
                 }
             }
             recyclerViewViewHolderItems?.itemBinding?.quantitySelectorView?.apply {
+                visibility = View.VISIBLE
                 layoutManager = activity?.let { activity ->
                     LinearLayoutManager(
                         activity,
@@ -223,13 +234,12 @@ class ProductListingAdapter(
                     )
                 }
                 val imageViewHeight = recyclerViewViewHolderItems.itemBinding.imProductImage.height
-                if (quantityInStock >= 4) {
+                if (quantityInStock >= 5) {
                     layoutParams?.height = imageViewHeight
                 } else {
                     layoutParams?.height = LayoutParams.WRAP_CONTENT
                 }
                 adapter = selectQuantityViewAdapter
-
 
                 val mScrollTouchListener: RecyclerView.OnItemTouchListener =
                     object : RecyclerView.OnItemTouchListener {
@@ -257,7 +267,6 @@ class ProductListingAdapter(
                         ) {
                         }
                     }
-
                 addOnItemTouchListener(mScrollTouchListener)
             }
             selectQuantityViewAdapter?.setItem(quantityInStock)
@@ -280,7 +289,16 @@ class ProductListingAdapter(
                 }
             )
         }
+        updateRecyclerView()
+    }
+
+    private fun updateRecyclerView() {
+        lastSelectedItemPosition = -1 // reset the value.
         notifyDataSetChanged()
+    }
+
+    fun resetLastSelectedItemPosition() {
+        lastSelectedItemPosition = -1 // reset the value.
     }
 
     interface OnTapIcon {
