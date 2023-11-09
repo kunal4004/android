@@ -171,10 +171,8 @@ class OrderConfirmationFragment :
         val context = Context(device, null, DY_CHANNEL)
         val cartValue: MutableList<Cart> = arrayListOf()
         itemsOrder?.forEach {
-            cartValue.addAll(itemsOrder!!.map {
-                Cart(it.productId,it.quantity,it.priceInfo?.amount.toString())
-            }
-            )
+            val cart = Cart(it.commerceItemInfo?.catalogRefId,it.commerceItemInfo?.quantity,it.priceInfo?.amount.toString())
+            cartValue.add(cart)
         }
         val properties = Properties(null,null,PURCHASE_V1,null,response.orderSummary?.total.toString(),ZAR,null,null,null,null, null,null,null,null,null,null,response.orderSummary?.orderId,cartValue)
         val eventsDyPurchase = Event(null,null,null,null,null,null,null,null,null,null,null,null,PURCHASE,properties)
@@ -193,7 +191,7 @@ class OrderConfirmationFragment :
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
-        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null)
+        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null,null)
         val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
         dataOtherArray?.add(dataOther)
         val page = Page(null, ORDER_CONFIRMATION_PAGE, OTHER, null, dataOtherArray)

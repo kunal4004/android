@@ -24,8 +24,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -81,7 +79,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
-import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Cart
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
@@ -442,10 +439,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         // Get list of saved address and navigate to proper Checkout page.
                         viewModel.getSavedAddress()
                     }
-                }
-                AppConfigSingleton.dynamicYieldConfig?.apply {
-                    if (isDynamicYieldEnabled == true)
-                        prepareDynamicYieldCheckoutRequest()
+                    AppConfigSingleton.dynamicYieldConfig?.apply {
+                        if (isDynamicYieldEnabled == true)
+                            prepareDynamicYieldCheckoutRequest(deliveryType)
+                    }
                 }
             }
 
@@ -1369,10 +1366,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
         val productList: ArrayList<String>? = ArrayList()
-        for (otherProductId in viewModel.getCartItemList()) {
-            if (otherProductId.commerceItemInfo.commerceId != null) {
-                var productID = otherProductId.commerceItemInfo.productId
-                productList?.add(productID!!)
+        cartItems?.let { cartItems ->
+            for (cartItemGroup: CartItemGroup in cartItems) {
+                val commerceItemList = cartItemGroup.commerceItems
+                for (cm: CommerceItem in commerceItemList) {
+                    val productID = cm.commerceItemInfo.catalogRefId
+                    productList?.add(productID)
+                }
             }
         }
         val page = Page(productList, DY_LOCATION, DY_CART_TYPE, null)
@@ -2357,12 +2357,14 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
-    private fun prepareDynamicYieldCheckoutRequest() {
+    private fun prepareDynamicYieldCheckoutRequest(deliveryType: Delivery?) {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
-        val productList: ArrayList<String>? = ArrayList()
-        val page = Page(productList, DY_CHECKOUT, OTHER, null)
+        val productList: ArrayList<DataOther> = ArrayList()
+        val dataOther = DataOther(null,null,null,null,null, deliveryType?.type)
+        productList.add(dataOther)
+        val page = Page(null, DY_CHECKOUT, OTHER, null,productList)
         val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
