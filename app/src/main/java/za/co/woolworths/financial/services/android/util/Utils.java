@@ -1237,12 +1237,6 @@ public class Utils {
             case PLP_ADD_TO_LIST:
                 appInstanceObject.featureWalkThrough.plp_add_to_list = true;
                 break;
-            case SHOP_FULFILMENT:
-                appInstanceObject.featureWalkThrough.shopFulfilment = true;
-                break;
-            case SHOP_LOCATION:
-                appInstanceObject.featureWalkThrough.shopLocation = true;
-                break;
             default:
                 break;
         }
