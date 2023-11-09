@@ -241,21 +241,27 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                 item.commerceItemInfo?.externalImageRefV2?.let {
                     setProductImage(imProductImage, it)
                 }
-                itemName?.text = buildSpannedString {
+                itemName.text = buildSpannedString {
                     val typeface =
                         ResourcesCompat.getFont(itemBinding.root.context, R.font.opensans_semi_bold)
-                    append(item.commerceItemInfo?.quantity?.toString())
-                    setSpan(
-                        CustomTypefaceSpan("opensans", typeface),
-                        0,
-                        item.commerceItemInfo?.quantity?.toString()?.length ?: 0,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    append(" x ")
-                    append(item.commerceItemInfo?.productDisplayName)
+                    item.commerceItemInfo?.quantity?.let {
+                        append(it.toString())
+                        setSpan(
+                            CustomTypefaceSpan("opensans", typeface),
+                            0,
+                            it.toString().length ?: 0,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                        append(" x ")
+                    }
+
+                    item.commerceItemInfo?.productDisplayName?.let {
+                        append(it)
+                    }
+
 
                 }
-                price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo?.amount)
+               price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo?.amount)
                 price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 root.setOnClickListener { listner.onOpenProductDetail(item) }
 
