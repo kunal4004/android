@@ -210,11 +210,10 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			if (lifecycleTransitionType == LifecycleTransitionType.BACKGROUND_TO_FOREGROUND) {
 				if (getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment){
 					WfsBiometricManagerImpl biometricManager = new WfsBiometricManagerImpl();
-					biometricManager.
-							setupBiometricAuthenticationForWRewards(
-									biometricSingleton,
-									this,
-									wRewardViewModel);
+					biometricManager.setupBiometricAuthenticationForWRewards(
+							biometricSingleton,
+							this,
+							wRewardViewModel);
 				}
 			}
 			return null;
