@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.compose.runtime.remember
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.MyOrdersPastOrderItemBinding
@@ -64,14 +63,13 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
             val item = dataList[position].item as Order
             itemBinding.orderState.setContent {
                 OneAppTheme {
-                    val background = remember {
-                        when {
-                            item.state?.contains(context.getString(R.string.cancelled)) == true && item.endlessAisleOrder -> ErrorLabel
-                            item.state?.contains(context.getString(R.string.cancelled)) == true -> ColorF3662D
-                            item.endlessAisleOrder -> ColorD85C11
-                            else -> Color4ABB77
-                        }
-                    }
+                    val background =
+                            when {
+                                (item.state?.contains(context.getString(R.string.cancelled)) == true) && item.endlessAisleOrder -> ErrorLabel
+                                item.state?.contains(context.getString(R.string.cancelled)) == true -> ColorF3662D
+                                item.endlessAisleOrder -> ColorD85C11
+                                else -> Color4ABB77
+                            }
 
                     OrderState(
                         context.getString(R.string.order_id, item.orderId.replaceFirstChar { it.uppercase() }),
