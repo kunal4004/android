@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.write_a_review.view
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -72,6 +73,8 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         const val PRODUCT_NAME = "PRODUCT_NAME"
         const val IMAGE_PATH = "IMGE_PATH"
         const val PRODUCT_ID = "PRODUCT_ID"
+        @SuppressLint("ObjectAnimatorBinding")
+        val OBJECT_ANIMATOR = ObjectAnimator.ofInt(null, "scrollY", 0).setDuration(500)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -197,8 +200,12 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         var reviewText: String? = null
         var title: String? = null
         var nickName: String? = null
+        var mid: Int
         if (binding.ratingBar.rating == 0f) {
-            requestRatingBar()
+            resources.displayMetrics.let {
+                 mid = it.heightPixels / 2 - binding.errorMsgOfRatingbar.height
+            }
+            animateScrollView(binding,mid)
             CustomRatingBar.clicked = true
             binding.ratingBar.drawBoundingBox()
             binding.errorMsgOfRatingbar.visibility = View.VISIBLE
@@ -208,7 +215,10 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
             rating = binding.ratingBar.rating.toDouble()
         }
         if (!binding.yesButton.isSelected && !binding.noButton.isSelected) {
-            requestToogleButton()
+            resources.displayMetrics.let {
+                 mid = it.heightPixels / 2 - binding.errorMsgOfToggleBtn.height
+            }
+            animateScrollView(binding,mid)
             binding.yesButton.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
             binding.noButton.background =
@@ -218,7 +228,10 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
 
         }
         if (binding.reviewTitleEdit.text.isNullOrEmpty() || (binding.reviewTitleEdit.text.length <= 1)) {
-            requestReviewTitle()
+            resources.displayMetrics.let {
+                 mid = it.heightPixels / 2 - binding.errorMsgOfReviewTitle.height
+            }
+            animateScrollView(binding,mid)
             binding.reviewInput.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
             startShakeAnimation(binding.reviewInput)
@@ -446,29 +459,11 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
 
         }
     }
-
-    private fun requestRatingBar() {
-        resources.displayMetrics.let {
-            val mid: Int =
-                it.heightPixels / 2 - binding.errorMsgOfRatingbar.height
-            ObjectAnimator.ofInt(binding.scrollView, "scrollY", mid).setDuration(500).start()
-        }
-    }
-
-    private fun requestToogleButton() {
-        resources.displayMetrics.let {
-            val mid: Int =
-                it.heightPixels / 2 - binding.errorMsgOfToggleBtn.height
-            ObjectAnimator.ofInt(binding.scrollView, "scrollY", mid).setDuration(500).start()
-        }
-    }
-
-    private fun requestReviewTitle() {
-        resources.displayMetrics.let {
-            val mid: Int =
-                it.heightPixels / 2 - binding.errorMsgOfReviewTitle.height
-            ObjectAnimator.ofInt(binding.scrollView, "scrollY", mid).setDuration(500).start()
-        }
+    private fun animateScrollView(binding: WriteAReviewFormBinding, mid: Int) {
+        OBJECT_ANIMATOR.target = binding.scrollView
+        OBJECT_ANIMATOR.setIntValues(mid)
+        OBJECT_ANIMATOR.duration = 500
+        OBJECT_ANIMATOR.start()
     }
 
 }
