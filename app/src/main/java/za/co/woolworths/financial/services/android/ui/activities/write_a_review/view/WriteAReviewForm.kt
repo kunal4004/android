@@ -84,6 +84,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
             image = getString(IMAGE_PATH)
             productId = getString(PRODUCT_ID)
         }
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
     }
 

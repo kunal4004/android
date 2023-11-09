@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
+    <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -812,6 +812,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
