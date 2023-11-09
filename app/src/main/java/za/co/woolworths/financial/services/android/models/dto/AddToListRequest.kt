@@ -10,5 +10,6 @@ data class AddToListRequest(
     var catalogRefId: String? = null,
     var quantity: String? = null,
     var listId: String? = null,
-    var isGWP: Boolean = false
+    var isGWP: Boolean = false,
+    var size: String? = null
 ): Parcelable

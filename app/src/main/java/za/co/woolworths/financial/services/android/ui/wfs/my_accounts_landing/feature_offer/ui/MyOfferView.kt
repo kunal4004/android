@@ -7,7 +7,12 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -15,8 +20,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -26,7 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import za.co.woolworths.financial.services.android.ui.wfs.component.*
+import za.co.woolworths.financial.services.android.ui.wfs.component.LazyListRowSnap
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight24dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight8dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth16dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth24dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.SurfaceTag
+import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFamilyBoldH1
 import za.co.woolworths.financial.services.android.ui.wfs.core.animationDurationMilis400
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.box_shimmer_image
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_offers_row
@@ -43,6 +54,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.ex
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.createLocator
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.imageAspectRatio
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen.LazyColumnKeyConstant
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_offer.schema.OfferProductType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountOfferKeys
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.CommonItem
@@ -86,14 +98,13 @@ fun OfferViewMainList(
     items: MutableMap<AccountOfferKeys, CommonItem.OfferItem?>,
     isLoading: Boolean = false,
     isBottomSpacerShown : Boolean = false,
-    brush: Brush? = null,
     onClick: (OfferClickEvent) -> Unit) {
 
-    val listOfOffers = items.values.toMutableList()
-    val listOfOfferSize = listOfOffers.size
+    val listOfOffers = remember { items.values.toMutableList()}
+    val listOfOfferSize = remember { listOfOffers.size }
 
     if (listOfOfferSize == 1) {
-        val offer = listOfOffers[0]
+        val offer = remember {listOfOffers[0]}
         val locator = offer?.automationLocatorKey
         Column(modifier = Modifier.padding(start = Margin.start, end = Margin.end)) {
             SpacerHeight8dp()
@@ -104,8 +115,7 @@ fun OfferViewMainList(
                         .testAutomationTag(createLocator(my_offers_row, locator)), item,
                     onClick = onClick
                 ) {
-                    OfferViewRow(item = item,  isLoading,
-                    brush,listSize = listOfOfferSize)
+                    OfferViewRow(item = item,  isLoading, listSize = listOfOfferSize)
                 }
             }
             if (isBottomSpacerShown){
@@ -114,14 +124,13 @@ fun OfferViewMainList(
         }
     } else {
         LazyListRowSnap(modifier = Modifier.testAutomationTag(sign_out_my_offers_carousel)) {
-            item { SpacerWidth24dp() }
-            items(items = listOfOffers, itemContent = {item ->
+            item(key = LazyColumnKeyConstant.OfferLazyListRowSnapSpacerWidth24dp) { SpacerWidth24dp() }
+            items(items = listOfOffers,key = { offer -> offer?.key ?: "N/A" }, itemContent = {item ->
                 item ?: return@items
                 val locator = item.automationLocatorKey
 
-
                 if (!item.data.isAnimationEnabled) {
-                    OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
+                    OfferCards(locator, item, onClick, isLoading, listOfOfferSize)
                 }
 
                     AnimatedVisibility(
@@ -130,7 +139,7 @@ fun OfferViewMainList(
                         else EnterTransition.None,
                         exit = ExitTransition.Companion.None
                     ) {
-                        OfferCards(locator, item, onClick, isLoading, brush, listOfOfferSize)
+                        OfferCards(locator, item, onClick, isLoading, listOfOfferSize)
                         viewModel.petInsuranceDidAnimateOnce = true
                     }
 
@@ -147,7 +156,6 @@ private fun OfferCards(
     item: CommonItem.OfferItem,
     onClick: (OfferClickEvent) -> Unit,
     isLoading: Boolean,
-    brush: Brush?,
     listOfOfferSize: Int
 ) {
     Row(
@@ -169,7 +177,6 @@ private fun OfferCards(
             OfferViewRow(
                 item = item,
                 isLoading = isLoading,
-                brush = brush,
                 listSize = listOfOfferSize
             )
         }
@@ -181,8 +188,8 @@ private fun OfferCards(
 fun OfferViewRow(
     item: CommonItem.OfferItem,
     isLoading: Boolean = false,
-    brush: Brush? = null,
-    listSize: Int = 0) {
+    listSize: Int = 0
+) {
 
     val data = item.data
     val properties = item.properties
@@ -193,7 +200,7 @@ fun OfferViewRow(
     val locator = item.automationLocatorKey
 
     if (isLoading){
-        OfferShimmerView(brush = brush, modifier = Modifier
+        OfferShimmerView(modifier = Modifier
             .width(params.second)
             .height(params.third)
             .testAutomationTag(createLocator(box_shimmer_image, locator)))
@@ -228,7 +235,12 @@ fun OfferViewRow(
 
             Column(modifier = Modifier
                 .fillMaxWidth()
-                .testAutomationTag(createLocator(sign_out_my_offers_container_constraint_layout_column, locator))
+                .testAutomationTag(
+                    createLocator(
+                        sign_out_my_offers_container_constraint_layout_column,
+                        locator
+                    )
+                )
                 .constrainAs(columnRefs) {
                     top.linkTo(marginTopGuideline)
                     start.linkTo(marginStartGuideline)

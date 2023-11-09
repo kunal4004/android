@@ -639,7 +639,7 @@ class KotlinUtils {
                             fullAddress, context
                         )
 
-                        if (timeSlot.isNullOrEmpty()) {
+                        if (timeSlot?.isNullOrEmpty() == true) {
                             tvDeliveryLocation?.text =
                                 context?.getString(R.string.no_timeslots_available_title)
                                     ?.plus("\t\u2022\t")?.plus(
@@ -674,6 +674,30 @@ class KotlinUtils {
                     }
                 }
             }
+        }
+
+        fun setCncStoreValidateResponse(browsingStoreData: Store, listStore: Store) {
+            listStore.apply {
+                unDeliverableCommerceItems = browsingStoreData.unDeliverableCommerceItems
+                distance = browsingStoreData.distance
+                deliverable = browsingStoreData.deliverable
+                storeId = browsingStoreData.storeId
+                deliverySlotsDetails = browsingStoreData.deliverySlotsDetails
+                firstAvailableFoodDeliveryDate =
+                    browsingStoreData.firstAvailableFoodDeliveryDate
+                firstAvailableOtherDeliveryDate =
+                    browsingStoreData.firstAvailableOtherDeliveryDate
+                storeAddress = browsingStoreData.storeAddress
+                quantityLimit = browsingStoreData.quantityLimit
+                storeName = browsingStoreData.storeName
+                storeDeliveryType = browsingStoreData.storeDeliveryType
+                unSellableCommerceItems = browsingStoreData.unSellableCommerceItems
+                locationId = browsingStoreData.locationId
+                longitude = browsingStoreData.longitude
+                latitude = browsingStoreData.latitude
+                deliveryDetails = browsingStoreData.deliveryDetails
+            }
+            setBrowsingCncStore(browsingStoreData)
         }
 
         fun showChangeDeliveryTypeDialog(
@@ -1820,9 +1844,22 @@ class KotlinUtils {
             logEvent(eventName, params)
             requestInAppReview(eventName, activity)
         }
+
+        fun extractPlistFromDeliveryDetails(): String? {
+            val deliveryDetails: String? = Utils.getDeliveryDetails()
+            if (deliveryDetails.isNullOrEmpty()) {
+                return ""
+            } else {
+                val deliveryDetailsArray = deliveryDetails?.split("-")
+                return deliveryDetailsArray?.getOrNull(1)
+            }
+        }
     }
 }
 
+fun setBrowsingCncStore(browsingStoreData: Store) {
+    KotlinUtils.browsingCncStore = browsingStoreData
+}
 fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {
     rootView.findViewById<View>(it).alpha = alpha
 }
@@ -1867,6 +1904,10 @@ fun Fragment.isFragmentAttached(): Boolean {
         return true
     }
     return false
+}
+fun isAValidSouthAfricanNumber(number: String?): Boolean {
+    val regex = Regex(AppConstant.SA_MOBILE_NUMBER_PATTERN)
+    return regex.matches(number.toString())
 }
 
 

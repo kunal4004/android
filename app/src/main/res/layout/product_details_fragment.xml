@@ -112,7 +112,7 @@
 
                 </RelativeLayout>
 
-                <Space
+                <androidx.legacy.widget.Space
                     android:id="@+id/space"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/twenty_dp"
@@ -180,21 +180,15 @@
                     app:layout_constraintStart_toStartOf="@+id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@id/ratingLayout" />
 
-                <WebView
-                    android:id="@+id/payFlexWidget"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clickable="false"
-                    android:duplicateParentState="true"
-                    android:focusableInTouchMode="false"
-                    android:touchscreenBlocksFocus="false"
-                    android:focusable="false"
-                    android:visibility="gone"
-                     app:layout_constraintEnd_toEndOf="parent"
+                <androidx.compose.ui.platform.ComposeView
+                    android:id="@+id/wfsShoptimiserComposable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/priceLayout"
-                    tools:ignore="WebViewLayout" />
-
+                    app:layout_constraintTop_toTopOf="@+id/onlinePromotionalTextView3"
+                    />
 
 
                 <TextView
@@ -209,7 +203,8 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
-                    app:layout_constraintTop_toBottomOf="@+id/payFlexWidget" />
+                    app:layout_constraintTop_toBottomOf="@+id/priceLayout" />
+
 
                 <TextView
                     android:id="@+id/onlinePromotionalTextView2"
@@ -241,7 +236,6 @@
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2" />
 
-
                 <include
                     android:id="@+id/freeGiftWithPurchaseLayout"
                     layout="@layout/product_details_gift_with_purchase"
@@ -251,7 +245,10 @@
                     android:layout_marginTop="@dimen/thirty_dp"
                     android:layout_marginRight="@dimen/twenty_four_dp"
                     android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/onlinePromotionalTextView3" />
+                    app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                    app:layout_constraintStart_toStartOf="@id/left_guideline"
+                    app:layout_constraintTop_toBottomOf="@id/onlinePromotionalTextView3"
+                    />
 
                 <include
                     android:id="@+id/sizeColorSelectorLayout"
@@ -260,6 +257,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/twenty_four_dp"
                     android:layout_marginRight="@dimen/twenty_four_dp"
+                    app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+                    app:layout_constraintStart_toStartOf="@+id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@id/freeGiftWithPurchaseLayout" />
 
                 <include

@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigChatEnabledForProductFeatures;
 import za.co.woolworths.financial.services.android.models.dto.chat.InAppChatTipAcknowledgements;
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 /**
@@ -91,6 +90,13 @@ public class AppInstanceObject {
         public Long linkedDeviceIdentityId;
         public String mId;
 
+        public String serverDyId;
+        public String sessionDyId;
+
+        public boolean enhanceSubstitutionFeatureShown;
+        public String deliveryDetails;
+
+
         public User() {
             id = AppInstanceObject.getCurrentUsersID();
             shoppingDeliveryLocationHistory = new ArrayList<>();
@@ -159,14 +165,8 @@ public class AppInstanceObject {
         public boolean my_lists;
         public boolean pargo_store;
         public boolean new_fbh_cnc;
+        public boolean plp_add_to_list;
 
-    }
-
-    /***
-     * Check to determine if biometric custom popup should be displayed
-     */
-    public static boolean biometricWalkthroughIsPresented(Activity activity) {
-        return activity != null && !get().isBiometricWalkthroughPresented() && AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication() && !AuthenticateUtils.getInstance(activity).isAuthenticationEnabled();
     }
 
     public InAppChatTipAcknowledgements getInAppChatTipAcknowledgements() {

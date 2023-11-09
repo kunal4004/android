@@ -6,15 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RecommendationCategoryListItemBinding
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 
 
 class ProductCategoryAdapter(private val actionItemList: List<Action>?) :
     RecyclerView.Adapter<ProductCategoryAdapter.MyRecViewHolder>() {
 
     var row_index = 0
-    var onItemClick: ((Int, List<Product>?) -> Unit)? = null
+    var onItemClick: ((Int, List<ProductList>?) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyRecViewHolder {
         return MyRecViewHolder(
