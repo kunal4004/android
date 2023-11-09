@@ -112,21 +112,6 @@ fun ListOfImagesView(
     }
 }
 
-//case1
-// screenwidth : 400
-// tile width : 50 (with padding)
-
-// 400/50  = 8 (available tite in row)
-// item count  == 15
-// show = (8-1) + (8 show as +)
-
-
-//case2
-// availabel item = 3
-// available space :
-///  item count  == 15
-//// show = (8-1) + (8 show as +)
-
 @Preview(showBackground = true)
 @Composable
 fun ListOfImagesViewPreview() {
