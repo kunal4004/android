@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.write_a_review.view
 
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -71,6 +73,8 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         const val PRODUCT_NAME = "PRODUCT_NAME"
         const val IMAGE_PATH = "IMGE_PATH"
         const val PRODUCT_ID = "PRODUCT_ID"
+        @SuppressLint("ObjectAnimatorBinding")
+        val OBJECT_ANIMATOR = ObjectAnimator.ofInt(null, "scrollY", 0).setDuration(500)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +84,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
             image = getString(IMAGE_PATH)
             productId = getString(PRODUCT_ID)
         }
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
     }
 
@@ -101,6 +106,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         recyclerView?.layoutManager = gridLayout
 
         binding.backArrow.setOnClickListener(this@WriteAReviewForm)
+        CustomRatingBar.clicked = false
         getUserNickName()
         configureDefaultUI()
         editable()
@@ -189,18 +195,31 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
     }
 
     private fun validateSubmitForm() {
-        var rating: Int? = null
+        var rating: Double? = null
         var ratingQualityValue: Int? = null
         var ratingValueBox: Int? = null
         var reviewText: String? = null
         var title: String? = null
         var nickName: String? = null
+        var mid: Int
         if (binding.ratingBar.rating == 0f) {
+            resources.displayMetrics.let {
+                 mid = it.heightPixels / 2 - binding.errorMsgOfRatingbar.height
+            }
+            animateScrollView(binding,mid)
+            CustomRatingBar.clicked = true
+            binding.ratingBar.drawBoundingBox()
             binding.errorMsgOfRatingbar.visibility = View.VISIBLE
         } else {
-            rating = binding.ratingBar.rating.toInt()
+            CustomRatingBar.clicked = false
+            binding.ratingBar.drawBoundingBox()
+            rating = binding.ratingBar.rating.toDouble()
         }
         if (!binding.yesButton.isSelected && !binding.noButton.isSelected) {
+            resources.displayMetrics.let {
+                 mid = it.heightPixels / 2 - binding.errorMsgOfToggleBtn.height
+            }
+            animateScrollView(binding,mid)
             binding.yesButton.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
             binding.noButton.background =
@@ -210,6 +229,10 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
 
         }
         if (binding.reviewTitleEdit.text.isNullOrEmpty() || (binding.reviewTitleEdit.text.length <= 1)) {
+            resources.displayMetrics.let {
+                 mid = it.heightPixels / 2 - binding.errorMsgOfReviewTitle.height
+            }
+            animateScrollView(binding,mid)
             binding.reviewInput.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.error_edit_box, null)
             startShakeAnimation(binding.reviewInput)
@@ -239,9 +262,9 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         }
         ratingQualityValue = ratingQuality?.toInt()
         ratingValueBox = ratingValue?.toInt()
-        if ((rating != 0) && (title != null) && (reviewText != null) && (nickName != null) && (isrecommended == true || isrecommended == false)) {
+        if ((rating != null) && (title != null) && (reviewText != null) && (nickName != null) && (isrecommended == true || isrecommended == false)) {
             submitForm(
-                rating,
+                rating?.toInt(),
                 title,
                 reviewText,
                 nickName,
@@ -325,7 +348,8 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
 
     private fun editable() {
         binding.ratingBar?.setOnRatingBarChangeListener { p0, p1, p2 ->
-            binding.rating?.setTextColor(resources.getColor(R.color.text_colors))
+            CustomRatingBar.clicked = true
+            binding.ratingBar.drawBoundingBox()
             binding.errorMsgOfRatingbar.visibility = View.GONE
         }
         binding.reviewTitleEdit?.addTextChangedListener(object : TextWatcher {
@@ -435,6 +459,12 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
             }
 
         }
+    }
+    private fun animateScrollView(binding: WriteAReviewFormBinding, mid: Int) {
+        OBJECT_ANIMATOR.target = binding.scrollView
+        OBJECT_ANIMATOR.setIntValues(mid)
+        OBJECT_ANIMATOR.duration = 500
+        OBJECT_ANIMATOR.start()
     }
 
 }
