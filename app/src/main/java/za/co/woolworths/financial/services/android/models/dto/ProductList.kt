@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
+import java.io.Serializable
 import java.util.*
 
 @Parcelize
@@ -38,6 +39,7 @@ data class ProductList(
     var otherSkus: List<OtherSkus>? = null,
 
     var promotions: ArrayList<Promotions>? = null,
+    val recToken: String? = null, //To be used for the recommendations analytics
 
     @JvmField
     var saveText: String? = null,
@@ -79,5 +81,6 @@ data class ProductList(
     var averageRating: String? = null,
     @SerializedName("reviewCount")
     @Expose
-    var reviewCount: String? = null
-) : Parcelable
+    var reviewCount: String? = null,
+    var network: String? = null
+) : Parcelable, Serializable

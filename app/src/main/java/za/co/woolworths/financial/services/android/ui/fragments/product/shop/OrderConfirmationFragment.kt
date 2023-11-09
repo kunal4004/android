@@ -25,17 +25,28 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivit
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.dto.cart.toAddToListRequest
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Cart
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.viewmodel.OrderConfirmationViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -43,12 +54,14 @@ import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+
 
 @AndroidEntryPoint
 class OrderConfirmationFragment :
@@ -62,6 +75,11 @@ class OrderConfirmationFragment :
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
     private var isPurchaseEventTriggered: Boolean = false
     private val orderConfirmationViewModel: OrderConfirmationViewModel by viewModels()
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
+    private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,6 +94,11 @@ class OrderConfirmationFragment :
             viewLifecycleOwner,
             binding.root
         ) {}
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -103,6 +126,12 @@ class OrderConfirmationFragment :
 
                                     //Make this call to recommendation API after receiving the 200 or 201 from the order
                                     orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
+                                    AppConfigSingleton.dynamicYieldConfig?.apply {
+                                        if (isDynamicYieldEnabled == true) {
+                                            prepareDYConfirmationPageViewRequest(response)
+                                            prepareDYPurchaseOrderRequest(response)
+                                        }
+                                    }
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -119,6 +148,43 @@ class OrderConfirmationFragment :
                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
                 }
             }, SubmittedOrderResponse::class.java))
+    }
+
+    private fun prepareDYPurchaseOrderRequest(response: SubmittedOrderResponse) {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress, config?.getDeviceModel())
+        val context = Context(device, null, DY_CHANNEL)
+        val cartValue: MutableList<Cart> = arrayListOf()
+        itemsOrder?.forEach {
+            val cart = Cart(it.commerceItemInfo?.catalogRefId,it.commerceItemInfo?.quantity,it.priceInfo?.amount.toString())
+            cartValue.add(cart)
+        }
+        val properties = Properties(null,null,PURCHASE_V1,null,response.orderSummary?.total.toString(),ZAR,null,null,null,null, null,null,null,null,null,null,response.orderSummary?.orderId,cartValue)
+        val eventsDyPurchase = Event(null,null,null,null,null,null,null,null,null,null,null,null,PURCHASE,properties)
+        val events = ArrayList<Event>()
+        events.add(eventsDyPurchase)
+        val preparePurchaseRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(preparePurchaseRequestEvent)
+    }
+
+    private fun prepareDYConfirmationPageViewRequest(response: SubmittedOrderResponse) {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress, config?.getDeviceModel())
+        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null,null)
+        val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
+        dataOtherArray?.add(dataOther)
+        val page = Page(null, ORDER_CONFIRMATION_PAGE, OTHER, null, dataOtherArray)
+        val context = Context(device, page,DY_CHANNEL)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun showPurchaseEvent(response: SubmittedOrderResponse) {
@@ -235,8 +301,7 @@ class OrderConfirmationFragment :
                             optionTitle.text = it.getString(R.string.collecting_from)
                             setUpCncOrderDetailsLayout(response)
                             continueBrowsingStandardLinearLayout.setOnClickListener {
-                                requireActivity().setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                                requireActivity().finish()
+                                startShopping()
                             }
                         }
                 }
@@ -263,8 +328,7 @@ class OrderConfirmationFragment :
                         optionLocation.text = formattedNickNameWithAddress
                         optionTitle.text = it.getString(R.string.delivering_to)
                         continueBrowsingStandardLinearLayout.setOnClickListener {
-                            requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                            requireActivity()?.finish()
+                            startShopping()
                         }
                         standardEnroutetextView.text = it.getText(R.string.dash_status_en_route)
                         collectedOrDeliveredTextView.text =
@@ -303,8 +367,7 @@ class OrderConfirmationFragment :
                                 ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                         )
                         continueBrowsingLinearLayout.setOnClickListener {
-                            requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                            requireActivity()?.finish()
+                            startShopping()
                         }
                     }
                     setUpDashOrderDetailsLayout(response)
@@ -352,6 +415,13 @@ class OrderConfirmationFragment :
                     }
                 }
             }
+        }
+    }
+
+    private fun startShopping() {
+        requireActivity().apply {
+            setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+            finish()
         }
     }
 

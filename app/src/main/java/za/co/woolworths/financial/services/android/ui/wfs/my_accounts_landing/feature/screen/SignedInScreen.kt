@@ -6,19 +6,26 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.runtime.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.json.JSONException
@@ -27,7 +34,12 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
-import za.co.woolworths.financial.services.android.ui.wfs.component.*
+import za.co.woolworths.financial.services.android.ui.wfs.component.DividerThicknessOne
+import za.co.woolworths.financial.services.android.ui.wfs.component.SectionDivider
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerBottom
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight24dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight8dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.TextFuturaFamilyHeader1
 import za.co.woolworths.financial.services.android.ui.wfs.component.pull_to_refresh.WfsPullToRefreshUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.core.RetrofitFailureResult
@@ -35,6 +47,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.core.animationDuration
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.findActivity
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.enumtype.MyAccountSectionHeaderType
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.screen.LazyColumnKeyConstant.AccountProductCardsGroupElseBlock
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_chat.ui.WfsChatView
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_general.stabletype.GeneralProductType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_general.ui.GeneralItem
@@ -42,7 +55,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_pet_insurance.ui.PetInsuranceView
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.AccountProductCardsGroup
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.LoadingOptions
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.enumtype.ShimmerOptions
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.AccountLandingInstantLauncher
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.CommonItem
@@ -95,12 +107,13 @@ fun SignedInScreen(
         FicaModelCollector(onClick = onClick)
 
         SignInContainer(isAccountLoading = userAccounts.isLoading, onClick = onClick, onProductClick = onProductClick,  allUserAccounts = userAccounts)
+
     }
 }
 
 @Composable
 fun UserAccountLandingViewModel.BiometricsCollector(onClick: (OnAccountItemClickListener) -> Unit) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(isBiometricPopupEnabled) {
         if (isBiometricPopupEnabled) {
             onClick(AccountLandingInstantLauncher.BiometricIsRequired)
             isBiometricPopupEnabled = false
@@ -149,70 +162,64 @@ private fun UserAccountLandingViewModel.SignInContainer(
     onClick: (OnAccountItemClickListener) -> Unit,
     allUserAccounts: NetworkStatusUI<UserAccountResponse>
 ) {
+    val signInList = remember { this@SignInContainer.buildSignInList() }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        BrushShimmerEffect { brush ->
+        Column {
+            WelcomeSectionView(
+                viewModel = this@SignInContainer,
+                isLoadingInProgress = isAccountLoading,
+                isRotatingState = { isRotating ->
+                    isRefreshButtonRotating = isRotating
+                },
+                icon = getRefreshIcon(),
+                onClick = { queryAccountLandingService() })
 
-            Column {
-                WelcomeSectionView(
-                    viewModel = this@SignInContainer,
-                    isRotating = isRefreshButtonRotating,
-                    isLoadingInProgress = isAccountLoading,
-                    isRotatingState = { isRotating ->
-                        isRefreshButtonRotating = isRotating
-                    },
-                    icon = getRefreshIcon(),
-                    brush = brush,
-                    onClick = { queryAccountLandingService() })
+            SectionDivider()
 
-                SectionDivider()
-
-                // Trigger pull to refresh
-                WfsPullToRefreshUI( // state hoisting concept
-                    isEnabled = !isAccountLoading && isC2UserOrMyProductItemExist(),
-                    isAccountRefreshingTriggered = isAccountRefreshingTriggered,
-                    isAccountRefreshing = { refresh ->
-                        isAccountRefreshingTriggered = refresh
-                        if (refresh) {
-                            queryAccountLandingService()
-                        }
-                    })
-                {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        state = rememberLazyListState()) {
-
-                        myProductsSection(
-                            isLoading = isAccountLoading,
-                            brush = brush,
-                            viewModel = this@SignInContainer,
-                            onProductClick = onProductClick)
-
-                        item {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                SpacerHeight24dp()
-                                SectionDivider()
-                                SpacerBottom(height = Dimens.eight_dp)
-                            }
-                        }
-
-                        offerViewGroup(
-                            isLoading = isAccountLoading,
-                            brush = brush,
-                            viewModel = this@SignInContainer,
-                            onClick
-                        )
-
-                        item { SectionDivider() }
-
-                        profileAndGeneralViewGroup(
-                            isLoading = isAccountLoading,
-                            viewModel = this@SignInContainer,
-                            brush = brush,
-                            onClick
-                        )
-
+            // Trigger pull to refresh
+            WfsPullToRefreshUI( // state hoisting concept
+                isEnabled = !isAccountLoading && isC2UserOrMyProductItemExist(),
+                isAccountRefreshingTriggered = isAccountRefreshingTriggered,
+                isAccountRefreshing = { refresh ->
+                    isAccountRefreshingTriggered = refresh
+                    if (refresh) {
+                        queryAccountLandingService()
                     }
+                })
+            {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = rememberLazyListState()) {
+
+                    myProductsSection(
+                        isLoading = isAccountLoading,
+                        viewModel = this@SignInContainer,
+                        onProductClick = onProductClick)
+
+                    item() {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            SpacerHeight24dp()
+                            SectionDivider()
+                            SpacerBottom(height = Dimens.eight_dp)
+                        }
+                    }
+
+                    offerViewGroup(
+                        isLoading = isAccountLoading,
+                        viewModel = this@SignInContainer,
+                        onClick
+                    )
+
+                    item (key = LazyColumnKeyConstant.SectionDivider){ SectionDivider() }
+
+                    profileAndGeneralViewGroup(
+                        isLoading = isAccountLoading,
+                        viewModel = this@SignInContainer,
+                        signInList = signInList,
+                        onClick
+                    )
+
                 }
             }
         }
@@ -360,45 +367,42 @@ private fun UserAccountLandingViewModel.LinkMyDevice() {
 private fun LazyListScope.profileAndGeneralViewGroup(
     isLoading: Boolean,
     viewModel: UserAccountLandingViewModel,
-    brush: Brush,
+    signInList: MutableList<Any>,
     onClick: (OnAccountItemClickListener) -> Unit
 ) {
-    viewModel.buildSignInList().forEach {
-        item {
-            viewModel.UiElements(isLoading = isLoading, it, brush, onClick)
+    signInList.forEachIndexed { index, value ->
+        item(key = "${LazyColumnKeyConstant.SignInList}$index") {
+            viewModel.UiElements(isLoading = isLoading, value, onClick)
         }
     }
 }
 
 private fun LazyListScope.offerViewGroup(
     isLoading: Boolean,
-    brush: Brush,
     viewModel: UserAccountLandingViewModel,
     offerClicked: (OfferClickEvent) -> Unit
 ) {
     // My offer items
-    item {
+    item(key = LazyColumnKeyConstant.OfferSection) {
         val product = MyAccountSectionHeaderType.MyOffers.title()
         val locator = product.automationLocatorKey ?: ""
         HeaderItem(
             title = stringResource(id = product.title),
             locator = locator,
-            isLoading = isLoading,
-            brush = brush
+            isLoading = isLoading
         )
     }
 
-    item {
+    item(key = LazyColumnKeyConstant.OfferSectionSpacerBottom) {
         SpacerBottom(height = Dimens.sixteen_dp)
     }
 
-    item {
+    item(key = LazyColumnKeyConstant.OfferSectionCarousel) {
         OfferCarousel(
             viewModel=viewModel,
             myOffers = viewModel.mapOfMyOffers,
             isLoading = isLoading,
-            isBottomSpacerShown = viewModel.isC2User(),
-            brush = brush
+            isBottomSpacerShown = viewModel.isC2User()
         ) {
             offerClicked(it)
         }
@@ -407,24 +411,21 @@ private fun LazyListScope.offerViewGroup(
 
 private fun LazyListScope.myProductsSection(
     isLoading: Boolean,
-    brush: Brush,
     viewModel: UserAccountLandingViewModel,
     onProductClick: (AccountProductCardsGroup) -> Unit
 ) {
-    val shimmerOptions = ShimmerOptions(brush = brush)
     val loadingOptions = LoadingOptions(isAccountLoading = isLoading)
     val myProductList = viewModel.mapOfFinalProductItems
 
-    productHeaderView(isLoading, brush)
+    productHeaderView(isLoading)
 
-    for (item in viewModel.mapOfFinalProductItems) {
+    for (item in myProductList) {
         when (val productItems = item.value) {
-            is AccountProductCardsGroup.ApplicationStatus -> item {
+            is AccountProductCardsGroup.ApplicationStatus ->    item(key = LazyColumnKeyConstant.AccountProductCardsGroupApplicationStatus) {
                 ProductViewApplicationStatusView(
                     onClick = onProductClick,
                     applicationStatus = productItems.copy(
-                        isLoadingInProgress = loadingOptions,
-                        shimmerOptions = shimmerOptions
+                        isLoadingInProgress = loadingOptions
                     )
                 )
             }
@@ -433,21 +434,18 @@ private fun LazyListScope.myProductsSection(
             is AccountProductCardsGroup.PetInsurance -> displayPetInsuranceProduct(
                 item,
                 loadingOptions,
-                shimmerOptions,
                 productItems,
                 viewModel,
                 onProductClick
             )
 
-            else -> item {
+            else -> item (key = LazyColumnKeyConstant.getDynamicKey(AccountProductCardsGroupElseBlock)){
                 productItems?.let { item ->
                     if (loadingOptions.isAccountLoading) {
                         ProductShimmerView(
-                            brush = brush,
                             key = item.properties.automationLocatorKey
                         )
-                    }
-                    if (!loadingOptions.isAccountLoading) {
+                    } else {
                         ProductContainerSwitcher(productGroup = item, onProductClick = onProductClick)
                     }
                 }
@@ -459,10 +457,9 @@ private fun LazyListScope.myProductsSection(
         if (viewModel.petInsuranceResponse != null && !viewModel.isPetInsuranceNotCovered()) {
             viewModel.cachedPetInsuranceModel()
         } else {
-            item {
+            item(key = LazyColumnKeyConstant.NoC2IdNorProductView) {
                 NoC2IdNorProductView(
                     isLoadingInProgress = isLoading,
-                    brush = brush,
                     isBottomSpacerShown = viewModel.isC2User(),
                     onClick = onProductClick
                 )
@@ -471,8 +468,8 @@ private fun LazyListScope.myProductsSection(
     }
 
     if (!viewModel.isC2User()) {
-        item {
-            LinkYourWooliesCardUI(isLoading, brush, onProductClick)
+        item(key = LazyColumnKeyConstant.LinkYourWooliesCardUI) {
+            LinkYourWooliesCardUI(isLoading, onProductClick)
         }
     }
 }
@@ -480,7 +477,6 @@ private fun LazyListScope.myProductsSection(
 private fun LazyListScope.displayPetInsuranceProduct(
     accountProductCardsGroupMap: MutableMap.MutableEntry<String, AccountProductCardsGroup?>,
     loadingOptions: LoadingOptions,
-    shimmerOptions: ShimmerOptions,
     productItems: AccountProductCardsGroup.PetInsurance,
     viewModel: UserAccountLandingViewModel,
     onProductClick: (AccountProductCardsGroup) -> Unit) {
@@ -491,7 +487,6 @@ private fun LazyListScope.displayPetInsuranceProduct(
         }
         if (loadingOptions.isAccountLoading) {
             ProductShimmerView(
-                brush = shimmerOptions.brush,
                 key = productItems.properties.automationLocatorKey
             )
         }
@@ -516,9 +511,9 @@ private fun LazyListScope.displayPetInsuranceProduct(
 }
 
 private fun LazyListScope.productHeaderView(
-    isLoading: Boolean,
-    brush: Brush?) {
-    item {
+    isLoading: Boolean
+) {
+    item(key = LazyColumnKeyConstant.ProductHeaderView) {
         val product = MyAccountSectionHeaderType.MyProducts.title()
         val title = stringResource(product.title)
         val locator = product.automationLocatorKey ?: ""
@@ -529,18 +524,16 @@ private fun LazyListScope.productHeaderView(
             modifier = Modifier
                 .padding(start = Margin.start, top = Margin.end)
                 .testAutomationTag(locator),
-            isLoading = isLoading,
-            brush = brush
+            isLoading = isLoading
         )
     }
-    item { SpacerHeight8dp() }
+    item(key = LazyColumnKeyConstant.SpacerHeight8dp) { SpacerHeight8dp() }
 }
 
 @Composable
 fun UserAccountLandingViewModel.UiElements(
     isLoading: Boolean,
     content: Any?,
-    brush: Brush? = null,
     onClick: (OnAccountItemClickListener) -> Unit
 ) {
     val messageState by messageState.collectAsStateWithLifecycle()
@@ -554,8 +547,7 @@ fun UserAccountLandingViewModel.UiElements(
             is CommonItem.Header -> HeaderItem(
                 title = stringResource(id = content.title),
                 locator = content.automationLocatorKey ?: "",
-                isLoading = isLoading,
-                brush = brush
+                isLoading = isLoading
             )
 
             CommonItem.SectionDivider -> SectionDivider()
@@ -577,8 +569,7 @@ fun UserAccountLandingViewModel.UiElements(
 
             is CommonItem.UserAccountApplicationInfo -> ApplicationInfoView(
                 applicationInfo = content,
-                isLoading = isLoading,
-                brush = brush
+                isLoading = isLoading
             )
 
             is GeneralProductType -> {
@@ -587,8 +578,7 @@ fun UserAccountLandingViewModel.UiElements(
                 }
                 GeneralItem(
                     item = content,
-                    isLoading = isLoading,
-                    brush = brush
+                    isLoading = isLoading
                 ) { onClick(it) }
             }
 
@@ -603,8 +593,8 @@ fun HeaderItem(
     locator: String,
     textAlign: TextAlign = TextAlign.Start,
     fontSize: TextUnit = FontDimensions.sp20,
-    isLoading: Boolean = false,
-    brush: Brush? = null) {
+    isLoading: Boolean = false
+) {
     TextFuturaFamilyHeader1(
         text = title,
         locator = locator,
@@ -612,7 +602,6 @@ fun HeaderItem(
         fontSize = fontSize,
         textColor = Color.Black,
         modifier = Modifier.padding(start = Margin.start, top = Margin.top),
-        isLoading = isLoading,
-        brush = brush
+        isLoading = isLoading
     )
 }

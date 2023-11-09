@@ -15,12 +15,15 @@ import android.webkit.WebViewClient
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCheckoutPaymentWebBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.service.network.PaymentAnalyticsData
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -32,15 +35,22 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyValues.Companion.CURRENCY_VALUE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import java.net.URI
 
 
+@AndroidEntryPoint
 class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_web),
     AdvancedWebView.Listener {
 
@@ -63,6 +73,10 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     private lateinit var binding: FragmentCheckoutPaymentWebBinding
     private var currentSuccessURI = ""
     private var cartItemList: ArrayList<CommerceItem>? = null
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,6 +173,10 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
                 paymentArguments[TRANSACTION_ID] = jsonToAnalyticsList?.transaction_id ?: ""
             paymentArguments[PAYMENT_VALUE] = jsonToAnalyticsList?.value?.toString() ?: "0.0"
             paymentArguments[PAYMENT_TYPE] = jsonToAnalyticsList?.payment_type ?: ""
+            AppConfigSingleton.dynamicYieldConfig?.apply {
+                if (isDynamicYieldEnabled == true)
+                    preparePaymentPageViewRequest(jsonToAnalyticsList)
+            }
         }
 
         when (paymentStatusType) {
@@ -251,6 +269,25 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         }
         if (!paymentArguments.isNullOrEmpty())
             Utils.triggerFireBaseEvents(PAYMENT_STATUS, paymentArguments, activity)
+    }
+
+    private fun preparePaymentPageViewRequest(jsonToAnalyticsList: PaymentAnalyticsData?) {
+        config = NetworkConfig(AppContextProviderImpl())
+        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
+            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
+            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val dataOther = DataOther(null,null,ZAR,jsonToAnalyticsList?.payment_type,jsonToAnalyticsList?.value,null)
+        val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
+        dataOtherArray?.add(dataOther)
+        val page = Page(null, PAYMENT_PAGE, OTHER, null, dataOtherArray)
+        val context = Context(device, page, Utils.DY_CHANNEL)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
+        dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
     override fun onPageError(errorCode: Int, description: String?, failingUrl: String?) {

@@ -159,6 +159,36 @@
                 app:layout_constraintTop_toBottomOf="@id/tvTitle"
                 tools:text="NAVY BLUE, SMALL" />
 
+            <ImageView
+                android:id="@+id/substitutionIcon"
+                android:layout_width="@dimen/fifteen_dp"
+                android:layout_height="@dimen/fifteen_dp"
+                android:layout_marginVertical="@dimen/twelve_dp"
+                android:src="@drawable/union_row"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSubstituteItem"
+                app:layout_constraintStart_toStartOf="@id/tvTitle"
+                app:layout_constraintTop_toTopOf="@+id/tvSubstituteItem" />
+
+            <TextView
+                android:layout_marginHorizontal="@dimen/four_dp"
+                android:id="@+id/tvSubstituteItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/twelve_dp"
+                android:fontFamily="@font/opensans_regular"
+                android:paddingVertical="@dimen/two_dp"
+                android:text="@string/substitute_default"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twelve_sp"
+                android:visibility="gone"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintStart_toEndOf="@id/substitutionIcon"
+                app:layout_constraintTop_toBottomOf="@id/tvColorSize"
+                app:layout_goneMarginTop="@dimen/four_dp"
+                tools:visibility="visible" />
+
             <TextView
                 android:id="@+id/tvProductAvailability"
                 android:layout_width="wrap_content"
@@ -175,7 +205,7 @@
                 android:visibility="gone"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintStart_toStartOf="@id/tvColorSize"
-                app:layout_constraintTop_toBottomOf="@id/tvColorSize"
+                app:layout_constraintTop_toBottomOf="@id/tvSubstituteItem"
                 tools:visibility="visible" />
 
             <include

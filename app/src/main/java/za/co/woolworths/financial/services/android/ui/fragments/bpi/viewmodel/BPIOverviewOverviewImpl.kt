@@ -9,9 +9,8 @@ import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.models.dto.bpi.Overview
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.contract.BPIOverviewInterface
-import java.lang.Exception
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 class BPIOverviewOverviewImpl(private val arguments: Bundle?) :
     BPIOverviewInterface {
@@ -158,7 +157,7 @@ class BPIOverviewOverviewImpl(private val arguments: Bundle?) :
     override fun navigateToOverviewDetail(): Pair<BalanceProtectionInsuranceOverview?, Boolean> {
         val insuranceType = getInsuranceType()
         val hasOneInsuranceTypeItem = insuranceType.isNotEmpty() && insuranceType.size == 1 && !insuranceType[0].covered
-        val insuranceTypeItem = coveredUncoveredList()?.get(0)
+        val insuranceTypeItem = coveredUncoveredList()?.getOrNull(0)
         return Pair(insuranceTypeItem, hasOneInsuranceTypeItem)
     }
 

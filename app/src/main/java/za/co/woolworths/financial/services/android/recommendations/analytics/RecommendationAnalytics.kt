@@ -1,11 +1,11 @@
 package za.co.woolworths.financial.services.android.recommendations.analytics
 
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.recommendations.analytics.usecase.RecClickUseCase
 import za.co.woolworths.financial.services.android.recommendations.analytics.usecase.RecImpressionUseCase
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepositoryImpl
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 
 object CoroutineScopeProvider {
     val externalScope: CoroutineScope by lazy {
@@ -18,7 +18,7 @@ class RecommendationAnalytics private constructor(
     private val coroutineScope: CoroutineScope
 ) : RecommendationEvents {
 
-    override fun submitRecClicks(products: List<Product>) {
+    override fun submitRecClicks(products: List<ProductList>) {
         if (coroutineScope.isActive) {
             coroutineScope.launch {
                 recommendationUseCase.recClickUseCase()(products = products)

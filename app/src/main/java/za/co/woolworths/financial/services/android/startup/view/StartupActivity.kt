@@ -56,8 +56,8 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.StartupView
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.NotificationUtils
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
@@ -162,6 +162,10 @@ class StartupActivity :
 
     private fun setUpFirebaseconfig() {
         firebaseRemoteConfig = startupViewModel.getFirebaseRemoteConfigData()
+        if (Utils.isAppUpdated(this)) {
+            // Reset Firebase Remote Config cache if the app has been updated
+            firebaseRemoteConfig.reset()
+        }
         configBuilder = FirebaseRemoteConfigSettings.Builder()
             .setMinimumFetchIntervalInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
             .setFetchTimeoutInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL)
@@ -354,7 +358,7 @@ class StartupActivity :
         }
         // Remove old usage of SharedPreferences data.
         //   startupViewModel.clearSharedPreference(this@StartupActivity)
-        AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
+        AuthenticateUtils.enableBiometricForCurrentSession(true)
     }
 
     private fun setupLoadingScreen() {
