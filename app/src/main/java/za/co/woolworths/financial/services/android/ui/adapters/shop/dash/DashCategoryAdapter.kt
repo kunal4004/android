@@ -381,10 +381,25 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
                     it.tvProductName.setOnClickListener { navigator.openProductDetailView(this) }
                     it.mainImgLayout.setOnClickListener { navigator.openProductDetailView(this) }
                 }
-                setQuickshopListener(context, navigator, this, this@ProductCarouselItemViewHolder, dashLandingNavigationListener, recommendationViewModel)
+                itemBinding.rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.let { quickShopButton ->
+                    quickShopButton.setOnClickListener {
+                        if (recommendationViewModel?.getQuickShopButtonPressed() == true) {
+                                updateMainRecyclerView(dashLandingNavigationListener)
+                                return@setOnClickListener
+                            }
+                        }
+
+                        setQuickshopListener(
+                            context,
+                            navigator,
+                            this,
+                            this@ProductCarouselItemViewHolder,
+                            dashLandingNavigationListener
+                        )
+                    }
+                }
             }
         }
-    }
 
     private fun setQuickshopListener(
         context: Context,
@@ -392,44 +407,36 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
         productList: ProductList,
         viewHolder: ProductCarouselItemViewHolder,
         dashLandingNavigationListener: OnDashLandingNavigationListener?,
-        recommendationViewModel: RecommendationViewModel?
     ) {
-        itemBinding.rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
-
-            if (recommendationViewModel?.getQuickShopButtonPressed() == true) {
-                updateMainRecyclerView(dashLandingNavigationListener)
-                return@setOnClickListener
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART,
+            context as? BottomNavigationActivity
+        )
+        val fulfilmentTypeId =
+            AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
+        fulfilmentTypeId?.let { id ->
+            if (productList.sku.isNullOrEmpty()) {
+                // This might be the case of th recommendation product where we do not have sku from API so we'll add productId as a sku here
+                productList.sku = productList.productId
             }
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART,
-                context as? BottomNavigationActivity
-            )
-            val fulfilmentTypeId =
-                AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
-            fulfilmentTypeId?.let { id ->
-                if (productList.sku.isNullOrEmpty()) {
-                    // This might be the case of th recommendation product where we do not have sku from API so we'll add productId as a sku here
-                    productList.sku = productList.productId
-                }
 
-                var addItemToCartData = if (isEnhanceSubstitutionFeatureAvailable()) {
-                    AddItemToCart(
-                        productList.productId,
-                        productList.sku,
-                        0,
-                        SubstitutionChoice.SHOPPER_CHOICE.name,
-                        ""
-                    )
-                } else {
-                    AddItemToCart(productList.productId, productList.sku, 0)
-                }
-                dashLandingNavigationListener?.setProductCarousalItemViewHolder(viewHolder)
-                navigator?.queryInventoryForStore(
-                    id,
-                    addItemToCartData,
-                    productList
+            val addItemToCartData = if (isEnhanceSubstitutionFeatureAvailable()) {
+                AddItemToCart(
+                    productList.productId,
+                    productList.sku,
+                    0,
+                    SubstitutionChoice.SHOPPER_CHOICE.name,
+                    ""
                 )
+            } else {
+                AddItemToCart(productList.productId, productList.sku, 0)
             }
+            dashLandingNavigationListener?.setProductCarousalItemViewHolder(viewHolder)
+            navigator?.queryInventoryForStore(
+                id,
+                addItemToCartData,
+                productList
+            )
         }
     }
 
