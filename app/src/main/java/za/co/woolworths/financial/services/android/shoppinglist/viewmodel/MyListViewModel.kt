@@ -358,10 +358,8 @@ class MyListViewModel @Inject constructor(
     }
 
     private fun getUpdatedList(list: List<ShoppingList>): List<ShoppingList> {
-        val imageCountInRow = getProductCount()
         list.mapIndexed { index, shoppingList ->
             shoppingList.modifiedListCount = "(" + shoppingList.listCount + ")"
-            shoppingList.noOfProductInRow = imageCountInRow
             shoppingList.productImageList = getImageListData(index, shoppingList)
         }
         return list
@@ -395,24 +393,6 @@ class MyListViewModel @Inject constructor(
             }
         }
         return mockListDetails
-    }
-
-    private fun getProductCount(): Int {
-        val displayMetrics: DisplayMetrics? =
-            WoolworthsApplication.getAppContext()?.resources?.displayMetrics  //400
-        var productsCountInRow = 3 // minimum items in a row
-        if (displayMetrics != null) {
-            val screenWidthDp = displayMetrics?.widthPixels?.div(displayMetrics?.density!!)
-          //  val usableDeviceWidth = (screenWidthDp?.minus(50)) // 50 is the left and right margin //350
-           /* if (usableDeviceWidth != null) {
-                productsCountInRow =
-                    ((usableDeviceWidth / 54).roundToInt()) // 54 is the width of productImage
-            }*/
-            if (screenWidthDp != null) {
-                productsCountInRow = (screenWidthDp / 59.17).roundToInt()
-            }
-        }
-        return productsCountInRow
     }
 
     fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {
