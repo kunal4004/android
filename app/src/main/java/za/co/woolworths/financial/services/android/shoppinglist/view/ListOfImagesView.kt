@@ -42,8 +42,10 @@ fun ListOfImagesView(
     listItem: ShoppingList,
     onImageItemClick: () -> Unit,
 ) {
-    val configuration = LocalConfiguration.current
-    val widthInDp = configuration.screenWidthDp.dp - 55.dp
+
+    val maxImageCount = fetchMaxImageCount()
+
+    val listImages = listItem.productImageList
     LazyRow(
         modifier = Modifier
             .height(70.dp)
@@ -57,9 +59,6 @@ fun ListOfImagesView(
         contentPadding = PaddingValues(horizontal = 4.dp),
         userScrollEnabled = false
     ) {
-
-        val maxImageCount = widthInDp.div(55.dp).roundToInt()-1 //5
-        val listImages = listItem.productImageList
 
         if (listImages.size <= maxImageCount) {
             items(count = listImages.size) { index ->
@@ -110,6 +109,14 @@ fun ListOfImagesView(
             }
         }
     }
+}
+
+@Composable
+fun fetchMaxImageCount(): Int {
+    val configuration = LocalConfiguration.current
+    val widthInDp = configuration.screenWidthDp.dp - 55.dp
+    return widthInDp.div(55.dp).roundToInt()-1
+
 }
 
 @Preview(showBackground = true)

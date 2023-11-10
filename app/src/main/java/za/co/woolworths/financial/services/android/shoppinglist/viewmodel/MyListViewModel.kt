@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.shoppinglist.viewmodel
 
-import android.util.DisplayMetrics
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
