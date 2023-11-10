@@ -65,8 +65,8 @@ class ContextualTooltipShowcaseManager : CotextualTooltipShowcase {
         if (delivery == null) {
             return null
         }
+        val data = AppInstanceObject.get().featureWalkThrough.tooltipData
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            val data = AppInstanceObject.get().featureWalkThrough.tooltipData
             return when (data.session) {
                 ShopTooltipUserSession.FIRST -> {
                     //This is the first time session case
@@ -87,6 +87,8 @@ class ContextualTooltipShowcaseManager : CotextualTooltipShowcase {
                     return null
                 }
             }
+        } else {
+            //Existing user session
         }
         return null
     }

@@ -111,7 +111,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private var shoppingListsResponse: ShoppingListsResponse? = null
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
-    private var userNavigatedFromFulfilmentTooltip = false
     private var isScreenRefreshing = false
     private var needToDisplayTooltip = false
     private val fragmentResultLauncher =
@@ -219,10 +218,12 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             tvSearchProduct.setOnClickListener { navigateToProductSearch() }
             imBarcodeScanner.setOnClickListener { checkCameraPermission() }
             fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener {
+                hideTooltipIfVisible()
                 launchShopToggleScreen()
             }
 
             fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener {
+                hideTooltipIfVisible()
                 launchStoreOrLocationSelection()
             }
 
@@ -280,10 +281,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private fun hideTooltipIfVisible() {
         (activity as? BottomNavigationActivity)?.apply {
             if(walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
-                val feature = walkThroughPromtView.getFeature()
-                if (feature == TooltipDialog.Feature.SHOP_FULFILMENT) {
-                    userNavigatedFromFulfilmentTooltip = true
-                }
                 walkThroughPromtView.hide()
             }
         }
