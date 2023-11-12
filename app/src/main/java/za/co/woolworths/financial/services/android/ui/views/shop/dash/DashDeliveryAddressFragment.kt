@@ -136,8 +136,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         if (isFragmentAttached()) {
             dashDeliveryAdapter =
                 DashDeliveryAdapter(
-                    requireContext(), onDemandNavigationListener = this,
-                    dashLandingNavigationListener = this, onDataUpdateListener = onDataUpdateListener, this,
+                    requireContext(), onDemandNavigationListener = this@DashDeliveryAddressFragment,
+                    dashLandingNavigationListener = this@DashDeliveryAddressFragment, onDataUpdateListener = onDataUpdateListener, this@DashDeliveryAddressFragment,
                     activity = activity,
                     recommendationViewModel
                 )

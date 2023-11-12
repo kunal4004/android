@@ -166,7 +166,6 @@ class DashDeliveryAdapter(
             is OnDemandCategoryLayoutViewHolder -> {
                 holder.bindView(
                     context,
-                    position,
                     categoryList[position] as List<RootCategory>,
                     onDemandNavigationListener
                 )
@@ -174,7 +173,6 @@ class DashDeliveryAdapter(
             is BannerCarouselLayoutViewHolder -> {
                 holder.bindView(
                     context,
-                    position,
                     categoryList[position] as ProductCatalogue,
                     dashLandingNavigationListener
                 )
@@ -183,7 +181,6 @@ class DashDeliveryAdapter(
                 if(position < categoryList.size && position >= 0)
                 holder.bindView(
                     context,
-                    position,
                     categoryList[position] as ProductCatalogue,
                     categoryList[position + 1] as ProductCatalogue,
                     dashLandingNavigationListener
@@ -201,7 +198,6 @@ class DashDeliveryAdapter(
             is LongBannerCarouselLayoutViewHolder -> {
                 holder.bindView(
                     context,
-                    position,
                     categoryList[position] as ProductCatalogue,
                     dashLandingNavigationListener
                 )
@@ -209,7 +205,6 @@ class DashDeliveryAdapter(
             is LongBannerListLayoutViewHolder -> {
                 holder.bindView(
                     context,
-                    position,
                     categoryList[position] as ProductCatalogue,
                     dashLandingNavigationListener
                 )
@@ -217,13 +212,12 @@ class DashDeliveryAdapter(
             is  TodayWooliesLayoutViewHolder -> {
                 holder.bindView(
                     context,
-                    position,
                     categoryList[position] as ProductCatalogue,
                     dashLandingNavigationListener
                 )
             }
             is RecommendationLayoutViewHolder -> {
-                holder.bindView(productCatalogue = categoryList[position] as ProductCatalogue)
+                holder.bindView(productCatalogue = categoryList[position] as ProductCatalogue, dashLandingNavigationListener, recommendationViewModel)
             }
 
         }
@@ -312,7 +306,6 @@ class OnDemandCategoryLayoutViewHolder(val itemBinding: ItemLayoutOnDemandCatego
 
     fun bindView(
         context: Context,
-        position: Int,
         onDemandCategories: List<RootCategory>?,
         onDemandNavigationListener: OnDemandNavigationListener
     ) {
@@ -334,7 +327,6 @@ class BannerCarouselLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselB
 
     fun bindView(
         context: Context,
-        position: Int,
         productCatalogue: ProductCatalogue?,
         dashLandingNavigationListener: OnDashLandingNavigationListener
     ) {
@@ -357,7 +349,6 @@ class BannerGridLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselBindi
 
     fun bindView(
         context: Context,
-        position: Int,
         productCatalogue: ProductCatalogue?,
         nextProductCatalogue: ProductCatalogue?,
         dashLandingNavigationListener: OnDashLandingNavigationListener
@@ -416,7 +407,6 @@ class LongBannerCarouselLayoutViewHolder(val itemBinding: ItemLayoutProductCarou
 
     fun bindView(
         context: Context,
-        position: Int,
         productCatalogue: ProductCatalogue?,
         dashLandingNavigationListener: OnDashLandingNavigationListener
     ) {
@@ -438,7 +428,6 @@ class LongBannerListLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselB
 
     fun bindView(
         context: Context,
-        position: Int,
         productCatalogue: ProductCatalogue?,
         dashLandingNavigationListener: OnDashLandingNavigationListener
     ) {
@@ -460,7 +449,6 @@ class TodayWooliesLayoutViewHolder(val itemBinding: ItemLayoutProductCarouselBin
 
     fun bindView(
         context: Context,
-        position: Int,
         productCatalogue: ProductCatalogue?,
         dashLandingNavigationListener: OnDashLandingNavigationListener,
     ) {
@@ -483,10 +471,10 @@ class RecommendationLayoutViewHolder(
     val activity: FragmentActivity?) :
     RecyclerView.ViewHolder(itemBinding.root) {
 
-    fun bindView(productCatalogue: ProductCatalogue?) {
+    fun bindView(productCatalogue: ProductCatalogue?, dashLandingNavigationListener: OnDashLandingNavigationListener, recommendationViewModel: RecommendationViewModel) {
         itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
         itemBinding.rvDashCategories.apply {
-            val productCarouselAdapter = DashCategoryAdapter(context, null, iProductListing, null)
+            val productCarouselAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, iProductListing, recommendationViewModel)
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = productCarouselAdapter
             productCatalogue?.let {
