@@ -3153,5 +3153,6 @@
     <string name="please_enter_a_review_title.">Please enter a review title.</string>
     <string name="please_enter_a_display_name.">Please enter a display name.</string>
     <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
+    <string name="barcode_generated">Barcode Generated</string>
 
 </resources>

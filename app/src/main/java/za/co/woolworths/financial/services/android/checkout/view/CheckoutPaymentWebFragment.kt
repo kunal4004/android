@@ -66,6 +66,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     }
 
     enum class PaymentStatus(val type: String) {
+        PAY_IN_STORE("payinstore"),
         PAYMENT_SUCCESS("success"),
         PAYMENT_ABANDON("abandon"),
         PAYMENT_UNAUTHENTICATED("unauthenticated"),
@@ -146,6 +147,9 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
 
     private fun navigateToOrderConfirmation() {
         binding.paymentSuccessConfirmationLayout?.root?.visibility = View.VISIBLE
+        if (isEndlessAisleJourney == true) {
+            binding.paymentSuccessConfirmationLayout.txtOrderPaymentConfirmed.text = getString(R.string.barcode_generated)
+        }
         Handler(Looper.getMainLooper()).postDelayed({
             binding.paymentSuccessConfirmationLayout?.root?.visibility = View.GONE
             val bundle = Bundle()
@@ -192,7 +196,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         }
 
         when (paymentStatusType) {
-            PaymentStatus.PAYMENT_SUCCESS.type -> {
+            PaymentStatus.PAYMENT_SUCCESS.type, PaymentStatus.PAY_IN_STORE.type -> {
                 val eventParams = Bundle()
                 eventParams.apply {
 
