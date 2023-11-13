@@ -832,7 +832,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 mBannerImage,
                 mIsComingFromBLP,
                 mPromotionalCopy,
-                this@ProductListingFragment
+                this@ProductListingFragment,
+                confirmAddressViewModel
             )
         }
         val mRecyclerViewLayoutManager: GridLayoutManager?
@@ -869,7 +870,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     mBannerImage,
                     mIsComingFromBLP,
                     mPromotionalCopy,
-                    this@ProductListingFragment
+                    this@ProductListingFragment,
+                    confirmAddressViewModel
                 )
             }
         binding.productsRecyclerView.apply {
@@ -1478,6 +1480,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         // Nothing to do
     }
 
+    override fun updateMainRecyclerView() {
+        mProductAdapter?.notifyDataSetChanged()
+    }
+
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
         addItemToCart: AddItemToCart?,
@@ -1520,7 +1526,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 requireContext(), requireFragmentManager(),
                 KotlinUtils.browsingDeliveryType
             )
-            mProductAdapter?.resetLastSelectedItemPosition()
             return
         }
 
@@ -1544,7 +1549,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                         HTTP_OK -> {
                             val skuInventoryList = skusInventoryForStoreResponse.skuInventory
                             if (skuInventoryList.size == 0 || skuInventoryList[0].quantity == 0) {
-                                mProductAdapter?.resetLastSelectedItemPosition()
                                 addItemToCart?.catalogRefId?.let { skuId ->
                                     // TODO: Remove non-fatal exception below once APP2-65 is closed
                                     setCrashlyticsString(

@@ -12,5 +12,4 @@ interface OnDashLandingNavigationListener {
         headerText: String?
     )
     fun setProductCarousalItemViewHolder(viewHolder: ProductCarouselItemViewHolder)
-    fun updateMainRecyclerView()
 }

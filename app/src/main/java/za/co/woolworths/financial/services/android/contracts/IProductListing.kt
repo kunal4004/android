@@ -12,6 +12,7 @@ interface IProductListing {
     fun queryInventoryForStore(fulfilmentTypeId: String, addItemToCart: AddItemToCart?, productList: ProductList)
     fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems)
     fun setMyRecycleViewHolder(recyclerViewHolder: MyRecycleViewHolder)
+    fun updateMainRecyclerView()
     fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?)
     fun queryStoreFinderProductByFusedLocation(location: Location?)
     fun openChangeFulfillmentScreen()

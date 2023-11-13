@@ -245,6 +245,11 @@ class RecommendationFragment :
         this.recyclerViewHolder = recyclerViewHolder
     }
 
+
+    override fun updateMainRecyclerView() {
+        mProductListRecommendationAdapter?.notifyDataSetChanged()
+    }
+
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
         addItemToCart: AddItemToCart?,
