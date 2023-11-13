@@ -242,6 +242,11 @@ class RecommendationFragment :
     override fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems) {
         TODO("Not yet implemented")
     }
+
+    override fun updateMainRecyclerView() {
+        mProductListRecommendationAdapter?.notifyDataSetChanged()
+    }
+
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
         addItemToCart: AddItemToCart?,
