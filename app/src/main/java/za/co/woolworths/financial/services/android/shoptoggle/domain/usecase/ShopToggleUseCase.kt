@@ -184,7 +184,7 @@ class ShopToggleUseCase @Inject constructor(
     }
 
     private fun getStandardData() = ShopToggleData(
-        id = 1,
+        id = STANDARD_DELIVERY_ID,
         title = resourcesProvider.getString(R.string.use_standard_delivery),
         subTitle = resourcesProvider.getString(R.string.standard_shop_fashion),
         icon = R.drawable.ic_toggle_delivery_truck,
@@ -194,13 +194,14 @@ class ShopToggleUseCase @Inject constructor(
         deliverySlotFbh = "",
         learnMore = resourcesProvider.getString(R.string.determined_at_checkout),
         deliveryButtonText = resourcesProvider.getString(R.string.set_to_standard_delivery),
+        deliveryButtonTextContinue = resourcesProvider.getString(R.string.continue_with_standard_delivery),
         quantity = 0,
         isDashDelivery = false,
         deliveryType = Delivery.STANDARD.type
     ).toDomain()
 
     private fun getDashData() = ShopToggleData(
-        id = 2,
+        id = DASH_DELIVERY_ID,
         title = resourcesProvider.getString(R.string.use_dash_delivery),
         subTitle = resourcesProvider.getString(R.string.get_food_today),
         icon = R.drawable.ic_toggle_dash_scooter,
@@ -210,13 +211,14 @@ class ShopToggleUseCase @Inject constructor(
         deliverySlotFbh = "",
         learnMore = resourcesProvider.getString(R.string.determined_at_checkout),
         deliveryButtonText = resourcesProvider.getString(R.string.set_to_dash_delivery),
+        deliveryButtonTextContinue = resourcesProvider.getString(R.string.continue_with_dash_delivery),
         quantity = 0,
         deliveryType = Delivery.DASH.type,
         isDashDelivery = true
     ).toDomain()
 
     private fun getCncData() = ShopToggleData(
-        id = 3,
+        id = CNC_DELIVERY_ID,
         title = resourcesProvider.getString(R.string.use_click_collect),
         subTitle = resourcesProvider.getString(R.string.collect_fashion_food),
         icon = R.drawable.ic_toggle_collection_bag,
@@ -226,12 +228,13 @@ class ShopToggleUseCase @Inject constructor(
         deliverySlotFbh = "",
         learnMore = resourcesProvider.getString(R.string.determined_at_checkout),
         deliveryButtonText = resourcesProvider.getString(R.string.set_to_click_and_collect),
+        deliveryButtonTextContinue = resourcesProvider.getString(R.string.continue_with_cnc_delivery),
         quantity = 0,
         deliveryType = Delivery.CNC.type,
         isDashDelivery = false
     ).toDomain()
 
-    suspend fun postConfirmAddress(confirmLocationRequest: ConfirmLocationRequest) =
+    private suspend fun postConfirmAddress(confirmLocationRequest: ConfirmLocationRequest) =
         geoLocationApiHelper.postConfirmLocation(confirmLocationRequest)
 
     fun isConnectedToInternet(context: Context) =
@@ -266,7 +269,7 @@ class ShopToggleUseCase @Inject constructor(
     fun sendConfirmLocation(deliveryType: Delivery) =
         flow<Resource<List<UnSellableCommerceItem>>> {
             if (isConnectedToNetwork() != true) {
-                emit(Resource.Error(message = "No internet"))
+                emit(Resource.Error(message = resourcesProvider.getString(R.string.no_internet_title)))
                 return@flow
             }
             val unsellableItems = getUnsellableItems(deliveryType)
@@ -277,7 +280,7 @@ class ShopToggleUseCase @Inject constructor(
                 try {
                     val confirmLocationRequest = KotlinUtils.getConfirmLocationRequest(deliveryType)
                     if (confirmLocationRequest.address.placeId.isNullOrEmpty()) {
-                        emit(Resource.Error(message = "Place id is null"))
+                        emit(Resource.Error(message = resourcesProvider.getString(R.string.no_internet_title)))
                         return@flow
                     }
                     val confirmLocationResponse = postConfirmAddress(confirmLocationRequest)
@@ -289,12 +292,12 @@ class ShopToggleUseCase @Inject constructor(
                         }
 
                         else -> {
-                            emit(Resource.Error(message = "some error occurred, try again"))
+                            emit(Resource.Error(message = resourcesProvider.getString(R.string.no_internet_title)))
                         }
                     }
                 } catch (e: Exception) {
                     FirebaseManager.logException(e)
-                    emit(Resource.Error(message = "some error occurred, try again"))
+                    emit(Resource.Error(message = resourcesProvider.getString(R.string.no_internet_title)))
                 }
             }
         }

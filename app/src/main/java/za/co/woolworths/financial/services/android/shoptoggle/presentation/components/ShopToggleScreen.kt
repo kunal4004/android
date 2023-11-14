@@ -21,7 +21,9 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 fun ShopToggleScreen(
     viewModel: ShopToggleViewModel,
     item: List<ToggleModel>,
-    onSelectDeliveryType: (Delivery?) -> Unit
+    isUserAuthenticated: Boolean,
+    isAutoNavigated: Boolean,
+    onSelectDeliveryType: (Delivery?, Boolean) -> Unit
 ) {
 
     Spacer(modifier = Modifier.height(Dimens.sixteen_dp))
@@ -52,7 +54,7 @@ fun ShopToggleScreen(
     )
     Spacer(modifier = Modifier.height(Dimens.dp24))
 
-    ToggleExpandableList(viewModel, item, onSelectDeliveryType)
+    ToggleExpandableList(viewModel, item, isAutoNavigated = isAutoNavigated, isUserAuthenticated, onSelectDeliveryType)
 
 }
 

@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.shoptoggle.domain.usecase.Lea
 import za.co.woolworths.financial.services.android.shoptoggle.domain.usecase.Resource
 import za.co.woolworths.financial.services.android.shoptoggle.domain.usecase.ShopToggleUseCase
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
@@ -31,6 +32,7 @@ class ShopToggleViewModel @Inject constructor(
     private val learnMoreUseCase: LearnMoreUseCase
 ) : ViewModel() {
 
+    private var autoNavigation: Boolean = false
     private val _state = mutableStateOf(ToggleScreenState())
     val state: State<ToggleScreenState> = _state
 
@@ -101,6 +103,10 @@ class ShopToggleViewModel @Inject constructor(
                     _state.value =
                         ToggleScreenState(data = result.data ?: shopToggleUseCase.getFailureData())
                     _selectedDeliveryTypeItemId.value = shopToggleUseCase.getSelectedDeliveryId()
+
+                    if(autoNavigation && SessionUtilities.getInstance().isUserAuthenticated) {
+                        _expandedItemId.value = shopToggleUseCase.getSelectedDeliveryId()
+                    }
                 }
             }
         }.launchIn(viewModelScope)
@@ -146,6 +152,10 @@ class ShopToggleViewModel @Inject constructor(
 
     fun validateLocationResponse(): ValidateLocationResponse? {
         return shopToggleUseCase.validateLocationResponse()
+    }
+
+    fun setFromAutoNavigation(autoNavigation: Boolean) {
+        this.autoNavigation = autoNavigation
     }
 }
 

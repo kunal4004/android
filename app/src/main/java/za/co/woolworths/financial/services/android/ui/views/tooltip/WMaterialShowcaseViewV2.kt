@@ -74,14 +74,17 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
     private var mTvTapMessage: TextView? = null
     private var mTvTitle: TextView? = null
     private var mArrowIcon: ImageView? = null
+    private var mArrowIconExistingUser: ImageView? = null
     private var mTvDescription: TextView? = null
     private var mBtnNext: TextView? = null
     private var actionListener: IWalkthroughActionListener? = null
     private var feature: TooltipDialog.Feature? = null
     private var mContentView: View? = null
     private var mTvCounter: TextView? = null
+    private var isSecondTimeFlow: Boolean = false
 
-    constructor(context: Context, feature: TooltipDialog.Feature?) : super(context) {
+    constructor(context: Context, feature: TooltipDialog.Feature?, isSecondTimeFlow: Boolean) : super(context) {
+        this.isSecondTimeFlow = isSecondTimeFlow
         init()
         this.feature = feature
     }
@@ -120,7 +123,11 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
         mIvLocation = mContentView?.findViewById(R.id.ivLocation)
         mArrowIcon = mContentView?.findViewById(R.id.ivArrow)
         mTvCounter = mContentView?.findViewById(R.id.tvCounter)
+        mArrowIconExistingUser = mContentView?.findViewById(R.id.ivArrow_right)
         mBtnNext?.setOnClickListener(this)
+        if (isSecondTimeFlow) {
+            hideExistingUserArrow()
+        }
     }
 
     /**
@@ -360,13 +367,13 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
      * BUILDER CLASS
      * Gives us a builder utility class with a fluent API for eaily configuring showcase views
      */
-    class Builder(private val activity: Activity, feature: TooltipDialog.Feature?) {
+    class Builder(private val activity: Activity, feature: TooltipDialog.Feature?, isSecondTimeFlow: Boolean = false) {
         private var fullWidth = false
         private var shapeType = CIRCLE_SHAPE
         private val showcaseView: WMaterialShowcaseViewV2
 
         init {
-            showcaseView = WMaterialShowcaseViewV2(activity, feature)
+            showcaseView = WMaterialShowcaseViewV2(activity, feature, isSecondTimeFlow)
             showcaseView.setContentBasedOnFeature()
         }
 
@@ -645,5 +652,10 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
                 }
             }
         }
+    }
+    private fun hideExistingUserArrow(){
+        mArrowIconExistingUser?.visibility = VISIBLE
+        mArrowIcon?.visibility= GONE
+        mTvCounter?.visibility= GONE
     }
 }

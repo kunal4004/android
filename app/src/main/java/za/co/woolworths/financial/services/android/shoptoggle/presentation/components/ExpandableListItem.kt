@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.ToggleModel
+import za.co.woolworths.financial.services.android.shoptoggle.domain.usecase.ShopToggleUseCase
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.*
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -29,9 +30,11 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 fun ExpandableListItem(
     item: ToggleModel,
     expandedId: Int?,
+    isAutoNavigated: Boolean,
     defaultSelectionId: Int?,
+    isUserAuthenticated: Boolean,
     onItemClick: () -> Unit,
-    onSelectDeliveryType: (Delivery?) -> Unit,
+    onSelectDeliveryType: (Delivery?, Boolean) -> Unit,
     viewModel: ShopToggleViewModel,
 ) {
 
@@ -43,8 +46,8 @@ fun ExpandableListItem(
         modifier = Modifier
             .fillMaxSize()
             .border(
-                BorderStroke(if (showBorder(expandedId, defaultSelectionId, item)) Dimens.oneDp else Dimens.point_five_dp,
-                    color = if (showBorder(expandedId, defaultSelectionId, item)) Color.Black else ColorD8D8D8),
+                BorderStroke(if (showBorder(expandedId, defaultSelectionId, item, isAutoNavigated, isUserAuthenticated)) Dimens.oneDp else Dimens.point_five_dp,
+                    color = if (showBorder(expandedId, defaultSelectionId, item, isAutoNavigated, isUserAuthenticated)) Color.Black else ColorD8D8D8),
                 shape = RoundedCornerShape(Dimens.four_dp)
             )
             .shadow(
@@ -64,16 +67,24 @@ fun ExpandableListItem(
         }
 
     ) {
-        ExpandableCard(item, isExpanded(expandedId, item), defaultSelectionId == item.id, viewModel, onSelectDeliveryType)
+        ExpandableCard(item, isExpanded(expandedId, item, isAutoNavigated, isUserAuthenticated), defaultSelectionId == item.id, isAutoNavigated, viewModel, onSelectDeliveryType)
     }
 }
 
-private fun showBorder(isExpandedId: Int?, lastSelectionId: Int?, item: ToggleModel): Boolean {
-    return isExpanded(isExpandedId, item = item) || (lastSelectionId == item.id && (isExpandedId == null || isExpandedId == lastSelectionId))
+private fun showBorder(isExpandedId: Int?, lastSelectionId: Int?, item: ToggleModel, isAutoNavigated: Boolean, isUserAuthenticated: Boolean): Boolean {
+    return isExpanded(isExpandedId, item = item, isAutoNavigated = isAutoNavigated, isUserAuthenticated) || (lastSelectionId == item.id && (isExpandedId == null || isExpandedId == lastSelectionId))
 }
 
-private fun isExpanded(expandedId: Int?, item: ToggleModel): Boolean {
-    return  expandedId == item.id
+private fun isExpanded(expandedId: Int?, item: ToggleModel, isAutoNavigated: Boolean, isUserAuthenticated: Boolean): Boolean {
+    var expId = expandedId
+    return  if (isAutoNavigated && isUserAuthenticated) {
+        if (expId == null) {
+            expId = ShopToggleUseCase.STANDARD_DELIVERY_ID
+        }
+        expId == item.id
+    } else {
+        expId == item.id
+    }
 }
 
 @Composable
@@ -81,8 +92,9 @@ private fun ExpandableCard(
     item: ToggleModel,
     isExpanded: Boolean,
     isSelected: Boolean,
+    isAutoNavigated: Boolean,
     viewModel: ShopToggleViewModel,
-    onSelectDeliveryType: (Delivery?) -> Unit
+    onSelectDeliveryType: (Delivery?, Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -171,7 +183,7 @@ private fun ExpandableCard(
 
         }
 
-        ExpandedData(isExpanded, isSelected, item,viewModel, onSelectDeliveryType)
+        ExpandedData(isExpanded, isSelected, isAutoNavigated, item,viewModel, onSelectDeliveryType)
 
     }
 
