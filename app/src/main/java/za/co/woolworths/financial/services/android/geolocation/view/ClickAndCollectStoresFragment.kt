@@ -191,11 +191,7 @@ class ClickAndCollectStoresFragment :
         return activity?.let {
             object : Dialog(it, theme) {
                 override fun onBackPressed() {
-                    if (needStoreSelection == true) {
-                        activity?.finish()
-                    } else {
-                        dismiss()
-                    }
+                    closeDialog()
                 }
             }
         } ?: super.onCreateDialog(savedInstanceState)
@@ -246,7 +242,7 @@ class ClickAndCollectStoresFragment :
             }
 
             R.id.backButton -> {
-                dismiss()
+                closeDialog()
             }
 
             R.id.btChange -> {
@@ -256,6 +252,14 @@ class ClickAndCollectStoresFragment :
                     bundleOf(BUNDLE to bundle)
                 )
             }
+        }
+    }
+
+    private fun closeDialog() {
+        if (needStoreSelection == true) {
+            activity?.finish()
+        } else {
+            dismiss()
         }
     }
 
