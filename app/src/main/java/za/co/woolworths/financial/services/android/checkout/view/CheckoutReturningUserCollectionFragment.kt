@@ -154,6 +154,7 @@ class CheckoutReturningUserCollectionFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCheckoutReturningUserCollectionBinding.bind(view)
+        locator = Locator(activity as AppCompatActivity)
 
         if (navController == null)
             navController = Navigation.findNavController(view)
