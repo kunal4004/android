@@ -843,7 +843,7 @@ class OrderConfirmationFragment :
                 this.root.visibility = VISIBLE
                 orderNumber.text = resources.getString(R.string.order_id,
                     response?.orderSummary?.orderId)
-                barcodeNumber.text = response?.orderSummary?.endlessAisleBarcode
+                barcodeNumber.text = response?.orderSummary?.endlessAisleBarcode?.chunked(4)?.joinToString(" ")
                 barcodeMessage.text = getBarcodeMessage()
                 try {
                     barcodeImage.setImageBitmap(Utils.encodeAsBitmap(
