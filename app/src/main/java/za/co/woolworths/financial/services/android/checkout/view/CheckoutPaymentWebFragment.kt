@@ -145,15 +145,15 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         }
     }
 
-    private fun navigateToOrderConfirmation() {
+    private fun navigateToOrderConfirmation(isEndlessAisle: Boolean) {
         binding.paymentSuccessConfirmationLayout?.root?.visibility = View.VISIBLE
-        if (isEndlessAisleJourney == true) {
+        if (isEndlessAisle) {
             binding.paymentSuccessConfirmationLayout.txtOrderPaymentConfirmed.text = getString(R.string.barcode_generated)
         }
         Handler(Looper.getMainLooper()).postDelayed({
             binding.paymentSuccessConfirmationLayout?.root?.visibility = View.GONE
             val bundle = Bundle()
-            bundle.putBoolean(IS_ENDLESS_AISLE_JOURNEY, isEndlessAisleJourney == true)
+            bundle.putBoolean(IS_ENDLESS_AISLE_JOURNEY, isEndlessAisle)
             view?.let {
                 GeoUtils.navigateSafe(it, R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment, bundle)
             }
@@ -266,7 +266,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
                         this
                     )
                 }
-                navigateToOrderConfirmation()
+                navigateToOrderConfirmation(paymentStatusType == PaymentStatus.PAY_IN_STORE.type)
             }
             PaymentStatus.PAYMENT_ABANDON.type -> {
                 view?.findNavController()?.navigateUp()
