@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -19,7 +18,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.ShimmerLabel
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight24dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansFamilyBoldH1
 import za.co.woolworths.financial.services.android.ui.wfs.component.TextOpenSansMediumH3
-import za.co.woolworths.financial.services.android.ui.wfs.component.rotationAnimation
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_child_column
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_child_row
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_child_row_box
@@ -27,7 +25,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.an
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_name_family_name_text
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_refresh_icon
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.welcome_section_welcome_back_text
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.conditional
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.noRippleClickable
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.schema.OnAccountItemClickListener
@@ -43,11 +40,9 @@ fun WelcomeSectionView(
     viewModel: UserAccountLandingViewModel,
     icon: Int,
     isLoadingInProgress: Boolean,
-    isRotating: Boolean,
     isRotatingState: (Boolean) -> Unit,
     onClick: (OnAccountItemClickListener) -> Unit
 ) {
-    val rotation = rotationAnimation()
     val greetings = stringResource(id = viewModel.getUsernameAndGreeting().greeting)
 
     Column(
@@ -84,8 +79,6 @@ fun WelcomeSectionView(
             NameAndRefreshButtonView(
                 viewModel,
                 isLoadingInProgress,
-                isRotating,
-                rotation,
                 isRotatingState,
                 onClick,
                 icon
@@ -102,8 +95,7 @@ fun WelcomeSectionView(
 private fun NameAndRefreshButtonView(
     viewModel: UserAccountLandingViewModel,
     isLoadingInProgress: Boolean,
-    isRotating: Boolean,
-    rotation: Float, isRotatingState: (Boolean) -> Unit,
+    isRotatingState: (Boolean) -> Unit,
     onClick: (OnAccountItemClickListener) -> Unit,
     icon: Int
 ) {
@@ -144,12 +136,16 @@ private fun NameAndRefreshButtonView(
 
         if (!isLoadingInProgress && viewModel.isC2UserOrMyProductItemExist()) {
             Box(modifier = Modifier
-                .conditional(isRotating, ifTrue = { rotate(rotation) }, ifFalse = null)
                 .noRippleClickable {
                     isRotatingState(true)
                     onClick(RefreshAccountItem)
                 }
-            ) { MyIcon(id = icon, modifier =  Modifier.testAutomationTag(welcome_section_refresh_icon)) }
+            ) {
+                MyIcon(
+                    id = icon,
+                    modifier = Modifier.testAutomationTag(welcome_section_refresh_icon)
+                )
+            }
         }
 
         if (isLoadingInProgress) {

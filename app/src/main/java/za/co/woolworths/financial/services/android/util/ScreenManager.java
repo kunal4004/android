@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
 
 /**
  * Created by eesajacobs on 2016/11/30.
@@ -168,7 +169,7 @@ public class ScreenManager {
                 }
 
                 if (!AppInstanceObject.get().isBiometricWalkthroughPresented() &&
-                        AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication() && !AuthenticateUtils.getInstance(activity).isAuthenticationEnabled()) {
+                         !AuthenticateUtils.Companion.isAuthenticationEnabled()) {
                     activity.startActivityForResult(new Intent(activity, BiometricsWalkthrough.class), BIOMETRICS_LAUNCH_VALUE);
                 }
             }

@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -17,6 +18,7 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
+@AndroidEntryPoint
 class WRewardsFragment : Fragment(R.layout.wrewards_fragment) {
 
     private var bottomNav: BottomNavigationActivity? = (activity as? BottomNavigationActivity)
@@ -97,7 +99,10 @@ class WRewardsFragment : Fragment(R.layout.wrewards_fragment) {
             }
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             //One time biometricsWalkthrough
-            ScreenManager.presentBiometricWalkthrough(activity)
+            val bottomNavigationActivity = (requireActivity() as? BottomNavigationActivity)
+            if(bottomNavigationActivity?.bottomNavigationById?.currentItem == INDEX_REWARD) {
+                ScreenManager.presentBiometricWalkthrough(activity)
+            }
         }
         init()
     }
