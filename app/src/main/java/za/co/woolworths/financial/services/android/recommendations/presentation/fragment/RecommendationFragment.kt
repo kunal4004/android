@@ -206,6 +206,22 @@ class RecommendationFragment :
         super.onDestroyView()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && recommendationViewModel.getQuickShopButtonPressed()){
+            recommendationViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (recommendationViewModel.getQuickShopButtonPressed()){
+            recommendationViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
+    }
+
     override fun openProductDetailView(productList: ProductList) {
         if(isConnectedToNetwork() == true) {
             WoolworthsApplication.getInstance().recommendationAnalytics.submitRecClicks(products = listOf(productList))

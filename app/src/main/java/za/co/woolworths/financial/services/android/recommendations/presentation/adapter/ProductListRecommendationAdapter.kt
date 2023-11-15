@@ -30,8 +30,6 @@ class ProductListRecommendationAdapter(
     private val recommendationViewModel: RecommendationViewModel,
 ) : RecyclerView.Adapter<MyRecycleViewHolder>() {
 
-    private var selectQuantityViewAdapter: SelectQuantityAdapter? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyRecycleViewHolder {
         return MyRecycleViewHolder(
             RecommendationsProductListingPageRowBinding.inflate(
@@ -40,8 +38,15 @@ class ProductListRecommendationAdapter(
         )
     }
 
+    override fun onViewAttachedToWindow(holder: MyRecycleViewHolder) {
+        if (holder is MyRecycleViewHolder) {
+            holder.setIsRecyclable(false)
+        }
+        super.onViewAttachedToWindow(holder)
+    }
+
     override fun onBindViewHolder(holder: MyRecycleViewHolder, position: Int) {
-        mProductsList.get(position)?.let { productList ->
+        mProductsList[position]?.let { productList ->
             if (holder is MyRecycleViewHolder) {
                 navigator?.let {
                     holder.setProductItem(
@@ -82,10 +87,6 @@ class ProductListRecommendationAdapter(
                                 0
                             )
                         }
-                        selectQuantityViewAdapter =
-                            SelectQuantityAdapter { selectedQuantity: Int ->
-                                quantityItemClicked(selectedQuantity, addItemToCart)
-                            }
                         navigator?.queryInventoryForStore(
                             id,
                             addItemToCart,
@@ -107,6 +108,10 @@ class ProductListRecommendationAdapter(
         recommendationViewModel.setQuickShopButtonPressed(true)
         if (addItemToCart != null) {
             val quantityInStock = addItemToCart.quantity
+            val selectQuantityViewAdapter =
+                SelectQuantityAdapter { selectedQuantity: Int ->
+                    quantityItemClicked(selectedQuantity, addItemToCart)
+                }
             if (quantityInStock > 0) {
                 // replace quickshop button image to cross button image
                 activity?.let {
@@ -128,7 +133,7 @@ class ProductListRecommendationAdapter(
                     )
                 }
                 val imageViewHeight =
-                    recyclerViewViewHolderItems.mProductListingPageRowBinding.imProductImage.height
+                    recyclerViewViewHolderItems.mProductListingPageRowBinding.imProductImage.height + recyclerViewViewHolderItems.mProductListingPageRowBinding.tvProductName.height
                 if (quantityInStock >= 5) {
                     layoutParams?.height = imageViewHeight
                 } else {
@@ -189,7 +194,7 @@ class ProductListRecommendationAdapter(
 
     private fun updateRecyclerView() {
         recommendationViewModel.setQuickShopButtonPressed(false)
-        this.notifyDataSetChanged()
+        navigator?.updateMainRecyclerView()
     }
 
     override fun getItemCount(): Int {

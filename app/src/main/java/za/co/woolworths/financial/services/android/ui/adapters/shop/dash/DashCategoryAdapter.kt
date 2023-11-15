@@ -384,7 +384,7 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
                 itemBinding.rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.let { quickShopButton ->
                     quickShopButton.setOnClickListener {
                         if (recommendationViewModel?.getQuickShopButtonPressed() == true) {
-                            updateMainRecyclerView(dashLandingNavigationListener)
+                            updateMainRecyclerView()
                             return@setOnClickListener
                         }
                         setQuickshopListener(
@@ -439,8 +439,8 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
         }
     }
 
-    private fun updateMainRecyclerView(dashLandingNavigationListener: OnDashLandingNavigationListener?) {
-        dashLandingNavigationListener?.updateMainRecyclerView()
+    private fun updateMainRecyclerView() {
+        productlistingNavigator?.updateMainRecyclerView()
     }
 
     private fun setProductName(productList: ProductList?) = itemBinding.rowLayout.apply {

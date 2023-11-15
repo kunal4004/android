@@ -448,6 +448,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     override fun onResume() {
         super.onResume()
+        if (confirmAddressViewModel.getQuickShopButtonPressed()){
+            confirmAddressViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
         FirebaseAnalyticsEventHelper.viewScreenEventForPLP(activity = activity, screenViewEventData = getScreenViewEventData())
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
@@ -1132,6 +1136,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        if (!hidden && confirmAddressViewModel.getQuickShopButtonPressed()){
+            confirmAddressViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
                 true -> lockDrawerFragment()

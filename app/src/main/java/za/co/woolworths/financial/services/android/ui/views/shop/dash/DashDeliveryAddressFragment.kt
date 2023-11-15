@@ -158,6 +158,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun onResume() {
         super.onResume()
+        if (confirmAddressViewModel.getQuickShopButtonPressed()){
+            confirmAddressViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
         val parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         if (!isVisible || parentFragment?.getCurrentFragmentIndex() != ShopFragment.SelectedTabIndex.DASH_TAB.index || !isAdded) {
             return
@@ -170,6 +174,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         super.onHiddenChanged(hidden)
         if (!hidden){
             refreshInAppNotificationToast()
+            if (confirmAddressViewModel.getQuickShopButtonPressed()){
+                confirmAddressViewModel.setQuickShopButtonPressed(false)
+                updateMainRecyclerView()
+            }
         }
     }
 
