@@ -106,6 +106,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         recyclerView?.layoutManager = gridLayout
 
         binding.backArrow.setOnClickListener(this@WriteAReviewForm)
+        binding.termsAndCondition.setOnClickListener(this@WriteAReviewForm)
         CustomRatingBar.clicked = false
         getUserNickName()
         configureDefaultUI()
@@ -456,6 +457,10 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                     ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
                 binding.noButton.background =
                     ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
+            }
+
+            R.id.terms_and_condition -> {
+                (activity as? BottomNavigationActivity)?.openWriteAReviewTnCScreenFragment("ACTION_ITEMS_TnC")
             }
 
         }

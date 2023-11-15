@@ -806,6 +806,30 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12sdp" />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/by_submitting_you_agree_to_our"
+                            android:textSize="@dimen/_11ssp"
+                            android:fontFamily="@font/opensans_regular"
+                            android:textColor="@color/color_666666"/>
+
+                        <TextView
+                            android:id="@+id/terms_and_condition"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/terms_and_Conditions_for_write_a_review"
+                            android:textSize="@dimen/_11ssp"
+                            android:fontFamily="@font/opensans_bold"
+                            android:textColor="@color/color_666666"/>
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

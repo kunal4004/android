@@ -3153,5 +3153,7 @@
     <string name="please_enter_a_review_title.">Please enter a review title.</string>
     <string name="please_enter_a_display_name.">Please enter a display name.</string>
     <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
+    <string name="by_submitting_you_agree_to_our">By submitting, you agree to our</string>
+    <string name="terms_and_Conditions_for_write_a_review">Terms and Conditions.</string>
 
 </resources>

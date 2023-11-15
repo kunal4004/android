@@ -12,6 +12,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.write_a_
 import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm.PRODUCT_ID;
 import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm.PRODUCT_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewSuccessScreenFragment.ACTION_ITEMS;
+import static za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewTnCFragment.ACTION_ITEMS_TnC;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.BRAND_NAVIGATION_DETAILS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.IS_BROWSING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
@@ -106,6 +107,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm;
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewSuccessScreenFragment;
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewTnCFragment;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -1654,6 +1656,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         writeAReviewSuccessScreenFragment.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
         pushFragmentNoAnim(writeAReviewSuccessScreenFragment);
+    }
+
+    public void openWriteAReviewTnCScreenFragment(@NotNull String actionItems) {
+        Bundle bundle = new Bundle();
+        bundle.putString(ACTION_ITEMS_TnC, actionItems);
+        WriteAReviewTnCFragment writeAReviewTnCFragment = WriteAReviewTnCFragment.Companion.newInstance();
+        writeAReviewTnCFragment.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragmentNoAnim(writeAReviewTnCFragment);
     }
 
 }
