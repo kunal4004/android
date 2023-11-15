@@ -48,26 +48,25 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
         /*
         * Implementation of room db will eliminate bundle argument requirement by fetching account data directly from db
         */
-            intent?.extras?.let { args ->
-                bpiPresenter = bpiViewModel?.overviewPresenter(args)
-                bpiOptIn = args.getBoolean(BPI_OPT_IN, false)
-                bpiProductGroupCode = args.getString(BPI_PRODUCT_GROUP_CODE)
-            }
+        intent?.extras?.let { args ->
+            bpiPresenter = bpiViewModel?.overviewPresenter(args)
+            bpiOptIn = args.getBoolean(BPI_OPT_IN, false)
+            bpiProductGroupCode = args.getString(BPI_PRODUCT_GROUP_CODE)
+        }
         if(bpiOptIn){
             bpiPresenter?.createNavigationGraph(
                 fragmentContainerView = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as? NavHostFragment,
                 navHostFragmentId = R.navigation.my_account_bpi_navhost,
                 startDestination =  R.id.BPIOptInCarouselFragment,
                 extras = bundleOf(BPI_PRODUCT_GROUP_CODE to bpiProductGroupCode))
-        }
-        else{
+        } else {
             val overviewPair = bpiPresenter?.navigateToOverviewDetail()
             val hasOnlyOneInsuranceTypeItem = overviewPair?.second ?: false
             bpiPresenter?.createNavigationGraph(
                 fragmentContainerView = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as? NavHostFragment,
                 navHostFragmentId = R.navigation.my_account_bpi_navhost,
-                startDestination =  if(hasOnlyOneInsuranceTypeItem) R.id.OverViewDetail else R.id.Overview,
-                extras =  if(hasOnlyOneInsuranceTypeItem) BPIOverviewDetailFragmentArgs.Builder(overviewPair?.first).build().toBundle() else  intent.extras)
+                startDestination =  if(hasOnlyOneInsuranceTypeItem && overviewPair?.first != null) R.id.OverViewDetail else R.id.Overview,
+                extras =  if(hasOnlyOneInsuranceTypeItem && overviewPair?.first != null) BPIOverviewDetailFragmentArgs.Builder(overviewPair?.first).build().toBundle() else  intent.extras)
         }
     }
 
