@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models
 
 import DynamicYieldConfig
+import za.co.woolworths.financial.services.android.models.dto.EnableWriteReview
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.*
