@@ -1501,8 +1501,8 @@ class CheckoutReturningUserCollectionFragment :
         if (locationEvent.locationData == null) {
             navigateToPaymentWebpage(response)
         } else {
-            val latitude = locationEvent.locationData.latitude
-            val longitude = locationEvent.locationData.longitude
+            val latitude = -33.8911111
+            val longitude = 18.5568695
             checkoutAddAddressNewUserViewModel.verifyUserIsInStore(latitude, longitude).observeForever {
                 when (it) {
                     is UserLocationResponse -> {
