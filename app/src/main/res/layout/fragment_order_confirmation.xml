@@ -71,6 +71,8 @@
                 layout="@layout/delivering_to_collection_from"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="visible"
                 android:layout_marginTop="@dimen/nineteen_dp" />
 
             <include
