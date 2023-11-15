@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditionsBinding>(
     WriteAReviewTermsAndConditionsBinding::inflate
 ) {
-
     private val writeAReviewTnCLink = AppConstant.tnc_link
 
     companion object {
@@ -41,7 +40,6 @@ class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditio
             }
         }
     }
-
 
     private inner class MyWebViewClient : WebViewClient() {
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
