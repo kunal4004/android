@@ -198,8 +198,17 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
         ordersResponse.orderSummary?.apply {
             if (!taxNoteNumbers.isNullOrEmpty())
                 dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
-            if (orderCancellable && !requestCancellation)
-                dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.CANCEL_ORDER))
+            if (orderCancellable && !requestCancellation) {
+                val orderStatus = orderStatus as? String ?: state
+                if (orderStatus?.contains(getString(R.string.processing)) == false) {
+                    dataList.add(
+                        OrderDetailsItem(
+                            null,
+                            OrderDetailsItem.ViewType.CANCEL_ORDER
+                        )
+                    )
+                }
+            }
             if (isChatEnabled)
                 dataList.add(
                     OrderDetailsItem(

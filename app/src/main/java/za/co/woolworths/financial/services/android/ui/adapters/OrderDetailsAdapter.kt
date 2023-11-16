@@ -269,7 +269,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                         }
                         when (deliveryDates.keys.size) {
                             0 -> {
-                                itemBinding.timeslotTitle?.visibility = View.GONE
+                                itemBinding.timeslot?.text = context.getString(R.string.empty)
                             }
                             1 -> {
                                 itemBinding.timeslot?.text =

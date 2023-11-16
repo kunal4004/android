@@ -2840,6 +2840,7 @@
     <string name="retry_txt">RETRY</string>
     <string name="reported">REPORTED</string>
     <string name="cancelled">Cancelled</string>
+    <string name="processing">Processing</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
 
