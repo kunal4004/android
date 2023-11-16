@@ -1423,7 +1423,7 @@ class CheckoutReturningUserCollectionFragment :
 
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse, isEndlessAisle: Boolean = false) {
         view?.findNavController()?.navigate(
-                R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutPaymentWebFragment,
+                R.id.action_checkoutReturningUserCollectionFragment_to_checkoutPaymentWebFragment,
                 bundleOf(
                         CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens,
                         CheckoutAddressManagementBaseFragment.CART_ITEM_LIST to cartItemList,
