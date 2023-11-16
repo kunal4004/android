@@ -134,6 +134,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
@@ -1387,5 +1389,15 @@ open class OneAppService(
 
     suspend fun copyItemFromList (copyItemApiRequest: CopyItemToListRequest) =
         mApiInterface.copyItemsFromList(super.getSessionToken(), super.getDeviceIdentityToken(), copyItemApiRequest)
+
+
+    suspend fun writeAReviewForm(productId: String?, prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent): retrofit2.Response<WriteAReviewFormResponse> {
+        return mApiInterface.writeAReviewForm(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            productId,
+            prepareWriteAReviewFormRequestEvent
+        )
+    }
 
 }

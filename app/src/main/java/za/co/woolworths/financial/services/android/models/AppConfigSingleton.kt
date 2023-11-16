@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models
 
 import DynamicYieldConfig
+import za.co.woolworths.financial.services.android.models.dto.EnableWriteReview
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.*
@@ -71,6 +72,7 @@ object AppConfigSingleton {
     var lowStock: ConfigLowStock? = null
     var tooltipSettings: TooltipSettings? = null
     var ratingsAndReviews: RatingsAndReviews? = null
+    var enableWriteReviews: EnableWriteReview? = null
 
     var enhanceSubstitution: EnhanceSubstitution? = null
     @JvmStatic
@@ -242,6 +244,7 @@ object AppConfigSingleton {
 
             appConfig.ratingsAndReviews?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                enableWriteReviews = this.enableWriteReview
                 ratingsAndReviews = this
             }
 

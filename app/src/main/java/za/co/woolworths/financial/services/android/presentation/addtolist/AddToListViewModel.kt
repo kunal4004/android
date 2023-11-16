@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.domain.usecase.AddToListByOrd
 import za.co.woolworths.financial.services.android.domain.usecase.AddToListUC
 import za.co.woolworths.financial.services.android.domain.usecase.CreateNewListUC
 import za.co.woolworths.financial.services.android.domain.usecase.GetMyListsUC
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody
@@ -199,12 +200,8 @@ class AddToListViewModel @Inject constructor(
                     return@launch
                 }
                 val listId = it.listId
-                val skuID: String? = null
-                val size: String? = null
                 // If giftListId is empty pass listId as giftListId
                 items.map { item -> if(item.giftListId.isNullOrEmpty()) { item.giftListId = listId } }
-//                items.map {item -> if (item.skuID?.isNotEmpty() == true) {item.skuID = skuID} }
-//                items.map {item -> if (item.size?.isNotEmpty() == true) {item.size = size} }
 
                 async {
                     addProductsToList(listId, items.toList()).collect {
@@ -227,7 +224,16 @@ class AddToListViewModel @Inject constructor(
                                         isAddToListInProgress = false,
                                         isAddToListSuccess = isSuccess
                                     )
-                                    prepareDyAddToWishListRequestEvent(skuID, size)
+                                    AppConfigSingleton.dynamicYieldConfig?.apply {
+                                        if (isDynamicYieldEnabled == true) {
+                                            items.forEach { item ->
+                                                prepareDyAddToWishListRequestEvent(
+                                                    item.skuID,
+                                                    item.size
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
 
                                 Status.ERROR -> {
@@ -281,7 +287,7 @@ class AddToListViewModel @Inject constructor(
         }
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(Utils.IPAddress,config?.getDeviceModel())
+        val device = Device(Utils.IPAddress,config.getDeviceModel())
         val context = Context(device,null, Utils.DY_CHANNEL)
         val properties = Properties(null,null,
             Utils.ADD_TO_WISH_LIST_DY_TYPE,null,null,null,null,skuID,null,null,null,size,null,null,null,null,null,null)
@@ -330,7 +336,13 @@ class AddToListViewModel @Inject constructor(
                                 isAddToListInProgress = false,
                                 isAddToListSuccess = isSuccess
                             )
-                            prepareDyAddToWishListRequestEvent(orderId, "")
+                            AppConfigSingleton.dynamicYieldConfig?.apply {
+                                if (isDynamicYieldEnabled == true) {
+                                    items.forEach { item ->
+                                        prepareDyAddToWishListRequestEvent(item.skuID, item.size)
+                                    }
+                                }
+                            }
                         }
 
                         Status.ERROR -> {
