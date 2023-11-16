@@ -4,10 +4,14 @@ import android.location.Location
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 
 interface IProductListing {
     fun openProductDetailView(productList: ProductList)
     fun queryInventoryForStore(fulfilmentTypeId: String, addItemToCart: AddItemToCart?, productList: ProductList)
+    fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems)
+
+    fun updateMainRecyclerView()
     fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?)
     fun queryStoreFinderProductByFusedLocation(location: Location?)
     fun openChangeFulfillmentScreen()
