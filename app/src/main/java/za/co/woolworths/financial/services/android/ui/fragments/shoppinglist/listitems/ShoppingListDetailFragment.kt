@@ -1331,13 +1331,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
         if (isSingleItemSelected) {
             singleShoppingListItem?.let {
-                selectedItems.add(CopyItemDetail(skuID = it.catalogRefId, catalogRefId = it.catalogRefId, quantity = it.quantityInStock.toString()))
+                selectedItems.add(CopyItemDetail(skuID = it.catalogRefId, catalogRefId = it.catalogRefId, quantity = "1"))
             }
             selectedItemCount = 1
         } else {
             for (item in viewModel.mShoppingListItems) {
                 if (item.isSelected == true) {
-                    selectedItems.add(CopyItemDetail(skuID = item.catalogRefId, catalogRefId = item.catalogRefId, quantity = item.quantityInStock.toString()))
+                    selectedItems.add(CopyItemDetail(skuID = item.catalogRefId, catalogRefId = item.catalogRefId, quantity = "1"))
                 }
             }
             selectedItemCount = selectedItems.size

@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.shoppinglist.viewmodel
 
-import android.util.DisplayMetrics
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -358,10 +357,8 @@ class MyListViewModel @Inject constructor(
     }
 
     private fun getUpdatedList(list: List<ShoppingList>): List<ShoppingList> {
-        val imageCountInRow = getProductCount()
         list.mapIndexed { index, shoppingList ->
             shoppingList.modifiedListCount = "(" + shoppingList.listCount + ")"
-            shoppingList.noOfProductInRow = imageCountInRow
             shoppingList.productImageList = getImageListData(index, shoppingList)
         }
         return list
@@ -395,21 +392,6 @@ class MyListViewModel @Inject constructor(
             }
         }
         return mockListDetails
-    }
-
-    private fun getProductCount(): Int {
-        val displayMetrics: DisplayMetrics? =
-            WoolworthsApplication.getAppContext()?.resources?.displayMetrics
-        var productsCountInRow = 3 // minimum items in a row
-        if (displayMetrics != null) {
-            val screenWidthDp = displayMetrics?.widthPixels?.div(displayMetrics?.density!!)
-            val usableDeviceWidth = (screenWidthDp?.minus(50)) // 50 is the left and right margin
-            if (usableDeviceWidth != null) {
-                productsCountInRow =
-                    ((usableDeviceWidth / 54).roundToInt()) // 54 is the width of productImage
-            }
-        }
-        return productsCountInRow
     }
 
     fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {

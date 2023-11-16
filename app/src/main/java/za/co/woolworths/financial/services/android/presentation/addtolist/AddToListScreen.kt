@@ -207,9 +207,9 @@ fun SingleLabelCheckBox(
             modifier = Modifier.padding(24.dp),
             painter = painterResource(
                 id = if (selectedListItems.contains(item))
-                    R.drawable.check_mark_icon
+                    R.drawable.filled_checkbox
                 else
-                    R.drawable.uncheck_item
+                    R.drawable.empty_checkbox
             ),
             contentDescription = null
         )
