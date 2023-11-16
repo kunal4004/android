@@ -848,7 +848,7 @@ class OrderConfirmationFragment :
                 try {
                     barcodeImage.setImageBitmap(Utils.encodeAsBitmap(
                         response?.orderSummary?.endlessAisleBarcode,
-                        BarcodeFormat.CODE_128, barcodeImage.width, 60));
+                        BarcodeFormat.CODE_128, binding.root.width, 60));
                 } catch (e: WriterException) {
                     FirebaseManager.Companion.logException(e);
                 }
