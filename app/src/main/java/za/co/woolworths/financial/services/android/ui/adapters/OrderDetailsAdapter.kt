@@ -239,7 +239,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                 ErrorLabel
                             }
                             state.contains(context.getString(R.string.cancelled)) -> ColorF3662D
-                            it.endlessAisleOrder -> ColorD85C11
+                            it.endlessAisleOrder && !state.contains(context.getString(R.string.processing)) -> ColorD85C11
                             else -> Color4ABB77
                         }
 

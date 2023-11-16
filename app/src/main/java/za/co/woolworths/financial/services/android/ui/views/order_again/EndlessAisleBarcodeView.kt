@@ -19,14 +19,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight12dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight16dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight8dp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color444444
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.HeaderGrey
-import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
@@ -44,7 +42,7 @@ fun EndlessAisleBarcodeView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Scan your barcode at the till point",
+            text = "Scan Your Barcode At The Till Point",
             style = TextStyle(
                 fontFamily = FuturaFontFamily,
                 fontWeight = FontWeight.W600,
@@ -84,7 +82,7 @@ fun EndlessAisleBarcodeView(
                     "when the store closes.",
             style = TextStyle(
                 fontFamily = OpenSansFontFamily,
-                fontWeight = FontWeight.W300,
+                fontWeight = FontWeight.W400,
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center,
                 color = Color444444

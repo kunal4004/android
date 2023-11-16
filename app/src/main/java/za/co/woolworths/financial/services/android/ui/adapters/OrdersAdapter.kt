@@ -67,7 +67,7 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
                             when {
                                 (item.state?.contains(context.getString(R.string.cancelled)) == true) && item.endlessAisleOrder -> ErrorLabel
                                 item.state?.contains(context.getString(R.string.cancelled)) == true -> ColorF3662D
-                                item.endlessAisleOrder -> ColorD85C11
+                                item.endlessAisleOrder && !item.state.contains(context.getString(R.string.processing)) -> ColorD85C11
                                 else -> Color4ABB77
                             }
 
