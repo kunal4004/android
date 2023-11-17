@@ -13,10 +13,10 @@ apply plugin: 'kotlin-parcelize'
 android {
 
     def major = "9"
-    def minor = "12"
-    def fix = "0"
-    def jobNumberProduction = 226
-    def jobNumberQa = 734
+    def minor = "13"
+    def fix = "1"
+    def jobNumberProduction = 231
+    def jobNumberQa = 740
 
     buildFeatures {
         dataBinding true
@@ -318,6 +318,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation "androidx.biometric:biometric:1.2.0-alpha05"
 
     implementation 'com.android.volley:volley:1.2.0'
     implementation "com.google.android.gms:play-services-auth-api-phone:17.5.0"

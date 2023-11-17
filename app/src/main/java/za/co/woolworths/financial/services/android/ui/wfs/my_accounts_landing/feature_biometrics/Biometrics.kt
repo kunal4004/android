@@ -10,17 +10,12 @@ import javax.inject.Inject
 
 interface Biometrics {
     fun appInstanceObject(): AppInstanceObject?
-    fun isBiometricScreenNeeded() : Boolean
 }
 
 class BiometricImpl @Inject constructor()  : Biometrics {
 
     override fun appInstanceObject(): AppInstanceObject? {
         return AppInstanceObject.get()
-    }
-
-    override fun isBiometricScreenNeeded(): Boolean {
-        return appInstanceObject()?.isBiometricWalkthroughPresented == false
     }
 }
 
