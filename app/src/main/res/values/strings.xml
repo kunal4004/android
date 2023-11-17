@@ -2538,6 +2538,7 @@
     <string name="dash_title_text_2">Limited shop of %1$s Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
+    <string name="dash_product_search">Search name, product code or brand</string>
     <string name="shop_landing_fulfilment_title_cnc_and_standard">Food, Fashion, Beauty and Home</string>
     <string name="shop_landing_fulfilment_title_dash">Food Only</string>
     <string name="shop_landing_product_all_search">Search Food, Fashion, Beauty and Home</string>

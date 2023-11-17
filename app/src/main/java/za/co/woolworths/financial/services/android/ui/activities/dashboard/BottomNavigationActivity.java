@@ -602,6 +602,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Utils.updateStatusBarBackground(this);
         pushFragmentNoAnim(writeAReviewForm);
     }
+
     @Override
     public void scrollableViewHelper(NestedScrollView nsv) {
         getSlidingLayout().setScrollableViewHelper(new NestedScrollableViewHelper(nsv));
