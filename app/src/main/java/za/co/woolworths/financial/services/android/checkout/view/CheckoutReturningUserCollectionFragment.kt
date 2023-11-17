@@ -115,7 +115,6 @@ class CheckoutReturningUserCollectionFragment :
     private var liquorOrder: Boolean? = false
     private var cartItemList: ArrayList<CommerceItem>? = null
     private var orderTotalValue: Double = -1.0
-    private var isMixedBasket: Boolean? = false
     private lateinit var locator: Locator
 
     @Inject
@@ -164,7 +163,6 @@ class CheckoutReturningUserCollectionFragment :
 
         cartItemList =
             arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
-        isMixedBasket = arguments?.getBoolean(Constant.IS_MIXED_BASKET, false)
 
         initializeCollectingFromView()
         initializeCollectingDetailsView()
@@ -1266,7 +1264,7 @@ class CheckoutReturningUserCollectionFragment :
                             return@observe
                         }
 
-                        if(isEndlessAisleAvailable() && isMixedBasket == false) {
+                        if(isEndlessAisleAvailable() && isFBHOnly()) {
                             locator.getCurrentLocationSilently { event ->
                                 when (event) {
                                     is Event.Location -> {

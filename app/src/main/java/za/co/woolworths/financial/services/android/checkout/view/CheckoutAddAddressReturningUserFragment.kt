@@ -166,7 +166,6 @@ class CheckoutAddAddressReturningUserFragment :
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
-    private var isMixedBasket: Boolean? = false
     private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     enum class FoodSubstitution(val rgb: String) {
@@ -208,7 +207,6 @@ class CheckoutAddAddressReturningUserFragment :
         }
 
         cartItemList = arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
-        isMixedBasket = arguments?.getBoolean(Constant.IS_MIXED_BASKET, false)
 
         initViews()
     }
@@ -1159,7 +1157,7 @@ class CheckoutAddAddressReturningUserFragment :
                             return@observe
                         }
 
-                        if(isEndlessAisleAvailable() && isMixedBasket == false) {
+                        if(isEndlessAisleAvailable() && otherType == ONLY_OTHER) {
                             locator.getCurrentLocationSilently { event ->
                                 when (event) {
                                     is Event.Location -> {
