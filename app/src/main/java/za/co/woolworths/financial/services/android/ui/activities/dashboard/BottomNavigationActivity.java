@@ -129,11 +129,12 @@ import za.co.woolworths.financial.services.android.ui.views.NestedScrollableView
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
-import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricCallback;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManager;
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog;
+import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel;
 import za.co.woolworths.financial.services.android.util.AppConstant;
@@ -187,7 +188,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private ToastUtils mToastUtils;
     public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
     private QueryBadgeCounter mQueryBadgeCounter;
-    public WMaterialShowcaseView walkThroughPromtView = null;
+    public TooltipDialog walkThroughPromtView = null;
     public RefinementDrawerFragment drawerFragment;
     public JsonObject appLinkData;
     private BottomNavigationItemView accountNavigationView;
@@ -803,15 +804,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         switchTab(INDEX_PRODUCT);
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
 
-        Fragment fragment = mNavController.getCurrentFrag();
-        if (isNewSession && fragment instanceof ShopFragment) {
-            isNewSession = false;
-            ((ShopFragment) fragment).setShopDefaultTab();
-        }
-
        if(getCurrentFragment() instanceof ShopFragment) {
             ShopFragment fragment1 = (ShopFragment) getCurrentFragment();
-            fragment1.showShopFeatureWalkThrough();
+           fragment1.showFulfilmentTooltip();
            // Check for location permission. if permission is rejected then never ask again.
            if(Utils.isLocationEnabled(this)) {
                fragment1.checkRunTimePermissionForLocation();
@@ -901,6 +896,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         if (walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
             walkThroughPromtView.hide();
+            final Fragment currentFragment = getCurrentFragment();
+            if(walkThroughPromtView.getFeature() == TooltipDialog.Feature.SHOP_FULFILMENT && currentFragment instanceof ShopFragment && currentFragment.isVisible()){
+                ((ShopFragment)currentFragment).showFulfilmentTooltip(); // This is to display the location tooltip
+            }
             return;
         }
 

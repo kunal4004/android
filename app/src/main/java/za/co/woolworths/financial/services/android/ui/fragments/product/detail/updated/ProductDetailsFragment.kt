@@ -701,7 +701,7 @@ class ProductDetailsFragment :
             ScreenManager.presentSSOSigninActivity(activity,
                 SSO_REQUEST_WRITE_A_REVIEW,
                 isUserBrowsing)
-            return
+
         } else {
             (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productName, imagePath, productId)
         }
@@ -1802,7 +1802,9 @@ class ProductDetailsFragment :
         isInventoryCalled: Boolean,
         substitutionProductItem: ProductList? = null
     ) {
-        if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false) {
+        if ((KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false)
+            || (productDetails?.fulfillmentType != getString(R.string.fullfilment_type_01) && productDetails?.productType !=getString(R.string.food_product_type))
+        ) {
             binding.productDetailOptionsAndInformation.substitutionLayout.root?.visibility = View.GONE
             return
         }
@@ -2868,6 +2870,9 @@ class ProductDetailsFragment :
                     }
                     SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION -> {
                         updateStockAvailability(true)
+                    }
+                    SSO_REQUEST_WRITE_A_REVIEW -> {
+                        (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productDetails?.productName,productDetails?.externalImageRefV2, productDetails?.productId)
                     }
                 }
             }
