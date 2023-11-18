@@ -104,7 +104,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showGeneralInfoDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.updateCheckOutLink
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
@@ -125,6 +124,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAndLocation
 import za.co.woolworths.financial.services.android.util.Utils.*
 
 @AndroidEntryPoint
@@ -1864,12 +1864,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         binding.fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = GONE
         shoppingDeliveryLocation?.let {
             requireActivity().apply {
-                setDeliveryAddressView(
+                setDeliveryAndLocation(
                     this,
                     shoppingDeliveryLocation.fulfillmentDetails,
                     binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle,
                     binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle,
-                    null
                 )
             }
         }

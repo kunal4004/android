@@ -600,6 +600,62 @@ class KotlinUtils {
             }
         }
 
+        fun setDeliveryAndLocation(
+            context: Activity?,
+            fulfillmentDetails: FulfillmentDetails,
+            tvDeliveringTo: TextView,
+            tvDeliveryLocation: TextView,
+        ) {
+            with(fulfillmentDetails) {
+                when (Delivery?.getType(deliveryType)) {
+                    Delivery.CNC -> {
+                        tvDeliveringTo?.text =
+                            context?.resources?.getString(R.string.click_and_collect)
+                        tvDeliveryLocation?.text =
+                            capitaliseFirstLetter(storeName)
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                    }
+
+                    Delivery.STANDARD -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        val fullAddress = capitaliseFirstLetter(address?.address1 ?: "")
+                        val formmmatedNickName = getFormattedNickName(
+                                address?.nickname,
+                                fullAddress, context
+                            )
+                        formmmatedNickName.append(fullAddress)
+                        tvDeliveryLocation?.text = formmmatedNickName
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                    }
+
+                    Delivery.DASH -> {
+                        tvDeliveringTo.text = context?.resources?.getString(R.string.dash_delivery)
+                        val fullAddress = capitaliseFirstLetter(
+                            WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                ?: address?.address1 ?: ""
+                        )
+                        val formmmatedNickName = getFormattedNickName(
+                            address?.nickname,
+                            fullAddress, context
+                        )
+                        formmmatedNickName.append(fullAddress)
+                        tvDeliveryLocation?.text = formmmatedNickName
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                    }
+
+                    else -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation?.text =
+                            context?.resources?.getString(R.string.default_location)
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+
         fun setDeliveryAddressViewFoShop(
             context: Activity?,
             fulfillmentDetails: FulfillmentDetails,
