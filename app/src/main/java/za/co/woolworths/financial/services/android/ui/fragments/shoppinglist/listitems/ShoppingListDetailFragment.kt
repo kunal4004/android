@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Spannable
@@ -56,6 +57,7 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoader
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -87,9 +89,10 @@ import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.EmptyCartView
 import za.co.woolworths.financial.services.android.util.EmptyCartView.EmptyCartInterface
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAndLocation
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showQuantityLimitErrror
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -268,9 +271,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         setUpAddToCartButton()
         with(bindingListDetails) {
             initList(rcvShoppingListItems)
-
+            fulfilmentAndLocationLayout.root.setBackgroundColor(Color.WHITE)
+            fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.visibility = GONE
+            fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = GONE
             selectDeselectAllTextView.setOnClickListener(this@ShoppingListDetailFragment)
-            deliveryLocationConstLayout.setOnClickListener(this@ShoppingListDetailFragment)
+            fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener(this@ShoppingListDetailFragment)
+            fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener(this@ShoppingListDetailFragment)
             textProductSearch.setOnClickListener(this@ShoppingListDetailFragment)
             blackToolTipLayout.closeWhiteBtn.setOnClickListener(this@ShoppingListDetailFragment)
             blackToolTipLayout.changeLocationButton.setOnClickListener(this@ShoppingListDetailFragment)
@@ -352,7 +358,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.deliveryLocationConstLayout -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
+            bindingListDetails.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
+            bindingListDetails.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
             R.id.selectDeselectAllTextView -> onOptionsItemSelected()
             R.id.textProductSearch -> openProductSearchActivity()
             R.id.btnRetry -> if (NetworkManager.getInstance().isConnectedToNetwork(
@@ -363,10 +370,47 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 viewModel.getShoppingListDetails()
             }
             R.id.btnCheckOut -> addItemsToCart()
-            R.id.changeLocationButton -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
+            R.id.changeLocationButton -> launchShopToggleScreen()
             R.id.closeWhiteBtn -> hideBlackToolTip()
             else -> {}
         }
+    }
+
+    private fun launchShopToggleScreen() {
+        Intent(requireActivity(), ShopToggleActivity::class.java).apply {
+            startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
+        }
+    }
+    private fun launchStoreOrLocationSelection() {
+        val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+        if (delivery == Delivery.CNC) {
+            launchStoreSelection()
+        } else {
+            launchGeoLocationFlow()
+        }
+    }
+    private fun launchStoreSelection() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            BundleKeysConstants.UPDATE_STORE_REQUEST,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.CNC,
+            needStoreSelection = true,
+        )
+    }
+
+    private fun launchGeoLocationFlow() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            BundleKeysConstants.UPDATE_LOCATION_REQUEST,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isLocationUpdateRequest = true,
+            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType
+        )
     }
 
     private fun openProductSearchActivity() {
@@ -954,6 +998,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     viewModel.getShoppingListDetails()
                 }
             }
+            ShopToggleActivity.REQUEST_DELIVERY_TYPE, BundleKeysConstants.UPDATE_LOCATION_REQUEST, BundleKeysConstants.UPDATE_STORE_REQUEST ->{
+                if (resultCode == RESULT_OK) {
+                    setDeliveryLocation()
+                    if (viewModel.isShoppingListContainsUnavailableItems())
+                        showBlackToolTip()
+                    else
+                        hideBlackToolTip()
+                    viewModel.getShoppingListDetails()
+                }
+            }
         }
     }
 
@@ -961,12 +1015,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         val shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation()
         if (shoppingDeliveryLocation?.fulfillmentDetails == null || !isAdded || !isVisible) return
         view?.apply {
-            setDeliveryAddressView(
+            setDeliveryAndLocation(
                 activity,
                 shoppingDeliveryLocation.fulfillmentDetails,
-                bindingListDetails.tvDeliveryTitle,
-                bindingListDetails.tvDeliverySubtitle,
-                bindingListDetails.imgDelivery
+                bindingListDetails.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle,
+                bindingListDetails.fulfilmentAndLocationLayout.layoutLocation.tvTitle,
             )
         }
     }
