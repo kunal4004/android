@@ -1914,7 +1914,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature) {
-        if (feature == TooltipDialog.Feature.DELIVERY_LOCATION) onClick((binding.fulfilmentAndLocationLayout.layoutLocation.root)!!)
+        if (feature == TooltipDialog.Feature.DELIVERY_LOCATION) {
+            CartUtils.onLocationSelectionClicked(
+                requireActivity(),
+                liquorCompliance
+            )
+        }
     }
 
     override fun onPromptDismiss(feature: TooltipDialog.Feature) {
