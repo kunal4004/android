@@ -8,17 +8,19 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.awfs.coordination.databinding.WriteAReviewTermsAndConditionsBinding
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.EnableWriteReview
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditionsBinding>(
     WriteAReviewTermsAndConditionsBinding::inflate
 ) {
-    private val writeAReviewTnCLink = AppConstant.tnc_link
+    private val writeAReviewTnCLink = AppConfigSingleton.enableWriteReviews?.tncLink
 
     companion object {
         fun newInstance() = WriteAReviewTnCFragment()
-        const val ACTION_ITEMS_TnC = "ACTION_ITEMS_TnC"
+        const val ACTION_ITEMS_TnC = AppConstant.actionItemTnC
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,7 +38,9 @@ class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditio
                 cacheMode = WebSettings.LOAD_NO_CACHE
                 webViewClient = MyWebViewClient()
                 binding.writeAReviewProgressbar.visibility = View.VISIBLE
-                loadUrl(writeAReviewTnCLink)
+                if (writeAReviewTnCLink != null) {
+                    loadUrl(writeAReviewTnCLink)
+                }
             }
         }
     }
@@ -47,7 +51,9 @@ class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditio
         }
 
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            view?.loadUrl(writeAReviewTnCLink)
+            if (writeAReviewTnCLink != null) {
+                view?.loadUrl(writeAReviewTnCLink)
+            }
             return true
         }
 

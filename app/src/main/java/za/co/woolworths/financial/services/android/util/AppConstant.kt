@@ -147,8 +147,7 @@ class AppConstant {
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
         const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
 
-        //TnC link of Write A Review
-        const val tnc_link = "https://www-win-qa.woolworths.co.za/corporate/cmp212633"
+        const val actionItemTnC = "ACTION_ITEMS_TnC"
     }
 
     class Keys {
