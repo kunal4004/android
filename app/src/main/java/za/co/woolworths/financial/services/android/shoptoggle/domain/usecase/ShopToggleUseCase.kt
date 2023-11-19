@@ -101,7 +101,7 @@ class ShopToggleUseCase @Inject constructor(
         }
         val foodQuantity = onDemand?.quantityLimit?.foodMaximumQuantity
         val deliveryPrice = onDemand?.firstAvailableFoodDeliveryCost
-        dashModel.deliveryCost = "R $deliveryPrice"
+        dashModel.deliveryCost = "R $deliveryPrice.00"
         dashModel.foodQuantity = foodQuantity ?: 0
         //Prepare CNC Data
         val cncModel = getCncData()
@@ -155,7 +155,7 @@ class ShopToggleUseCase @Inject constructor(
         val dashModel = getDashData()
         dashModel.dataFailure = true
         val foodQuantity = 30
-        dashModel.deliveryCost = "R 35"
+        dashModel.deliveryCost = "R 35.00"
         dashModel.foodQuantity = foodQuantity
         ///////////////CNC///////////////////////
         val cncModel = getCncData()

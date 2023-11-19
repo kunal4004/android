@@ -95,7 +95,7 @@ fun ExpandedData(
 
                         )
                 ) {
-                    append(stringResource(R.string.learn_more))
+                    append(stringResource(R.string.fulfillment_learn_more))
                 }
             },
             fontFamily = OpenSansFontFamily,

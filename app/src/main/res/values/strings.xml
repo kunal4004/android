@@ -3118,7 +3118,7 @@
     <string name="collect_fashion_food">Collect FASHION, BEAUTY, HOME AND food</string>
     <string name="set_to_click_and_collect">SET TO CLICK &amp; COLLECT</string>
     <string name="back_arrow"> Back Arrow</string>
-    <string name="what_would_you_like_to_shop">What would you like to shop?</string>
+    <string name="what_would_you_like_to_shop">What Would You Like To Shop?</string>
     <string name="you_can_choose_option">You can choose between our 3 delivery options here:</string>
     <string name="down_arrow">Down Arrow</string>
     <string name="learn_more_description">Between R0 - R80* delivery fee, or free for Fashion, Beauty and Home orders over R475. Free delivery for Woolies Black Card holders.\n<i>*This depends on your location / products.</i></string>
@@ -3139,6 +3139,7 @@
     <string name="limited_food_item_msg">*Limited shop of %1$s food items</string>
     <string name="cnc_delivery_slots_not_available">Unfortunately, we can\'t load your collection timeslots right now.</string>
     <string name="dash_delivery_slots_not_available">Unfortunately, we can\'t load your delivery timeslots right now.</string>
+    <string name="fulfillment_learn_more">Learn more</string>
 
 
     <string name="something_went_wrong">Something went wrong</string>
