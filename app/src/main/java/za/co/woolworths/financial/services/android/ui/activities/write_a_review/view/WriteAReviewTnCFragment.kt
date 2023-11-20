@@ -15,7 +15,6 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditionsBinding>(
     WriteAReviewTermsAndConditionsBinding::inflate
 ) {
-    private val writeAReviewTnCLink = AppConfigSingleton.enableWriteReviews?.tncLink
 
     companion object {
         fun newInstance() = WriteAReviewTnCFragment()
