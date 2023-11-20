@@ -3153,4 +3153,6 @@
     <string name="please_enter_a_display_name.">Please enter a display name.</string>
     <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
 
+    <string name="order_again_title">Reorder your favourite foods now.</string>
+    <string name="sign_in_to_order_again">sign in to order again</string>
 </resources>
