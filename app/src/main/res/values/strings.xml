@@ -3115,7 +3115,6 @@
     <string name="digital_product_type">digitalProducts</string>
     <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
 
-    <string name="order_with_hash">Order #</string>
     <!--  Write a Review Details -->
     <string name="write_a_review">Write a Review</string>
     <string name="leave_us_a_review">Leave us a review</string>
@@ -3156,6 +3155,7 @@
     <string name="please_enter_a_review_title.">Please enter a review title.</string>
     <string name="please_enter_a_display_name.">Please enter a display name.</string>
     <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
+    <string name="barcode_generated">Barcode Generated</string>
     <string name="endless_aisle_order_error_label">Unfortunately, your online order has been cancelled because your barcode has expired.</string>
     <string name="endless_aisle_barcode_title">Scan Your Barcode At The Till Point</string>
     <string name="endless_aisle_barcode_desc">Scan your barcode at the till point for in store payments. Barcode expires when the store closes.</string>

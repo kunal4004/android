@@ -8,6 +8,7 @@ import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductRequest
@@ -2347,5 +2348,15 @@ interface ApiInterface {
         @Query("productId") productId: String?,
         @Body prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent
     ) : retrofit2.Response<WriteAReviewFormResponse>
+
+    @GET("wfs/app/v4/user/locations/payinstore")
+    fun verifyUserIsInStore(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double
+    ): Call<UserLocationResponse>
 
 }

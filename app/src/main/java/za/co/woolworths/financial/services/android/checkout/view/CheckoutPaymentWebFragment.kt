@@ -66,6 +66,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     }
 
     enum class PaymentStatus(val type: String) {
+        PAY_IN_STORE("payinstore"),
         PAYMENT_SUCCESS("success"),
         PAYMENT_ABANDON("abandon"),
         PAYMENT_UNAUTHENTICATED("unauthenticated"),
@@ -105,11 +106,13 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             CookieManager.getInstance().flush()
 
             CookieManager.getInstance().acceptCookie()
-            var paymentUrl = if(isEndlessAisleJourney == false)
-                    AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
-                else
-                    AppConfigSingleton.nativeCheckout?.checkoutPaymentURL   //TODO replace following commented line one API done
-                    //AppConfigSingleton.nativeCheckout?.checkoutPaymentUrlPayInStore
+
+            var paymentUrl = when(isEndlessAisleJourney) {
+                true -> AppConfigSingleton.nativeCheckout?.checkoutPaymentUrlPayInStore
+                false -> AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+                else -> AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+            }
+
             val webTokens =
                 arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
             val cookie = "TOKEN=${webTokens?.jsessionId};AUTHENTICATION=${webTokens?.auth};"
@@ -142,12 +145,15 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         }
     }
 
-    private fun navigateToOrderConfirmation() {
+    private fun navigateToOrderConfirmation(isEndlessAisle: Boolean) {
         binding.paymentSuccessConfirmationLayout?.root?.visibility = View.VISIBLE
+        if (isEndlessAisle) {
+            binding.paymentSuccessConfirmationLayout.txtOrderPaymentConfirmed.text = getString(R.string.barcode_generated)
+        }
         Handler(Looper.getMainLooper()).postDelayed({
             binding.paymentSuccessConfirmationLayout?.root?.visibility = View.GONE
             val bundle = Bundle()
-            bundle.putBoolean(IS_ENDLESS_AISLE_JOURNEY, isEndlessAisleJourney == true)
+            bundle.putBoolean(IS_ENDLESS_AISLE_JOURNEY, isEndlessAisle)
             view?.let {
                 GeoUtils.navigateSafe(it, R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment, bundle)
             }
@@ -190,7 +196,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         }
 
         when (paymentStatusType) {
-            PaymentStatus.PAYMENT_SUCCESS.type -> {
+            PaymentStatus.PAYMENT_SUCCESS.type, PaymentStatus.PAY_IN_STORE.type -> {
                 val eventParams = Bundle()
                 eventParams.apply {
 
@@ -260,7 +266,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
                         this
                     )
                 }
-                navigateToOrderConfirmation()
+                navigateToOrderConfirmation(paymentStatusType == PaymentStatus.PAY_IN_STORE.type)
             }
             PaymentStatus.PAYMENT_ABANDON.type -> {
                 view?.findNavController()?.navigateUp()
