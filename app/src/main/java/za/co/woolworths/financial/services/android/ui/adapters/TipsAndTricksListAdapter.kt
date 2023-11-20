@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
 import android.content.res.TypedArray
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
