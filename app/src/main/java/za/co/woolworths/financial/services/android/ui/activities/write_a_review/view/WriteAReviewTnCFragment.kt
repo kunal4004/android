@@ -9,7 +9,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.awfs.coordination.databinding.WriteAReviewTermsAndConditionsBinding
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditionsBinding>(
@@ -18,7 +17,6 @@ class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditio
 
     companion object {
         fun newInstance() = WriteAReviewTnCFragment()
-        const val ACTION_ITEMS_TnC = AppConstant.actionItemTnC
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
