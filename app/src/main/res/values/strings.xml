@@ -3087,6 +3087,7 @@
 
 
 
+    <string name="fullfilment_type_01">"01"</string>
     <string name="substitute_default">Let My Shopper Choose For Me</string>
     <string name="search_alternative_product">Search for an alternative product</string>
     <string name="choose_substitute">Choose My Own Substitute</string>
