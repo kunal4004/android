@@ -45,7 +45,6 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
     private var productId: String? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
     private val writeAReviewFormViewModel: WriteAReviewFormViewModel by viewModels()
-    private val actionItemTnC = AppConstant.actionItemTnC
 
 
     private val boxes: List<TextView> by lazy {
@@ -461,7 +460,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
             }
 
             R.id.terms_and_condition -> {
-                (activity as? BottomNavigationActivity)?.openWriteAReviewTnCScreenFragment(actionItemTnC)
+                (activity as? BottomNavigationActivity)?.openWriteAReviewTnCScreenFragment(AppConstant.actionItemTnC)
             }
 
         }

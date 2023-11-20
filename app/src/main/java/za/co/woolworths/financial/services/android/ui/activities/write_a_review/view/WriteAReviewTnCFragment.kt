@@ -37,8 +37,8 @@ class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditio
                 cacheMode = WebSettings.LOAD_NO_CACHE
                 webViewClient = MyWebViewClient()
                 binding.writeAReviewProgressbar.visibility = View.VISIBLE
-                if (writeAReviewTnCLink != null) {
-                    loadUrl(writeAReviewTnCLink)
+                if (AppConfigSingleton.enableWriteReviews?.tncLink != null) {
+                    loadUrl(AppConfigSingleton.enableWriteReviews?.tncLink.toString())
                 }
             }
         }
@@ -50,8 +50,8 @@ class WriteAReviewTnCFragment : BaseFragmentBinding<WriteAReviewTermsAndConditio
         }
 
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            if (writeAReviewTnCLink != null) {
-                view?.loadUrl(writeAReviewTnCLink)
+            if (AppConfigSingleton.enableWriteReviews?.tncLink != null) {
+                view?.loadUrl(AppConfigSingleton.enableWriteReviews?.tncLink.toString())
             }
             return true
         }
