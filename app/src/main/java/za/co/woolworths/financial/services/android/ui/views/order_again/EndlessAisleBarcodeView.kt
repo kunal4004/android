@@ -13,12 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight16dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight8dp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
@@ -42,7 +44,7 @@ fun EndlessAisleBarcodeView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Scan Your Barcode At The Till Point",
+            text = stringResource(R.string.endless_aisle_barcode_title),
             style = TextStyle(
                 fontFamily = FuturaFontFamily,
                 fontWeight = FontWeight.W600,
@@ -78,8 +80,7 @@ fun EndlessAisleBarcodeView(
         SpacerHeight16dp()
 
         Text(
-            text = "Scan your barcode at the till point for in store payments. Barcode expires " +
-                    "when the store closes.",
+            text = stringResource(R.string.endless_aisle_barcode_desc),
             style = TextStyle(
                 fontFamily = OpenSansFontFamily,
                 fontWeight = FontWeight.W400,

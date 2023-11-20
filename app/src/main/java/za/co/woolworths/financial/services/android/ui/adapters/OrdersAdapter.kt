@@ -85,7 +85,7 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.total)
             itemBinding.root.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
 
-            if (!item.deliveryDates?.isJsonNull!!) {
+            if (item.deliveryDates?.isJsonNull != true) {
                 val deliveryDates: HashMap<String, String> = hashMapOf()
                 deliveryDates.clear()
                 itemBinding.deliveryDateContainer.removeAllViews()
