@@ -191,7 +191,7 @@ interface ApiInterface {
         "Content-Type: application/json",
         "Accept: application/json",
         "Media-Type: application/json",
-//        "cacheTime:3600", // TODO add this back when testing is complete
+        "cacheTime:3600",
     )
     @GET("wfs/app/v4/mobileconfigs")
     suspend fun getConfig(
