@@ -6,6 +6,8 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.StoreCardUpshellMessageFragmentBinding
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
@@ -31,6 +33,7 @@ class StoreCardFreezeCardUpshellMessage : Fragment(R.layout.store_card_upshell_m
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeFrageLifeCycle()
         val binding = StoreCardUpshellMessageFragmentBinding.bind(view)
         val card =
             arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsTemporaryFreeze
@@ -59,5 +62,15 @@ class StoreCardFreezeCardUpshellMessage : Fragment(R.layout.store_card_upshell_m
             }
         }
     }
+    private fun observeFrageLifeCycle(){
+        lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                viewModel.isStoreCardUpShellFragmentVisible = true
+            }
 
+            override fun onPause(owner: LifecycleOwner) {
+                viewModel.isStoreCardUpShellFragmentVisible = false
+            }
+        })
+    }
 }
