@@ -4,30 +4,55 @@ import android.app.Activity
 import android.content.Context
 import android.text.Spannable
 import android.text.TextUtils
-import android.text.style.TypefaceSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.compose.ui.text.SpanStyle
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.*
+import com.awfs.coordination.databinding.AddItemToShoppinglistLayoutBinding
+import com.awfs.coordination.databinding.CancelOrderLayoutBinding
+import com.awfs.coordination.databinding.GeneralComposeViewBinding
+import com.awfs.coordination.databinding.MyOrdersPastOrdersHeaderBinding
+import com.awfs.coordination.databinding.OrderDetailsCommerceItemBinding
+import com.awfs.coordination.databinding.OrderDetailsGiftCommerceItemBinding
+import com.awfs.coordination.databinding.OrderDetailsViewTaxInvoiceLayoutBinding
+import com.awfs.coordination.databinding.OrderHistoryChatLayoutBinding
+import com.awfs.coordination.databinding.OrderHistoryDetailsTotalAmountLayoutBinding
+import com.awfs.coordination.databinding.OrderHistoryTypeBinding
+import com.awfs.coordination.databinding.TrackOrderLayoutBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.google.zxing.BarcodeFormat
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+import za.co.woolworths.financial.services.android.ui.views.order_again.EndlessAisleBarcodeView
+import za.co.woolworths.financial.services.android.ui.views.order_again.OrderState
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight8dp
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Color4ABB77
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD85C11
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorF3662D
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ErrorLabel
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -44,6 +69,11 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             OrderDetailsItem.ViewType.ORDER_STATUS.value -> {
                 return OrderStatusViewHolder(
                     OrderHistoryTypeBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
+            }
+            OrderDetailsItem.ViewType.ENDLESS_AISLE_BARCODE.value -> {
+                return EndlessAisleBarcodeViewHolder(
+                    GeneralComposeViewBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
             }
             OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT.value -> {
@@ -102,6 +132,28 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         return dataList.size
     }
 
+    inner class EndlessAisleBarcodeViewHolder(val itemBinding: GeneralComposeViewBinding) :
+        OrdersBaseViewHolder(itemBinding.root) {
+        override fun bind(position: Int) {
+            val data = dataList[position].item as? OrderSummary
+            if (data?.endlessAisleBarcode.isNullOrEmpty()) return
+            val bitmap = Utils.encodeAsBitmap(data?.endlessAisleBarcode, BarcodeFormat.CODE_128, 314, 74)
+            itemBinding.composeView.setContent {
+                data?.endlessAisleBarcode?.let {
+                    OneAppTheme {
+                        Column {
+                            EndlessAisleBarcodeView(
+                                it.chunked(4).joinToString(" "),
+                                bitmap
+                            )
+                            SpacerHeight8dp(bgColor = OneAppBackground)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     inner class OrderStatusViewHolder(val itemBinding: OrderHistoryTypeBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             itemBinding.apply {
@@ -110,16 +162,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                 orderTypeView?.visibility = View.VISIBLE
                 val item = dataList[position].item as OrderDetailsResponse
                 item.orderSummary?.let {
-                    it.state?.let {
-                        orderState?.text = it.drop(6)
-                        orderState.setBackgroundResource(if (it.equals("Order Cancelled",
-                                true)
-                        ) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
-                    }
-                    it.orderId?.let { it ->
-                        orderNumber?.text = context.getString(R.string.order_id,
-                            it.replaceFirstChar { it.uppercase() })
-                    }
+
                     it.submittedDate?.let {
                         purchaseDate?.text =
                             WFormatter.formatOrdersHistoryDate(it)
@@ -133,6 +176,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
 
                     val delivery: String? = it.fulfillmentDetails?.deliveryType
                     var deliveryType: Delivery?
+                    var orderStatus = ""
                     if (delivery.isNullOrEmpty()) {
                         orderTypeView?.visibility = View.GONE
                         val storePickup = it.store != null
@@ -182,13 +226,35 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                 deliveryAddress?.text =
                                     item.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) }
                                 orderType?.text = context.getString(R.string.dash_delivery)
-                                val orderStatus = item.orderSummary.orderStatus as? String
-                                if (orderStatus.isNullOrEmpty())
-                                    orderState?.text = item.orderSummary.state?.drop(6)
-                                else
-                                    orderState?.text = orderStatus
+                                orderStatus = item.orderSummary.orderStatus as? String ?: ""
                             }
                             else -> {}
+                        }
+                    }
+                    it.state?.let { state ->
+                        var errorLabel = ""
+                        val bgColor = when {
+                            state.contains(context.getString(R.string.cancelled)) && it.endlessAisleOrder -> {
+                                errorLabel = context.getString(R.string.endless_aisle_order_error_label)
+                                ErrorLabel
+                            }
+                            state.contains(context.getString(R.string.cancelled)) -> ColorF3662D
+                            it.endlessAisleOrder && !state.contains(context.getString(R.string.processing)) -> ColorD85C11
+                            else -> Color4ABB77
+                        }
+
+                        orderState.setContent {
+                            OneAppTheme {
+                                val background by remember { mutableStateOf(bgColor) }
+                                val status by remember { mutableStateOf(orderStatus.ifEmpty { state }) }
+                                val error by remember { mutableStateOf(errorLabel) }
+                                OrderState(
+                                    stringResource(R.string.order_id, it.orderId?.replaceFirstChar { it.uppercase() } ?: ""),
+                                    status.replace(context.getString(R.string.order), "").uppercase(),
+                                    error,
+                                    background
+                                )
+                            }
                         }
                     }
 
@@ -203,7 +269,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                         }
                         when (deliveryDates.keys.size) {
                             0 -> {
-                                itemBinding.timeslotTitle?.visibility = View.GONE
+                                itemBinding.timeslot?.text = context.getString(R.string.empty)
                             }
                             1 -> {
                                 itemBinding.timeslot?.text =

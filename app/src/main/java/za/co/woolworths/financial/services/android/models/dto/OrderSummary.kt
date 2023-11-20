@@ -2,12 +2,10 @@ package za.co.woolworths.financial.services.android.models.dto
 
 import android.os.Parcelable
 import com.google.gson.JsonElement
-import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails
-import za.co.woolworths.financial.services.android.models.network.Status
 
 /**
  * Created by W7099877 on 2018/02/08.
@@ -51,6 +49,6 @@ data class OrderSummary(
     var hasMinimumBasketAmount: Boolean = false,
     var minimumBasketAmount: Double = 0.0,
     var cashVoucherApplied: Double = 0.0,
-    var endlessAisleOrder:Boolean = false,
-    var endlessAisleBarcode:String = ""
+    val endlessAisleOrder: Boolean = false,
+    val endlessAisleBarcode: String = ""
 ) : Parcelable
