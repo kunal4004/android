@@ -42,7 +42,7 @@ class ShopToggleActivity : ComponentActivity() {
                         TopAppBar(
                             modifier = Modifier.offset(x = (-18).dp),
                             title = { Text(text = "") },
-                            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
+                            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
                                     Icon(painter = painterResource(id = R.drawable.back24),

@@ -12,17 +12,22 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentShopBinding
 import com.google.gson.JsonSyntaxException
+import com.perfectcorp.common.utility.Log
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,6 +45,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductsRequestPar
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -204,7 +210,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             imBarcodeScanner.setOnClickListener { checkCameraPermission() }
             shopToolbar.setOnClickListener {
                 hideTooltipIfVisible()
-                onEditDeliveryLocation()
+                Intent(requireActivity(), ShopToggleActivity::class.java).apply {
+                    startActivity(this)
+                }
             }
 
             shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this@ShopFragment)

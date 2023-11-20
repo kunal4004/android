@@ -56,7 +56,8 @@ class Dimensions(
     val eighteen_dp : Dp,
     val one_twenty_dp : Dp,
     val point_five_dp : Dp,
-    val one_point_five_sp : TextUnit
+    val one_point_five_sp : TextUnit,
+    val dp40 : Dp,
 
 )
 
@@ -109,7 +110,8 @@ val sw320Dimensions = Dimensions(
     eighteen_dp = 18.dp,
     one_twenty_dp = 120.dp,
     point_five_dp = 0.5.dp,
-    one_point_five_sp = 1.5.sp
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 )
 
 val sw360Dimensions = Dimensions(
@@ -161,7 +163,8 @@ val sw360Dimensions = Dimensions(
     eighteen_dp = 18.dp,
     one_twenty_dp = 120.dp,
     point_five_dp = 0.5.dp,
-    one_point_five_sp = 1.5.sp
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 )
 
 val sw400Dimensions = Dimensions(
@@ -213,7 +216,8 @@ val sw400Dimensions = Dimensions(
     eighteen_dp = 18.dp,
     one_twenty_dp = 120.dp,
     point_five_dp = 0.5.dp,
-    one_point_five_sp = 1.5.sp
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 
 )
 
@@ -267,6 +271,7 @@ val sw420Dimensions = Dimensions(
     point_five_dp = 0.5.dp,
     one_point_five_sp = 1.5.sp,
     ten_sp = 10.sp,
+    dp40 = 40.dp
 )
 
 val sw440Dimensions = Dimensions(
@@ -318,7 +323,8 @@ val sw440Dimensions = Dimensions(
     eighteen_dp = 18.dp,
     one_twenty_dp = 120.dp,
     point_five_dp = 0.5.dp,
-    one_point_five_sp = 1.5.sp
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 )
 
 
@@ -371,5 +377,6 @@ val sw480Dimensions = Dimensions(
     eighteen_dp = 18.dp,
     one_twenty_dp = 120.dp,
     point_five_dp = 0.5.dp,
-    one_point_five_sp = 1.5.sp
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 )

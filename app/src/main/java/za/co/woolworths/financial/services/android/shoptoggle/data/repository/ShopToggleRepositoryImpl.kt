@@ -45,7 +45,7 @@ class ShopToggleRepositoryImpl @Inject constructor(
                 deliveryCost = resourcesProvider.getString(R.string.delivery_cost),
                 deliveryTime = "Food: Tues, 21 March *Unlimited items",
                 deliveryProduct = "Food only *Limited shop of 30 food items",
-                learnMore = "R 35.00 Learn more",
+                learnMore = "R 35.00 ",
                 deliveryButtonText = resourcesProvider.getString(R.string.set_to_click_and_collect),
                 isDashDelivery = false)
 

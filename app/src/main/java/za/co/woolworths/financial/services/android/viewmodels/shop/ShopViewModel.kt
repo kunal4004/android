@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -20,13 +21,15 @@ import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.repository.shop.ShopRepository
+import za.co.woolworths.financial.services.android.shoptoggle.data.pref.ShopTogglePrefStore
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import javax.inject.Inject
 
 @HiltViewModel
 class ShopViewModel @Inject constructor(
-    private val shopRepository: ShopRepository
+    private val shopRepository: ShopRepository,
+    private val shopTogglePrefStore: ShopTogglePrefStore,
 ) : ViewModel() {
 
     private val _isOnDemandCategoriesAvailable = MutableLiveData(false)
@@ -77,6 +80,8 @@ class ShopViewModel @Inject constructor(
     private val _lastDashOrderInProgress = MutableLiveData(false)
     val lastDashOrderInProgress: LiveData<Boolean>
         get() = _lastDashOrderInProgress
+
+    val isShopToggleScreenFirstTime = shopTogglePrefStore.isShopToggleScreenFirstTime().asLiveData()
 
     fun getDashLandingDetails() {
         _dashLandingDetails.value = Event(Resource.loading(null))
