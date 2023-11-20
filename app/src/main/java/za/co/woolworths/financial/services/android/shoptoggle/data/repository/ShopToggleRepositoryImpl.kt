@@ -2,12 +2,14 @@ package za.co.woolworths.financial.services.android.shoptoggle.data.repository
 
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.common.ResourcesProvider
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.shoptoggle.data.dto.ShopToggleData
 import za.co.woolworths.financial.services.android.shoptoggle.domain.repository.ShopToggleRepository
 import javax.inject.Inject
 
 class ShopToggleRepositoryImpl @Inject constructor(
     private val resourcesProvider: ResourcesProvider,
+    private val geoLocationApiHelper: GeoLocationApiHelper
 ) : ShopToggleRepository {
     // TODO: Remaining string value need to set from backend response
     override fun getShopToggleList(): List<ShopToggleData> {
@@ -52,4 +54,5 @@ class ShopToggleRepositoryImpl @Inject constructor(
             )
     }
 
+    override suspend fun getValidateLocation(placeId: String) = geoLocationApiHelper.getValidateLocation(placeId)
 }

@@ -7,10 +7,11 @@ data class ToggleModel(
     val subTitle: String? = "",
     val icon: Int,
     val deliveryType: String,
-    val deliveryTime: String,
-    val deliveryProduct: String,
+    var deliveryTime: String,
+    var deliveryProduct: String,
     val deliveryCost: String,
-    val learnMore: String,
+    var learnMore: String,
+    var dataFailure: Boolean,
     val deliveryButtonText: String,
     val isDashDelivery: Boolean
 )
