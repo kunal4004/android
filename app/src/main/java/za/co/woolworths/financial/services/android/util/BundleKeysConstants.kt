@@ -19,6 +19,7 @@ class BundleKeysConstants {
 
         //geo location
         const val IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN = "new_toggle"
+        const val NEED_STORE_SELECTION = "store_selection"
         const val KEY_PLACE_ID = "placeId"
         const val KEY_LATITUDE = "latitude"
         const val KEY_LONGITUDE = "longitude"

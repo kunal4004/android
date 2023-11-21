@@ -15,11 +15,13 @@ import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewm
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @Composable
 fun ShopToggleScreen(
     viewModel: ShopToggleViewModel,
     item: List<ToggleModel>,
+    onSelectDeliveryType: (Delivery?) -> Unit
 ) {
 
     Spacer(modifier = Modifier.height(Dimens.sixteen_dp))
@@ -50,7 +52,7 @@ fun ShopToggleScreen(
     )
     Spacer(modifier = Modifier.height(Dimens.dp24))
 
-    ToggleExpandableList(viewModel, item)
+    ToggleExpandableList(viewModel, item, onSelectDeliveryType)
 
 }
 

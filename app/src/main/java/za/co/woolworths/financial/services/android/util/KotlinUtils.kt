@@ -62,6 +62,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
@@ -111,6 +112,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEED_STORE_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEW_DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
@@ -462,7 +464,9 @@ class KotlinUtils {
             liquorCompliance: LiquorCompliance? = null,
             cartItemList: ArrayList<CommerceItem>? = null,
             isFromNewToggleFulfilmentScreen: Boolean = false,
-            newDelivery: Delivery? = null
+            needStoreSelection: Boolean = false,
+            newDelivery: Delivery? = null,
+            validateLocationResponse: ValidateLocationResponse? = null
         ) {
 
             activity?.apply {
@@ -473,6 +477,7 @@ class KotlinUtils {
                     mBundle.putBoolean(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder)
                     mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
                 }
+                mBundle.putSerializable(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
                 mBundle.putString(DELIVERY_TYPE, delivery.toString())
                 mBundle.putString(NEW_DELIVERY_TYPE, newDelivery?.type)
                 mBundle.putString(PLACE_ID, placeId)
@@ -483,6 +488,7 @@ class KotlinUtils {
                 mBundle.putBoolean(IS_FBH_ONLY, isFBHOnly)
                 mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
                 mBundle.putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, isFromNewToggleFulfilmentScreen)
+                mBundle.putBoolean(NEED_STORE_SELECTION, needStoreSelection)
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
                 mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)

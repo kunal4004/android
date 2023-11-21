@@ -11,13 +11,16 @@ fun ShopToggleData.toDomain(): ToggleModel {
         subTitle = subTitle,
         icon = icon,
         deliveryType = deliveryType,
-        deliveryTime = deliveryTime,
-        deliveryProduct = deliveryProduct,
-        deliveryCost = deliveryCost,
-        learnMore = learnMore,
+        deliverySlotFood = deliverySlotFood,
+        deliverySlotFbh = deliverySlotFbh,
+        deliveryCostLabel = deliveryCost,
+        deliveryCost = learnMore,
         deliveryButtonText = deliveryButtonText,
         isDashDelivery = isDashDelivery,
-        dataFailure = false
+        dataFailure = false,
+        foodQuantity = quantity,
+        deliveryTypeLabel = deliveryTypeLabel
+
     )
 }
 
