@@ -127,6 +127,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				if (tab.getPosition() == TabState.OVERVIEW.tabState && tab.getCustomView() != null) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW, getActivity());
 				} else if (tab.getPosition() == TabState.VOUCHERS.tabState) {
+					showBiometricPrompt();
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSVOUCHERS, getActivity());
 				} else if (tab.getPosition() == TabState.SAVINGS.tabState) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS, getActivity());
@@ -208,12 +209,9 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 		appLifecycleObserver = new AppLifeCycleObserver(biometricSingleton, lifecycleTransitionType -> {
 			if (lifecycleTransitionType == LifecycleTransitionType.BACKGROUND_TO_FOREGROUND) {
-				if (getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment){
-					WfsBiometricManagerImpl biometricManager = new WfsBiometricManagerImpl();
-					biometricManager.setupBiometricAuthenticationForWRewards(
-							biometricSingleton,
-							this,
-							wRewardViewModel);
+				if (getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment &&
+						tabLayout.getSelectedTabPosition() == 1){
+					showBiometricPrompt();
 				}
 			}
 			return null;
@@ -224,6 +222,14 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
 		else
 			setupTabIcons(DEFAULT_VOUCHER_COUNT);
+	}
+
+	private void showBiometricPrompt(){
+		WfsBiometricManagerImpl biometricManager = new WfsBiometricManagerImpl();
+		biometricManager.setupBiometricAuthenticationForWRewards(
+				biometricSingleton,
+				this,
+				wRewardViewModel);
 	}
 
 	private void setupTabIcons(int activeVoucherCount) {

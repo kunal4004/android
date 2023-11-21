@@ -34,27 +34,21 @@ public class WRewardLoggedInViewModel extends BaseViewModel<WRewardLoggedInViewM
 
 	public void setScreenBlurEnabled(Fragment fragment) {
 		View view = fragment.getView();
-		View viewToBlur = view.findViewById(R.id.wrewardsViewPager);
+		View viewToBlur = view.findViewById(R.id.tabs);
 		ImageView backgroundImage = view.findViewById(R.id.blurEffectImage);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-			viewToBlur.setRenderEffect(RenderEffect.createBlurEffect(blurRadius, blurRadius, Shader.TileMode.CLAMP));
-			viewToBlur.invalidate();
-		}
-		else {
-			Bitmap contentBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-			Canvas canvas = new Canvas(contentBitmap);
-			viewToBlur.draw(canvas);
+		Bitmap contentBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(contentBitmap);
+		viewToBlur.draw(canvas);
 
-			// Apply a blur effect to the captured bitmap
-			Bitmap blurredBitmap = applyBlur(fragment.getActivity(), contentBitmap);
+		// Apply a blur effect to the captured bitmap
+		Bitmap blurredBitmap = applyBlur(fragment.getActivity(), contentBitmap);
 
-			backgroundImage.setImageBitmap(blurredBitmap);
-			backgroundImage.setVisibility(View.VISIBLE);
-			backgroundImage.invalidate();
-			view.invalidate();
-			viewToBlur.invalidate();
-		}
+		backgroundImage.setImageBitmap(blurredBitmap);
+		backgroundImage.setVisibility(View.VISIBLE);
+		backgroundImage.invalidate();
+		view.invalidate();
+		viewToBlur.invalidate();
 	}
 
 
@@ -78,16 +72,12 @@ public class WRewardLoggedInViewModel extends BaseViewModel<WRewardLoggedInViewM
 
 	public void setScreenBlurDisabled(Fragment fragment) {
 		View view = fragment.getView();
-		View viewToBlur = view.findViewById(R.id.wrewardsViewPager);
+		View viewToBlur = view.findViewById(R.id.tabs);
 		ImageView backgroundImage = view.findViewById(R.id.blurEffectImage);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-			viewToBlur.setRenderEffect(null);
-		}
-		else{
-			backgroundImage.setVisibility(View.GONE);
-			backgroundImage.invalidate();
-		}
+		backgroundImage.setVisibility(View.GONE);
+		backgroundImage.setImageBitmap(null);
+		backgroundImage.invalidate();
 
 		viewToBlur.invalidate();
 		view.invalidate();
