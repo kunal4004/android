@@ -18,97 +18,22 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
+        android:enabled="false"
+        android:contentDescription="@string/button_confirm_delivery"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline" />
 
-    <LinearLayout
+    <za.co.woolworths.financial.services.android.util.datetimepicker.DateTimePickerView
+        android:id="@+id/dateTimePicker"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/seventy_dp"
-        android:contentDescription="@string/cd_ccd_btnconfirm"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pageDesc">
-
-
-        <za.co.woolworths.financial.services.android.util.picker.WheelView
-            android:id="@+id/datePicker"
-            android:layout_width="0dp"
-            android:layout_height="220dp"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:contentDescription="@string/cd_ccd_listdayanddate"
-            app:wv_curvedArcDirection="left"
-            app:wv_curvedArcDirectionFactor="0.5"
-            app:wv_dividerColor="#12000000"
-            app:wv_dividerHeight="1dp"
-            app:wv_lineSpacing="18dp"
-            app:wv_normalItemTextColor="@color/gray"
-            app:wv_selectedItemTextColor="@color/black"
-            app:wv_selectedTextFont="medium_bold"
-            app:wv_showDivider="true"
-            app:wv_textAlign="right"
-            app:wv_textBoundaryMargin="@dimen/sixteen_dp"
-            app:wv_textFont="medium"
-            app:wv_textSize="18sp" />
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical"
-            android:background="#12000000" />
-
-        <za.co.woolworths.financial.services.android.util.picker.WheelView
-            android:id="@+id/timePicker"
-            android:layout_width="0dp"
-            android:layout_height="220dp"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:contentDescription="@string/cd_ccd_listtime"
-            app:wv_curvedArcDirection="right"
-            app:wv_curvedArcDirectionFactor="0.5"
-            app:wv_dividerColor="#12000000"
-            app:wv_dividerHeight="1dp"
-            app:wv_lineSpacing="18dp"
-            app:wv_normalItemTextColor="@color/gray"
-            app:wv_selectedItemTextColor="@color/black"
-            app:wv_selectedTextFont="medium_bold"
-            app:wv_showDivider="true"
-            app:wv_textAlign="left"
-            app:wv_textBoundaryMargin="@dimen/sixteen_dp"
-            app:wv_textFont="medium"
-            app:wv_textSize="18sp" />
-
-
-        <!--<com.zyyoona7.wheel.WheelView
-            android:visibility="gone"
-            android:id="@+id/wv_city"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:wv_curved="true"
-            app:wv_curvedArcDirection="left"
-            app:wv_curvedArcDirectionFactor="0.5"
-            app:wv_refractRatio="0.8"
-            app:wv_cyclic="false"
-            app:wv_dividerColor="#e0f2f1"
-            app:wv_dividerHeight="0.5dp"
-            app:wv_dividerPaddingForWrap="10dp"
-            app:wv_dividerType="fill"
-            app:wv_drawSelectedRect="true"
-            app:wv_lineSpacing="10dp"
-            app:wv_normalItemTextColor="@color/gray"
-            app:wv_selectedItemPosition="4"
-            app:wv_selectedItemTextColor="@color/black"
-            app:wv_selectedRectColor="#aebfbe"
-            app:wv_showDivider="true"
-            app:wv_textAlign="center"
-            app:wv_textBoundaryMargin="10dp"
-            app:wv_textSize="24sp"
-            app:wv_visibleItems="6" />-->
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/pageDesc"
+        app:layout_constraintBottom_toTopOf="@+id/confirm"/>
 
     <TextView
         android:id="@+id/pageTitle"

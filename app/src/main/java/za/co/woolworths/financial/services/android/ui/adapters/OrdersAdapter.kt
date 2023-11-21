@@ -65,7 +65,11 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
                     val background =
                             when {
                                 item.state?.contains(context.getString(R.string.cancelled)) == true -> ErrorLabel
-                                item.endlessAisleOrder && item.state.contains(context.getString(R.string.status_awaiting_payment)) -> ColorD85C11
+                                item.endlessAisleOrder
+                                        && item.state.contains(
+                                    context.getString(R.string.status_awaiting_payment),
+                                    ignoreCase = true
+                                ) -> ColorD85C11
                                 else -> Color4ABB77
                             }
 

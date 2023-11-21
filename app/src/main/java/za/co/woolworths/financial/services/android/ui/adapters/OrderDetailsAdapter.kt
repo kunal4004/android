@@ -238,7 +238,8 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                     errorLabel = context.getString(R.string.endless_aisle_order_error_label)
                                 ErrorLabel
                             }
-                            it.endlessAisleOrder && state.contains(context.getString(R.string.status_awaiting_payment)) -> ColorD85C11
+                            it.endlessAisleOrder && state.contains(context.getString(R.string
+                                .status_awaiting_payment), ignoreCase = true) -> ColorD85C11
                             else -> Color4ABB77
                         }
 
