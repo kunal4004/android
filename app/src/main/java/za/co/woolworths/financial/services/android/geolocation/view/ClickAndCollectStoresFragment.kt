@@ -37,6 +37,9 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentWIthUnsellable
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
@@ -44,6 +47,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErro
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_CNC
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
@@ -70,6 +74,7 @@ class ClickAndCollectStoresFragment :
     private var isComingFromConfirmAddress: Boolean? = false
     private var isComingFromNewToggleFulfilment: Boolean? = false
     private var needStoreSelection: Boolean? = false
+    private var unSellableCommerceItems: List<UnSellableCommerceItem> = emptyList()
     private var isComingFromCheckout: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
     private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
@@ -196,7 +201,8 @@ class ClickAndCollectStoresFragment :
                     }
                     renderSuccess {
                         setBrowsingDataInformation(output)
-                        navigateToFulfillmentScreen()
+
+
                     }
                 }
             }
@@ -222,12 +228,15 @@ class ClickAndCollectStoresFragment :
             storeData?.forEach { listStore ->
                 if (listStore.storeId == browsingStoreList[0].storeId) {
                     KotlinUtils.setCncStoreValidateResponse(browsingStoreList[0], listStore)
+                    unSellableCommerceItems= browsingStoreList[0].unSellableCommerceItems!!
                     return@forEach
                 }
+
             }
         }
-    }
+        navigateToFulfillmentScreen()
 
+    }
     private fun callValidateStoreInventory() {
         lifecycleScope.launch {
             if (placeId.isNullOrEmpty() && dataStore?.storeId.isNullOrEmpty()) {
@@ -281,7 +290,11 @@ class ClickAndCollectStoresFragment :
 
     private fun navigateToFulfillmentScreen() {
         if (isComingFromNewToggleFulfilment == true) {
-            (mValidateLocationResponse ?: validateLocationResponse)?.let { confirmSetAddress(it) }
+            if(unSellableCommerceItems?.size!!>0){
+                sendResultBack()
+            } else {
+                (mValidateLocationResponse ?: validateLocationResponse)?.let { confirmSetAddress(it) }
+            }
         } else if (IS_FROM_STORE_LOCATOR) {
             dataStore?.let {
                 bundle?.putString(
@@ -512,6 +525,24 @@ class ClickAndCollectStoresFragment :
     private fun firstTimeFBHCNCIntroDialog() {
         val fbh = FBHInfoBottomSheetDialog()
         activity?.supportFragmentManager?.let { fbh.show(it, AppConstant.TAG_FBH_CNC_FRAGMENT) }
+    }
+
+    private fun sendResultBack() {
+        val  deliveryType: Delivery=Delivery.CNC
+        //unSellableCommerceItems = store.unSellableCommerceItems!!
+      //  if(unSellableCommerceItems?.size!!>0)
+
+            val intent = Intent().apply {
+                putExtra(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE,
+                    ToggleFulfilmentWIthUnsellable(unSellableCommerceItems,deliveryType))
+                putExtra(DELIVERY_CNC, deliveryType)
+            }
+
+            activity?.setResult(Activity.RESULT_OK, intent)
+            activity?.finish()
+
+
+
     }
 
 }

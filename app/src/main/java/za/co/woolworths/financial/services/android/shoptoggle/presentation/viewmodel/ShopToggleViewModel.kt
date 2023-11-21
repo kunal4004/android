@@ -80,7 +80,8 @@ class ShopToggleViewModel @Inject constructor(
                 is Resource.Success -> {
                     _confirmAddressState.value = ConfirmAddressState(
                         unsellableItems = result.data,
-                        isSuccess = true
+                        isSuccess = true,
+                        delivery =delivery
                     )
                 }
             }
@@ -168,5 +169,6 @@ data class ConfirmAddressState(
     val unsellableItems: List<UnSellableCommerceItem>? = emptyList(),
     val isSuccess: Boolean = false,
     val hasError: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val delivery: Delivery? =null,
 )

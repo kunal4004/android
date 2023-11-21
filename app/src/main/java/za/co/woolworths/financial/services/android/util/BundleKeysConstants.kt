@@ -19,6 +19,8 @@ class BundleKeysConstants {
         const val CREDITCARD_TOKEN = "creditCardToken"
 
         //geo location
+        const val STORE_ID = "STORE_ID"
+        const val DELIVERY_CNC = "CNC"
         const val IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN = "new_toggle"
         const val LOCATION_UPDATE_REQUEST = "location_update_request"
         const val NEED_STORE_SELECTION = "store_selection"

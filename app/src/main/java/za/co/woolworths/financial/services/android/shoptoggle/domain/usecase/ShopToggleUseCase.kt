@@ -257,12 +257,14 @@ class ShopToggleUseCase @Inject constructor(
 
             Delivery.CNC.name -> {
             //TODO, fix this later on
-            /*validateLocationResponse?.validatePlace?.stores?.forEach {
+
+                val mStoreId= getDeliveryType()?.storeId
+               validateLocationResponse?.validatePlace?.stores?.forEach {
                     if (it.storeId.equals(mStoreId)) {
                         unSellableCommerceItems = it.unSellableCommerceItems
                     }
                 }
-                currentDeliveryType = Delivery.CNC*/
+             //   currentDeliveryType = Delivery.CNC
             }
 
             Delivery.DASH.name -> {

@@ -40,9 +40,11 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentResult
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentWIthUnsellable
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -61,6 +63,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.Shop
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ShopLandingAutoNavigateCheckerImpl
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.TooltipShown
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
+import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.ui.views.tooltip.CustomText
@@ -737,6 +740,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
         if (resultCode == RESULT_OK && requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE) {
             val toggleFulfilmentResult = getToggleFulfilmentResult(data)
+            val toggleFulfilmentResultWithUnsellable=getToggleFulfilmentResultWithUnSellable(data)
             if (toggleFulfilmentResult != null) {
                 if (toggleFulfilmentResult.needRefresh) {
                     val placeId = getDeliveryType()?.address?.placeId
@@ -751,7 +755,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     showTooltipIfRequired()
                 }
             }
+
+            else{
+                if(toggleFulfilmentResultWithUnsellable!=null){
+                    navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                        toggleFulfilmentResultWithUnsellable.deliveryType)
+                }
+            }
         }
+
 
         if (resultCode == RESULT_OK && (requestCode == UPDATE_LOCATION_REQUEST || requestCode == UPDATE_STORE_REQUEST)) {
             setDeliveryView()
@@ -763,6 +775,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT, ToggleFulfilmentResult::class.java)
         } else {
             intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT)
+        }
+    }
+
+    private fun getToggleFulfilmentResultWithUnSellable(intent: Intent?): ToggleFulfilmentWIthUnsellable? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE, ToggleFulfilmentWIthUnsellable::class.java)
+        } else {
+            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE)
         }
     }
 
@@ -1127,4 +1147,20 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     fun isUserAuthenticated() = SessionUtilities.getInstance().isUserAuthenticated
 
     fun getCurrentFragmentIndex() = binding.viewpagerMain?.currentItem
+
+    private fun navigateToUnsellableItemsFragment(
+        unsellableItemsList: ArrayList<UnSellableCommerceItem>, deliveryType:Delivery,) {
+        val unsellableItemsBottomSheetDialog =
+            UnsellableItemsBottomSheetDialog.newInstance(
+                unsellableItemsList,
+                deliveryType,
+                binding.shopProgressbar,
+                confirmAddressViewModel,
+                this@ShopFragment
+            )
+        unsellableItemsBottomSheetDialog.show(
+            parentFragmentManager,
+            UnsellableItemsBottomSheetDialog::class.java.simpleName
+        )
+    }
 }

@@ -34,11 +34,14 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsColle
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.components.ShopToggleScreen
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STORE_ID
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -47,10 +50,11 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
 class ShopToggleActivity : ComponentActivity() {
-
+    var delivery: Delivery? =null
     companion object {
         const val REQUEST_DELIVERY_TYPE = 105
         const val INTENT_DATA_TOGGLE_FULFILMENT = "INTENT_DATA_TOGGLE_FULFILMENT"
+        const val INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE = "INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE"
 
         fun sendResultBack(activity: Activity?, delivery: String, needRefresh: Boolean) {
             val result = ToggleFulfilmentResult(
@@ -90,6 +94,16 @@ class ShopToggleActivity : ComponentActivity() {
             return intent
         }
     }
+
+    private fun sendResultBackWithUnsellableItems(unsellableItemsList: ArrayList<UnSellableCommerceItem>,
+                                                  deliveryType:Delivery?) {
+         val result= deliveryType?.let { ToggleFulfilmentWIthUnsellable(unsellableItemsList, it) }
+         val intent = Intent()
+         intent.putExtra(INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE, result)
+        this@ShopToggleActivity.setResult(Activity.RESULT_OK, intent)
+        this@ShopToggleActivity.finish()
+    }
+
 
     private val viewModel by viewModels<ShopToggleViewModel>()
     private var isComingFromCheckout: Boolean = false
@@ -184,8 +198,10 @@ class ShopToggleActivity : ComponentActivity() {
                             }
 
                             if (confirmAddressState.isSuccess) {
+                                delivery=confirmAddressState.delivery
                                 if (!confirmAddressState.unsellableItems.isNullOrEmpty()) {
-                                    //TODO, navigate back to the previous page & display unsellable dialog
+                                    sendResultBackWithUnsellableItems(ArrayList(confirmAddressState.unsellableItems),delivery)
+                                //TODO, navigate back to the previous page & display unsellable dialog
                                 } else {
                                     val deliveryType = KotlinUtils.getDeliveryType()?.deliveryType
                                     deliveryType?.let {
@@ -322,14 +338,32 @@ class ShopToggleActivity : ComponentActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_DELIVERY_TYPE) {
-                if (isComingFromCheckout) {
-                    onConfirmLocationNavigation(Delivery.CNC.name)
-                } else {
+            val toggleFulfilmentResultWithUnsellable=getToggleFulfilmentResultWithUnSellable(data)
+            if(toggleFulfilmentResultWithUnsellable!=null){
+                sendResultBackWithUnsellableItems(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                toggleFulfilmentResultWithUnsellable.deliveryType)
+            }
+            else {
+                if (requestCode == REQUEST_DELIVERY_TYPE) {
+                    if (isComingFromCheckout) {
+                        onConfirmLocationNavigation(Delivery.CNC.name)
+                    } else {
+                        sendResultBack()
+                    }
+                } else if (requestCode == BundleKeysConstants.REQUEST_CODE) {
                     sendResultBack()
                 }
-            } else if (requestCode == BundleKeysConstants.REQUEST_CODE) {
-                sendResultBack()
+            }
+        }
+    }
+
+    private fun unsellable(storeID:String){
+        var unSellableCommerceItems: List<UnSellableCommerceItem>? = emptyList()
+        WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores?.forEach {
+            if (it.storeId==storeID) {
+                unSellableCommerceItems = it.unSellableCommerceItems
+                sendResultBackWithUnsellableItems(ArrayList(unSellableCommerceItems),delivery)
+
             }
         }
     }
@@ -347,3 +381,18 @@ data class ToggleFulfilmentResult(
     val needRefresh: Boolean,
     val newDeliveryType: String
 ): Parcelable
+
+@Parcelize
+data class ToggleFulfilmentWIthUnsellable(
+
+    val unsellableItemsList: List<UnSellableCommerceItem>?,
+    val deliveryType:Delivery
+): Parcelable
+
+private fun getToggleFulfilmentResultWithUnSellable(intent: Intent?): ToggleFulfilmentWIthUnsellable? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE, ToggleFulfilmentWIthUnsellable::class.java)
+    } else {
+        intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE)
+    }
+}

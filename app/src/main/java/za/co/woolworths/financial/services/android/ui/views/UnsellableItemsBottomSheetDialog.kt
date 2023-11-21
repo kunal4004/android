@@ -176,10 +176,12 @@ class UnsellableItemsBottomSheetDialog(
                 commerceItems?.let { unsellableItems ->
                     FirebaseAnalyticsEventHelper.removeFromCartUnsellable(unsellableItems)
                 }
-                if (currentFragment is CartFragment) {
-                    // If it is coming from Cart means we will not call confirm Location API. We will remove items from cart and then will process the same flow.
-                    UnsellableUtils.removeItemsFromCart(progressBar, commerceItems, isCheckBoxSelected, currentFragment, confirmAddressViewModel)
-                } else {
+                //comment because coming from  togglescreen
+//                if (currentFragment is CartFragment) {
+//                    // If it is coming from Cart means we will not call confirm Location API. We will remove items from cart and then will process the same flow.
+//                    UnsellableUtils.removeItemsFromCart(progressBar, commerceItems, isCheckBoxSelected, currentFragment, confirmAddressViewModel)
+//                } else
+
                     UnsellableUtils.callConfirmPlace(
                         currentFragment,
                         if (isCheckBoxSelected) ConfirmLocationParams(
@@ -190,7 +192,7 @@ class UnsellableItemsBottomSheetDialog(
                         confirmAddressViewModel,
                         deliveryType
                     )
-                }
+
                 confirmRemoveItems()
             }
         }
