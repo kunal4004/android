@@ -150,6 +150,8 @@ class AppConstant {
 
         // Shop Landing Standard / CnC
         const val FOOD_CATEGORY_ID = "cat606520"
+
+        const val actionItemTnC = "ACTION_ITEMS_TnC"
     }
 
     class Keys {

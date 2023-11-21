@@ -106,6 +106,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm;
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewSuccessScreenFragment;
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewTnCFragment;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -601,7 +602,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Utils.updateStatusBarBackground(this);
         pushFragmentNoAnim(writeAReviewForm);
     }
-
     @Override
     public void scrollableViewHelper(NestedScrollView nsv) {
         getSlidingLayout().setScrollableViewHelper(new NestedScrollableViewHelper(nsv));
@@ -1655,6 +1655,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         writeAReviewSuccessScreenFragment.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
         pushFragmentNoAnim(writeAReviewSuccessScreenFragment);
+    }
+
+    public void openWriteAReviewTnCScreenFragment(@NotNull String actionItems) {
+        Bundle bundle = new Bundle();
+        bundle.putString(AppConstant.actionItemTnC, actionItems);
+        WriteAReviewTnCFragment writeAReviewTnCFragment = WriteAReviewTnCFragment.Companion.newInstance();
+        writeAReviewTnCFragment.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragmentNoAnim(writeAReviewTnCFragment);
     }
 
 }

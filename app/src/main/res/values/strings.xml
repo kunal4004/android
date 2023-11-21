@@ -3086,6 +3086,7 @@
 
 
 
+    <string name="fullfilment_type_01">"01"</string>
     <string name="substitute_default">Let My Shopper Choose For Me</string>
     <string name="search_alternative_product">Search for an alternative product</string>
     <string name="choose_substitute">Choose My Own Substitute</string>
@@ -3152,6 +3153,8 @@
     <string name="please_enter_a_review_title.">Please enter a review title.</string>
     <string name="please_enter_a_display_name.">Please enter a display name.</string>
     <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
+    <string name="by_submitting_you_agree_to_our">By submitting, you agree to our</string>
+    <string name="terms_and_Conditions_for_write_a_review">Terms and Conditions.</string>
 
     <string name="order_again_title">Reorder your favourite foods now.</string>
     <string name="sign_in_to_order_again">sign in to order again</string>
