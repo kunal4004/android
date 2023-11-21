@@ -19,4 +19,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:id="@+id/chatBubbleLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:gravity="end"
+        android:orientation="vertical">
+        <include
+            android:id="@+id/includeChatCollectAgentFloatingButton"
+            layout="@layout/chat_collect_agent_floating_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
