@@ -20,7 +20,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBase
 import za.co.woolworths.financial.services.android.ui.views.order_again.OrderState
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color4ABB77
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD85C11
-import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorF3662D
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ErrorLabel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
@@ -65,9 +64,8 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
                 OneAppTheme {
                     val background =
                             when {
-                                (item.state?.contains(context.getString(R.string.cancelled)) == true) && item.endlessAisleOrder -> ErrorLabel
-                                item.state?.contains(context.getString(R.string.cancelled)) == true -> ColorF3662D
-                                item.endlessAisleOrder && !item.state.contains(context.getString(R.string.processing)) -> ColorD85C11
+                                item.state?.contains(context.getString(R.string.cancelled)) == true -> ErrorLabel
+                                item.endlessAisleOrder && item.state.contains(context.getString(R.string.status_awaiting_payment)) -> ColorD85C11
                                 else -> Color4ABB77
                             }
 
