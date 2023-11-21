@@ -8,7 +8,7 @@ import com.google.android.material.tabs.TabLayout
 
 class WRewardUniqueLocatorsHelper {
     companion object {
-        fun setTabBarIDs(view: TabLayout.Tab, index: Int) {
+        fun setTabBarIDs(view: View, index: Int) {
             when (index) {
                 0 -> view.contentDescription = WRewardsUniqueLocators.OVERVIEW_TITLE_TEXT.value
                 1 -> view.contentDescription = WRewardsUniqueLocators.VOUCHERS_TITLE_TEXT.value
