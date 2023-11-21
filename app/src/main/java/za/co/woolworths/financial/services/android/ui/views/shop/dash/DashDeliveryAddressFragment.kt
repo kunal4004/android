@@ -768,7 +768,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         false
                     )
                 }
-                val imageViewHeight = recyclerViewViewHolderItems?.itemBinding?.rowLayout?.imProductImage?.height
+                val imageViewHeight =
+                    (recyclerViewViewHolderItems?.itemBinding?.rowLayout?.imProductImage?.height
+                        ?: 0) + (recyclerViewViewHolderItems?.itemBinding?.rowLayout?.tvProductName?.height
+                        ?: 0)
                 if (quantityInStock >= 5) {
                     layoutParams?.height = imageViewHeight
                 } else {

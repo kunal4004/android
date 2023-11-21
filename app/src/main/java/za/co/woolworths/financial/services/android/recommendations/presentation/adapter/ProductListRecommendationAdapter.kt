@@ -133,8 +133,8 @@ class ProductListRecommendationAdapter(
                     )
                 }
                 val imageViewHeight =
-                    recyclerViewViewHolderItems.mProductListingPageRowBinding.imProductImage.height + recyclerViewViewHolderItems.mProductListingPageRowBinding.tvProductName.height
-                if (quantityInStock >= 5) {
+                    recyclerViewViewHolderItems.mProductListingPageRowBinding.imProductImage.height + recyclerViewViewHolderItems.mProductListingPageRowBinding.tvProductName.height + 50
+                if (quantityInStock >= 6) {
                     layoutParams?.height = imageViewHeight
                 } else {
                     layoutParams?.height = RecyclerView.LayoutParams.WRAP_CONTENT
