@@ -217,12 +217,6 @@ interface WfsApiService {
     ):  Response<PetInsuranceModel>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/user/featureEnablement/PET")
-    suspend fun getFeatureEnablement(
-        @Header("deviceIdentityToken") deviceIdentityToken: String
-    ): Response<FeatureEnablementModel>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/user/fica/refreshStatus")
     suspend fun getFica(
         @Header("deviceIdentityToken") deviceIdentityToken: String

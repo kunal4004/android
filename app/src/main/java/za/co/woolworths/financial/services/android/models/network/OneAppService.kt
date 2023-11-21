@@ -650,9 +650,6 @@ open class OneAppService(
         }
     }
 
-    fun getShoppingCart(): Call<ShoppingCartResponse> {
-        return mApiInterface.getShoppingCart(getSessionToken(), getDeviceIdentityToken())
-    }
 
     suspend fun getShoppingCartV2() : retrofit2.Response<ShoppingCartResponse>{
         return withContext(Dispatchers.IO){
@@ -1290,13 +1287,6 @@ open class OneAppService(
             getDeviceIdentityToken(),
             insuranceType,
             insuranceTypeOptInBody
-        )
-    }
-
-    fun getFicaResponse(): Call<FicaModel> {
-        return mApiInterface.getFica(
-            getSessionToken(),
-            getDeviceIdentityToken()
         )
     }
 

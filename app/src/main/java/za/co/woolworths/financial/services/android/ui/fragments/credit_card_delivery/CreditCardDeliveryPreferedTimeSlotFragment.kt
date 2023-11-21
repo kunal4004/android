@@ -17,9 +17,8 @@ import za.co.woolworths.financial.services.android.ui.activities.credit_card_del
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
-import za.co.woolworths.financial.services.android.util.picker.WheelView
 
-class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragment(R.layout.credit_card_delivery_prefered_time_slots_layout), WheelView.OnItemSelectedListener<Any> {
+class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragment(R.layout.credit_card_delivery_prefered_time_slots_layout) {
 
     private lateinit var binding: CreditCardDeliveryPreferedTimeSlotsLayoutBinding
     private var timeslots: List<TimeSlot>? = null
@@ -39,8 +38,7 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
 
         this.navController = Navigation.findNavController(view)
         setUpToolBar()
-        binding.datePicker?.onItemSelectedListener = this
-        binding.timePicker?.onItemSelectedListener = this
+
         binding.confirm?.setOnClickListener {
             bundle?.putString("selected_date", selectedDate?.date)
             bundle?.putString("selected_time", selectedTime)
@@ -68,7 +66,13 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
     }
 
     fun configureUI() {
-        timeslots?.let { setDatePickerData(it) }
+        timeslots?.let {
+            binding.dateTimePicker.initialize(it){ date, time ->
+                selectedDate = date
+                selectedTime = time
+                binding.confirm.isEnabled = true
+            }
+        }
     }
 
     private fun setUpToolBar() {
@@ -77,56 +81,6 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
                 setToolbarTitle("")
                 changeToolbarBackground(R.color.white)
             }
-        }
-    }
-
-    override fun onItemSelected(wheelView: WheelView<Any>?, data: Any?, position: Int) {
-        when (wheelView?.id) {
-            R.id.datePicker -> {
-                timeslots = Gson().fromJson(bundle?.getString("available_time_slots"), object : TypeToken<List<TimeSlot>>() {}.type)
-                selectedDate = timeslots?.get(position)
-                selectedDate?.let { setTimePickerData(it) }
-            }
-            R.id.timePicker -> {
-                selectedTime = data as String?
-            }
-        }
-    }
-
-    private fun setDatePickerData(timeSlots: List<TimeSlot>) {
-        val daySet: HashSet<String> = Utils.getDaySet()
-        timeSlots.forEachIndexed { index, slot ->
-            var unformattedDate: String = changeDateFormat(slot.date)
-            val parts: List<String>? = slot.date.split("-")
-            if (parts?.size!! >= 2) {
-                parts?.get(2)?.let {
-                    var day: String = it
-                    if (daySet.contains(it)) {
-                        day = it.get(1).toString()
-                    }
-                    unformattedDate = unformattedDate.replace(it, day + WFormatter.getDayOfMonthSuffix(it.toInt()))
-                }
-            }
-            timeSlots.get(index).date = unformattedDate
-        }
-        val defaultItemPosition = timeSlots.let { it.size / 2 }
-        selectedDate = timeSlots[defaultItemPosition - 1]
-        selectedTime = selectedDate?.availableTimeslots?.let { (it.size / 2) }?.let { selectedDate?.availableTimeslots?.get(it) }
-        binding.datePicker?.apply {
-            data = timeSlots
-            selectedItemPosition = defaultItemPosition - 1
-        }
-        setTimePickerData(timeSlots[defaultItemPosition - 1])
-    }
-
-    private fun changeDateFormat(date: String): String {
-        return WFormatter.getDayAndFormatedDate(date)
-    }
-
-    private fun setTimePickerData(timeSlot: TimeSlot) {
-        binding.timePicker?.apply {
-            data = timeSlot.availableTimeslots
-            selectedItemPosition = timeSlot.availableTimeslots.let { (it.size / 2) }
         }
     }
 }
