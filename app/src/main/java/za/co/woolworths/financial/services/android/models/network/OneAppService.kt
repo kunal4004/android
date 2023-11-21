@@ -864,7 +864,7 @@ open class OneAppService(
         body: OrderToShoppingListRequestBody
     ): retrofit2.Response<OrderToListReponse> = mApiInterface.addToListByOrderId(
         getSessionToken(), getDeviceIdentityToken(), orderId, body
-    ).execute()
+    )
 
     fun getOrderTaxInvoice(taxNoteNumber: String): Call<OrderTaxInvoiceResponse> {
         return mApiInterface.getTaxInvoice(
