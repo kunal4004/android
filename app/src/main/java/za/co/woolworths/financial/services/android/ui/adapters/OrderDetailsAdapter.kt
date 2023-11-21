@@ -46,7 +46,6 @@ import za.co.woolworths.financial.services.android.ui.views.order_again.OrderSta
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight8dp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color4ABB77
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD85C11
-import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorF3662D
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ErrorLabel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -234,12 +233,12 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                     it.state?.let { state ->
                         var errorLabel = ""
                         val bgColor = when {
-                            state.contains(context.getString(R.string.cancelled)) && it.endlessAisleOrder -> {
-                                errorLabel = context.getString(R.string.endless_aisle_order_error_label)
+                            state.contains(context.getString(R.string.cancelled))  -> {
+                                if(it.endlessAisleOrder)
+                                    errorLabel = context.getString(R.string.endless_aisle_order_error_label)
                                 ErrorLabel
                             }
-                            state.contains(context.getString(R.string.cancelled)) -> ColorF3662D
-                            it.endlessAisleOrder && !state.contains(context.getString(R.string.processing)) -> ColorD85C11
+                            it.endlessAisleOrder && state.contains(context.getString(R.string.status_awaiting_payment)) -> ColorD85C11
                             else -> Color4ABB77
                         }
 
