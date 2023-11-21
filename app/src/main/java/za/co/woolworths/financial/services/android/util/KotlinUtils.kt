@@ -106,10 +106,12 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEW_DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -458,7 +460,9 @@ class KotlinUtils {
             defaultAddress: Address? = null,
             whoISCollecting: String? = null,
             liquorCompliance: LiquorCompliance? = null,
-            cartItemList: ArrayList<CommerceItem>? = null
+            cartItemList: ArrayList<CommerceItem>? = null,
+            isFromNewToggleFulfilmentScreen: Boolean = false,
+            newDelivery: Delivery? = null
         ) {
 
             activity?.apply {
@@ -470,6 +474,7 @@ class KotlinUtils {
                     mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
                 }
                 mBundle.putString(DELIVERY_TYPE, delivery.toString())
+                mBundle.putString(NEW_DELIVERY_TYPE, newDelivery?.type)
                 mBundle.putString(PLACE_ID, placeId)
                 mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
                 mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
@@ -477,6 +482,7 @@ class KotlinUtils {
                 mBundle.putBoolean(IS_MIXED_BASKET, isMixedBasket)
                 mBundle.putBoolean(IS_FBH_ONLY, isFBHOnly)
                 mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                mBundle.putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, isFromNewToggleFulfilmentScreen)
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
                 mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)

@@ -3125,6 +3125,20 @@
     <string name="learn_more_dash_desc">R35 fixed delivery fee. Driver tipping available.</string>
     <string name="learn_more_click_desc">Between R0 - R20 collection fee, or free for orders over R450.</string>
     <string name="our_delivery_costs">Our Delivery Costs</string>
+    <string name="title_dash_set_location_modal">To shop accurately with Woolies Dash, we need your location.</string>
+    <string name="title_cnc_set_location_modal">To shop accurately using our \n Click &amp; Collect service, we need your location.</string>
+    <string name="title_standard_set_location_modal">To shop accurately with Woolies, we need your location.</string>
+    <string name="desc_standard_set_location_modal">Set your location for the most accurate stock, availability, and pricing. We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="desc_dash_set_location_modal">Set your location for the most accurate stock, availability, and pricing. We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="desc_cnc_set_location_modal">We’ll use this to give you the most accurate stock, availability, and pricing of our quality products from collection points near you.</string>
+    <string name="cta_set_my_location">Set My Location</string>
+    <string name="fashion_beauty_home_toggle_fulfilment">Fashion, Beauty, Home:</string>
+    <string name="food_toggle_fulfilment">Food:</string>
+    <string name="unlimited_items">*Unlimited items</string>
+    <string name="food_only_toggle_fulfilment">Food only</string>
+    <string name="limited_food_item_msg">*Limited shop of %1$s food items</string>
+    <string name="cnc_delivery_slots_not_available">Unfortunately, we can\'t load your collection timeslots right now.</string>
+    <string name="dash_delivery_slots_not_available">Unfortunately, we can\'t load your delivery timeslots right now.</string>
 
 
     <string name="something_went_wrong">Something went wrong</string>
