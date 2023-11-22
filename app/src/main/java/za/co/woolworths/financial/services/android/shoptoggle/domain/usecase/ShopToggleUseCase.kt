@@ -279,10 +279,10 @@ class ShopToggleUseCase @Inject constructor(
                 emit(Resource.Error(message = resourcesProvider.getString(R.string.no_internet_title)))
                 return@flow
             }
-            val unsellableItems = getUnsellableItems(deliveryType)
-            if (!unsellableItems.isNullOrEmpty() && SessionUtilities.getInstance().isUserAuthenticated) {
-                emit(Resource.Success(data = unsellableItems))
-            } else {
+//            val unsellableItems = getUnsellableItems(deliveryType)
+//            if (!unsellableItems.isNullOrEmpty() && SessionUtilities.getInstance().isUserAuthenticated) {
+//                emit(Resource.Success(data = unsellableItems))
+//            } else {
                 emit(Resource.Loading())
                 try {
                     val confirmLocationRequest = getConfirmLocationRequest(deliveryType)
@@ -306,7 +306,7 @@ class ShopToggleUseCase @Inject constructor(
                     FirebaseManager.logException(e)
                     emit(Resource.Error(message = resourcesProvider.getString(R.string.no_internet_title)))
                 }
-            }
+            //}
         }
 
     private fun getConfirmLocationRequest(deliveryType: Delivery?): ConfirmLocationRequest {
