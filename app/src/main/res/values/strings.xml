@@ -1540,8 +1540,8 @@
     <string name="manage_my_delivery">Manage My Delivery</string>
     <string name="confirm_address">Confirm Address</string>
     <string name="edit_address"><u>Edit Address</u></string>
-    <string name="time_slots_page_title">When Would Like Your \nCard Delivered?</string>
-    <string name="time_slots_page_desc">Choose a date and select a preferred timeslot for when you would like your card delivered.</string>
+    <string name="time_slots_page_title">When Would Like Your Card \nDelivered?</string>
+    <string name="time_slots_page_desc">Choose a date and select a preferred time slot to have your card delivered.</string>
     <string name="processing_error">Processing Error</string>
     <string name="time_slots_error_desc">We were unable to find available time slots.</string>
     <string name="validate_address_error_desc">We were unable to confirm your \nrequest at this time.</string>
@@ -3153,5 +3153,19 @@
     <string name="please_enter_a_review_title.">Please enter a review title.</string>
     <string name="please_enter_a_display_name.">Please enter a display name.</string>
     <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
+    <string name="by_submitting_you_agree_to_our">By submitting, you agree to our</string>
+    <string name="terms_and_Conditions_for_write_a_review">Terms and Conditions.</string>
+
+    <string name="choose_a_timeslot">Choose a timeslot</string>
+    <string name="date_picker_today">Today</string>
+    <string name="date_picker_tomorrow">Tomorrow</string>
+    <string name="navigate_up">"Navigate up"</string>
+    <string name="day_slot">"day_lot_"</string>
+    <string name="month_slot">"month_slot_"</string>
+    <string name="day_and_Time_slot">"day_And_Time_Slot_"</string>
+    <string name="choose_time_slot">"lableChooseTimeSlot"</string>
+    <string name="time_slot">"timeSlot_"</string>
+    <string name="check_box">"check_Box_"</string>
+    <string name="button_confirm_delivery">"button_Confirm"</string>
 
 </resources>

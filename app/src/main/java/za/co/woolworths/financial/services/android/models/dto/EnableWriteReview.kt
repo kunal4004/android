@@ -8,5 +8,6 @@ data class EnableWriteReview(
     var foodItem: Boolean = false,
     var fashion: Boolean = false,
     var home: Boolean = false,
-    var beauty: Boolean = false
+    var beauty: Boolean = false,
+    var tncLink: String?
 ): Parcelable
