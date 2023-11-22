@@ -230,7 +230,7 @@ class ShopToggleUseCase @Inject constructor(
         subTitle = resourcesProvider.getString(R.string.collect_fashion_food),
         icon = R.drawable.ic_toggle_collection_bag,
         deliveryTypeLabel = resourcesProvider.getString(R.string.earliest_click_and_collect),
-        deliveryCost = resourcesProvider.getString(R.string.delivery_cost),
+        deliveryCost = resourcesProvider.getString(R.string.collection_cost),
         deliverySlotFood = "",
         deliverySlotFbh = "",
         learnMore = resourcesProvider.getString(R.string.determined_at_checkout),

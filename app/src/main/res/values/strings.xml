@@ -3107,6 +3107,7 @@
     <string name="standard_shop_fashion"> shop FASHION, BEAUTY, HOME AND food</string>
     <string name="earliest_standard_delivery_dates">Earliest Standard Delivery Dates:</string>
     <string name="delivery_cost">Delivery Cost:</string>
+    <string name="collection_cost">Collection Cost:</string>
     <string name="determined_at_checkout">Determined at checkout. </string>
     <string name="set_to_standard_delivery">SET TO STANDARD DELIVERY</string>
     <string name="get_food_today">GET FOOD, TODAY</string>
