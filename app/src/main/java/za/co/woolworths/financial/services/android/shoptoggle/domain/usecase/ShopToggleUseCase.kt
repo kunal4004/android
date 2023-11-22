@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.common.ResourcesProvider
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -20,6 +21,7 @@ import za.co.woolworths.financial.services.android.shoptoggle.domain.repository.
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -103,7 +105,10 @@ class ShopToggleUseCase @Inject constructor(
         dashModel.foodQuantity = foodQuantity ?: 0
         //Prepare CNC Data
         val cncModel = getCncData()
-        val store = stores?.get(0)
+        val store = GeoUtils.getStoreDetails(
+            getDeliveryType()?.storeId,
+            stores
+        ) ?: stores?.get(0)
         val foodDeliveryDate = store?.firstAvailableFoodDeliveryDate ?: resourcesProvider.getString(
             R.string.no_timeslots_available_title
         )

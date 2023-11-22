@@ -65,9 +65,9 @@ class ContextualTooltipShowcaseManager : CotextualTooltipShowcase {
         previouslyNewUser: Boolean,
         isUserAuthenticated: Boolean
     ): TooltipShown {
-        return if (previouslyNewUser) {
+        return if (previouslyNewUser && isNewSession) {
             TooltipShown.FULFILMENT_SECOND
-        } else if (currentStatus == null) {
+        } else if (currentStatus == null && isNewSession) {
             TooltipShown.FULFILMENT
         } else if (currentStatus == TooltipShown.FULFILMENT) {
             TooltipShown.LOCATION
@@ -165,7 +165,7 @@ class ContextualTooltipShowcaseManager : CotextualTooltipShowcase {
 
     private fun getCurrentUserType(data: TooltipData?, isUserAuthenticated: Boolean): UserType {
         var userType = data?.userType
-        if (userType == null) {
+        if (userType != UserType.EXISTING) {
             userType = if (isUserAuthenticated) {
                 UserType.EXISTING
             } else {
