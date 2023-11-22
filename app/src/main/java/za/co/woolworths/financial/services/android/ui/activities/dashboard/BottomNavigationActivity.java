@@ -737,6 +737,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     switchTab(INDEX_TODAY);
                     hideToolbar();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU, BottomNavigationActivity.this);
+                    checkLocation();
                     return true;
 
                 case R.id.navigate_to_shop:
@@ -798,6 +799,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     };
 
+    private void checkLocation(){
+        if(getCurrentFragment() instanceof WTodayFragment) {
+            WTodayFragment wTodayFragment = (WTodayFragment) getCurrentFragment();
+            if (Utils.isLocationEnabled(this)) {
+                wTodayFragment.checkRunTimePermissionForLocation();
+            }
+        }
+    }
     public void onShopTabSelected(MenuItem item) {
         replaceAccountIcon(item);
         setCurrentSection(R.id.navigate_to_shop);

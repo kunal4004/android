@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
@@ -51,6 +52,9 @@ class ShopToggleActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val autoNavigation = intent?.extras?.getBoolean(BundleKeysConstants.TOGGLE_FULFILMENT_AUTO_NAVIGATION) ?: false
+        viewModel.setFromAutoNavigation(autoNavigation)
+        val isUserAuthenticated = SessionUtilities.getInstance().isUserAuthenticated
         setContent {
             OneAppTheme {
                 Surface(
@@ -86,12 +90,20 @@ class ShopToggleActivity : ComponentActivity() {
                                 CircularProgressIndicator(color = Color.Black)
                             }
                         } else {
-                            ShopToggleScreen(viewModel, state.data) { delivery ->
+                            ShopToggleScreen(viewModel, state.data, isUserAuthenticated, isAutoNavigated = autoNavigation) { delivery, needRefresh ->
                                 if (delivery != null) {
-                                    if (delivery == Delivery.CNC) {
-                                        launchStoreSelection()
+                                    if (needRefresh) {
+                                        if (delivery == Delivery.CNC) {
+                                            launchStoreSelection()
+                                        } else {
+                                            viewModel.confirmAddress(delivery)
+                                        }
                                     } else {
-                                        viewModel.confirmAddress(delivery)
+                                        sendResultBack(
+                                            this@ShopToggleActivity,
+                                            delivery = viewModel.deliveryType().type,
+                                            needRefresh = false
+                                        )
                                     }
                                 }
                             }

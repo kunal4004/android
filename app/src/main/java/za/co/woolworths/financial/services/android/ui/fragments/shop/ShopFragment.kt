@@ -113,6 +113,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var isScreenRefreshing = false
     private var needToDisplayTooltip = false
+    private var isNewTooltipSession = true
     private val fragmentResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != RESULT_OK) {
@@ -952,12 +953,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
        return HtmlCompat.fromHtml(getString(text),HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
     fun showToggleFulfilmentScreen() {
-        contextualTooltipShowcase.updateToolTipUserSession()
         if (!shopLandingAutoNavigator.isShopLandingVisited()) {
             toggleScreenTimer = Timer()
             toggleScreenTimer?.schedule(timerTask {
                 shopLandingAutoNavigator.markShopLandingVisited()
-                launchShopToggleScreen()
+                launchShopToggleScreen(autoNavigation = true)
             }, TOGGLE_SCREEN_DELAY)
         } else {
             showTooltipIfRequired()
@@ -966,13 +966,18 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     fun showTooltipIfRequired() {
         val delivery = currentDeliveryType()
-        when (contextualTooltipShowcase.toolTipToDisplay(delivery)) {
+        val tooltipShown = contextualTooltipShowcase.toolTipToDisplay(delivery, isNewTooltipSession, isUserAuthenticated())
+        if (isNewTooltipSession) {
+            isNewTooltipSession = false
+        }
+        when (tooltipShown) {
             TooltipShown.FULFILMENT -> {
                 val shown = showFulfilmentTooltip()
                 if (shown) {
                     contextualTooltipShowcase.markTooltipShown(
                         delivery = delivery,
-                        tooltipShown = TooltipShown.FULFILMENT
+                        tooltipShown = TooltipShown.FULFILMENT,
+                        isUserAuthenticated()
                     )
                 }
             }
@@ -982,7 +987,19 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 if (shown) {
                     contextualTooltipShowcase.markTooltipShown(
                         delivery = delivery,
-                        tooltipShown = TooltipShown.LOCATION
+                        tooltipShown = TooltipShown.LOCATION,
+                        isUserAuthenticated()
+                    )
+                }
+            }
+
+            TooltipShown.FULFILMENT_SECOND -> {
+                val shown = showFulfilmentTooltip(isSecondTimeFlow = true)
+                if (shown) {
+                    contextualTooltipShowcase.markTooltipShown(
+                        delivery = delivery,
+                        tooltipShown = TooltipShown.COMPLETED,
+                        isUserAuthenticated()
                     )
                 }
             }
@@ -997,13 +1014,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         return Delivery.getType(getDeliveryType()?.deliveryType) ?: Delivery.STANDARD
     }
 
-    private fun launchShopToggleScreen() {
+    private fun launchShopToggleScreen(autoNavigation: Boolean = false) {
         Intent(requireActivity(), ShopToggleActivity::class.java).apply {
+            putExtra(BundleKeysConstants.TOGGLE_FULFILMENT_AUTO_NAVIGATION, autoNavigation)
             startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
         }
     }
 
-    private fun showFulfilmentTooltip(): Boolean {
+    private fun showFulfilmentTooltip(isSecondTimeFlow: Boolean = false): Boolean {
         // Prevent dialog to display in other section when fragment is not visible
         (activity as? BottomNavigationActivity)?.let {
             if (it.currentFragment !is ShopFragment || !isAdded) {
@@ -1037,11 +1055,13 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             val descriptionText=getCustomToolTipText(it)
 
             it.walkThroughPromtView =
-                WMaterialShowcaseViewV2.Builder(it, TooltipDialog.Feature.SHOP_FULFILMENT)
+                WMaterialShowcaseViewV2.Builder(it, TooltipDialog.Feature.SHOP_FULFILMENT, isSecondTimeFlow = isSecondTimeFlow)
                     .setTarget(binding.fulfilmentAndLocationLayout.layoutFulfilment.root)
                     .setTitle(titleToolTip)
                     .setDescription(descriptionText)
-                    .setActionText(getString(R.string.got_it)).withRectangleShape().setTargetTouchable(true)
+                    .setActionText(if (isSecondTimeFlow) getString(R.string.got_it) else getString(R.string.next))
+                    .withRectangleShape()
+                    .setTargetTouchable(true)
                     .setDismissOnTouch(false).setDismissOnTargetTouch(false).setShapePadding(0)
                     .setAction(walkThroughListener).setDelay(0).setFadeDuration(0).setArrowIcon(R.drawable.ic_arrow_tooltip_spinning)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black_e6000000)).build()

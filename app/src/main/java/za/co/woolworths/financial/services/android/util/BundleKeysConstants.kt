@@ -5,6 +5,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.use
 class BundleKeysConstants {
 
     companion object {
+        const val TOGGLE_FULFILMENT_AUTO_NAVIGATION = "TOGGLE_FULFILMENT_AUTO_NAVIGATION"
         const val BUNDLE = "bundle"
 
         //AccountsOptionFragment Keys

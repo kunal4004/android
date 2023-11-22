@@ -30,10 +30,11 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 @Composable
 fun ExpandedData(
     isExpanded: Boolean,
-    isSelected: Boolean,
+    isDefaultSelectedDelivery: Boolean,
+    isAutoNavigated: Boolean,
     item: ToggleModel,
     viewModel: ShopToggleViewModel,
-    onSelectDeliveryType: (Delivery?) -> Unit
+    onSelectDeliveryType: (Delivery?, Boolean) -> Unit
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -105,21 +106,26 @@ fun ExpandedData(
 
         Spacer(modifier = Modifier.height(Dimens.sixteen_dp))
 
-        if (!isSelected) {
+        if (!isDefaultSelectedDelivery || isAutoNavigated) {
             BlackButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(Dimens.fifty_dp),
-                text = item.deliveryButtonText.uppercase(),
+                text = getPrimaryCtaText(isDefaultSelectedDelivery, isAutoNavigated, item).uppercase(),
                 enabled = true,
             ) {
                 val placeId = KotlinUtils.getDeliveryType()?.address?.placeId
                 if (placeId.isNullOrEmpty()) {
                     showSetLocationBottomSheet = true
                 } else {
-                    // Call the confirm location API
                     val deliveryType = Delivery.getType(item.deliveryType)
-                    onSelectDeliveryType(deliveryType)
+                    if (isDefaultSelectedDelivery && isAutoNavigated) {
+                        // Do not call the API, just send user back to the previous page
+                        onSelectDeliveryType(deliveryType, false)
+                    } else {
+                        // Call the confirm location API
+                        onSelectDeliveryType(deliveryType, true)
+                    }
                 }
             }
         }
@@ -195,6 +201,16 @@ fun ExpandedData(
             }
         )
     }
+}
+
+@Composable
+private fun getPrimaryCtaText(isDefaultSelectedDelivery: Boolean, isAutoNavigated: Boolean, item: ToggleModel): String {
+    return if (isDefaultSelectedDelivery && isAutoNavigated) {
+        item.deliveryButtonTextContinue
+    } else {
+        item.deliveryButtonText
+    }
+
 }
 
 @Composable

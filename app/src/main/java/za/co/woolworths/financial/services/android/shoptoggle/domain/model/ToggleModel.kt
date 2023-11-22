@@ -15,5 +15,6 @@ data class ToggleModel(
     var deliveryCost: String,
     var dataFailure: Boolean,
     val deliveryButtonText: String,
-    val isDashDelivery: Boolean
+    val deliveryButtonTextContinue: String,
+    val isDashDelivery: Boolean,
 )

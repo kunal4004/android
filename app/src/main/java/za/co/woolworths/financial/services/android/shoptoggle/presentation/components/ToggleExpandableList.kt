@@ -27,7 +27,9 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 fun ToggleExpandableList(
     viewModel: ShopToggleViewModel,
     item: List<ToggleModel>,
-    onSelectDeliveryType: (Delivery?) -> Unit
+    isAutoNavigated: Boolean,
+    isUserAuthenticated: Boolean,
+    onSelectDeliveryType: (Delivery?, Boolean) -> Unit
 ) {
 
     LazyColumn(
@@ -38,7 +40,9 @@ fun ToggleExpandableList(
             ExpandableListItem(
                 item = item,
                 expandedId = viewModel.expandedItemId,
+                isAutoNavigated = isAutoNavigated,
                 defaultSelectionId = viewModel.selectedDeliveryTypeItemId,
+                isUserAuthenticated = isUserAuthenticated,
                 onItemClick = {
 
                     if (viewModel.expandedItemId == item.id) {

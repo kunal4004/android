@@ -13,5 +13,6 @@ data class ShopToggleData(
     val learnMore: String,
     val deliveryButtonText: String,
     val isDashDelivery: Boolean,
-    val quantity: Int
+    val quantity: Int,
+    val deliveryButtonTextContinue: String,
 )
