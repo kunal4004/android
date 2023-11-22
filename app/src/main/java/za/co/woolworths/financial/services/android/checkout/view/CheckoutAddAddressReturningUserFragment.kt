@@ -74,6 +74,7 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.native_
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
@@ -499,11 +500,15 @@ class CheckoutAddAddressReturningUserFragment :
                         }
                     }
                 }
-                binding.checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringTitle.text =
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text =
                     requireContext().getString(R.string.standard_delivery)
-                binding.checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringValue?.text =
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text =
                     deliveringToAddress
-                binding.checkoutDeliveryDetailsLayout?.root?.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.visibility = GONE
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = GONE
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.root.setBackgroundColor(Color.WHITE)
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener(this)
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener(this)
             }
         }
     }
@@ -685,15 +690,7 @@ class CheckoutAddAddressReturningUserFragment :
             shimmerComponentArray = listOf(
                 Pair<ShimmerFrameLayout, View>(
                     checkoutDeliveryDetailsLayout.deliveringTitleShimmerFrameLayout,
-                    checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringTitle
-                ),
-                Pair<ShimmerFrameLayout, View>(
-                    checkoutDeliveryDetailsLayout.deliveringTitleValueShimmerFrameLayout,
-                    checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringValue
-                ),
-                Pair<ShimmerFrameLayout, View>(
-                    checkoutDeliveryDetailsLayout.forwardImgViewShimmerFrameLayout,
-                    checkoutDeliveryDetailsLayout.imageViewCaretForward
+                    checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.root
                 ),
                 Pair<ShimmerFrameLayout, View>(
                     nativeCheckoutFoodSubstitutionLayout.foodSubstitutionTitleShimmerFrameLayout,
@@ -1062,29 +1059,6 @@ class CheckoutAddAddressReturningUserFragment :
                 }
             }
 
-            R.id.checkoutDeliveryDetailsLayout -> {
-                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    SLOT_SELECTION_REQUEST_CODE,
-                    KotlinUtils.getPreferredDeliveryType(),
-                    placesId,
-                    false,
-                    isComingFromCheckout = true,
-                    isMixedBasket = false,
-                    isFBHOnly = false,
-                    isComingFromSlotSelection = true,
-                    savedAddressResponse = savedAddress,
-                    defaultAddress = defaultAddress,
-                    whoISCollecting = "",
-                    liquorCompliance = liquorOrder?.let { liquorOrder ->
-                        liquorImageUrl?.let { liquorImageUrl ->
-                            LiquorCompliance(liquorOrder, liquorImageUrl)
-                        }
-                    }
-                )
-                activity?.finish()
-            }
-
             R.id.txtContinueToPayment -> {
                 cartItemList?.let {
                     addShippingInfoEventsAnalytics.sendEventData(
@@ -1096,7 +1070,81 @@ class CheckoutAddAddressReturningUserFragment :
                 onCheckoutPaymentClick()
                 preparePaymentPageViewRequest(orderTotalValue)
             }
+
+            binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
+
+            binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
         }
+    }
+
+    private fun launchShopToggleScreen() {
+        val intent = ShopToggleActivity.getIntent(requireActivity(),
+            isComingFromCheckout = true,
+            isComingFromSlotSelection = true,
+            savedAddressResponse = savedAddress,
+            defaultAddress = defaultAddress,
+            liquorCompliance = liquorOrder?.let { liquorOrder ->
+                liquorImageUrl?.let { liquorImageUrl ->
+                    LiquorCompliance(liquorOrder, liquorImageUrl)
+                }
+            }
+        )
+        startActivityForResult(intent, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
+        activity?.finish()
+    }
+    private fun launchStoreOrLocationSelection() {
+        val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+        if (delivery == Delivery.CNC) {
+            launchStoreSelection()
+        } else {
+            launchGeoLocationFlow()
+        }
+    }
+    private fun launchStoreSelection() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            BundleKeysConstants.UPDATE_STORE_REQUEST,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.CNC,
+            needStoreSelection = true,
+        )
+    }
+
+    private fun launchGeoLocationFlow() {
+//        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+//            activity,
+//            BundleKeysConstants.UPDATE_LOCATION_REQUEST,
+//            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
+//            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+//            isLocationUpdateRequest = true,
+//            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType
+//        )
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            SLOT_SELECTION_REQUEST_CODE,
+            KotlinUtils.getPreferredDeliveryType(),
+            placesId,
+            isLocationUpdateRequest = true,
+            isFromNewToggleFulfilmentScreen = true,
+            isFromDashTab = false,
+            isComingFromCheckout = true,
+            isMixedBasket = false,
+            isFBHOnly = false,
+            isComingFromSlotSelection = true,
+            savedAddressResponse = savedAddress,
+            defaultAddress = defaultAddress,
+            whoISCollecting = "",
+            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
+            liquorCompliance = liquorOrder?.let { liquorOrder ->
+                liquorImageUrl?.let { liquorImageUrl ->
+                    LiquorCompliance(liquorOrder, liquorImageUrl)
+                }
+            }
+        )
+        activity?.finish()
     }
 
     private fun preparePaymentPageViewRequest(orderTotalValue: Double) {

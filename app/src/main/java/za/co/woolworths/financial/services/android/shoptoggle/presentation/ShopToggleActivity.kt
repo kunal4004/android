@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.shoptoggle.presentation
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.activity.ComponentActivity
@@ -17,15 +19,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.parcelize.Parcelize
+import za.co.woolworths.financial.services.android.cart.view.CartFragment
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
+import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.components.ShopToggleScreen
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
@@ -45,14 +62,58 @@ class ShopToggleActivity : ComponentActivity() {
             activity?.setResult(Activity.RESULT_OK, intent)
             activity?.finish()
         }
+
+        fun getIntent(
+            context: Context,
+            isComingFromCheckout: Boolean = false,
+            isComingFromSlotSelection: Boolean = false,
+            savedAddressResponse: SavedAddressResponse? = null,
+            defaultAddress: Address? = null,
+            whoISCollecting: String? = null,
+            liquorCompliance: LiquorCompliance? = null,
+        ): Intent {
+            val intent = Intent(context, ShopToggleActivity::class.java)
+            intent.apply {
+                putExtra(BundleKeysConstants.IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                putExtra(BundleKeysConstants.IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                putExtra(BundleKeysConstants.SAVED_ADDRESS_RESPONSE, savedAddressResponse)
+                putExtra(BundleKeysConstants.DEFAULT_ADDRESS, defaultAddress)
+                if (liquorCompliance != null && liquorCompliance.isLiquorOrder && AppConfigSingleton.liquor != null && AppConfigSingleton.liquor!!.noLiquorImgUrl != null && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
+                    putExtra(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder)
+                    putExtra(Constant.NO_LIQUOR_IMAGE_URL, AppConfigSingleton.liquor!!.noLiquorImgUrl)
+                }
+                putExtra(
+                    CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
+                    whoISCollecting
+                )
+            }
+            return intent
+        }
     }
 
     private val viewModel by viewModels<ShopToggleViewModel>()
+    private var isComingFromCheckout: Boolean = false
+    private var isComingFromSlotSelection: Boolean = false
+    private var savedAddressResponse: SavedAddressResponse? = null
+    private var whoIsCollecting: WhoIsCollectingDetails? = null
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val autoNavigation = intent?.extras?.getBoolean(BundleKeysConstants.TOGGLE_FULFILMENT_AUTO_NAVIGATION) ?: false
+        var autoNavigation = false
+        intent?.extras?.apply {
+            autoNavigation = getBoolean(BundleKeysConstants.TOGGLE_FULFILMENT_AUTO_NAVIGATION) ?: false
+            isComingFromSlotSelection = getBoolean(BundleKeysConstants.IS_COMING_FROM_SLOT_SELECTION, false) ?: false
+            isComingFromCheckout = getBoolean(BundleKeysConstants.IS_COMING_FROM_CHECKOUT, false) ?: false
+            getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, null)?.let {
+                whoIsCollecting = Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
+            }
+            savedAddressResponse = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                getSerializable(BundleKeysConstants.SAVED_ADDRESS_RESPONSE, SavedAddressResponse::class.java)
+            else
+                getSerializable(BundleKeysConstants.SAVED_ADDRESS_RESPONSE) as? SavedAddressResponse
+        }
+
         viewModel.setFromAutoNavigation(autoNavigation)
         val isUserAuthenticated = SessionUtilities.getInstance().isUserAuthenticated
         setContent {
@@ -128,7 +189,11 @@ class ShopToggleActivity : ComponentActivity() {
                                 } else {
                                     val deliveryType = KotlinUtils.getDeliveryType()?.deliveryType
                                     deliveryType?.let {
-                                        sendResultBack(this@ShopToggleActivity, delivery = deliveryType, needRefresh = true)
+                                        if (isComingFromCheckout) {
+                                            onConfirmLocationNavigation(deliveryType)
+                                        } else {
+                                            sendResultBack(this@ShopToggleActivity, delivery = deliveryType, needRefresh = true)
+                                        }
                                     }
                                 }
                             }
@@ -153,10 +218,116 @@ class ShopToggleActivity : ComponentActivity() {
         )
     }
 
+    private fun onConfirmLocationNavigation(deliveryTypeText: String) {
+        if (isComingFromCheckout) {
+            val delivery = Delivery.getType(deliveryTypeText)
+            if (delivery == Delivery.STANDARD || delivery == Delivery.DASH) {
+                if (isComingFromSlotSelection) {
+                    /*Navigate to slot selection page with updated saved address*/
+                    val checkoutActivityIntent =
+                        Intent(
+                            this,
+                            CheckoutActivity::class.java
+                        ).apply {
+                            putExtra(
+                                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+                                savedAddressResponse
+                            )
+                            val result = when (delivery) {
+                                Delivery.STANDARD -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
+                                else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
+                            }
+                            putExtra(result, true)
+                            putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+                            putExtra(
+                                Constant.NO_LIQUOR_IMAGE_URL,
+                                getLiquorImageUrl()
+                            )
+                        }
+                    apply {
+                        startActivityForResult(
+                            checkoutActivityIntent,
+                            BundleKeysConstants.FULLFILLMENT_REQUEST_CODE
+                        )
+
+                        overridePendingTransition(
+                            R.anim.slide_from_right,
+                            R.anim.slide_out_to_left
+                        )
+
+                    }
+                    finish()
+                }
+            }
+            else if (isComingFromSlotSelection) {
+                if (whoIsCollecting != null) {
+                    startCheckoutActivity(Utils.toJson(whoIsCollecting))
+                } else {
+                    /*Navigate to who is collecting*/
+                    val placeId = KotlinUtils.getDeliveryType()?.address?.placeId
+                    KotlinUtils.presentEditDeliveryGeoLocationActivity2(
+                        this@ShopToggleActivity,
+                        CartFragment.REQUEST_PAYMENT_STATUS,
+                        GeoUtils.getDelivertyType(),
+                        placeId,
+                        isComingFromCheckout = true,
+                        isMixedBasket = false, //TODO, setting static value for now (viewModel.isMixedBasket())
+                        isFBHOnly = false, //TODO, setting static value for now (viewModel.isFBHOnly())
+                        isComingFromSlotSelection = false,
+                        savedAddressResponse = savedAddressResponse,
+                        defaultAddress = null,
+                        whoISCollecting = "",
+                        isLiquorOrder = getLiquorOrder(),
+                        liquorImageUrl = getLiquorImageUrl(),
+                        cartItemList = null, //TODO, setting static for now (viewModel.getCartItemList())
+                    )
+                }
+            }
+
+        } else {
+            setResult(Activity.RESULT_OK)
+            finish()
+        }
+    }
+
+    private fun startCheckoutActivity(toJson: String?) {
+        val checkoutActivityIntent = Intent(this@ShopToggleActivity, CheckoutActivity::class.java)
+        checkoutActivityIntent.putExtra(
+            CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
+            toJson
+        )
+        checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+        checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
+        startActivityForResult(checkoutActivityIntent, CartFragment.REQUEST_PAYMENT_STATUS)
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left)
+        finish()
+    }
+    private fun getLiquorOrder(): Boolean {
+        var liquorOrder = false
+        intent?.extras?.apply {
+            liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+        }
+        return liquorOrder
+    }
+
+    private fun getLiquorImageUrl(): String {
+        var liquorImageUrl = ""
+        intent?.extras?.apply {
+            liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
+        }
+        return liquorImageUrl
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_DELIVERY_TYPE || requestCode == BundleKeysConstants.REQUEST_CODE) {
+            if (requestCode == REQUEST_DELIVERY_TYPE) {
+                if (isComingFromCheckout) {
+                    onConfirmLocationNavigation(Delivery.CNC.name)
+                } else {
+                    sendResultBack()
+                }
+            } else if (requestCode == BundleKeysConstants.REQUEST_CODE) {
                 sendResultBack()
             }
         }

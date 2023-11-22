@@ -54,11 +54,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
@@ -477,6 +479,62 @@ class KotlinUtils {
                 // todo Change this logic to add everything in bundle as this is exceeding 1mb limit of bundle.
                 if (liquorCompliance != null && liquorCompliance.isLiquorOrder && liquor != null && liquor!!.noLiquorImgUrl != null && !liquor!!.noLiquorImgUrl.isEmpty()) {
                     mBundle.putBoolean(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder)
+                    mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
+                }
+                mBundle.putSerializable(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
+                mBundle.putString(DELIVERY_TYPE, delivery.toString())
+                mBundle.putString(NEW_DELIVERY_TYPE, newDelivery?.type)
+                mBundle.putString(PLACE_ID, placeId)
+                mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
+                mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(IS_COMING_FROM_CNC_SELETION, isComingFromCheckout)
+                mBundle.putBoolean(IS_MIXED_BASKET, isMixedBasket)
+                mBundle.putBoolean(IS_FBH_ONLY, isFBHOnly)
+                mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                mBundle.putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, isFromNewToggleFulfilmentScreen)
+                mBundle.putBoolean(LOCATION_UPDATE_REQUEST, isLocationUpdateRequest)
+                mBundle.putBoolean(NEED_STORE_SELECTION, needStoreSelection)
+                mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
+                mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
+                mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
+                mBundle.putSerializable(
+                    CheckoutAddressManagementBaseFragment.CART_ITEM_LIST,
+                    cartItemList
+                )
+                mIntent.putExtra(BUNDLE, mBundle)
+                startActivityForResult(mIntent, requestCode)
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+        }
+
+        fun presentEditDeliveryGeoLocationActivity2(
+            activity: Activity?,
+            requestCode: Int,
+            delivery: Delivery? = Delivery.STANDARD,
+            placeId: String? = null,
+            isFromDashTab: Boolean = false,
+            isComingFromCheckout: Boolean = false,
+            isMixedBasket: Boolean = false,
+            isFBHOnly: Boolean = false,
+            isComingFromSlotSelection: Boolean = false,
+            isLocationUpdateRequest: Boolean = false,
+            savedAddressResponse: SavedAddressResponse? = null,
+            defaultAddress: Address? = null,
+            whoISCollecting: String? = null,
+            isLiquorOrder: Boolean? = null,
+            liquorImageUrl: String? = null,
+            cartItemList: ArrayList<CommerceItem>? = null,
+            isFromNewToggleFulfilmentScreen: Boolean = false,
+            needStoreSelection: Boolean = false,
+            newDelivery: Delivery? = null,
+            validateLocationResponse: ValidateLocationResponse? = null
+        ) {
+            activity?.apply {
+                val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
+                val mBundle = Bundle()
+                // todo Change this logic to add everything in bundle as this is exceeding 1mb limit of bundle.
+                if (isLiquorOrder == true && liquor != null && liquor!!.noLiquorImgUrl != null && !liquor!!.noLiquorImgUrl.isEmpty()) {
+                    mBundle.putBoolean(Constant.LIQUOR_ORDER, isLiquorOrder)
                     mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
                 }
                 mBundle.putSerializable(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)

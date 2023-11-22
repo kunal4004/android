@@ -82,6 +82,7 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.native_
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
@@ -90,6 +91,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildPushNotificationAlertToast
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
@@ -266,15 +268,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
                 binding.checkoutCollectingFromLayout.deliveringTitleShimmerFrameLayout,
-                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringTitle
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.checkoutCollectingFromLayout.deliveringTitleValueShimmerFrameLayout,
-                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                binding.checkoutCollectingFromLayout.forwardImgViewShimmerFrameLayout,
-                binding.checkoutCollectingFromLayout.imageViewCaretForward
+                binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.root
             ),
             Pair<ShimmerFrameLayout, View>(
                 binding.nativeCheckoutFoodSubstitutionLayout.foodSubstitutionTitleShimmerFrameLayout,
@@ -811,8 +805,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun initializeDashingToView() {
-        binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringTitle?.text =
-            getString(R.string.dashing_to)
+        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.visibility = GONE
+        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = GONE
+        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.root.setBackgroundColor(Color.WHITE)
+        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text =
+            requireContext().getString(R.string.dash_delivery)
+
         binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.root?.visibility = GONE
         if (arguments == null) {
             binding.checkoutCollectingFromLayout.root.visibility = GONE
@@ -884,9 +882,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
                     binding.checkoutCollectingFromLayout?.root?.visibility = GONE
                 }
-                binding.checkoutCollectingFromLayout.tvNativeCheckoutDeliveringValue?.text =
+                binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text =
                     deliveringToAddress
-                binding.checkoutCollectingFromLayout?.root?.setOnClickListener(this)
+                binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener(this)
+                binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener(this)
             }
         }
     }
@@ -1113,38 +1112,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.checkoutCollectingFromLayout -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT,
-                    hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
-                    ),
-                    activity
-                )
-
-                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
-                    KotlinUtils.getPreferredDeliveryType(),
-                    placesId,
-                    isFromDashTab = false,
-                    isComingFromCheckout = true,
-                    isMixedBasket = false,
-                    isFBHOnly = false,
-                    isComingFromSlotSelection = true,
-                    savedAddressResponse = savedAddress,
-                    defaultAddress = defaultAddress,
-                    whoISCollecting = "",
-                    liquorCompliance = liquorOrder?.let { liquorOrder ->
-                        liquorImageUrl?.let { liquorImageUrl ->
-                            LiquorCompliance(liquorOrder, liquorImageUrl)
-                        }
-                    }
-                )
-                activity?.finish()
-            }
-
             R.id.chooseDateLayout -> {
                 onChooseDateClicked()
             }
@@ -1160,7 +1127,71 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 preparePaymentPageViewRequest(orderTotalValue)
 
             }
+            binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
+
+            binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
         }
+    }
+    private fun launchShopToggleScreen() {
+        val intent = ShopToggleActivity.getIntent(requireActivity(),
+            isComingFromCheckout = true,
+            isComingFromSlotSelection = true,
+            savedAddressResponse = savedAddress,
+            defaultAddress = defaultAddress,
+            liquorCompliance = liquorOrder?.let { liquorOrder ->
+                liquorImageUrl?.let { liquorImageUrl ->
+                    LiquorCompliance(liquorOrder, liquorImageUrl)
+                }
+            }
+        )
+        startActivityForResult(intent, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
+        activity?.finish()
+    }
+    private fun launchStoreOrLocationSelection() {
+        val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+        if (delivery == Delivery.CNC) {
+            launchStoreSelection()
+        } else {
+            launchGeoLocationFlow()
+        }
+    }
+    private fun launchStoreSelection() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            BundleKeysConstants.UPDATE_STORE_REQUEST,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.CNC,
+            needStoreSelection = true,
+        )
+    }
+
+    private fun launchGeoLocationFlow() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
+            KotlinUtils.getPreferredDeliveryType(),
+            placesId,
+            isFromDashTab = false,
+            isComingFromCheckout = true,
+            isMixedBasket = false,
+            isFBHOnly = false,
+            isComingFromSlotSelection = true,
+            isLocationUpdateRequest = true,
+            savedAddressResponse = savedAddress,
+            defaultAddress = defaultAddress,
+            whoISCollecting = "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
+            liquorCompliance = liquorOrder?.let { liquorOrder ->
+                liquorImageUrl?.let { liquorImageUrl ->
+                    LiquorCompliance(liquorOrder, liquorImageUrl)
+                }
+            }
+        )
+        activity?.finish()
     }
 
     private fun preparePaymentPageViewRequest(orderTotalValue: Double) {

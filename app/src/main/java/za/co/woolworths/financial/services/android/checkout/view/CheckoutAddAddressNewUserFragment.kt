@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -83,6 +84,7 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.regex.Pattern
 import kotlin.coroutines.CoroutineContext
@@ -97,6 +99,8 @@ class CheckoutAddAddressNewUserFragment :
     PoiBottomSheetDialog.ClickListener,
     UnIndexedAddressIdentifiedListener {
 
+    private var isLocationUpdateRequest: Boolean = false
+    private var isComingFromNewToggleFulfilment: Boolean = false
     private lateinit var binding: CheckoutAddAddressNewUserBinding
     private var deliveringOptionsList: List<String>? = null
     private var navController: NavController? = null
@@ -148,6 +152,8 @@ class CheckoutAddAddressNewUserFragment :
         bundle?.apply {
             isComingFromCheckout = getBoolean(IS_COMING_FROM_CHECKOUT, false)
             isComingFromSlotSelection = getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
+            isComingFromNewToggleFulfilment = getBoolean(BundleKeysConstants.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
+            isLocationUpdateRequest = getBoolean(BundleKeysConstants.LOCATION_UPDATE_REQUEST, false)
             if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
                 val editSavedAddress = getString(EDIT_SAVED_ADDRESS_RESPONSE_KEY)
@@ -1208,10 +1214,64 @@ class CheckoutAddAddressNewUserFragment :
         if (bundle?.containsKey(DELIVERY_TYPE) == true) {
             baseFragBundle?.putString(DELIVERY_TYPE, bundle?.getString(DELIVERY_TYPE))
         }
-        findNavController().navigate(
-            R.id.action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment,
-            bundleOf(BUNDLE to baseFragBundle)
-        )
+        if (isComingFromNewToggleFulfilment && isLocationUpdateRequest && isComingFromCheckout) {
+            val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+            if (isComingFromSlotSelection && (delivery == Delivery.STANDARD || delivery == Delivery.DASH)) {
+                        /*Navigate to slot selection page with updated saved address*/
+                savedAddressResponse?.defaultAddressNickname = address.nickname
+                val checkoutActivityIntent =
+                    Intent(requireActivity(),
+                        CheckoutActivity::class.java
+                    ).apply {
+                        putExtra(
+                            CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+                            savedAddressResponse
+                        )
+                        val result = when (delivery) {
+                            Delivery.STANDARD -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
+                            else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
+                        }
+                        putExtra(result, true)
+                        putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+                        putExtra(
+                            Constant.NO_LIQUOR_IMAGE_URL,
+                            getLiquorImageUrl()
+                        )
+                    }
+                requireActivity().apply {
+                    startActivityForResult(
+                        checkoutActivityIntent,
+                        BundleKeysConstants.FULLFILLMENT_REQUEST_CODE
+                    )
+                     overridePendingTransition(
+                         R.anim.slide_from_right,
+                         R.anim.slide_out_to_left
+                     )
+                    finish()
+                }
+            }
+        } else {
+            findNavController().navigate(
+                R.id.action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment,
+                bundleOf(BUNDLE to baseFragBundle)
+            )
+        }
+    }
+
+    private fun getLiquorOrder(): Boolean {
+        var liquorOrder = false
+        arguments?.apply {
+            liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+        }
+        return liquorOrder
+    }
+
+    private fun getLiquorImageUrl(): String {
+        var liquorImageUrl = ""
+        arguments?.apply {
+            liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
+        }
+        return liquorImageUrl
     }
 
     private fun showErrorPhoneNumber(resourceId:Int) {

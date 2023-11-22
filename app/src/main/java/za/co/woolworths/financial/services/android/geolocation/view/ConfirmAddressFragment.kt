@@ -29,7 +29,9 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
@@ -62,6 +64,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.LOCATION_UPDATE_REQUEST
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
@@ -626,7 +629,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                                     }
                                 } else if ((isComingFromNewToggleFulfilment && !newDeliveryType.isNullOrEmpty()) || isLocationUpdateRequest) {
                                     // New user journey flow from the new toggle fulfilment screen when there is no place id available initially
-                                    validateDeliverableAndNavigate(place, address.placesId!!, validateLocationResponse)
+                                    validateDeliverableAndNavigate(place, address, validateLocationResponse)
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
                                     KotlinUtils.isComingFromCncTab = false
                                     /* set cnc browsing data */
@@ -687,28 +690,28 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         }
     }
 
-    private fun validateDeliverableAndNavigate(place: ValidatePlace, placeId: String, validateLocationResponse: ValidateLocationResponse) {
+    private fun validateDeliverableAndNavigate(place: ValidatePlace, address: Address, validateLocationResponse: ValidateLocationResponse) {
         when (newDeliveryType) {
             // As per delivery type first we will verify if it is deliverable for that or not.
             Delivery.STANDARD.type -> {
-                if (place.deliverable == true) {
-                    binding.confirmSetAddress(validateLocationResponse, placeId, newDeliveryType!!)
+                if (place.deliverable == true && !address.placesId.isNullOrEmpty()) {
+                    binding.confirmSetAddress(validateLocationResponse, address.placesId!!, newDeliveryType!!, address = address)
                 } else {
                     showChangeLocationDialog()
                 }
             }
 
             Delivery.CNC.type -> {
-                if (place.stores?.getOrNull(0)?.deliverable == true) {
-                    launchStores(placeId, validateLocationResponse)
+                if (place.stores?.getOrNull(0)?.deliverable == true && !address.placesId.isNullOrEmpty()) {
+                    launchStores(address.placesId!!, validateLocationResponse)
                 } else {
                     showNoCollectionStores()
                 }
             }
 
             Delivery.DASH.type -> {
-                if (place.onDemand?.deliverable == true) {
-                    binding.confirmSetAddress(validateLocationResponse, placeId, newDeliveryType!!)
+                if (place.onDemand?.deliverable == true && !address.placesId.isNullOrEmpty()) {
+                    binding.confirmSetAddress(validateLocationResponse, address.placesId!!, newDeliveryType!!, address = address)
                 } else {
                     showChangeLocationDialog()
                 }
@@ -827,9 +830,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                                 )
                             }
 
-                            // navigate to Dash home tab.
-                            activity?.setResult(Activity.RESULT_OK)
-                            activity?.finish()
+                            onConfirmLocationNavigation(address)
                         }
                     }
                 }
@@ -838,6 +839,78 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                 FirebaseManager.logException(e)
             }
         }
+    }
+
+    private fun onConfirmLocationNavigation(selectedAddress: Address?) {
+        if (isComingFromCheckout) {
+            if (deliveryType == Delivery.STANDARD.name || deliveryType == Delivery.DASH.name) {
+                if (isComingFromSlotSelection) {
+                    /*Navigate to slot selection page with updated saved address*/
+                    val checkoutActivityIntent =
+                        Intent(
+                            activity,
+                            CheckoutActivity::class.java
+                        ).apply {
+                            savedAddressResponse?.defaultAddressNickname = selectedAddress?.nickname
+                            putExtra(
+                                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+                                savedAddressResponse
+                            )
+                            val result = when (deliveryType) {
+                                Delivery.STANDARD.name -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
+                                else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
+                            }
+                            putExtra(result, true)
+                            putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+                            putExtra(
+                                Constant.NO_LIQUOR_IMAGE_URL,
+                                getLiquorImageUrl()
+                            )
+                        }
+                    activity?.apply {
+                        startActivityForResult(
+                            checkoutActivityIntent,
+                            BundleKeysConstants.FULLFILLMENT_REQUEST_CODE
+                        )
+
+                        overridePendingTransition(
+                            R.anim.slide_from_right,
+                            R.anim.slide_out_to_left
+                        )
+
+                    }
+                    activity?.finish()
+                } else {
+                    sendResult()
+                }
+            } else {
+                sendResult()
+            }
+        } else {
+            // navigate to shop/list/cart tab
+            sendResult()
+        }
+    }
+
+    private fun getLiquorOrder(): Boolean {
+        var liquorOrder = false
+        arguments?.apply {
+            liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+        }
+        return liquorOrder
+    }
+
+    private fun getLiquorImageUrl(): String {
+        var liquorImageUrl = ""
+        arguments?.apply {
+            liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
+        }
+        return liquorImageUrl
+    }
+
+    private fun sendResult() {
+        activity?.setResult(Activity.RESULT_OK)
+        activity?.finish()
     }
 
     private fun navigateToLastScreen(address: Address) {
@@ -965,6 +1038,15 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             IS_COMING_FROM_SLOT_SELECTION,
             isComingFromSlotSelection
         )
+        bundle.apply {
+            putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, isComingFromNewToggleFulfilment)
+            putBoolean(LOCATION_UPDATE_REQUEST, isLocationUpdateRequest)
+            putBoolean(Constant.LIQUOR_ORDER, getLiquorOrder())
+            putString(
+                Constant.NO_LIQUOR_IMAGE_URL,
+                getLiquorImageUrl()
+            )
+        }
         view?.let {
             GeoUtils.navigateSafe(
                 it, R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
