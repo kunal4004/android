@@ -8,6 +8,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Conf
 import za.co.woolworths.financial.services.android.common.ResourcesProvider
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
@@ -20,6 +21,7 @@ import za.co.woolworths.financial.services.android.shoptoggle.domain.model.Toggl
 import za.co.woolworths.financial.services.android.shoptoggle.domain.repository.ShopToggleRepository
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -101,7 +103,7 @@ class ShopToggleUseCase @Inject constructor(
         }
         val foodQuantity = onDemand?.quantityLimit?.foodMaximumQuantity
         val deliveryPrice = onDemand?.firstAvailableFoodDeliveryCost
-        dashModel.deliveryCost = "R $deliveryPrice"
+        dashModel.deliveryCost = "R $deliveryPrice.00"
         dashModel.foodQuantity = foodQuantity ?: 0
         //Prepare CNC Data
         val cncModel = getCncData()
@@ -155,7 +157,7 @@ class ShopToggleUseCase @Inject constructor(
         val dashModel = getDashData()
         dashModel.dataFailure = true
         val foodQuantity = 30
-        dashModel.deliveryCost = "R 35"
+        dashModel.deliveryCost = "R 35.00"
         dashModel.foodQuantity = foodQuantity
         ///////////////CNC///////////////////////
         val cncModel = getCncData()
@@ -228,7 +230,7 @@ class ShopToggleUseCase @Inject constructor(
         subTitle = resourcesProvider.getString(R.string.collect_fashion_food),
         icon = R.drawable.ic_toggle_collection_bag,
         deliveryTypeLabel = resourcesProvider.getString(R.string.earliest_click_and_collect),
-        deliveryCost = resourcesProvider.getString(R.string.delivery_cost),
+        deliveryCost = resourcesProvider.getString(R.string.collection_cost),
         deliverySlotFood = "",
         deliverySlotFbh = "",
         learnMore = resourcesProvider.getString(R.string.determined_at_checkout),
@@ -283,7 +285,7 @@ class ShopToggleUseCase @Inject constructor(
             } else {
                 emit(Resource.Loading())
                 try {
-                    val confirmLocationRequest = KotlinUtils.getConfirmLocationRequest(deliveryType)
+                    val confirmLocationRequest = getConfirmLocationRequest(deliveryType)
                     if (confirmLocationRequest.address.placeId.isNullOrEmpty()) {
                         emit(Resource.Error(message = resourcesProvider.getString(R.string.no_internet_title)))
                         return@flow
@@ -306,6 +308,31 @@ class ShopToggleUseCase @Inject constructor(
                 }
             }
         }
+
+    private fun getConfirmLocationRequest(deliveryType: Delivery?): ConfirmLocationRequest {
+        val deliverType = getDeliveryType()
+        val placeId = deliverType?.address?.placeId
+        var storeId = deliverType?.storeId
+        val confirmLocationAddress = ConfirmLocationAddress(placeId)
+        return when (deliveryType) {
+            Delivery.STANDARD -> {
+                ConfirmLocationRequest(BundleKeysConstants.STANDARD, confirmLocationAddress, "")
+            }
+
+            Delivery.CNC -> {
+                ConfirmLocationRequest(BundleKeysConstants.CNC, confirmLocationAddress, storeId)
+            }
+
+            Delivery.DASH -> {
+                storeId = validateLocationResponse?.validatePlace?.onDemand?.storeId
+                ConfirmLocationRequest(BundleKeysConstants.DASH, confirmLocationAddress, storeId)
+            }
+
+            else -> {
+                ConfirmLocationRequest(BundleKeysConstants.STANDARD, confirmLocationAddress, "")
+            }
+        }
+    }
 
     private fun saveResponse(
         confirmLocationResponse: ConfirmDeliveryAddressResponse,

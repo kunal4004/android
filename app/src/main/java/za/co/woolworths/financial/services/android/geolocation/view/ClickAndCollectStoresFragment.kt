@@ -105,7 +105,7 @@ class ClickAndCollectStoresFragment :
             etEnterNewAddress?.addTextChangedListener(this@ClickAndCollectStoresFragment)
             dialog?.window
                 ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
-            if (isComingFromConfirmAddress == true) {
+            if (isComingFromConfirmAddress == true || (needStoreSelection == true && mValidateLocationResponse == null)) {
                 placeId?.let {
                     if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
                         getDeliveryDetailsFromValidateLocation(it)
@@ -265,9 +265,7 @@ class ClickAndCollectStoresFragment :
 
     private fun navigateToFulfillmentScreen() {
         if (isComingFromNewToggleFulfilment == true) {
-            if (mValidateLocationResponse != null) {
-                confirmSetAddress(mValidateLocationResponse!!)
-            }
+            (mValidateLocationResponse ?: validateLocationResponse)?.let { confirmSetAddress(it) }
         } else if (IS_FROM_STORE_LOCATOR) {
             dataStore?.let {
                 bundle?.putString(
