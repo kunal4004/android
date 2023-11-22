@@ -49,8 +49,6 @@ class DashCategoryAdapter(
 
     private var headerText: String? = null
     private var type: String? = null
-    var productCarouselItemViewHolder: ProductCarouselItemViewHolder? = null
-
 
     private val diffCallback = object : DiffUtil.ItemCallback<Any>() {
 
@@ -79,43 +77,55 @@ class DashCategoryAdapter(
         set(value) = differ.submitList(value)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-         when (viewType) {
+        return when (viewType) {
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_BANNER_CAROUSEL ->
-              return  BannerCarouselItemViewHolder(
+                BannerCarouselItemViewHolder(
                     ItemBannerCarouselBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_BANNER_GRID -> {
-                return BannerGridItemViewHolder(
+                BannerGridItemViewHolder(
                     ItemBannerGridBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
             }
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL, DashDeliveryAdapter.TYPE_DASH_RECOMMENDATION_SLOT -> {
-               productCarouselItemViewHolder = ProductCarouselItemViewHolder(
-                    ItemProductCarouselListBinding.inflate(LayoutInflater.from(context), parent, false)
+                ProductCarouselItemViewHolder(
+                    ItemProductCarouselListBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
                 )
-                return productCarouselItemViewHolder as ProductCarouselItemViewHolder
             }
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_CAROUSEL -> {
-               return LongBannerCarouselItemViewHolder(
-                    ItemLongBannerCarouselBinding.inflate(LayoutInflater.from(context), parent, false)
+                LongBannerCarouselItemViewHolder(
+                    ItemLongBannerCarouselBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
                 )
             }
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_LIST -> {
-               return LongBannerListItemViewHolder(
+                LongBannerListItemViewHolder(
                     ItemLongBannerListBinding.inflate(LayoutInflater.from(context), parent, false)
                 )
             }
 
             DashDeliveryAdapter.TYPE_DASH_TODAY_WITH_WOOLIES -> {
-                return TodayWooliesListItemViewHolder(
-                    TodayWithWooliesListItemBinding.inflate(LayoutInflater.from(context), parent, false)
+                TodayWooliesListItemViewHolder(
+                    TodayWithWooliesListItemBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
                 )
             }
-            else -> return EmptyViewHolder(View(context))
+
+            else -> EmptyViewHolder(View(context))
         }
     }
 
