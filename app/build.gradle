@@ -14,8 +14,8 @@ android {
 
     def major = "9"
     def minor = "13"
-    def fix = "2"
-    def jobNumberProduction = 232
+    def fix = "3"
+    def jobNumberProduction = 233
     def jobNumberQa = 740
 
     buildFeatures {
