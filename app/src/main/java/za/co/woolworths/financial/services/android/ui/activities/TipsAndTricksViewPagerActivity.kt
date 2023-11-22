@@ -270,13 +270,11 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
     }
 
     private fun presentAccountStatements() {
-
-        val productGroupCode = if (availableAccounts.contains("SC")) {
-            "SC"
-        } else if (availableAccounts.contains("PL")) {
-            "PL"
-        } else {
-            null
+        val (sc, pl) = AccountsProductGroupCode.STORE_CARD.groupCode to AccountsProductGroupCode.PERSONAL_LOAN.groupCode
+        val productGroupCode = when {
+            sc in availableAccounts -> sc
+            pl in availableAccounts -> pl
+            else -> null
         }
         redirectToStatement(productGroupCode)
 
