@@ -15,7 +15,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.vi
 @Composable
 fun OrderAgainScreen(
     viewModel: OrderAgainViewModel,
-    onEvent: () -> Unit
+    onEvent: () -> Unit,
+    onBackPressed: () -> Unit
 ) {
 
     Scaffold(
@@ -25,7 +26,7 @@ fun OrderAgainScreen(
                     title = stringResource(id = R.string.order_again)
                 )
             ) {
-                
+                viewModel.onEvent()
             }
         },
     ) {
@@ -35,6 +36,8 @@ fun OrderAgainScreen(
 }
 
 @Composable
-private fun OrderAgainStatelessScreen(modifier: Modifier = Modifier) {
+private fun OrderAgainStatelessScreen(
+    modifier: Modifier = Modifier
+) {
 
 }

@@ -34,4 +34,8 @@ class OrderAgainViewModel @Inject constructor(
             }
         }
     }
+
+    fun onEvent() {
+
+    }
 }
