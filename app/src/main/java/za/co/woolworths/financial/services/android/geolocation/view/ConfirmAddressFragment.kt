@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Con
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.ConfirmAddressStoreLocator
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -617,6 +618,9 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                                             CustomBottomSheetDialogFragment::class.java.simpleName
                                         )
                                     }
+                                } else if (isComingFromNewToggleFulfilment && !newDeliveryType.isNullOrEmpty()) {
+                                    // New user journey flow from the new toggle fulfilment screen when there is no place id available initially
+                                    validateDeliverableAndNavigate(place, address.placesId!!, validateLocationResponse)
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
                                     KotlinUtils.isComingFromCncTab = false
                                     /* set cnc browsing data */
@@ -677,6 +681,54 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         }
     }
 
+    private fun validateDeliverableAndNavigate(place: ValidatePlace, placeId: String, validateLocationResponse: ValidateLocationResponse) {
+        when (newDeliveryType) {
+            // As per delivery type first we will verify if it is deliverable for that or not.
+            Delivery.STANDARD.type -> {
+                if (place.deliverable == true) {
+                    binding.confirmSetAddress(validateLocationResponse, placeId, newDeliveryType!!)
+                } else {
+                    showChangeLocationDialog()
+                }
+            }
+
+            Delivery.CNC.type -> {
+                if (place.stores?.getOrNull(0)?.deliverable == true) {
+                    launchStores(placeId, validateLocationResponse)
+                } else {
+                    showNoCollectionStores()
+                }
+            }
+
+            Delivery.DASH.type -> {
+                if (place.onDemand?.deliverable == true) {
+                    binding.confirmSetAddress(validateLocationResponse, placeId, newDeliveryType!!)
+                } else {
+                    showChangeLocationDialog()
+                }
+            }
+        }
+    }
+
+    private fun launchStores(placeId: String, validateLocationResponse: ValidateLocationResponse) {
+        val bundle = Bundle()
+        bundle.apply {
+            putString(KEY_PLACE_ID, placeId)
+            putString(BundleKeysConstants.NEW_DELIVERY_TYPE, newDeliveryType)
+            putBoolean(
+                IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN,
+                isComingFromNewToggleFulfilment
+            )
+            putSerializable(
+                BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse
+            )
+        }
+        findNavController().navigate(
+            R.id.actionClickAndCollectStoresFragment,
+            bundleOf(BUNDLE to bundle)
+        )
+    }
+
     private fun showErrorDialog() {
         if(!isAdded && !isVisible) return
         val customBottomSheetDialogFragment =
@@ -694,11 +746,21 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         )
     }
 
+    private fun getConfirmAddressRequest(delivery: String, validateLocationResponse: ValidateLocationResponse, placeId: String, address: String? = ""): ConfirmLocationRequest {
+        val confirmLocationAddress = ConfirmLocationAddress(placeId, null, address)
+        return if (delivery == Delivery.DASH.type) {
+            val storeId = validateLocationResponse.validatePlace?.onDemand?.storeId
+            ConfirmLocationRequest(BundleKeysConstants.DASH, confirmLocationAddress, storeId)
+        } else {
+            ConfirmLocationRequest(BundleKeysConstants.STANDARD, confirmLocationAddress, "")
+        }
+    }
 
     private fun ConfirmAddressBottomSheetDialogBinding.confirmSetAddress(
         validateLocationResponse: ValidateLocationResponse,
         placeId: String,
         currentDeliveryType: String,
+        address: Address? = null
     ) {
         if (placeId.isNullOrEmpty())
             return
@@ -706,11 +768,15 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
         //make confirm Location call
         val confirmLocationAddress = ConfirmLocationAddress(placeId)
         val confirmLocationRequest =
-            ConfirmLocationRequest(
-                currentDeliveryType,
-                confirmLocationAddress,
-                validateLocationResponse.validatePlace?.onDemand?.storeId
-            )
+            if (isComingFromNewToggleFulfilment && !newDeliveryType.isNullOrEmpty()) {
+                getConfirmAddressRequest(newDeliveryType!!, validateLocationResponse, placeId, address?.address2)
+            } else {
+                ConfirmLocationRequest(
+                    currentDeliveryType,
+                    confirmLocationAddress,
+                    validateLocationResponse.validatePlace?.onDemand?.storeId
+                )
+            }
 
         lifecycleScope.launch {
             progressBar?.visibility = View.VISIBLE

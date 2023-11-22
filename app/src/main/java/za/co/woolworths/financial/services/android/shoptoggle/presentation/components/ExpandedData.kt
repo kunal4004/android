@@ -187,8 +187,9 @@ fun ExpandedData(
     }
 
     if (showSetLocationBottomSheet) {
+        val delivery = viewModel.deliveryType()
         SetLocationBottomSheetMain(
-            delivery = viewModel.deliveryType(),
+            delivery = delivery,
             onDismissRequest = {
                 showSetLocationBottomSheet = false
             }

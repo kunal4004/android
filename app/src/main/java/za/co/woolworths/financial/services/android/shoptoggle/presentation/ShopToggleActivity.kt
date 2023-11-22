@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.shoptoggle.presentation
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -17,10 +18,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.parcelize.Parcelize
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.components.ShopToggleScreen
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -29,6 +32,18 @@ class ShopToggleActivity : ComponentActivity() {
 
     companion object {
         const val REQUEST_DELIVERY_TYPE = 105
+        const val INTENT_DATA_TOGGLE_FULFILMENT = "INTENT_DATA_TOGGLE_FULFILMENT"
+
+        fun sendResultBack(activity: Activity?, delivery: String, needRefresh: Boolean) {
+            val result = ToggleFulfilmentResult(
+                needRefresh = needRefresh,
+                newDeliveryType = delivery
+            )
+            val intent = Intent()
+            intent.putExtra(INTENT_DATA_TOGGLE_FULFILMENT, result)
+            activity?.setResult(Activity.RESULT_OK, intent)
+            activity?.finish()
+        }
     }
 
     private val viewModel by viewModels<ShopToggleViewModel>()
@@ -99,9 +114,10 @@ class ShopToggleActivity : ComponentActivity() {
                                 if (!confirmAddressState.unsellableItems.isNullOrEmpty()) {
                                     //TODO, navigate back to the previous page & display unsellable dialog
                                 } else {
-                                    //TODO, navigate back to the previous page
-                                    setResult(REQUEST_DELIVERY_TYPE)
-                                    finish()
+                                    val deliveryType = KotlinUtils.getDeliveryType()?.deliveryType
+                                    deliveryType?.let {
+                                        sendResultBack(this@ShopToggleActivity, delivery = deliveryType, needRefresh = true)
+                                    }
                                 }
                             }
                         }
@@ -128,10 +144,22 @@ class ShopToggleActivity : ComponentActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_DELIVERY_TYPE) {
-                setResult(REQUEST_DELIVERY_TYPE)
-                finish()
+            if (requestCode == REQUEST_DELIVERY_TYPE || requestCode == BundleKeysConstants.REQUEST_CODE) {
+                sendResultBack()
             }
         }
     }
+
+    private fun sendResultBack() {
+        val deliveryType = KotlinUtils.getDeliveryType()?.deliveryType
+        if (!deliveryType.isNullOrEmpty()) {
+            sendResultBack(this@ShopToggleActivity, delivery = deliveryType, needRefresh = true)
+        }
+    }
 }
+
+@Parcelize
+data class ToggleFulfilmentResult(
+    val needRefresh: Boolean,
+    val newDeliveryType: String
+): Parcelable

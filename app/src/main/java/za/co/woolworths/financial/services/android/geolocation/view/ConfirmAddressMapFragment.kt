@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Con
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment.Companion.MAP_LOCATION_RESULT
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -346,17 +347,8 @@ class ConfirmAddressMapFragment :
                                     )
                                     activity?.finish()
                                 } else if (isComingFromNewToggleFulfilment == true && !newDeliveryType.isNullOrEmpty()) {
-                                    // User don't have any location (signin or signout both) that's why we are setting new location.
-                                    WoolworthsApplication.setValidatedSuburbProducts(
-                                        validateLocationResponse?.validatePlace
-                                    )
-                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                                        validateLocationResponse?.validatePlace
-                                    )
-                                    WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-                                        validateLocationResponse?.validatePlace
-                                    )
-                                    confirmSetAddress(validateLocationResponse)
+                                    // New user journey flow from the new toggle fulfilment screen when there is no place id available initially
+                                    validateDeliverableAndNavigate(place)
                                     return@let
                                 }
 
@@ -403,6 +395,54 @@ class ConfirmAddressMapFragment :
                 showErrorDialog()
             }
         }
+    }
+
+    private fun validateDeliverableAndNavigate(place: ValidatePlace) {
+        when (newDeliveryType) {
+            // As per delivery type first we will verify if it is deliverable for that or not.
+            Delivery.STANDARD.type -> {
+                if (place.deliverable == true) {
+                    confirmSetAddress(validateLocationResponse)
+                } else {
+                    showChangeLocationDialog()
+                }
+            }
+
+            Delivery.CNC.type -> {
+                if (place.stores?.getOrNull(0)?.deliverable == true) {
+                    launchStores()
+                } else {
+                    showNoCollectionStores()
+                }
+            }
+
+            Delivery.DASH.type -> {
+                if (place.onDemand?.deliverable == true) {
+                    confirmSetAddress(validateLocationResponse)
+                } else {
+                    showChangeLocationDialog()
+                }
+            }
+        }
+    }
+
+    private fun launchStores() {
+        val bundle = Bundle()
+        bundle.apply {
+            putString(KEY_PLACE_ID, placeId)
+            putString(BundleKeysConstants.NEW_DELIVERY_TYPE, newDeliveryType)
+            putBoolean(
+                IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN,
+                isComingFromNewToggleFulfilment!!
+            )
+            putSerializable(
+                BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse
+            )
+        }
+        findNavController().navigate(
+            R.id.actionClickAndCollectStoresFragment,
+            bundleOf(BUNDLE to bundle)
+        )
     }
 
     @SuppressLint("RestrictedApi")
@@ -496,36 +536,25 @@ class ConfirmAddressMapFragment :
         )
     }
 
+    private fun getConfirmAddressRequest(delivery: String): ConfirmLocationRequest {
+        val confirmLocationAddress = ConfirmLocationAddress(placeId, null, address2)
+        return if (delivery == Delivery.DASH.type) {
+            val storeId = validateLocationResponse.validatePlace?.onDemand?.storeId
+            ConfirmLocationRequest(BundleKeysConstants.DASH, confirmLocationAddress, storeId)
+        } else {
+            ConfirmLocationRequest(BundleKeysConstants.STANDARD, confirmLocationAddress, "")
+        }
+    }
+
     private fun confirmSetAddress(validateLocationResponse: ValidateLocationResponse) {
         if (placeId.isNullOrEmpty())
             return
-
-        if (isComingFromNewToggleFulfilment == true && newDeliveryType == Delivery.CNC.type) {
-            val bundle = Bundle()
-            bundle.apply {
-                putString(KEY_PLACE_ID, placeId)
-                putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, isComingFromNewToggleFulfilment!!)
-                putSerializable(
-                    BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
-            }
-            findNavController().navigate(
-                R.id.actionClickAndCollectStoresFragment,
-                bundleOf(BUNDLE to bundle)
-            )
-            return
-        }
 
         //make confirm Location call
         val confirmLocationAddress = ConfirmLocationAddress(placeId)
         val confirmLocationRequest =
         if (isComingFromNewToggleFulfilment == true && !newDeliveryType.isNullOrEmpty()) {
-            KotlinUtils.getConfirmLocationRequest(
-                if (newDeliveryType == Delivery.DASH.type) {
-                    Delivery.DASH
-                } else {
-                    Delivery.STANDARD
-                }
-            )
+            getConfirmAddressRequest(newDeliveryType!!)
         } else {
             ConfirmLocationRequest(
                 BundleKeysConstants.DASH,
