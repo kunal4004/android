@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.viewholder.MyRecycleViewHolder
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -447,6 +448,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     override fun onResume() {
         super.onResume()
+        if (confirmAddressViewModel.getQuickShopButtonPressed()){
+            confirmAddressViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
         FirebaseAnalyticsEventHelper.viewScreenEventForPLP(activity = activity, screenViewEventData = getScreenViewEventData())
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
@@ -1131,6 +1136,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        if (!hidden && confirmAddressViewModel.getQuickShopButtonPressed()){
+            confirmAddressViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
                 true -> lockDrawerFragment()
@@ -1473,6 +1482,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     override fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems) {
         this.recyclerViewViewHolderItems = recyclerViewViewHolderItems
+    }
+
+    override fun setMyRecycleViewHolder(recyclerViewHolder: MyRecycleViewHolder) {
+        // Nothing to do
     }
 
     override fun updateMainRecyclerView() {

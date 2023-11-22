@@ -22,7 +22,6 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.app_config.EnhanceSubstitution
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
@@ -33,15 +32,14 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductCategoryAdapter
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductListRecommendationAdapter
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.viewholder.MyRecycleViewHolder
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.adapters.SelectQuantityAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -49,7 +47,6 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
-import javax.annotation.Nullable
 
 @AndroidEntryPoint
 class RecommendationFragment :
@@ -70,6 +67,7 @@ class RecommendationFragment :
     private var mProductListRecommendationAdapter: ProductListRecommendationAdapter? = null
     private var recommendationLayoutManager: LinearLayoutManager? = null
     private var isViewItemListEventTriggeredOnPageLoad = false
+    private var recyclerViewHolder: MyRecycleViewHolder? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -138,7 +136,7 @@ class RecommendationFragment :
                     recommendationLayoutManager
 
                 mProductListRecommendationAdapter =
-                    ProductListRecommendationAdapter(productsList, this, activity)
+                    ProductListRecommendationAdapter(productsList, this, activity, recommendationViewModel)
             }
             recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.adapter =
                 mProductListRecommendationAdapter
@@ -208,6 +206,22 @@ class RecommendationFragment :
         super.onDestroyView()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && recommendationViewModel.getQuickShopButtonPressed()){
+            recommendationViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (recommendationViewModel.getQuickShopButtonPressed()){
+            recommendationViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
+    }
+
     override fun openProductDetailView(productList: ProductList) {
         if(isConnectedToNetwork() == true) {
             WoolworthsApplication.getInstance().recommendationAnalytics.submitRecClicks(products = listOf(productList))
@@ -242,6 +256,11 @@ class RecommendationFragment :
     override fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems) {
         TODO("Not yet implemented")
     }
+
+    override fun setMyRecycleViewHolder(recyclerViewHolder: MyRecycleViewHolder) {
+        this.recyclerViewHolder = recyclerViewHolder
+    }
+
 
     override fun updateMainRecyclerView() {
         mProductListRecommendationAdapter?.notifyDataSetChanged()
@@ -375,15 +394,8 @@ class RecommendationFragment :
                                     }
 
                                 try {
-                                    val selectYourQuantityFragment =
-                                        SelectYourQuantityFragment.newInstance(
-                                            cartItem,
-                                            this@RecommendationFragment
-                                        )
-                                    selectYourQuantityFragment.show(
-                                        this,
-                                        SelectYourQuantityFragment::class.java.simpleName
-                                    )
+                                    mProductListRecommendationAdapter?.showQuantitySelector(recyclerViewHolder, cartItem)
+
                                 } catch (ex: IllegalStateException) {
                                     FirebaseManager.logException(ex)
                                 }
