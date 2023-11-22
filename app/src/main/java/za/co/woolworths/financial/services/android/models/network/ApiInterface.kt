@@ -60,6 +60,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 
@@ -888,16 +890,6 @@ interface ApiInterface {
         @Body suburbRequest: SetDeliveryLocationSuburbRequest,
     ): Call<SetDeliveryLocationSuburbResponse>
 
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "Media-Type: application/json",
-    )
-    @GET("wfs/app/v4/cartV2")
-    fun getShoppingCart(
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-    ): Call<ShoppingCartResponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -1370,7 +1362,7 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("id") id: String,
         @Body requestBody: OrderToShoppingListRequestBody,
-    ): Call<OrderToListReponse>
+    ): retrofit2.Response<OrderToListReponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -2045,16 +2037,6 @@ interface ApiInterface {
         @Body body: Any,
     ): Response
 
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "Media-Type: application/json",
-    )
-    @GET("wfs/app/v4/user/fica/refreshStatus")
-    fun getFica(
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-    ): Call<FicaModel>
 
     @Headers(
         "Content-Type: application/json",
@@ -2070,20 +2052,6 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body confirmLocationRequest: ConfirmLocationRequest,
     ): Call<ConfirmDeliveryAddressResponse>
-
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "Media-Type: application/json",
-    )
-    @POST("wfs/app/v4/cartV2/confirmLocation")
-    suspend fun confirmPlaceLocation(
-        @Header("userAgent") userAgent: String,
-        @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body confirmLocationRequest: ConfirmLocationRequest,
-    ): retrofit2.Response<ConfirmDeliveryAddressResponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -2336,5 +2304,14 @@ interface ApiInterface {
         @Path("store_id") store_id: String,
         @Path("multipleSku") multipleSku: String,
         @Query("substitution") substitution: Boolean): retrofit2.Response<SkusInventoryForStoreResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/reviews/submitReview")
+    suspend fun writeAReviewForm(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("productId") productId: String?,
+        @Body prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent
+    ) : retrofit2.Response<WriteAReviewFormResponse>
 
 }

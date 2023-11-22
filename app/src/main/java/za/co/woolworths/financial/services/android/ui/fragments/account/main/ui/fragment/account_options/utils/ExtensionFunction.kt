@@ -18,7 +18,6 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.error_handler.GeneralErrorDialogPopupFragment
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils.mContext
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -64,9 +63,11 @@ fun showErrorDialog(activity: AppCompatActivity?, serverErrorResponse: ServerErr
 @SuppressLint("InflateParams")
 fun setToast(v: View?, messageId: Int) {
     v ?: return
-    val inflater = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val context = v.context
+    context ?: return
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     val layout: View = inflater.inflate(R.layout.w_toast, null)
-    val toast = Toast(mContext)
+    val toast = Toast(context)
     val text = layout.findViewById(R.id.toastMessageTextView) as TextView
     text.setText(messageId)
     toast.view = layout
