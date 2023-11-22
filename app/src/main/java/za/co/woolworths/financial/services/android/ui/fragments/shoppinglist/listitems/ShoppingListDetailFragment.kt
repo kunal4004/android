@@ -51,9 +51,8 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.ConfirmationBottomsheetDialogFragment
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Recommendation
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoader
@@ -94,6 +93,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Compani
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_KEY_CONFIRMATION_DIALOG
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.CustomProgressBar
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
@@ -284,8 +284,17 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 Status.SUCCESS -> {
                     hideLoadingProgress()
                     bindingListDetails.errorListView.visibility = GONE
-                    updateShoppingListAfterDeletion(response)
-                    shoppingListItemsAdapter?.resetSelection()
+                    val currentList =
+                        shoppingListItemsAdapter?.shoppingListItems ?: ArrayList(0)
+
+                    val updatedList =
+                        response?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
+
+                    viewModel.mShoppingListItems = updatedList
+                    viewModel.onDeleteSyncList(currentList)
+                    response?.let { onShoppingListItemDelete(it) }
+                    onDeleteUIUpdate()
+                    shoppingListItemsAdapter?.notifyDataSetChanged()
                     val message = HtmlCompat.fromHtml( getFormatedString(
                         count = selectedItemsForRemoval, R.plurals.remove_list) +"\t\t" + listName , HtmlCompat.FROM_HTML_MODE_LEGACY)
                     ToastFactory.showToast(
@@ -293,6 +302,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         bindingListDetails.rlCheckOut,
                         message.toString()
                     )
+                    //refresh main myList fragment to show updated count.
+                    /*todo need to remove this listener*/
+                    setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
@@ -370,19 +382,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private fun hideLoadingProgress() {
         customProgressDialog?.dismiss()
-    }
-
-    fun updateShoppingListAfterDeletion(response: ShoppingListItemsResponse?) {
-        val currentList =
-            shoppingListItemsAdapter?.shoppingListItems ?: ArrayList(0)
-
-        val updatedList =
-            response?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
-
-        shoppingListItemsAdapter?.shoppingListItems = response?.listItems as? ArrayList<ShoppingListItem>?
-        viewModel.mShoppingListItems = updatedList
-        viewModel.onDeleteSyncList(currentList)
-        shoppingListItemsAdapter?.notifyDataSetChanged()
     }
 
     private fun setUpToolbar(listName: String?) {
@@ -619,76 +618,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
     }
 
-    override fun onItemDeleteClick(
-        id: String,
-        productId: String,
-        catalogRefId: String,
-        shouldUpdateShoppingList: Boolean,
-    ) {
-        mId = id
-        mProductId = productId
-        mCatalogRefId = catalogRefId
-        mShouldUpdateShoppingList = shouldUpdateShoppingList
-        showDeleteConfirmationDialog(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED)
-    }
-
-    private fun onItemDeleteApiCall() {
-        if (mId?.isEmpty() == true || mProductId?.isEmpty() == true || mCatalogRefId?.isEmpty() == true) {
-            return
-        }
-
-        if (viewModel.listId.isEmpty()) {
-            return
-        }
-
-        val listSize = shoppingListItemsAdapter?.shoppingListItems?.size ?: 0
-        if (listSize == 1) {
-            if (!mShouldUpdateShoppingList) {
-                bindingListDetails.rlEmptyListView.visibility = VISIBLE
-                bindingListDetails.rcvShoppingListItems.visibility = GONE
-                showMenu = false
-                val activity: Activity? = activity
-                activity?.invalidateOptionsMenu()
-                bindingListDetails.rlCheckOut.visibility = GONE
-            }
-        }
-        val shoppingListItemsResponseCall = OneAppService().deleteShoppingListItem(
-            viewModel.listId, mId, mProductId, mCatalogRefId
-        )
-        bindingListDetails.loadingBar.visibility = VISIBLE
-        shoppingListItemsResponseCall.enqueue(
-            CompletionHandler(
-                object : IResponseListener<ShoppingListItemsResponse> {
-                    override fun onSuccess(response: ShoppingListItemsResponse?) {
-                        bindingListDetails.loadingBar.visibility = GONE
-                        val currentList =
-                            shoppingListItemsAdapter?.shoppingListItems ?: ArrayList(0)
-
-                        val updatedList =
-                            response?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
-
-                        when(updatedList.size) {
-                            currentList.size.minus(1) -> {
-                                shoppingListItemsAdapter?.deleteListItem(mCatalogRefId)
-                            }
-                            else -> {
-                                viewModel.mShoppingListItems = updatedList
-                                viewModel.onDeleteSyncList(currentList)
-                                response?.let { onShoppingListItemDelete(it) }
-                            }
-                        }
-                        //refresh main myList fragment to show updated count.
-                        setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
-                        onDeleteUIUpdate()
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        bindingListDetails.loadingBar.visibility = GONE
-                        if (mShouldUpdateShoppingList) onDeleteItemFailed()
-                    }
-                }, ShoppingListItemsResponse::class.java
-            )
-        )
+    override fun onItemDeleteClick(shoppingListItem: ShoppingListItem) {
+        singleShoppingListItem = shoppingListItem
+        selectedItemsForRemoval = 1
+        isSingleItemSelected = true
+        showDeleteConfirmationDialog()
     }
 
     private fun onDeleteUIUpdate() {
@@ -702,19 +636,21 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         updateCartCountButton()
     }
 
-    private fun showDeleteConfirmationDialog(resultCode: String) {
-        val customBottomSheetDialogFragment =
-            CustomBottomSheetDialogFragment.newInstance(
-                getString(R.string.are_you_sure),
-                getString(R.string.delete_confirmation_list_text),
-                getString(R.string.remove),
-                getString(R.string.cancel),
-                resultCode
+    private fun showDeleteConfirmationDialog() {
+        if (viewModel.isCheckedDontAskAgain()) {
+            removeItemFromList()
+        } else {
+            val bottomsheetConfirmationDialog = ConfirmationBottomsheetDialogFragment().also {
+                it.arguments = bundleOf(
+                    AppConstant.Keys.BUNDLE_KEY to AppConstant.RESULT_DELETE_ITEM_CONFIRMED,
+                    AppConstant.Keys.BUNDLE_KEY_SCREEN_NAME to AppConstant.SCREEN_NAME_DELETE_ITEM_CONFIRMATION
+                )
+            }
+            bottomsheetConfirmationDialog.show(
+                requireActivity().supportFragmentManager,
+                ConfirmationBottomsheetDialogFragment::class.java.simpleName
             )
-        customBottomSheetDialogFragment.show(
-            requireFragmentManager(),
-            CustomBottomSheetDialogFragment::class.java.simpleName
-        )
+        }
     }
 
     override fun onShoppingSearchClick() {
@@ -817,12 +753,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
     }
 
-    override fun onDeleteItemFailed() {
-        if (!isAdded) return
-        mErrorHandlerView?.showToast()
-        updateList()
-    }
-
     override fun openProductDetailFragment(productName: String, productList: ProductList) {
         if (activity is BottomNavigationActivity) {
             val fragment = ProductDetailsFragment.newInstance()
@@ -853,16 +783,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), result)
         }
 
-        setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
-            onItemDeleteApiCall()
-        }
-
-        setFragmentResultListener(AppConstant.REQUEST_KEY_CONFIRMATION_DIALOG) { _, bundle ->
+        setFragmentResultListener(REQUEST_KEY_CONFIRMATION_DIALOG) { _, bundle ->
             val result = bundle.getString(AppConstant.Keys.BUNDLE_KEY)
+            val isCheckedDontAskAgain =
+                bundle.getBoolean(AppConstant.Keys.BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED, false)
+            viewModel.setIsCheckedDontAskAgain(isCheckedDontAskAgain)
             if (result == AppConstant.RESULT_DELETE_ITEM_CONFIRMED) {
-                val isCheckedDontAskAgain =
-                    bundle.getBoolean(AppConstant.Keys.BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED, false)
-                viewModel.setIsCheckedDontAskAgain(isCheckedDontAskAgain)
                 removeItemFromList()
             }
         }
@@ -925,6 +851,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private fun updateCartCountButton() {
         val itemWasSelected = viewModel.isItemSelected(shoppingListItemsAdapter?.shoppingListItems)
+
+        // if no item then hide bottom view
+        if (viewModel.mShoppingListItems.size == 0) {
+            bindingListDetails.rlCheckOut.visibility = GONE
+            setScrollViewBottomMargin(0)
+            return
+        }
 
         if (itemWasSelected) {
             bindingListDetails.rlCheckOut.visibility = VISIBLE
