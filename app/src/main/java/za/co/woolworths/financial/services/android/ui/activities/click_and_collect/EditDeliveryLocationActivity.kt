@@ -43,6 +43,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     private var navHostFragment = NavHostFragment()
     private var needStoreSelection: Boolean = false
     private var isFromNewToggleFulfilmentScreen: Boolean = false
+    private var isLocationUpdateRequest: Boolean = false
     private var validateLocationResponse: ValidateLocationResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +58,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
             isComingFromCheckout =  this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
             isComingFromSlotSelection =  this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isFromNewToggleFulfilmentScreen = this.getBoolean(BundleKeysConstants.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
+            isLocationUpdateRequest = this.getBoolean(BundleKeysConstants.LOCATION_UPDATE_REQUEST, false)
             needStoreSelection = this.getBoolean(NEED_STORE_SELECTION, false)
             if (bundle?.containsKey(BundleKeysConstants.VALIDATE_RESPONSE) == true) {
                 validateLocationResponse = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -104,7 +106,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.confirm_location_nav_host)
 
-        if (placeId.isNullOrEmpty()) {
+        if (placeId.isNullOrEmpty() || isLocationUpdateRequest) {
             // naviagte to confirm address screen
             navGraph.startDestination = R.id.confirmAddressLocationFragment
             navController.graph = navGraph

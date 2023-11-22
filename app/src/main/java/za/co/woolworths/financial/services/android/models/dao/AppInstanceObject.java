@@ -10,6 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigChatEnabledForProductFeatures;
 import za.co.woolworths.financial.services.android.models.dto.chat.InAppChatTipAcknowledgements;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.TooltipData;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 /**
@@ -145,9 +146,9 @@ public class AppInstanceObject {
 
     public class FeatureWalkThrough {
         //Show Tutorials
+        public TooltipData tooltipData = null;
         public boolean showTutorials = true; // Default to show
-        public boolean shopFulfilment; // shop tab - fulfilment tooltip screen flag
-        public boolean shopLocation; // shop tab - location tooltip screen flag
+
         //features
         public boolean barcodeScan;
         public boolean findInStore;

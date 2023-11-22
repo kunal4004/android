@@ -58,6 +58,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ShopTooltipUserSession;
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.CurrentScreenType;
@@ -97,6 +98,16 @@ public class WoolworthsApplication extends Application implements Application.Ac
    @Inject ConnectivityLiveData connectivityLiveData;
 
     private RecommendationEvents recommendationAnalytics;
+
+    public ShopTooltipUserSession getToolTipUserSession() {
+        return toolTipUserSession;
+    }
+
+    public void setToolTipUserSession(ShopTooltipUserSession toolTipUserSession) {
+        this.toolTipUserSession = toolTipUserSession;
+    }
+
+    private ShopTooltipUserSession toolTipUserSession;
 
     private RecommendationAnalytics initRecommendationAnalytics() {
         final RecommendationUseCases recommendationUseCases = new RecommendationUseCaseProvider();

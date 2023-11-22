@@ -55,8 +55,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragmen
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.DASH_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.STANDARD_TAB
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
+import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ContextualTooltipShowcaseManager
+import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.CotextualTooltipShowcase
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ShopLandingAutoNavigateChecker
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ShopLandingAutoNavigateCheckerImpl
+import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.TooltipShown
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
@@ -71,6 +74,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.UPDATE_LOCATION_REQUEST
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.UPDATE_STORE_REQUEST
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
@@ -96,6 +101,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var toggleScreenTimer: Timer? = null
     private val shopLandingAutoNavigator: ShopLandingAutoNavigateChecker by lazy { ShopLandingAutoNavigateCheckerImpl() }
+    private val contextualTooltipShowcase: CotextualTooltipShowcase by lazy { ContextualTooltipShowcaseManager() }
     private var mTabTitle: MutableList<String>? = null
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
@@ -105,8 +111,8 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private var shoppingListsResponse: ShoppingListsResponse? = null
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
-    private var userNavigatedFromFulfilmentTooltip = false
     private var isScreenRefreshing = false
+    private var needToDisplayTooltip = false
     private val fragmentResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != RESULT_OK) {
@@ -211,9 +217,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         binding?.apply {
             tvSearchProduct.setOnClickListener { navigateToProductSearch() }
             imBarcodeScanner.setOnClickListener { checkCameraPermission() }
-            shopToolbar.setOnClickListener {
+            fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener {
                 hideTooltipIfVisible()
                 launchShopToggleScreen()
+            }
+
+            fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener {
+                hideTooltipIfVisible()
+                launchStoreOrLocationSelection()
             }
 
             shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this@ShopFragment)
@@ -270,10 +281,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private fun hideTooltipIfVisible() {
         (activity as? BottomNavigationActivity)?.apply {
             if(walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
-                val feature = walkThroughPromtView.getFeature()
-                if (feature == TooltipDialog.Feature.SHOP_FULFILMENT) {
-                    userNavigatedFromFulfilmentTooltip = true
-                }
                 walkThroughPromtView.hide()
             }
         }
@@ -372,37 +379,58 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                                     updateCurrentTab(getDeliveryType()?.deliveryType)
                                     setEventForDeliveryTypeAndBrowsingType()
                                     setDeliveryView()
+                                    if (needToDisplayTooltip) {
+                                        showTooltipIfRequired()
+                                        needToDisplayTooltip = false
+                                    }
                                 }
                             }
                         }
                     } catch (e: Exception) {
                         shopProgressbar.visibility = View.GONE
                         FirebaseManager.logException(e)
+                        needToDisplayTooltip = false
                         /*TODO : show error screen*/
                     } catch (e: JsonSyntaxException) {
                         shopProgressbar.visibility = View.GONE
                         FirebaseManager.logException(e)
+                        needToDisplayTooltip = false
                     }
                 }
             }
         }
     }
 
-    private fun onEditDeliveryLocation() {
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.SHOP_DELIVERY_CLICK_COLLECT,
-            hashMapOf(
-                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY_CLICK_COLLECT
-            ),
-            activity
-        )
-
+    private fun launchStoreOrLocationSelection() {
+        val delivery = Delivery.getType(getDeliveryType()?.deliveryType)
+        if (delivery == Delivery.CNC) {
+            launchStoreSelection()
+        } else {
+            launchGeoLocationFlow()
+        }
+    }
+    private fun launchStoreSelection() {
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
-            requireActivity(),
-            REQUEST_CODE,
+            activity,
+            UPDATE_STORE_REQUEST,
+            Delivery.getType(getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType,
+            getDeliveryType()?.address?.placeId ?: "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.CNC,
+            needStoreSelection = true,
+            validateLocationResponse = validateLocationResponse
+        )
+    }
+
+    private fun launchGeoLocationFlow() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            UPDATE_LOCATION_REQUEST,
             Delivery.getType(getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
-            getDeliveryType()?.address?.placeId ?: ""
+            getDeliveryType()?.address?.placeId ?: "",
+            isLocationUpdateRequest = true,
+            newDelivery = Delivery.getType(getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType
         )
     }
 
@@ -423,15 +451,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             } else {
                 setDeliveryView()
             }
-            // This is to display location tooltip when user navigate on toolbar click while fulfilment tooltip was being displayed, so we need to display the location tooltip when user move back to the Shop page
-            displayLocationTooltipIfRequired()
-        }
-    }
-
-    private fun displayLocationTooltipIfRequired() {
-        if (AppInstanceObject.get().featureWalkThrough.shopFulfilment && userNavigatedFromFulfilmentTooltip) {
-            userNavigatedFromFulfilmentTooltip = false
-            showLocationTooltip()
         }
     }
 
@@ -731,15 +750,19 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     val placeId = getDeliveryType()?.address?.placeId
                     if (!placeId.isNullOrEmpty()) {
                         isScreenRefreshing = true
+                        needToDisplayTooltip = true
                         executeValidateSuburb()
-                        //TODO, display tooltip if required here after the API call finishes
                     }
                 } else {
-                    //TODO, display tooltip if required here
                     //DO nothing here, will keep the standard selected by default
                     //Just Browsing or Not Now for set location
+                    showTooltipIfRequired()
                 }
             }
+        }
+
+        if (resultCode == RESULT_OK && (requestCode == UPDATE_LOCATION_REQUEST || requestCode == UPDATE_STORE_REQUEST)) {
+            setDeliveryView()
         }
     }
 
@@ -929,13 +952,49 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
        return HtmlCompat.fromHtml(getString(text),HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
     fun showToggleFulfilmentScreen() {
+        contextualTooltipShowcase.updateToolTipUserSession()
         if (!shopLandingAutoNavigator.isShopLandingVisited()) {
             toggleScreenTimer = Timer()
             toggleScreenTimer?.schedule(timerTask {
                 shopLandingAutoNavigator.markShopLandingVisited()
                 launchShopToggleScreen()
             }, TOGGLE_SCREEN_DELAY)
+        } else {
+            showTooltipIfRequired()
         }
+    }
+
+    fun showTooltipIfRequired() {
+        val delivery = currentDeliveryType()
+        when (contextualTooltipShowcase.toolTipToDisplay(delivery)) {
+            TooltipShown.FULFILMENT -> {
+                val shown = showFulfilmentTooltip()
+                if (shown) {
+                    contextualTooltipShowcase.markTooltipShown(
+                        delivery = delivery,
+                        tooltipShown = TooltipShown.FULFILMENT
+                    )
+                }
+            }
+
+            TooltipShown.LOCATION -> {
+                val shown = showLocationTooltip()
+                if (shown) {
+                    contextualTooltipShowcase.markTooltipShown(
+                        delivery = delivery,
+                        tooltipShown = TooltipShown.LOCATION
+                    )
+                }
+            }
+
+            else -> {
+                //DO nothing here, as of now
+            }
+        }
+    }
+
+    private fun currentDeliveryType(): Delivery {
+        return Delivery.getType(getDeliveryType()?.deliveryType) ?: Delivery.STANDARD
     }
 
     private fun launchShopToggleScreen() {
@@ -944,15 +1003,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    fun showFulfilmentTooltip() {
+    private fun showFulfilmentTooltip(): Boolean {
         // Prevent dialog to display in other section when fragment is not visible
         (activity as? BottomNavigationActivity)?.let {
             if (it.currentFragment !is ShopFragment || !isAdded) {
-                return
-            }
-            if (AppInstanceObject.get().featureWalkThrough.shopFulfilment) {
-                showLocationTooltip()
-                return
+                return false
             }
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
@@ -991,14 +1046,16 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     .setAction(walkThroughListener).setDelay(0).setFadeDuration(0).setArrowIcon(R.drawable.ic_arrow_tooltip_spinning)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black_e6000000)).build()
             it.walkThroughPromtView?.show(it)
+            return true
         }
+        return false
     }
 
-    private fun showLocationTooltip() {
+    private fun showLocationTooltip(): Boolean {
         // Prevent dialog to display in other section when fragment is not visible
         (activity as? BottomNavigationActivity)?.let {
-            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.shopLocation) {
-                return
+            if (it.currentFragment !is ShopFragment || !isAdded) {
+                return false
             }
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
@@ -1017,7 +1074,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     .setAction(walkThroughListener).setDelay(0).setFadeDuration(0).setArrowIcon(R.drawable.ic_arrow_tooltip_simple)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black_e6000000)).build()
             it.walkThroughPromtView?.show(it)
+            return true
         }
+        return false
     }
 
     private fun getLocationTooltipArguments(): Triple<String, String, String> {
@@ -1056,7 +1115,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private val walkThroughListener = object : WMaterialShowcaseViewV2.IWalkthroughActionListener {
         override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature?) {
             if (feature == TooltipDialog.Feature.SHOP_FULFILMENT) {
-                showLocationTooltip()
+                showTooltipIfRequired()
             }
         }
 

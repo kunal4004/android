@@ -99,7 +99,7 @@ class ShopToggleUseCase @Inject constructor(
         }
         val foodQuantity = onDemand?.quantityLimit?.foodMaximumQuantity
         val deliveryPrice = onDemand?.firstAvailableFoodDeliveryCost
-        dashModel.deliveryCost = deliveryPrice.toString()
+        dashModel.deliveryCost = "R $deliveryPrice"
         dashModel.foodQuantity = foodQuantity ?: 0
         //Prepare CNC Data
         val cncModel = getCncData()

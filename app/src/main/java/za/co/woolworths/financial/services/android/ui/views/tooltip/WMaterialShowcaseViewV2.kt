@@ -599,7 +599,6 @@ class WMaterialShowcaseViewV2 : FrameLayout, OnTouchListener, View.OnClickListen
                 visibility = VISIBLE
             }
         }, mDelayInMillis)
-        Utils.saveFeatureWalkthoughShowcase(feature)
         return true
     }
 

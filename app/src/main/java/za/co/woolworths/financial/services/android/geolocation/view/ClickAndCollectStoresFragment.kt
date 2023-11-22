@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.app.Activity
-import android.content.DialogInterface
+import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -45,7 +45,6 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragmentBinding
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -188,6 +187,20 @@ class ClickAndCollectStoresFragment :
         }
     }
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            object : Dialog(it, theme) {
+                override fun onBackPressed() {
+                    if (needStoreSelection == true) {
+                        activity?.finish()
+                    } else {
+                        dismiss()
+                    }
+                }
+            }
+        } ?: super.onCreateDialog(savedInstanceState)
+    }
+
     private fun setBrowsingDataInformation(validateStoreResponse: ValidateStoreResponse) {
         val browsingStoreList = validateStoreResponse?.validatePlace?.stores
         if (!browsingStoreList.isNullOrEmpty()) {
@@ -274,13 +287,6 @@ class ClickAndCollectStoresFragment :
                 )
             }
             dismiss()
-        }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        if (needStoreSelection == true) {
-            activity?.finish()
         }
     }
 
