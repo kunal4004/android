@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.AppLifeCycleObserver
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.LifecycleTransitionType
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.BiometricSingleton
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.CurrentScreenType
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.conditional
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.AccountLandingEventLauncherImpl
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.navigation.FragmentResultType
@@ -46,6 +48,8 @@ class UserAccountsLandingFragment : Fragment() {
 
     val viewModel: UserAccountLandingViewModel by activityViewModels()
     private var deepLinkParams: JsonObject? = null
+
+    private val appInstance  by lazy { WoolworthsApplication.getInstance()?.biometricSingleton }
 
     private val mRegisterActivityForResult = BetterActivityResult.registerActivityForResult(this)
 
@@ -202,7 +206,7 @@ class UserAccountsLandingFragment : Fragment() {
         }
     }
 
-    private val appLifecycleObserver = AppLifeCycleObserver(biometricSingleton = getBiometricSingleton()) { transitionType ->
+    private val appLifecycleObserver = AppLifeCycleObserver(biometricSingleton = appInstance) { transitionType ->
         if (transitionType == LifecycleTransitionType.BACKGROUND_TO_FOREGROUND) {
             viewModel.apply {
                 if (wasActivityOpened) {
@@ -211,9 +215,9 @@ class UserAccountsLandingFragment : Fragment() {
                 }
                 setOnTapActivated()
                 biometricManager.setupBiometricAuthenticationForAccountLanding(
-                    biometricSingleton = getBiometricSingleton(),
+                    biometricSingleton = appInstance,
                     this@UserAccountsLandingFragment,
-                    (requireActivity() as? BottomNavigationActivity),
+                    (requireActivity() as? AppCompatActivity),
                     this
                 )
             }
@@ -227,11 +231,19 @@ class UserAccountsLandingFragment : Fragment() {
         const val PET_INSURANCE_REQUEST_CODE = 1212
     }
 
-    private fun getBiometricSingleton(): BiometricSingleton? {
-       val woolworthsApplication : WoolworthsApplication? = WoolworthsApplication.getInstance()
-       return  woolworthsApplication?.biometricSingleton
+    override fun onResume() {
+        super.onResume()
+        if (requireActivity() is MyAccountActivity) {
+            viewModel.queryAccountLandingService(isApiUpdateForced = false)
+        }
     }
 
+    override fun onDestroy() {
+        if (requireActivity() is MyAccountActivity) {
+            appInstance?.clear()
+        }
+        super.onDestroy()
+    }
 
 }
 

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.wfs.common.state
 
 import android.app.Activity
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -17,7 +18,7 @@ class BiometricSingleton {
     // Use this method to set the current activity in the ViewModel
     fun setCurrentActivity(activity: Activity?) {
         currentScreenType = when (activity) {
-            is BottomNavigationActivity -> CurrentScreenType.BOTTOM_NAVIGATION_ACTIVITY
+            is MyAccountActivity, is BottomNavigationActivity -> CurrentScreenType.BOTTOM_NAVIGATION_ACTIVITY
             else -> CurrentScreenType.OTHERS
         }
     }
@@ -27,4 +28,7 @@ class BiometricSingleton {
         return currentScreenType == CurrentScreenType.BOTTOM_NAVIGATION_ACTIVITY
     }
 
+    fun clear(){
+        currentScreenType = null
+    }
 }
