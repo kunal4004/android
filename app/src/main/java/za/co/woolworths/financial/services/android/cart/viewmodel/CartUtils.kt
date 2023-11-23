@@ -84,10 +84,10 @@ class CartUtils {
             productDetails.sku = commerceItemInfo.catalogRefId
             val strProductList = Gson().toJson(productDetails)
 
+            BottomNavigationActivity.preventShopTooltip = true
             // Move to shop tab first.
             (activity as? BottomNavigationActivity)?.bottomNavigationById?.currentItem =
                 BottomNavigationActivity.INDEX_PRODUCT
-            BottomNavigationActivity.preventShopTooltip = true
             ScreenManager.openProductDetailFragment(activity, "", strProductList)
         }
 
