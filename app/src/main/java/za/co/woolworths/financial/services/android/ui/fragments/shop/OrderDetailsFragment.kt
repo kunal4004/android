@@ -185,6 +185,7 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
         ordersResponse.orderSummary?.takeIf {
             it.endlessAisleOrder
         }?.also { summary ->
+
             if (summary.state?.contains(requireContext().getString(R.string.cancelled)) == false) {
                 dataList.add(
                     OrderDetailsItem(
@@ -193,9 +194,13 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
                     )
                 )
             }
-            if (summary.state?.contains(requireContext().getString(R.string.processing)) == true) {
-                binding.orderItemsBtn.visibility = View.GONE
-            }
+
+            val visibility = summary.state?.let { state ->
+                if (state.contains(requireContext().getString(R.string.status_awaiting_payment), ignoreCase = true))
+                    View.GONE
+                else View.VISIBLE
+            } ?: View.VISIBLE
+            binding.orderItemsBtn.visibility = visibility
         }
         ordersResponse.orderSummary?.apply {
             if (!taxNoteNumbers.isNullOrEmpty())
