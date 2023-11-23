@@ -528,32 +528,33 @@
     <string name="need_help">Need Help</string>
     <string name="faq">FAQ</string>
     <string name="tips_tricks">Tips &amp; Tricks</string>
-    <string name="tips_tricks_titles_vouchers">Vouchers</string>
-    <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
+    <string name="tips_tricks_titles_vouchers">Your Vouchers</string>
+    <string name="tips_tricks_titles_stores">Find a Product In-Store</string>
     <string name="tips_tricks_titles_barcode">Barcode Scanning</string>
-    <string name="tips_tricks_titles_delivery">Delivery Location</string>
+    <string name="tips_tricks_titles_delivery"> Your Delivery Location</string>
     <string name="tips_tricks_titles_navigation">My Cart</string>
     <string name="tips_tricks_titles_my_accounts">Accounts</string>
-    <string name="tips_tricks_titles_statements">Statements</string>
+    <string name="tips_tricks_titles_statements">Access Your Statements</string>
     <string name="tips_tricks_titles_shopping_list">Shopping Lists</string>
-    <string name="tips_tricks_titles_refine_search">Refine Search</string>
+    <string name="tips_tricks_titles_refine_search">Filter Your Search</string>
     <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store before they expire.</string>
     <string name="tips_tricks_desc_stores">Track down the product you’re looking for in the app – save yourself a drive to the wrong store!</string>
-    <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlesslyc.</string>
     <string name="tips_tricks_desc_refine">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, carb clever.</string>
     <string name="tips_tricks_desc_delivery">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="tips_tricks_desc_navigation">Tap the cart icon in the bottom menu to see the items you’ve added to your cart.</string>
     <string name="tips_tricks_desc_my_accounts">See all your active Woolworths accounts and check your available balance, amount due and credit limit.</string>
     <string name="tips_tricks_desc_statements">View and send your latest statements for your Woolworths accounts.</string>
-    <string name="tips_tricks_desc_shopping_list">Create and manage shopping lists and easily add a list to your cart.</string>
+    <string name="tips_tricks_desc_shopping_list">Create and manage your shopping lists, and add a list to your cart.</string>
     <string name="tips_tricks_button_stores">check in-Store availability</string>
     <string name="tips_tricks_button_barcode">Scan a product</string>
     <string name="tips_tricks_button_refine">Refine</string>
     <string name="tips_tricks_button_navigation">LET’S GO</string>
     <string name="Dont_show_these_tips">Don’t show these tips</string>
     <string name="new_feature_tutorials">New Feature Tutorials</string>
-    <string name="navigation">Navigation</string>
     <string name="my_accounts">My Accounts</string>
+    <string name="get_shopping">Get Shopping</string>
+    <string name="View_Your_Accounts">View Your Accounts</string>
     <string name="ways_to_pay_your_account_cc_sc">There are 4 easy ways to pay your account:</string>
     <string name="how_to_pay_1">By Debit Order</string>
 
@@ -2705,7 +2706,7 @@
 
     <!-- Feature Walkthrough : Barcode Scanning  -->
     <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
-    <string name="feature_barcode_scanning_desc">Scan a product\'s barcode to view it\'s information or add it straight to your shopping list.</string>
+    <string name="feature_barcode_scanning_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
     <string name="feature_barcode_scanning_action_text">SCAN A PRODUCT</string>
 
     <!-- Feature Walkthrough : MY List  -->

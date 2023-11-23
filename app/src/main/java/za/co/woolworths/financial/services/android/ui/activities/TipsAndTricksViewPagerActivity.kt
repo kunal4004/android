@@ -24,7 +24,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.MY_ACCOUNT_RESPONSE
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.setContentDescription
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.getAccessibilityIdWithAppendedString
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import kotlin.properties.Delegates
@@ -75,6 +77,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
             setHomeAsUpIndicator(R.drawable.back24)
+            setHomeActionContentDescription(getString(R.string.back_button))
         }
     }
 
@@ -177,7 +180,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                 0->{
                     featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_get_shopping) else titles?.get(position)
                     featureActionButton?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_view_cart) else actionButtonTexts?.get(position)
-                    featureDescription?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation_sign_in) else descriptions?.get(position)
+                    featureDescription?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation) else descriptions?.get(position)
                 }
                 2, 3 -> {
                     featureActionButton?.visibility = View.INVISIBLE
@@ -196,7 +199,12 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                     featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && accountsResponse != null && ((getAvailableAccounts().contains(AccountsProductGroupCode.STORE_CARD.groupCode))
                                 || getAvailableAccounts().contains(AccountsProductGroupCode.PERSONAL_LOAN.groupCode))) View.VISIBLE else View.INVISIBLE
                 }
+
             }
+            featureTitle.contentDescription= featureTitle.text.toString().getAccessibilityIdWithAppendedString(featureTitle.text.toString(), getString(R.string.text))
+            featureDescription.contentDescription= featureTitle.text.toString().getAccessibilityIdWithAppendedString(featureTitle.text.toString(), getString(R.string.description))
+            featureIcon.contentDescription = featureTitle.text.toString().getAccessibilityIdWithAppendedString(featureTitle.text.toString(), getString(R.string.image_icon))
+            featureActionButton.contentDescription = featureTitle.text.toString().getAccessibilityIdWithAppendedString(featureTitle.text.toString(), getString(R.string.button))
         }
     }
 
