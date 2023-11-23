@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.TextUtils
@@ -56,6 +55,7 @@ import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companio
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedPlaceId
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.nativeCheckout
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -72,8 +72,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
-import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentWIthUnsellable
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -241,6 +241,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
         if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
             dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
+            if(result.equals(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE)){
+
+            }
+        }
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -509,13 +515,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setDeliveryLocationEnabled(!isEditMode)
         if (!isEditMode)
             setMinimumCartErrorMessage()
-    }
-
-    fun launchShopToggleScreen(autoNavigation: Boolean = false) {
-        Intent(requireActivity(), ShopToggleActivity::class.java).apply {
-            putExtra(BundleKeysConstants.TOGGLE_FULFILMENT_AUTO_NAVIGATION, autoNavigation)
-            startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
-        }
     }
 
     private fun dismissProgress() {
@@ -1526,6 +1525,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         loadShoppingCartAndSetDeliveryLocation()
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_CART, activity)
+        refreshScreen()
     }
 
     override fun onPause() {
@@ -1533,6 +1533,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         mConnectionBroadcast?.let {
             requireActivity().unregisterReceiver(it)
         }
+        UpdateScreenLiveData.removeObservers(viewLifecycleOwner)
     }
 
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
@@ -1605,10 +1606,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
         if (resultCode == Activity.RESULT_OK && (requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE ||
                     requestCode == BundleKeysConstants.UPDATE_LOCATION_REQUEST || requestCode == BundleKeysConstants.UPDATE_STORE_REQUEST)) {
-            val toggleFulfilmentResultWithUnsellable=getToggleFulfilmentResultWithUnSellable(data)
+
+            val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
+            refreshScreen()
             if(toggleFulfilmentResultWithUnsellable!=null){
-                navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
-                    toggleFulfilmentResultWithUnsellable.deliveryType)
+                UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                    toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
+                    binding.cartProgressBar,this,parentFragmentManager)
             }
             initializeLoggedInUserCartUI()
             loadShoppingCartAndSetDeliveryLocation()
@@ -1616,14 +1620,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
 
     }
-    private fun getToggleFulfilmentResultWithUnSellable(intent: Intent?): ToggleFulfilmentWIthUnsellable? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE, ToggleFulfilmentWIthUnsellable::class.java)
-        } else {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE)
-        }
-    }
-
     private fun loadShoppingCartAndSetDeliveryLocation() {
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
@@ -1639,6 +1635,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (!isVisible) {
             loadShoppingCart()
         }
+
     }
 
     override fun onConnectionChanged() {
@@ -2438,6 +2435,18 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 loadShoppingCart()
             }
         }
+
+    }
+
+    private fun refreshScreen(){
+        if(isVisible) {
+            UpdateScreenLiveData.observe(viewLifecycleOwner) {
+                if (it == 1) {
+                    loadShoppingCart()
+                    UpdateScreenLiveData.value = 0
+                }
+            }
+        }
     }
 
     private fun prepareDynamicYieldCheckoutRequest(deliveryType: Delivery?) {
@@ -2489,13 +2498,13 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         val context = Context(device, null, DY_CHANNEL)
         val cartLinesValue: MutableList<Cart> = arrayListOf()
         cartItems?.let { cartItems ->
-          for (cartItemGroup: CartItemGroup in cartItems) {
-              val commerceItemList = cartItemGroup.commerceItems
-              for (cm: CommerceItem in commerceItemList) {
-                  val cart = Cart(cm.commerceItemInfo.catalogRefId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
-                  cartLinesValue.add(cart)
-              }
-          }
+            for (cartItemGroup: CartItemGroup in cartItems) {
+                val commerceItemList = cartItemGroup.commerceItems
+                for (cm: CommerceItem in commerceItemList) {
+                    val cart = Cart(cm.commerceItemInfo.catalogRefId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
+                    cartLinesValue.add(cart)
+                }
+            }
         }
         val properties = Properties(null,null,SYNC_CART_V1,null,null,Constants.CURRENCY_VALUE,null,null,null,null,null,null,null,null,null,null,null,cartLinesValue)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,SYNC_CART,properties)
@@ -2516,6 +2525,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             setDeliveryLocationEnabled(true)
             setMinimumCartErrorMessage()
             resetItemDelete(true)
+            UpdateScreenLiveData.value=1
+
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, bundle ->
             val resultCode =

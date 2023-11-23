@@ -14,21 +14,18 @@ import za.co.woolworths.financial.services.android.cart.service.network.CartItem
 import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.common.ClickOnDialogButton
 import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheetDialogImpl
-import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.CreateList
 import za.co.woolworths.financial.services.android.models.dto.Price
-import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
@@ -72,6 +69,7 @@ class UnsellableUtils {
                         progressBar?.visibility = View.GONE
                         if (confirmLocationResponse != null) {
                             when (confirmLocationResponse.httpCode) {
+
                                 AppConstant.HTTP_OK, HTTP_OK_201 -> {
                                     if (SessionUtilities.getInstance().isUserAuthenticated) {
                                         Utils.savePreferredDeliveryLocation(
@@ -98,6 +96,9 @@ class UnsellableUtils {
                                     }
                                     // This will update the previous fragment data like location details.
                                     ConfirmLocationResponseLiveData.value = true
+
+
+
                                     if (confirmLocationParams?.commerceItemList != null) {
                                         // If unsellable items are removed from popup with addToList checkBox selected then call getList and createList/AddToList API.
                                         callGetListAPI(
@@ -108,6 +109,9 @@ class UnsellableUtils {
                                     } else {
                                         //This is not a unsellable flow or we don't have unsellable items so this will give callBack to AddToCart function or Checkout Summary Flow.
                                         AddToCartLiveData.value = true
+                                        UpdateScreenLiveData.value=1
+
+
                                     }
                                 }
 
@@ -283,6 +287,7 @@ class UnsellableUtils {
                         )
                     hideLoadingProgress()
                     val addToListResponse = addProductToListResponse?.body()
+
                     if (addToListResponse != null) {
                         when (addToListResponse.httpCode) {
                             AppConstant.HTTP_OK, HTTP_OK_201 -> {
@@ -297,7 +302,10 @@ class UnsellableUtils {
                                 )
                             }
                         }
+
                     }
+                    else{
+                        UpdateScreenLiveData.value=1}
                 } catch (e: Exception) {
                     FirebaseManager.logException(e)
                     hideLoadingProgress()
@@ -355,6 +363,7 @@ class UnsellableUtils {
                 fragment.parentFragmentManager,
                 CustomBottomSheetDialogFragment::class.java.simpleName
             )
+
         }
 
         private fun showListErrorDialog(
@@ -425,77 +434,78 @@ class UnsellableUtils {
             FirebaseAnalyticsEventHelper.addToWishlistEvent(addToWishListFirebaseEventData)
         }
 
-        fun removeItemsFromCart(
-            progressBar: ProgressBar,
-            commerceList: ArrayList<UnSellableCommerceItem>?,
-            isCheckBoxSelected: Boolean,
-            currentFragment: CartFragment,
-            confirmAddressViewModel: ConfirmAddressViewModel,
-        ) {
-            progressBar.visibility = View.VISIBLE
-            commerceItemList = commerceList
-            commerceList?.forEach {
-                removeItem(
-                    it.commerceId,
-                    progressBar,
-                    isCheckBoxSelected,
-                    currentFragment,
-                    confirmAddressViewModel
-                )
-            }
-        }
+//        fun removeItemsFromCart(
+//            progressBar: ProgressBar,
+//            commerceList: ArrayList<UnSellableCommerceItem>?,
+//            isCheckBoxSelected: Boolean,
+//            currentFragment: CartFragment,
+//            confirmAddressViewModel: ConfirmAddressViewModel,
+//        ) {
+//            progressBar.visibility = View.VISIBLE
+//            commerceItemList = commerceList
+//            commerceList?.forEach {
+//                removeItem(
+//                    it.commerceId,
+//                    progressBar,
+//                    isCheckBoxSelected,
+//                    currentFragment,
+//                    confirmAddressViewModel
+//                )
+//            }
+//        }
 
-        private fun removeItem(
-            commerceId: String, progressBar: ProgressBar, isCheckBoxSelected: Boolean,
-            currentFragment: CartFragment,
-            confirmAddressViewModel: ConfirmAddressViewModel,
-        ) {
-            OneAppService().removeCartItem(commerceId)
-                .enqueue(CompletionHandler(object : IResponseListener<ShoppingCartResponse> {
-                    override fun onSuccess(shoppingCartResponse: ShoppingCartResponse?) {
-                        onItemRemoved(
-                            commerceId,
-                            progressBar,
-                            isCheckBoxSelected,
-                            currentFragment,
-                            confirmAddressViewModel
-                        )
-                    }
+//        private fun removeItem(
+//            commerceId: String, progressBar: ProgressBar, isCheckBoxSelected: Boolean,
+//            currentFragment: CartFragment,
+//            confirmAddressViewModel: ConfirmAddressViewModel,
+//        ) {
+//            OneAppService().removeCartItem(commerceId)
+//                .enqueue(CompletionHandler(object : IResponseListener<ShoppingCartResponse> {
+//                    override fun onSuccess(shoppingCartResponse: ShoppingCartResponse?) {
+//                        onItemRemoved(
+//                            commerceId,
+//                            progressBar,
+//                            isCheckBoxSelected,
+//                            currentFragment,
+//                            confirmAddressViewModel
+//                        )
+//                    }
+//
+//                    override fun onFailure(error: Throwable?) {
+//                        onItemRemovedFailed(
+//                            commerceId,
+//                            progressBar,
+//                            isCheckBoxSelected,
+//                            currentFragment,
+//                            confirmAddressViewModel
+//                        )
+//                    }
+//                }, ShoppingCartResponse::class.java))
+//        }
 
-                    override fun onFailure(error: Throwable?) {
-                        onItemRemovedFailed(
-                            commerceId,
-                            progressBar,
-                            isCheckBoxSelected,
-                            currentFragment,
-                            confirmAddressViewModel
-                        )
-                    }
-                }, ShoppingCartResponse::class.java))
-        }
-
-        private fun onItemRemoved(
-            commerceId: String, progressBar: ProgressBar, isCheckBoxSelected: Boolean,
-            currentFragment: CartFragment,
-            confirmAddressViewModel: ConfirmAddressViewModel,
-        ) {
-            commerceItemList?.find { it.commerceId == commerceId }?.isItemRemoved = true
-
-            if (commerceItemList?.filter { commerceItem -> !commerceItem.isItemRemoved }
-                    .isNullOrEmpty()) {
-                progressBar.visibility = View.GONE
-                if (isCheckBoxSelected) {
-                    callGetListAPI(
-                        progressBar,
-                        currentFragment,
-                        confirmAddressViewModel,
-                    )
-                } else {
-                    //This is not a unsellable flow or we don't have unsellable items so this will give callBack to Checkout Summary Flow.
-                    AddToCartLiveData.value = true
-                }
-            }
-        }
+//        private fun onItemRemoved(
+//            commerceId: String, progressBar: ProgressBar, isCheckBoxSelected: Boolean,
+//            currentFragment: CartFragment,
+//            confirmAddressViewModel: ConfirmAddressViewModel,
+//        ) {
+//            commerceItemList?.find { it.commerceId == commerceId }?.isItemRemoved = true
+//
+//            if (commerceItemList?.filter { commerceItem -> !commerceItem.isItemRemoved }
+//                    .isNullOrEmpty()) {
+//                progressBar.visibility = View.GONE
+//                if (isCheckBoxSelected) {
+//                    callGetListAPI(
+//                        progressBar,
+//                        currentFragment,
+//                        confirmAddressViewModel,
+//                    )
+//                } else {
+//                    //This is not a unsellable flow or we don't have unsellable items so this will give callBack to Checkout Summary Flow.
+//                    AddToCartLiveData.value = true
+//                    UpdateDataLiveData.value=1
+//                }
+//            }
+//        }
 
         private fun onItemRemovedFailed(
             commerceId: String, progressBar: ProgressBar, isCheckBoxSelected: Boolean,
@@ -558,4 +568,5 @@ class UnsellableUtils {
             return unsellableCommerceItemList
         }
     }
+
 }

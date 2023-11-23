@@ -680,9 +680,9 @@ class KotlinUtils {
                             context?.resources?.getString(R.string.standard_delivery)
                         val fullAddress = capitaliseFirstLetter(address?.address1 ?: "")
                         val formmmatedNickName = getFormattedNickName(
-                                address?.nickname,
-                                fullAddress, context
-                            )
+                            address?.nickname,
+                            fullAddress, context
+                        )
                         formmmatedNickName.append(fullAddress)
                         tvDeliveryLocation?.text = formmmatedNickName
                         tvDeliveryLocation?.visibility = View.VISIBLE

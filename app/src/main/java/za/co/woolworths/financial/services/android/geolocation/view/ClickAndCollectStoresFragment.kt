@@ -39,7 +39,6 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
-import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentWIthUnsellable
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
@@ -208,6 +207,8 @@ class ClickAndCollectStoresFragment :
             }
         }
     }
+
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -530,16 +531,20 @@ class ClickAndCollectStoresFragment :
     private fun sendResultBack() {
         val  deliveryType: Delivery=Delivery.CNC
         //unSellableCommerceItems = store.unSellableCommerceItems!!
-      //  if(unSellableCommerceItems?.size!!>0)
+        //  if(unSellableCommerceItems?.size!!>0)
 
-            val intent = Intent().apply {
-                putExtra(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE,
-                    ToggleFulfilmentWIthUnsellable(unSellableCommerceItems,deliveryType))
-                putExtra(DELIVERY_CNC, deliveryType)
-            }
+        val intent = Intent().apply {
+            putExtra(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE,
+                ShopToggleActivity.ToggleFulfilmentWIthUnsellable(
+                    unSellableCommerceItems,
+                    deliveryType
+                )
+            )
+            putExtra(DELIVERY_CNC, deliveryType)
+        }
 
-            activity?.setResult(Activity.RESULT_OK, intent)
-            activity?.finish()
+        activity?.setResult(Activity.RESULT_OK, intent)
+        activity?.finish()
 
 
 

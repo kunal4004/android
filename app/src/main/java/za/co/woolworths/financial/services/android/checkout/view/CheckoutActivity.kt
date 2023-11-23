@@ -6,7 +6,6 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
@@ -20,8 +19,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.GEO_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
-import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
@@ -81,7 +80,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 baseFragBundle?.putString(NO_LIQUOR_IMAGE_URL, getString(NO_LIQUOR_IMAGE_URL))
             }
             baseFragBundle?.putBoolean(BundleKeysConstants.IS_COMING_FROM_CHECKOUT, true)
-           baseFragBundle?.putSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
+            baseFragBundle?.putSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
 
         }
         loadNavHostFragment()
@@ -279,5 +278,27 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             }
             it[0].onActivityResult(requestCode, resultCode, data)
         }
+
     }
+
+    override fun onResume() {
+        super.onResume()
+        screenRefresh()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        UpdateScreenLiveData.removeObservers(this)
+    }
+
+    private fun screenRefresh(){
+        UpdateScreenLiveData.observe(this) {
+            if(it==1)
+            { UpdateScreenLiveData.value=0
+                onBackPressed()
+            }
+        }
+    }
+
+
 }

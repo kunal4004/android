@@ -182,16 +182,16 @@ class UnsellableItemsBottomSheetDialog(
 //                    UnsellableUtils.removeItemsFromCart(progressBar, commerceItems, isCheckBoxSelected, currentFragment, confirmAddressViewModel)
 //                } else
 
-                    UnsellableUtils.callConfirmPlace(
-                        currentFragment,
-                        if (isCheckBoxSelected) ConfirmLocationParams(
-                            commerceItems,
-                            null
-                        ) else null,
-                        progressBar,
-                        confirmAddressViewModel,
-                        deliveryType
-                    )
+                UnsellableUtils.callConfirmPlace(
+                    currentFragment,
+                    if (isCheckBoxSelected) ConfirmLocationParams(
+                        commerceItems,
+                        null
+                    ) else null,
+                    progressBar,
+                    confirmAddressViewModel,
+                    deliveryType
+                )
 
                 confirmRemoveItems()
             }

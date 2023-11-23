@@ -72,17 +72,21 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureEnable
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
+
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
@@ -150,6 +154,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
     private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -463,7 +468,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                                 }
 
                                 if (response.orderSummary != null && (response.orderSummary?.totalItemsCount
-                                                ?: 0) <= 0) {
+                                        ?: 0) <= 0) {
                                     showEmptyCart()
                                     return@observe
                                 }
@@ -922,16 +927,16 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             binding.layoutDeliveryInstructions.switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.CHECKOUT,
-                            hashMapOf(
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                            KotlinUtils.getPreferredDeliveryType().toString(),
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.NEED_SHOPPING_BAG
-                            ),
-                            activity
+                        FirebaseManagerAnalyticsProperties.CHECKOUT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString(),
+                            FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.NEED_SHOPPING_BAG
+                        ),
+                        activity
                     )
                 }
             }
@@ -948,16 +953,16 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private fun deliveryInstructionClickListener(isChecked: Boolean) {
         if (isChecked)
             Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT,
-                    hashMapOf(
-                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                    KotlinUtils.getPreferredDeliveryType().toString(),
-                            FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.SPECIAL_DELIVERY_INSTRUCTION
-                    ),
-                    activity
+                FirebaseManagerAnalyticsProperties.CHECKOUT,
+                hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                            KotlinUtils.getPreferredDeliveryType().toString(),
+                    FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.SPECIAL_DELIVERY_INSTRUCTION
+                ),
+                activity
             )
         binding.layoutDeliveryInstructions.edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
             if (isChecked) View.VISIBLE else GONE
@@ -1010,18 +1015,18 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
                     Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.CHECKOUT,
-                            hashMapOf(
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.CHAT_WITH_SHOPPER,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                            KotlinUtils.getPreferredDeliveryType().toString()
-                            ),
-                            activity
+                        FirebaseManagerAnalyticsProperties.CHECKOUT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.CHAT_WITH_SHOPPER,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString()
+                        ),
+                        activity
                     )
 
                     selectedFoodSubstitution = FoodSubstitution.CHAT
@@ -1030,35 +1035,35 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
                     Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.CHECKOUT,
-                            hashMapOf(
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.SUBSTITUTE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                            KotlinUtils.getPreferredDeliveryType().toString()
-                            ),
-                            activity
+                        FirebaseManagerAnalyticsProperties.CHECKOUT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.SUBSTITUTE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString()
+                        ),
+                        activity
                     )
                 }
 
                 R.id.radioBtnNoThanks -> {
                     Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.CHECKOUT,
-                            hashMapOf(
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.NO_THANKS,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                            KotlinUtils.getPreferredDeliveryType().toString()
-                            ),
-                            activity
+                        FirebaseManagerAnalyticsProperties.CHECKOUT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.NO_THANKS,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString()
+                        ),
+                        activity
                     )
                     selectedFoodSubstitution = FoodSubstitution.NO_THANKS
                 }
@@ -1259,25 +1264,34 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 }
             }
         }
+        if (resultCode == Activity.RESULT_OK && requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE){
+            val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
+            if(toggleFulfilmentResultWithUnsellable!=null){
+                UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                    toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
+                    binding.loadingBar,this,parentFragmentManager)
+            }
+        }
     }
+
 
     override fun setSelectedTimeSlot(slot: Slot?) {
         selectedTimeSlot = slot
         isRequiredFieldsMissing()
 
         Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CHECKOUT,
-                hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.SELECT_TIMESLOT,
-                        FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                KotlinUtils.getPreferredDeliveryType().toString(),
-                        FirebaseManagerAnalyticsProperties.PropertyNames.TIME_SELECTED to
-                                selectedTimeSlot?.stringShipOnDate + " " + selectedTimeSlot?.hourSlot
-                ),
-                activity
+            FirebaseManagerAnalyticsProperties.CHECKOUT,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.SELECT_TIMESLOT,
+                FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                        KotlinUtils.getPreferredDeliveryType().toString(),
+                FirebaseManagerAnalyticsProperties.PropertyNames.TIME_SELECTED to
+                        selectedTimeSlot?.stringShipOnDate + " " + selectedTimeSlot?.hourSlot
+            ),
+            activity
         )
     }
 
@@ -1430,7 +1444,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
         if (isEnhanceSubstitutionFeatureEnable() == false) {
-          substituesAllowed = selectedFoodSubstitution.rgb
+            substituesAllowed = selectedFoodSubstitution.rgb
         } else {
             substituesAllowed = FoodSubstitution.NO_THANKS.rgb
         }
@@ -1649,7 +1663,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private fun updateAgeConfirmationUI(isNoLiquorOrder: Boolean?) {
         binding.ageConfirmationLayout?.root?.visibility = View.GONE
         binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
-                View.GONE
+            View.GONE
         Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
         liquorOrder = isNoLiquorOrder
         CheckoutAddressManagementBaseFragment.baseFragBundle?.apply {

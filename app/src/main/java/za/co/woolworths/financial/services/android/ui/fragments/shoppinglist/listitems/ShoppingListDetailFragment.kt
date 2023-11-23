@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
@@ -61,8 +62,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoader
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
-import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentWIthUnsellable
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -197,6 +198,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         initViewAndEvent()
         addSubscribeEvents()
         addFragmentListener()
+
     }
 
     private fun addSubscribeEvents() {
@@ -344,6 +346,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         bindingListDetails?.blackToolTipLayout?.root?.visibility = GONE
         timer?.cancel()
     }
+
+    private fun screenRefresh(){
+        if(isVisible) {
+            UpdateScreenLiveData.observe(viewLifecycleOwner) {
+                if (it == 1)
+                { UpdateScreenLiveData.value = 0
+                    viewModel.getShoppingListDetails()
+                    setDeliveryLocation()
+                }
+            }
+        }
+    }
+
 
     private fun setUpView() {
         bindingListDetails.rlEmptyListView.visibility =
@@ -914,11 +929,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
             )
         }
+        screenRefresh()
     }
 
     override fun onPause() {
         super.onPause()
         requireActivity().unregisterReceiver(mConnectionBroadcast)
+        UpdateScreenLiveData.removeObservers(viewLifecycleOwner)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -1007,11 +1024,14 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
             ShopToggleActivity.REQUEST_DELIVERY_TYPE, BundleKeysConstants.UPDATE_LOCATION_REQUEST, BundleKeysConstants.UPDATE_STORE_REQUEST ->{
                 if (resultCode == RESULT_OK) {
-                    val toggleFulfilmentResultWithUnsellable=getToggleFulfilmentResultWithUnSellable(data)
+
+                    val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
                     if(toggleFulfilmentResultWithUnsellable!=null){
-                        navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
-                            toggleFulfilmentResultWithUnsellable.deliveryType)
+                        UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                            toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
+                            bindingListDetails.loadingBar,this,parentFragmentManager)
                     }
+
                     setDeliveryLocation()
                     if (viewModel.isShoppingListContainsUnavailableItems())
                         showBlackToolTip()
@@ -1030,12 +1050,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
 
     }
-    fun launchShopToggleScreen(autoNavigation: Boolean = false) {
-        Intent(requireActivity(), ShopToggleActivity::class.java).apply {
-            putExtra(BundleKeysConstants.TOGGLE_FULFILMENT_AUTO_NAVIGATION, autoNavigation)
-            startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
-        }
-    }
+
     private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
         deliveryType: Delivery
@@ -1053,9 +1068,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         )
     }
 
-    private fun getToggleFulfilmentResultWithUnSellable(intent: Intent?): ToggleFulfilmentWIthUnsellable? {
+    private fun getToggleFulfilmentResultWithUnSellable(intent: Intent?): ShopToggleActivity.ToggleFulfilmentWIthUnsellable? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE, ToggleFulfilmentWIthUnsellable::class.java)
+            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE, ShopToggleActivity.ToggleFulfilmentWIthUnsellable::class.java)
         } else {
             intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE)
         }

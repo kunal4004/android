@@ -18,6 +18,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
@@ -34,17 +35,16 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_MODE
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
-import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
-import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentResult
-import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentWIthUnsellable
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -63,7 +63,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.Shop
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ShopLandingAutoNavigateCheckerImpl
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.TooltipShown
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
-import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment.Companion.DIALOG_BUTTON_CLICK_RESULT
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.ui.views.tooltip.CustomText
@@ -86,6 +86,7 @@ import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.StoreUtils
+import za.co.woolworths.financial.services.android.util.UnsellableUtils.Companion.ADD_TO_LIST_SUCCESS_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -280,6 +281,18 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             updateTabIconUI(currentTabPositionBasedOnDeliveryType())
             viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
         }
+
+        setFragmentResultListener(DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
+            if(result.equals(ADD_TO_LIST_SUCCESS_RESULT_CODE)){
+
+            }
+        }
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        UpdateScreenLiveData.removeObservers(viewLifecycleOwner)
     }
 
     private fun hideTooltipIfVisible() {
@@ -455,6 +468,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             } else {
                 setDeliveryView()
             }
+            refreshScreen()
         }
     }
 
@@ -535,7 +549,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         fulfillmentDetails?.apply {
             when (Delivery.getType(deliveryType)) {
                 Delivery.CNC -> {
-                        setSearchText(CLICK_AND_COLLECT_TAB, location = KotlinUtils.capitaliseFirstLetter(storeName))
+                    setSearchText(CLICK_AND_COLLECT_TAB, location = KotlinUtils.capitaliseFirstLetter(storeName))
                 }
 
                 Delivery.STANDARD -> {
@@ -740,7 +754,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
         if (resultCode == RESULT_OK && requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE) {
             val toggleFulfilmentResult = getToggleFulfilmentResult(data)
-            val toggleFulfilmentResultWithUnsellable=getToggleFulfilmentResultWithUnSellable(data)
             if (toggleFulfilmentResult != null) {
                 if (toggleFulfilmentResult.needRefresh) {
                     val placeId = getDeliveryType()?.address?.placeId
@@ -757,9 +770,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             }
 
             else{
+                val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
                 if(toggleFulfilmentResultWithUnsellable!=null){
-                    navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
-                        toggleFulfilmentResultWithUnsellable.deliveryType)
+                    UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                        toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
+                        binding.shopProgressbar,this,parentFragmentManager)
                 }
             }
         }
@@ -770,19 +785,11 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    private fun getToggleFulfilmentResult(intent: Intent?): ToggleFulfilmentResult? {
+    private fun getToggleFulfilmentResult(intent: Intent?): ShopToggleActivity.ToggleFulfilmentResult? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT, ToggleFulfilmentResult::class.java)
+            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT, ShopToggleActivity.ToggleFulfilmentResult::class.java)
         } else {
             intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT)
-        }
-    }
-
-    private fun getToggleFulfilmentResultWithUnSellable(intent: Intent?): ToggleFulfilmentWIthUnsellable? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE, ToggleFulfilmentWIthUnsellable::class.java)
-        } else {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE)
         }
     }
 
@@ -926,7 +933,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
         val yellowColor = ContextCompat.getColor(context, R.color.color_yellow_FEE600)
         val whiteColor =  ContextCompat.getColor(context, R.color.white)
-      // Apply the custom typefaces to specific text
+        // Apply the custom typefaces to specific text
         spannableString.setSpan(CustomText(customTypeface1, whiteColor) , 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannableString.setSpan(CustomText(customTypeface1, yellowColor) , 2, 19, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannableString.setSpan(CustomText(customTypeface2, whiteColor) , 20, 29, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -1148,19 +1155,17 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
     fun getCurrentFragmentIndex() = binding.viewpagerMain?.currentItem
 
-    private fun navigateToUnsellableItemsFragment(
-        unsellableItemsList: ArrayList<UnSellableCommerceItem>, deliveryType:Delivery,) {
-        val unsellableItemsBottomSheetDialog =
-            UnsellableItemsBottomSheetDialog.newInstance(
-                unsellableItemsList,
-                deliveryType,
-                binding.shopProgressbar,
-                confirmAddressViewModel,
-                this@ShopFragment
-            )
-        unsellableItemsBottomSheetDialog.show(
-            parentFragmentManager,
-            UnsellableItemsBottomSheetDialog::class.java.simpleName
-        )
+    private fun refreshScreen(){
+        if(isVisible) {
+            UpdateScreenLiveData.observe(viewLifecycleOwner) {
+                if (it == 1) {
+                    executeValidateSuburb()
+                    UpdateScreenLiveData.value = 0
+                }
+            }
+        }
     }
+
+
+
 }
