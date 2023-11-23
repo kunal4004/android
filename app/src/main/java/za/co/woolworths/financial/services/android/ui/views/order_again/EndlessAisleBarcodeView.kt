@@ -73,7 +73,8 @@ fun EndlessAisleBarcodeView(
                 fontWeight = FontWeight.W600,
                 fontFamily = FuturaFontFamily,
                 textAlign = TextAlign.Center,
-                color = Black
+                color = Black,
+                letterSpacing = 2.sp
             )
         )
 
