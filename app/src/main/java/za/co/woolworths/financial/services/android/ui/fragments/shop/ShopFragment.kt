@@ -486,15 +486,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         )
     }
 
-    fun checkRunTimePermissionForLocation(): Boolean {
-        permissionUtils?.apply {
-            val permissions = ArrayList<String>()
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-            return checkAndRequestPermissions(permissions, 3)
-        }
-        return false
-    }
-
     private fun updateTabIconUI(selectedTab: Int) {
         when (selectedTab) {
             STANDARD_TAB.index -> {
@@ -905,16 +896,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    private fun formatToolTipTitle(context: Context, start: String, coloredText: String, end: String): Spanned {
-        val labelColor = ContextCompat.getColor(context, R.color.color_yellow_FEE600)
-        val сolor: String = String.format("%X", labelColor).substring(2)
-        return HtmlCompat.fromHtml(
-            "$start<font color=\"#$сolor\">$coloredText</font><br>$end",
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-    }
-
-
     private fun getCustomToolTipText(context: Context): SpannableString {
         val descriptionText=getString(R.string.description_tooltip)
 
@@ -948,16 +929,22 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
     }
-    //getting text with HtMl formate
-    private fun textToolTip(text:Int): Spanned{
-       return HtmlCompat.fromHtml(getString(text),HtmlCompat.FROM_HTML_MODE_LEGACY)
-    }
+
     fun showToggleFulfilmentScreen() {
+        if (BottomNavigationActivity.preventShopTooltip) {
+            BottomNavigationActivity.preventShopTooltip = false
+            return
+        }
         if (!shopLandingAutoNavigator.isShopLandingVisited()) {
             toggleScreenTimer = Timer()
             toggleScreenTimer?.schedule(timerTask {
-                shopLandingAutoNavigator.markShopLandingVisited()
-                launchShopToggleScreen(autoNavigation = true)
+                (activity as? BottomNavigationActivity)?.let {
+                    if (it.currentFragment !is ShopFragment || !isVisible || !isAdded) {
+                        return@let
+                    }
+                    shopLandingAutoNavigator.markShopLandingVisited()
+                    launchShopToggleScreen(autoNavigation = true)
+                }
             }, TOGGLE_SCREEN_DELAY)
         } else {
             showTooltipIfRequired()
@@ -1037,14 +1024,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 else -> "\n".plus(getString(R.string.tooltip_standard_delivery))
             }
 
-            val title = formatToolTipTitle(
-                it,
-                getString(R.string.you_re_shopping_with),
-                deliveryType,
-                getString(R.string.tooltip_fulfilment_message)
-            )
-
-          //New formatToolTip
+            //New formatToolTip
             val titleToolTip = formatNewToolTipTitle(
                 it,
                 getString(R.string.you_re_shopping_with),
