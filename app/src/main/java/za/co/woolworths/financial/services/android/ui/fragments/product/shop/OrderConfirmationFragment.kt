@@ -126,7 +126,7 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
-                                    if (!isPurchaseEventTriggered)
+                                    if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
                                     {
                                         showPurchaseEvent(response)
                                         isPurchaseEventTriggered = false
@@ -260,7 +260,7 @@ class OrderConfirmationFragment :
             activity,
             KotlinUtils.vocShoppingHandling(deliveryType)
         )
-        if (Delivery.getType(deliveryType) == Delivery.CNC) {
+        if (Delivery.getType(deliveryType) == Delivery.CNC && isEndlessAisleJourney == false) {
             Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm,
                 activity
