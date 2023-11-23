@@ -73,9 +73,7 @@ class ChangeFulfillmentCollectionStoreFragment :
 
     override fun onResume() {
         super.onResume()
-        if (parentFragment?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.CLICK_AND_COLLECT_TAB.index) {
-            init()
-        }
+        init()
     }
 
     override fun noConnectionLayout(isVisible: Boolean) {
@@ -86,19 +84,6 @@ class ChangeFulfillmentCollectionStoreFragment :
     }
 
     fun init() {
-        binding.layoutClickAndCollectStore.apply {
-            etEnterNewAddress.addTextChangedListener(this@ChangeFulfillmentCollectionStoreFragment)
-        }
-        binding.layoutClickAndCollectStore.tvConfirmStore.setOnClickListener(this)
-        binding.layoutClickAndCollectStore.btChange.setOnClickListener(this)
-
-        var isPermissionGranted = false
-        activity?.apply {
-            isPermissionGranted = ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        }
         showCategoryList()
     }
 
