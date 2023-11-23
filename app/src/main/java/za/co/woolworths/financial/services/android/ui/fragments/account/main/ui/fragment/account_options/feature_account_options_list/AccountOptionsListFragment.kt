@@ -130,6 +130,9 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
                 balanceProtectionInsuranceTag.balanceProtectionInsuranceArrowImageView.visibility =
                     VISIBLE
             }
+            BpiInsuranceApplicationStatusType.DISABLED -> {
+                balanceProtectionInsuranceRelativeLayout.visibility = GONE
+            }
             else -> {
                 val data = bpi.leadGen
                 val displayLabel = data?.displayLabel

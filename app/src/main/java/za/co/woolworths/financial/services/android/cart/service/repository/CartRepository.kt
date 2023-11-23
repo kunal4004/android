@@ -2,12 +2,17 @@ package za.co.woolworths.financial.services.android.cart.service.repository
 
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import com.google.gson.JsonParseException
 import org.json.JSONException
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -41,7 +46,16 @@ class CartRepository @Inject constructor() {
                     }
                 } ?: Resource.error(R.string.error_unknown, null)
             } else {
-                Resource.error(R.string.error_unknown, null)
+                var errorResponse: CartResponse? = null
+                try {
+                    errorResponse = Gson().fromJson(
+                        response.errorBody()?.charStream(),
+                        CartResponse::class.java
+                    )
+                } catch (jsonException: JsonParseException) {
+                    FirebaseManager.logException(jsonException)
+                }
+                Resource.error(R.string.error_unknown, errorResponse)
             }
         } catch (e: IOException) {
             FirebaseManager.logException(e)

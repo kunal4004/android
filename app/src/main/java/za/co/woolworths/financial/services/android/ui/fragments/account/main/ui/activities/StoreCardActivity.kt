@@ -15,6 +15,7 @@ import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
@@ -29,6 +30,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_chat.ui.ChatParams
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_chat.ui.ChatView
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
@@ -47,6 +50,7 @@ class StoreCardActivity : AppCompatActivity() {
     val viewModel: MyAccountsRemoteApiViewModel by viewModels()
 
     @Inject lateinit var statusBarCompat: SystemBarCompat
+    @Inject lateinit var chatView: ChatView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +62,17 @@ class StoreCardActivity : AppCompatActivity() {
         homeViewModel.setDeepLinkParams(intent?.extras)
         setupView()
         setObservers()
+        initChatView()
+    }
+
+    private fun initChatView() {
+        val storeCard = homeViewModel.accountData ?: Account()
+        val chatParams = ChatParams(
+                activity = this@StoreCardActivity,
+                binding = binding.includeChatCollectAgentFloatingButton,
+                payMyAccountViewModel = payMyAccountViewModel,
+                accountList = listOf(storeCard))
+        chatView.chatToCollectionAgent(chatParams = chatParams)
     }
 
     private fun setObservers() {

@@ -129,6 +129,9 @@ class MyAccountActivity : AppCompatActivity() {
         binding.accountToolbarTitle?.text = title
     }
 
+    fun setToolbarContentDescription(id: String?) {
+        binding.accountToolbarTitle.contentDescription = id
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
