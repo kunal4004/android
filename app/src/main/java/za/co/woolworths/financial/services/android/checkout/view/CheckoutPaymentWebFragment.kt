@@ -145,7 +145,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         }
     }
 
-    private fun navigateToOrderConfirmation(isEndlessAisle: Boolean) {
+    private fun navigateToOrderConfirmation(isEndlessAisle: Boolean = false) {
         binding.paymentSuccessConfirmationLayout?.root?.visibility = View.VISIBLE
         if (isEndlessAisle) {
             binding.paymentSuccessConfirmationLayout.txtOrderPaymentConfirmed.text = getString(R.string.barcode_generated)
@@ -196,7 +196,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         }
 
         when (paymentStatusType) {
-            PaymentStatus.PAYMENT_SUCCESS.type, PaymentStatus.PAY_IN_STORE.type -> {
+            PaymentStatus.PAYMENT_SUCCESS.type -> {
                 val eventParams = Bundle()
                 eventParams.apply {
 
@@ -266,7 +266,13 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
                         this
                     )
                 }
-                navigateToOrderConfirmation(paymentStatusType == PaymentStatus.PAY_IN_STORE.type)
+                navigateToOrderConfirmation()
+            }
+            PaymentStatus.PAY_IN_STORE.type ->{
+                // clearing the paymentArguments because need to avoid analytics for endless order
+                // and below we have check if its empty then don't call analytics
+                paymentArguments.clear()
+                navigateToOrderConfirmation(true)
             }
             PaymentStatus.PAYMENT_ABANDON.type -> {
                 view?.findNavController()?.navigateUp()
