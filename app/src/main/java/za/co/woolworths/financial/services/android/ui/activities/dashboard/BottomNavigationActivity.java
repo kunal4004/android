@@ -106,6 +106,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm;
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewSuccessScreenFragment;
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewTnCFragment;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -243,7 +244,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
         userAccountLandingViewModel = new ViewModelProvider(this).get(UserAccountLandingViewModel.class);
-        parseDeepLinkData();
         new AmplifyInit();
         mNavController = FragNavController.newBuilder(savedInstanceState,
                         getSupportFragmentManager(),
@@ -254,6 +254,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 .eager(true)
                 .rootFragmentListener(this, 5)
                 .build();
+        parseDeepLinkData();
         // Adding default position for WToday Tab with index(INDEX_TODAY that is position 1) (When open app)
         // Tab order remain same in order to Shop,Today, My Cart,WRewards,My Account
         getBottomNavigationById().setCurrentItem(INDEX_TODAY);
@@ -1052,7 +1053,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public void switchTab(int number) {
         previousTabIndex = currentTabIndex;
         currentTabIndex = number;
-        mNavController.switchTab(number);
+        if (mNavController != null)
+            mNavController.switchTab(number);
         SessionUtilities.getInstance().setBottomNavigationPosition(String.valueOf(number));
     }
 
@@ -1655,6 +1657,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         writeAReviewSuccessScreenFragment.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
         pushFragmentNoAnim(writeAReviewSuccessScreenFragment);
+    }
+
+    public void openWriteAReviewTnCScreenFragment(@NotNull String actionItems) {
+        Bundle bundle = new Bundle();
+        bundle.putString(AppConstant.actionItemTnC, actionItems);
+        WriteAReviewTnCFragment writeAReviewTnCFragment = WriteAReviewTnCFragment.Companion.newInstance();
+        writeAReviewTnCFragment.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragmentNoAnim(writeAReviewTnCFragment);
     }
 
 }
