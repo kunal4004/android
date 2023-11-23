@@ -347,7 +347,6 @@ class AddToListViewModel @Inject constructor(
                                 isAddToListSuccess = isSuccess
                             )
 
-                            /*todo need to remove this one , need to confirm with Team4*/
                             AppConfigSingleton.dynamicYieldConfig?.apply {
                                 if (isDynamicYieldEnabled == true) {
                                     items.forEach { item ->
