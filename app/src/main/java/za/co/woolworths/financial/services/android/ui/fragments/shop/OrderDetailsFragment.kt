@@ -334,6 +334,7 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
         // Move to shop tab first.
         (requireActivity() as? BottomNavigationActivity)?.apply {
             onShopTabSelected(bottomNavigationById.menu[INDEX_PRODUCT])
+            BottomNavigationActivity.preventShopTooltip = true
         }
         ScreenManager.openProductDetailFragment(requireActivity(), productName, strProductList)
     }

@@ -87,6 +87,7 @@ class CartUtils {
             // Move to shop tab first.
             (activity as? BottomNavigationActivity)?.bottomNavigationById?.currentItem =
                 BottomNavigationActivity.INDEX_PRODUCT
+            BottomNavigationActivity.preventShopTooltip = true
             ScreenManager.openProductDetailFragment(activity, "", strProductList)
         }
 
