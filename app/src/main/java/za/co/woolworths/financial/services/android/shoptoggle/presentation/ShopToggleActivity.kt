@@ -281,6 +281,7 @@ class ShopToggleActivity : ComponentActivity() {
                         liquorImageUrl = getLiquorImageUrl(),
                         cartItemList = null, //TODO, setting static for now (viewModel.getCartItemList())
                     )
+                    finish()
                 }
             }
 
