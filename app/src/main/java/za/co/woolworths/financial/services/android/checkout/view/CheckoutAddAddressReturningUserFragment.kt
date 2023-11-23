@@ -70,6 +70,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
@@ -1073,7 +1074,7 @@ class CheckoutAddAddressReturningUserFragment :
                 preparePaymentPageViewRequest(orderTotalValue)
             }
 
-            binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> UnsellableAccess.launchShopToggleScreen(false,requireActivity())
+            binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
 
             binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
         }

@@ -34,17 +34,6 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsColle
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
-import za.co.woolworths.financial.services.android.cart.view.CartFragment
-import za.co.woolworths.financial.services.android.checkout.service.network.Address
-import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
-import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.components.ShopToggleScreen
@@ -52,8 +41,6 @@ import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewm
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STORE_ID
-import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -368,11 +355,6 @@ class ShopToggleActivity : ComponentActivity() {
                     toggleFulfilmentResultWithUnsellable.deliveryType
                 )
             } else {
-                if (requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE || requestCode == BundleKeysConstants.REQUEST_CODE) {
-                    sendResultBack()
-                }
-            }
-            else {
                 if (requestCode == REQUEST_DELIVERY_TYPE) {
                     if (isComingFromCheckout) {
                         onConfirmLocationNavigation(Delivery.CNC.name)
