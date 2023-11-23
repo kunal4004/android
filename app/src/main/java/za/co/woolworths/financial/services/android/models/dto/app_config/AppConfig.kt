@@ -50,6 +50,7 @@ data class AppConfig(
     var brandLandingPage: BrandLandingPage?,
     var toolTipSettings: TooltipSettings?,
     var enhanceSubstitution: EnhanceSubstitution?,
+    var endlessAisle: EndlessAisle?,
     var ratingsAndReviews: RatingsAndReviews?,
     var glassBox: GlassBox?,
     var bnplConfig: BnplConfig?,
