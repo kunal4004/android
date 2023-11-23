@@ -35,7 +35,6 @@ class BalanceProtectionInsuranceImpl @Inject constructor(private val accountDao:
 
     override fun balanceProtectionInsuranceTag(): AccountOptionsScreenUI.BalanceProtectionInsurance {
         val insuranceLeadGen = getBalanceProtectionInsuranceLead()
-        val isInsuranceCovered = isInsuranceCovered()
         var leadGen: BpiInsuranceApplication? = null
         val status = when {
             insuranceLeadGen != null -> when (insuranceLeadGen.status) {
@@ -49,10 +48,7 @@ class BalanceProtectionInsuranceImpl @Inject constructor(private val accountDao:
             }
             else -> {
                 leadGen = null
-                when (isInsuranceCovered) {
-                    true -> BpiInsuranceApplicationStatusType.INSURANCE_COVERED
-                    false -> BpiInsuranceApplicationStatusType.NOT_COVERED
-                }
+                BpiInsuranceApplicationStatusType.DISABLED
             }
         }
         return AccountOptionsScreenUI.BalanceProtectionInsurance(status, leadGen)
