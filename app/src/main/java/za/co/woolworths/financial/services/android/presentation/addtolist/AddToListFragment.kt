@@ -90,7 +90,6 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                     }
 
                     val list = viewModel.getListState().selectedListItem
-                    if (list.size != it.size) return@collect
 
                     var resultCode = arguments?.getInt(AppConstant.RESULT_CODE, -1) ?: -1
                     val successList = it.filter { listApiState -> listApiState.isSuccess }

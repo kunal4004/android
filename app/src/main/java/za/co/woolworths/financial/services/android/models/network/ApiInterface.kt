@@ -1388,7 +1388,7 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("id") id: String,
         @Body requestBody: OrderToShoppingListRequestBody,
-    ): Call<OrderToListReponse>
+    ): retrofit2.Response<OrderToListReponse>
 
     @Headers(
         "Content-Type: application/json",
