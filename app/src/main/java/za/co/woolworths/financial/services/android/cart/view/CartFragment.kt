@@ -495,6 +495,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     )
                 }
             }
+            putExtra(Constant.IS_MIXED_BASKET, viewModel.isMixedBasket())
         }
 
         if (((getPreferredDeliveryType() == Delivery.STANDARD)
