@@ -83,6 +83,10 @@ class ChangeFulfillmentCollectionStoreFragment :
         }
     }
 
+    fun setParentFragment(parentFragment: ShopFragment) {
+        this.parentFragment = parentFragment
+    }
+
     fun init() {
         showCategoryList()
     }

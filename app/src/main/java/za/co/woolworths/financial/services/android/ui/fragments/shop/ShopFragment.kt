@@ -595,10 +595,31 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             if (getDeliveryType() == null) {
                 setSearchText(STANDARD_TAB)
             }
+            refreshCnc()
             binding.viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
             setDeliveryView()
         } else {
             toggleScreenTimer?.cancel()
+        }
+    }
+
+    private fun refreshCnc() {
+        if (binding.viewpagerMain.currentItem != 1) {
+            return
+        }
+        val cncFragment =
+            binding.viewpagerMain?.adapter?.instantiateItem(
+                binding.viewpagerMain,
+                binding.viewpagerMain.currentItem
+            ) as? ChangeFulfillmentCollectionStoreFragment
+        if (cncFragment?.isAdded == true ) {
+            (activity as? BottomNavigationActivity)?.let {
+                if (it.currentFragment is ShopFragment) {
+                    binding.viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
+                    cncFragment.setParentFragment(it.currentFragment as ShopFragment)
+                    cncFragment.init()
+                }
+            }
         }
     }
 
