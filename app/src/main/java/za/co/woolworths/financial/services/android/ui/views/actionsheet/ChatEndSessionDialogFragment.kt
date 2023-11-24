@@ -71,11 +71,4 @@ class ChatEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickL
             R.id.noContinueSessionButton -> dismiss()
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AppConstant.RESULT_OK_HUAWEI_REQUEST_CODE) {
-            huaweiRatingsWindowResult(resultCode)
-        }
-    }
 }
