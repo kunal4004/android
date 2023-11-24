@@ -36,6 +36,7 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             quickAddToListSwitch(this)
             setOnClickListener(navigator, this)
             setNetworkName(this)
+            setOutOfStock(this)
         }
     }
 
@@ -184,7 +185,17 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                 productList?.apply {
                     when (productType) {
                         getString(R.string.food_product_type) -> {
-                            includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
+                            when (stockAvailable) {
+                                -1 -> {
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
+                                }
+                                0 -> {
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
+                                }
+                                else -> {
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
+                                }
+                            }
                         }
                         getString(R.string.digital_product_type) -> {
                             includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
@@ -204,13 +215,59 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                 productList?.apply {
                     when(productType) {
                        getString(R.string.food_product_type) -> {
-                            imAddToList?.visibility = VISIBLE
+                           when (stockAvailable) {
+                               -1 -> {
+                                   imAddToList?.visibility = VISIBLE
+                               }
+                               0 -> {
+                                   imAddToList?.visibility = GONE
+                               }
+                               else -> {
+                                   imAddToList?.visibility = GONE
+                               }
+                           }
                         }
                         getString(R.string.digital_product_type) -> {
                             imAddToList?.visibility = VISIBLE
                         }
                         else -> {
                             imAddToList?.visibility = GONE
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun setOutOfStock(productList: ProductList) {
+        itemBinding.apply {
+            root.context.apply {
+                productList.apply {
+                    when(productType) {
+                        getString(R.string.food_product_type) -> {
+                            when (stockAvailable) {
+                                -1 -> {
+                                    outOfStockTag.visibility = GONE
+                                   /* imAddToList.visibility = GONE
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE*/
+                                    imProductImage.alpha = 0.5f
+                                }
+                                0 -> {
+                                    outOfStockTag.visibility = VISIBLE
+                                   /* imAddToList.visibility = VISIBLE
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE*/
+                                }
+                                else -> {
+                                    outOfStockTag.visibility = GONE
+                                   /* imAddToList.visibility = VISIBLE
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE*/
+                                }
+                            }
+                        }
+                        getString(R.string.digital_product_type) -> {
+                            outOfStockTag.visibility = GONE
+                        }
+                        else -> {
+                            outOfStockTag.visibility = GONE
                         }
                     }
                 }
