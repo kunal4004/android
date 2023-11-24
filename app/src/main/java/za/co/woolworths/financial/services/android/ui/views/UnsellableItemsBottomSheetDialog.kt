@@ -20,8 +20,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.UnsellableItemsBottomSheetDialogBinding
-import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
@@ -41,6 +41,7 @@ class UnsellableItemsBottomSheetDialog(
     val progressBar: ProgressBar,
     val confirmAddressViewModel: ConfirmAddressViewModel,
     val currentFragment: Fragment,
+    val confirmLocationRequest: ConfirmLocationRequest? = null,
 ) : WBottomSheetDialogFragment(),
     View.OnClickListener {
 
@@ -58,12 +59,14 @@ class UnsellableItemsBottomSheetDialog(
             progressBar: ProgressBar,
             viewModel: ConfirmAddressViewModel,
             fragment: Fragment,
+            confirmLocationRequest: ConfirmLocationRequest? = null,
         ) =
             UnsellableItemsBottomSheetDialog(
                 deliveryType,
                 progressBar,
                 viewModel,
-                fragment
+                fragment,
+                confirmLocationRequest
             ).withArgs {
                 putSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS, unsellableItemsList)
             }
@@ -184,13 +187,14 @@ class UnsellableItemsBottomSheetDialog(
 
                 UnsellableUtils.callConfirmPlace(
                     currentFragment,
-                    if (isCheckBoxSelected) ConfirmLocationParams(
+                    ConfirmLocationParams(
                         commerceItems,
-                        null
-                    ) else null,
+                        confirmLocationRequest
+                    ),
                     progressBar,
                     confirmAddressViewModel,
-                    deliveryType
+                    deliveryType,
+                    isCheckBoxSelected
                 )
 
                 confirmRemoveItems()

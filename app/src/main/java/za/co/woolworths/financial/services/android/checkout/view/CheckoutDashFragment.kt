@@ -1150,7 +1150,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
             }
         )
         startActivityForResult(intent, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
-        activity?.finish()
+        //activity?.finish() //TODO, prevent multiple checkout screen lateron
     }
     private fun launchStoreOrLocationSelection() {
         val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)

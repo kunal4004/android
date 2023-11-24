@@ -86,7 +86,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.response.Co
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
@@ -490,9 +490,9 @@ class CheckoutAddAddressNewUserFragment :
             }
         }
 
-        ConfirmLocationResponseLiveData.observe(viewLifecycleOwner) {
-            if (it == true) {
-                ConfirmLocationResponseLiveData.value = false
+        UpdateScreenLiveData.observe(viewLifecycleOwner) {
+            if (it == 1) {
+                UpdateScreenLiveData.value = 0
                 relaunchCheckoutActivity()
             }
         }

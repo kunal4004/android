@@ -17,7 +17,6 @@ import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheet
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
@@ -51,6 +50,7 @@ class UnsellableUtils {
             progressBar: ProgressBar,
             confirmAddressViewModel: ConfirmAddressViewModel,
             deliveryType: Delivery,
+            isCheckBoxSelected: Boolean= false,
         ) {
             commerceItemList = confirmLocationParams?.commerceItemList
             // Call Confirm location API.
@@ -69,7 +69,6 @@ class UnsellableUtils {
                         progressBar?.visibility = View.GONE
                         if (confirmLocationResponse != null) {
                             when (confirmLocationResponse.httpCode) {
-
                                 AppConstant.HTTP_OK, HTTP_OK_201 -> {
                                     if (SessionUtilities.getInstance().isUserAuthenticated) {
                                         Utils.savePreferredDeliveryLocation(
@@ -94,12 +93,7 @@ class UnsellableUtils {
                                                 savedPlaceId
                                             )
                                     }
-                                    // This will update the previous fragment data like location details.
-                                    ConfirmLocationResponseLiveData.value = true
-
-
-
-                                    if (confirmLocationParams?.commerceItemList != null) {
+                                    if (isCheckBoxSelected) {
                                         // If unsellable items are removed from popup with addToList checkBox selected then call getList and createList/AddToList API.
                                         callGetListAPI(
                                             progressBar,
@@ -287,7 +281,6 @@ class UnsellableUtils {
                         )
                     hideLoadingProgress()
                     val addToListResponse = addProductToListResponse?.body()
-
                     if (addToListResponse != null) {
                         when (addToListResponse.httpCode) {
                             AppConstant.HTTP_OK, HTTP_OK_201 -> {
