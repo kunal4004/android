@@ -310,7 +310,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     tvSearchProduct.text = getString(R.string.shop_landing_product_all_search)
                     fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.standard_delivery)
                     fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
-                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.default_location)
+                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.set_location_title)
                 }
                 CLICK_AND_COLLECT_TAB -> {
                     tvSearchProduct.text = getCncSearchText()
@@ -613,9 +613,16 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 setSearchText(STANDARD_TAB)
             }
             binding.viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
+            refreshAdapter()
             setDeliveryView()
         } else {
             toggleScreenTimer?.cancel()
+        }
+    }
+
+    private fun refreshAdapter() {
+        if (binding.viewpagerMain.currentItem == DASH_TAB.index || binding.viewpagerMain.currentItem == CLICK_AND_COLLECT_TAB.index) {
+            shopPagerAdapter?.notifyDataSetChanged()
         }
     }
 
@@ -1123,7 +1130,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 message = getString(R.string.tooltip_location_message_to_change_your_store)
             }
             else -> {
-                if(binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text == getString(R.string.default_location)) {
+                if(binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text == getString(R.string.set_location_title)) {
                     //Location is not yet set
                     title = getString(R.string.tooltip_location_title_set_location)
                     description = getString(R.string.tooltip_location_description)
