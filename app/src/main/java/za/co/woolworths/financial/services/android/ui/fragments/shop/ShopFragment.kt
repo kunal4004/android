@@ -596,14 +596,14 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 setSearchText(STANDARD_TAB)
             }
             binding.viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
-            refreshCncAndDash()
+            refreshAdapter()
             setDeliveryView()
         } else {
             toggleScreenTimer?.cancel()
         }
     }
 
-    private fun refreshCncAndDash() {
+    private fun refreshAdapter() {
         if (binding.viewpagerMain.currentItem == DASH_TAB.index || binding.viewpagerMain.currentItem == CLICK_AND_COLLECT_TAB.index) {
             shopPagerAdapter?.notifyDataSetChanged()
         }
