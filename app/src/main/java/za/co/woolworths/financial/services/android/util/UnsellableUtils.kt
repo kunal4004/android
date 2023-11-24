@@ -54,6 +54,7 @@ class UnsellableUtils {
             progressBar: ProgressBar,
             confirmAddressViewModel: ConfirmAddressViewModel,
             deliveryType: Delivery,
+            isCheckBoxSelected: Boolean= false,
         ) {
             commerceItemList = confirmLocationParams?.commerceItemList
             // Call Confirm location API.
@@ -96,9 +97,7 @@ class UnsellableUtils {
                                                 savedPlaceId
                                             )
                                     }
-                                    // This will update the previous fragment data like location details.
-                                    ConfirmLocationResponseLiveData.value = true
-                                    if (confirmLocationParams?.commerceItemList != null) {
+                                    if (isCheckBoxSelected) {
                                         // If unsellable items are removed from popup with addToList checkBox selected then call getList and createList/AddToList API.
                                         callGetListAPI(
                                             progressBar,
@@ -106,6 +105,8 @@ class UnsellableUtils {
                                             confirmAddressViewModel,
                                         )
                                     } else {
+                                        // This will update the previous fragment data like location details.
+                                        ConfirmLocationResponseLiveData.value = true
                                         //This is not a unsellable flow or we don't have unsellable items so this will give callBack to AddToCart function or Checkout Summary Flow.
                                         AddToCartLiveData.value = true
                                     }
@@ -297,6 +298,8 @@ class UnsellableUtils {
                                 )
                             }
                         }
+                    } else {
+                        ConfirmLocationResponseLiveData.value = true
                     }
                 } catch (e: Exception) {
                     FirebaseManager.logException(e)

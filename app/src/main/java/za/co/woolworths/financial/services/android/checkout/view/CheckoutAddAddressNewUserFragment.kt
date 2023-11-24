@@ -7,7 +7,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.EditText
+import android.widget.HorizontalScrollView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -29,13 +33,20 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.DeleteAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.BOTH
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_PROVINCE
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.ONLY_SUBURB
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_NEW_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
@@ -53,7 +64,14 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter.Companion.EDIT_SAVED_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ADMINISTRATIVE_AREA_LEVEL_1
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.LOCALITY
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.POSTAL_CODE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.PREMISE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.SUBLOCALITY_LEVEL_1
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.SUBLOCALITY_LEVEL_2
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -62,28 +80,48 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_HOME
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_OFFICE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedDefaultName
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.poi.PoiBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_100_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.FIFTY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TEN
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboardIfVisible
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.UnIndexedAddressIdentifiedListener
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
+import za.co.woolworths.financial.services.android.util.UnsellableUtils.Companion.ADD_TO_LIST_SUCCESS_RESULT_CODE
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.isAValidSouthAfricanNumber
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.util.value
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.regex.Pattern
@@ -125,6 +163,8 @@ class CheckoutAddAddressNewUserFragment :
     private var oldNickName: String? = ""
     private var unIndexedAddressIdentified: Boolean = false
     private val unIndexedLiveData = MutableLiveData<Boolean>()
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
+    private var validateLocationResponse: ValidateLocationResponse? = null
 
 
     companion object {
@@ -423,7 +463,6 @@ class CheckoutAddAddressNewUserFragment :
     }
 
     private fun addFragmentResultListener() {
-
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
             if (selectedAddress.provinceName.isNullOrEmpty()) return@setFragmentResultListener
             provinceSuburbEnableType = ONLY_SUBURB
@@ -438,7 +477,58 @@ class CheckoutAddAddressNewUserFragment :
                     deleteAddress()
                 }
             }
+        }
+        setFragmentResultListener(ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            relaunchCheckoutActivity()
+        }
 
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                relaunchCheckoutActivity()
+            }
+        }
+
+        ConfirmLocationResponseLiveData.observe(viewLifecycleOwner) {
+            if (it == true) {
+                ConfirmLocationResponseLiveData.value = false
+                relaunchCheckoutActivity()
+            }
+        }
+    }
+
+    private fun relaunchCheckoutActivity() {
+        savedAddressResponse?.defaultAddressNickname = validateLocationResponse?.validatePlace?.placeDetails?.nickname
+        val checkoutActivityIntent =
+            Intent(requireActivity(),
+                CheckoutActivity::class.java
+            ).apply {
+                putExtra(
+                    SAVED_ADDRESS_KEY,
+                    savedAddressResponse
+                )
+                val result = when (Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)) {
+                    Delivery.STANDARD -> GEO_SLOT_SELECTION
+                    else -> DASH_SLOT_SELECTION
+                }
+                putExtra(result, true)
+                putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+                putExtra(
+                    Constant.NO_LIQUOR_IMAGE_URL,
+                    getLiquorImageUrl()
+                )
+            }
+        requireActivity().apply {
+            startActivityForResult(
+                checkoutActivityIntent,
+                BundleKeysConstants.FULLFILLMENT_REQUEST_CODE
+            )
+            overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
+            finish()
         }
     }
 
@@ -946,13 +1036,7 @@ class CheckoutAddAddressNewUserFragment :
                                         SAVED_ADDRESS_KEY,
                                         Utils.toJson(savedAddressResponse)
                                     )
-                                    response.address.nickname?.let { nickName ->
-                                        navigateToAddressConfirmation(
-                                            response.address.placesId,
-                                            response.address
-                                        )
-
-                                    }
+                                    callValidatePlaceApi(response.address)
                                     hideKeyboardIfVisible(activity)
                                 }
 
@@ -1196,7 +1280,85 @@ class CheckoutAddAddressNewUserFragment :
             }
     }
 
-    private fun navigateToAddressConfirmation(placesId: String?, address: Address) {
+    private fun callValidatePlaceApi(address: Address?){
+        if (address?.placesId.isNullOrEmpty())
+            return
+
+        // Make Validate Location Call
+        lifecycleScope.launch {
+            binding.loadingProgressBar?.visibility = View.VISIBLE
+            try {
+                validateLocationResponse =
+                    confirmAddressViewModel.getValidateLocation(address?.placesId!!)
+                binding.loadingProgressBar?.visibility = View.GONE
+                if (validateLocationResponse != null) {
+                    when (validateLocationResponse?.httpCode) {
+                        AppConstant.HTTP_OK -> {
+                            validateLocationResponse?.validatePlace?.let { place ->
+                                val delivery =
+                                    Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                                when (delivery) {
+                                    Delivery.STANDARD -> {
+                                        if (place.deliverable == true){
+                                            validateUnsellable(
+                                                address?.placesId,
+                                                address,
+                                                place
+                                            )
+                                        }
+                                        else {
+                                            showChangeLocationDialog()
+                                        }
+                                    }
+
+                                    Delivery.DASH -> {
+                                        if (place.onDemand != null && place.onDemand!!.deliverable) {
+                                            validateUnsellable(
+                                                address?.placesId,
+                                                address,
+                                                place
+                                            )
+                                        } else {
+                                            // Show not deliverable Bottom Dialog.
+                                            showChangeLocationDialog()
+                                        }
+                                    }
+
+                                    else -> {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+               binding.loadingProgressBar?.visibility = View.GONE
+                showErrorDialog()
+            } catch (e: JsonSyntaxException) {
+                FirebaseManager.logException(e)
+                binding.loadingProgressBar?.visibility = View.GONE
+                showErrorDialog()
+            }
+        }
+    }
+
+    private fun showChangeLocationDialog() {
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                getString(R.string.no_location_title),
+                getString(R.string.no_location_desc),
+                getString(R.string.change_location),
+                R.drawable.location_disabled, getString(R.string.dismiss)
+            )
+        customBottomSheetDialogFragment.show(
+            requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName
+        )
+    }
+
+    private fun validateUnsellable(placesId: String?, address: Address, place: ValidatePlace) {
         baseFragBundle?.putString(KEY_PLACE_ID, placesId)
         baseFragBundle?.putBoolean(
             IS_COMING_FROM_CHECKOUT,
@@ -1217,37 +1379,38 @@ class CheckoutAddAddressNewUserFragment :
         if (isComingFromNewToggleFulfilment && isLocationUpdateRequest && isComingFromCheckout) {
             val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
             if (isComingFromSlotSelection && (delivery == Delivery.STANDARD || delivery == Delivery.DASH)) {
-                        /*Navigate to slot selection page with updated saved address*/
-                savedAddressResponse?.defaultAddressNickname = address.nickname
-                val checkoutActivityIntent =
-                    Intent(requireActivity(),
-                        CheckoutActivity::class.java
-                    ).apply {
-                        putExtra(
-                            CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                            savedAddressResponse
-                        )
-                        val result = when (delivery) {
-                            Delivery.STANDARD -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
-                            else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
-                        }
-                        putExtra(result, true)
-                        putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
-                        putExtra(
-                            Constant.NO_LIQUOR_IMAGE_URL,
-                            getLiquorImageUrl()
+
+                var unSellableCommerceItems = when (delivery) {
+                    Delivery.STANDARD -> {
+                            place?.unSellableCommerceItems
+                    }
+
+                    Delivery.DASH -> {
+                        place?.onDemand?.unSellableCommerceItems
+                    }
+                    else -> {
+                        place?.unSellableCommerceItems
+                    }
+                }
+
+                if (unSellableCommerceItems?.isNullOrEmpty() == false) {
+                    // show unsellable items
+                    unSellableCommerceItems?.let {
+                        navigateToUnsellableItemsFragment(
+                            it as ArrayList<UnSellableCommerceItem>,
+                            delivery,
+                            getConfirmLocationRequest(placesId, address, delivery, place)
                         )
                     }
-                requireActivity().apply {
-                    startActivityForResult(
-                        checkoutActivityIntent,
-                        BundleKeysConstants.FULLFILLMENT_REQUEST_CODE
+
+                } else {
+                    val confirmLocationRequest = getConfirmLocationRequest(placesId, address, delivery, place)
+                    UnsellableUtils.callConfirmPlace(
+                        this@CheckoutAddAddressNewUserFragment,
+                        ConfirmLocationParams(null, confirmLocationRequest),
+                        binding.loadingProgressBar, confirmAddressViewModel,
+                        delivery
                     )
-                     overridePendingTransition(
-                         R.anim.slide_from_right,
-                         R.anim.slide_out_to_left
-                     )
-                    finish()
                 }
             }
         } else {
@@ -1256,6 +1419,55 @@ class CheckoutAddAddressNewUserFragment :
                 bundleOf(BUNDLE to baseFragBundle)
             )
         }
+    }
+
+    private fun getConfirmLocationRequest(placesId: String?, address: Address, delivery: Delivery, place: ValidatePlace): ConfirmLocationRequest {
+        val confirmLocationAddress =
+            ConfirmLocationAddress(placesId, address.nickname, address.address2)
+        return when (delivery) {
+            Delivery.STANDARD -> {
+                ConfirmLocationRequest(
+                    BundleKeysConstants.STANDARD,
+                    confirmLocationAddress,
+                    ""
+                )
+            }
+
+            Delivery.DASH -> {
+                ConfirmLocationRequest(
+                    BundleKeysConstants.DASH,
+                    confirmLocationAddress,
+                    place.onDemand?.storeId
+                )
+            }
+
+            else -> {
+                ConfirmLocationRequest(
+                    BundleKeysConstants.STANDARD,
+                    confirmLocationAddress,
+                    ""
+                )
+            }
+        }
+    }
+    private fun navigateToUnsellableItemsFragment(
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
+        currentDeliveryType: Delivery,
+        confirmLocationRequest: ConfirmLocationRequest,
+    ) {
+        val unsellableItemsBottomSheetDialog =
+            UnsellableItemsBottomSheetDialog.newInstance(
+                unSellableCommerceItems,
+                currentDeliveryType,
+                binding.loadingProgressBar,
+                confirmAddressViewModel,
+                this,
+                confirmLocationRequest
+            )
+        unsellableItemsBottomSheetDialog.show(
+            requireFragmentManager(),
+            UnsellableItemsBottomSheetDialog::class.java.simpleName
+        )
     }
 
     private fun getLiquorOrder(): Boolean {
