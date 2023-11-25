@@ -13,5 +13,7 @@ enum class BpiInsuranceApplicationStatusType(val status: String) : Serializable 
     NOT_OPTED_IN("NOT_OPTED_IN"),
     COVERED("COVERED"),
     NOT_COVERED("NOT_COVERED"),
-    INSURANCE_COVERED("INSURANCE_COVERED")
+    INSURANCE_COVERED("INSURANCE_COVERED"),
+    DISABLED("DISABLED")
+
 }

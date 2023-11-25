@@ -392,7 +392,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 viewModel.getShoppingListDetails()
             }
             R.id.btnCheckOut -> addItemsToCart()
-            R.id.changeLocationButton -> launchShopToggleScreen()
+            R.id.changeLocationButton -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
             R.id.closeWhiteBtn -> hideBlackToolTip()
             else -> {}
         }

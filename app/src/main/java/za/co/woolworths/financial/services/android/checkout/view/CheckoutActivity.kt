@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Ord
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
+import za.co.woolworths.financial.services.android.util.Constant.Companion.IS_MIXED_BASKET
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -65,6 +66,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             whoIsCollectingString =
                 getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "")
             isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)
+
             baseFragBundle = Bundle()
             baseFragBundle?.putString(
                 SAVED_ADDRESS_KEY,
@@ -82,7 +84,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             }
             baseFragBundle?.putBoolean(BundleKeysConstants.IS_COMING_FROM_CHECKOUT, true)
             baseFragBundle?.putSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
-
+            baseFragBundle?.putBoolean(IS_MIXED_BASKET, getBoolean(IS_MIXED_BASKET, false))
         }
         loadNavHostFragment()
     }

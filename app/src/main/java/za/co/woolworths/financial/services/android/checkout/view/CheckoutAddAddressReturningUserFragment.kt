@@ -27,8 +27,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -64,6 +62,9 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationData
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
+import za.co.woolworths.financial.services.android.endlessaisle.utils.isEndlessAisleAvailable
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
@@ -88,10 +89,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Che
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_ENDLESS_AISLE_JOURNEY
 import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
 import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 import za.co.woolworths.financial.services.android.util.Utils.*
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
@@ -124,6 +129,8 @@ class CheckoutAddAddressReturningUserFragment :
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
     private var orderTotalValue: Double = -1.0
+    private lateinit var locator: Locator
+
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     @Inject
     lateinit var addShippingInfoEventsAnalytics: AddShippingInfoEventsAnalytics
@@ -195,6 +202,7 @@ class CheckoutAddAddressReturningUserFragment :
         super.onViewCreated(view, savedInstanceState)
         binding = CheckoutAddAddressRetuningUserBinding.bind(view)
         expandableGrid = ExpandableGrid(this, binding)
+        locator = Locator(activity as AppCompatActivity)
 
         // Hide keyboard in case it was visible from a previous screen
         KeyboardUtils.hideKeyboardIfVisible(activity)
@@ -202,7 +210,9 @@ class CheckoutAddAddressReturningUserFragment :
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+
         cartItemList = arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
+
         initViews()
     }
 
@@ -1198,7 +1208,21 @@ class CheckoutAddAddressReturningUserFragment :
                             )
                             return@observe
                         }
-                        navigateToPaymentWebpage(response)
+
+                        if(isEndlessAisleAvailable() && otherType == ONLY_OTHER) {
+                            locator.getCurrentLocationSilently { event ->
+                                when (event) {
+                                    is Event.Location -> {
+                                        handleLocationEvent(event, response)
+                                    }
+                                    is Event.Permission -> {
+                                        handleLocationPermissionEvent(event, response)
+                                    }
+                                }
+                            }
+                        } else {
+                            navigateToPaymentWebpage(response)
+                        }
                     }
 
                     is Throwable -> {
@@ -1396,14 +1420,14 @@ class CheckoutAddAddressReturningUserFragment :
         return true
     }
 
-    private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
+    private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse, isEndlessAisle: Boolean = false) {
         view?.findNavController()?.navigate(
             R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutPaymentWebFragment,
             bundleOf(
                 KEY_ARGS_WEB_TOKEN to webTokens,
-                CART_ITEM_LIST to cartItemList
+                CART_ITEM_LIST to cartItemList,
+                IS_ENDLESS_AISLE_JOURNEY to isEndlessAisle
             )
-
         )
     }
 
@@ -1677,4 +1701,51 @@ class CheckoutAddAddressReturningUserFragment :
         }
     }
 
+    private fun handleLocationEvent(locationEvent: Event.Location, response: ShippingDetailsResponse) {
+        if (locationEvent.locationData == null) {
+            navigateToPaymentWebpage(response)
+        } else {
+            val latitude = locationEvent.locationData.latitude
+            val longitude = locationEvent.locationData.longitude
+            checkoutAddAddressNewUserViewModel.verifyUserIsInStore(latitude, longitude).observeForever {
+                when (it) {
+                    is UserLocationResponse -> {
+                        if (it.httpCode == 200) {
+                            val store = it.data.firstOrNull { data -> data.payInStore }
+                            if (store != null) {
+                                navigateToPaymentWebpage(response, true)
+                            } else {
+                                navigateToPaymentWebpage(response)
+                            }
+                        } else {
+                            navigateToPaymentWebpage(response)
+                        }
+                    }
+                    is Throwable -> {
+                        navigateToPaymentWebpage(response)
+                    }
+                    null -> {
+                        navigateToPaymentWebpage(response)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun handleLocationPermissionEvent(event: Event.Permission, response: ShippingDetailsResponse) {
+        when (event.event) {
+            EventType.LOCATION_PERMISSION_GRANTED -> {
+                // do nothing
+            }
+            EventType.LOCATION_DISABLED_ON_DEVICE -> {
+                navigateToPaymentWebpage(response)
+            }
+            EventType.LOCATION_PERMISSION_NOT_GRANTED -> {
+                navigateToPaymentWebpage(response)
+            }
+            EventType.LOCATION_SERVICE_DISCONNECTED -> {
+                navigateToPaymentWebpage(response)
+            }
+        }
+    }
 }
