@@ -71,7 +71,8 @@ class AppConstant {
         const val REQUEST_CODE_BARCODE_ACTIVITY = 1947
 
         const val REQUEST_CODE_CREATE_LIST = 9001
-        const val REQUEST_CODE_DELIVERY_LOCATION_CHANGE = 9002
+        const val REQUEST_CODE_ORDER_AGAIN_LOGIN = 9002
+        const val REQUEST_CODE_DELIVERY_LOCATION_CHANGE = 9003
 
         const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
@@ -147,6 +148,9 @@ class AppConstant {
         //connect online
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
         const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
+
+        // Shop Landing Standard / CnC
+        const val FOOD_CATEGORY_ID = "cat606520"
     }
 
     class Keys {

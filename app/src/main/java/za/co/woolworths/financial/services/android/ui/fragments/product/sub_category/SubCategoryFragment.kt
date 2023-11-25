@@ -22,17 +22,23 @@ import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.dto.SubCategory
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_AGAIN_LOGIN
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPictureCenterInside
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
-import za.co.woolworths.financial.services.android.util.expand.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import za.co.woolworths.financial.services.android.util.expand.ExpandableRecyclerAdapter
+import za.co.woolworths.financial.services.android.util.expand.ParentSubCategoryViewHolder
+import za.co.woolworths.financial.services.android.util.expand.SubCategoryAdapter
+import za.co.woolworths.financial.services.android.util.expand.SubCategoryChild
+import za.co.woolworths.financial.services.android.util.expand.SubCategoryModel
 
 
 class SubCategoryFragment :
@@ -257,6 +263,14 @@ class SubCategoryFragment :
         popFragmentSlideDown()
     }
 
+    override fun onOrderAgainClicked() {
+        if(SessionUtilities.getInstance().isUserAuthenticated) {
+            // TODO: Implement and navigate user to Order Again List screen.
+        } else {
+            ScreenManager.presentSSOSignin(requireActivity(), REQUEST_CODE_ORDER_AGAIN_LOGIN)
+        }
+    }
+
     private fun setHeader(mRootCategory: RootCategory?) {
         if (mRootCategory != null) {
             setPictureCenterInside(
@@ -301,6 +315,16 @@ class SubCategoryFragment :
          */
         val activity = activity ?: return
         mSubCategories = ArrayList(subCategories)
+
+        // Order Again Header
+        if (AppConstant.FOOD_CATEGORY_ID.equals(mRootCategory?.categoryId)) {
+            val subHeaderOrderAgainCategory = SubCategory().apply {
+                setCategoryId(mRootCategory?.categoryId)
+                setCategoryName(mRootCategory?.categoryName)
+                setHasChildren(false)
+            }
+            mSubCategories?.add(0, subHeaderOrderAgainCategory)
+        }
         val subHeaderCategory = SubCategory()
         subHeaderCategory.setCategoryId(mRootCategory?.categoryId)
         subHeaderCategory.setCategoryName(mRootCategory?.categoryName)
@@ -308,6 +332,7 @@ class SubCategoryFragment :
         subHeaderCategory.setImgUrl(mRootCategory?.imgUrl)
         subHeaderCategory.setHasChildren(false)
         mSubCategories?.add(0, subHeaderCategory)
+
         mSubCategoryListModel = ArrayList()
         mSubCategories?.let {
             for (subCategory in it) {
@@ -347,6 +372,15 @@ class SubCategoryFragment :
         if (!hidden) {
             hideToolbar()
             (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
+            // This is to re-iterate if the user is signed in from other fragments
+            notifyOrderAgainUpdate()
+        }
+    }
+
+    private fun notifyOrderAgainUpdate() {
+        if (AppConstant.FOOD_CATEGORY_ID.equals(mRootCategory?.categoryId)) {
+            // 1: Index Position for Order Again
+            mAdapter?.notifyItemChanged(1)
         }
     }
 
@@ -359,6 +393,11 @@ class SubCategoryFragment :
                 activity.onBackPressed()
                 activity.reloadDepartmentFragment()
             }
+        } else if (requestCode == REQUEST_CODE_ORDER_AGAIN_LOGIN
+            && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()
+        ) {
+            notifyOrderAgainUpdate()
+            // TODO: Implement and navigate user to Order Again List screen.
         }
     }
 }
