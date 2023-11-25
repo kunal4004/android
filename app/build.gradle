@@ -16,7 +16,7 @@ android {
     def minor = "13"
     def fix = "1"
     def jobNumberProduction = 231
-    def jobNumberQa = 740
+    def jobNumberQa = 742
 
     buildFeatures {
         dataBinding true
@@ -56,6 +56,8 @@ android {
         targetSdkVersion 33
         buildToolsVersion "30.0.3"
         multiDexEnabled true
+        renderscriptTargetApi 33
+        renderscriptSupportModeEnabled true
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
