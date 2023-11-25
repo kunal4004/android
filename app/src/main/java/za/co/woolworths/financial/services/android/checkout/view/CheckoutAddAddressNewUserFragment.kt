@@ -504,6 +504,7 @@ class CheckoutAddAddressNewUserFragment :
             Intent(requireActivity(),
                 CheckoutActivity::class.java
             ).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 putExtra(
                     SAVED_ADDRESS_KEY,
                     savedAddressResponse

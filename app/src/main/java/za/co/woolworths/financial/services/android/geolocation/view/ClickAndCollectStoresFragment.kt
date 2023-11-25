@@ -409,6 +409,7 @@ class ClickAndCollectStoresFragment :
             CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
             toJson
         )
+        checkoutActivityIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
         checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
         requireActivity().apply {

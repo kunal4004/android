@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
@@ -270,6 +271,10 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CHECKOUT_ON_DESTROY && resultCode == REQUEST_CHECKOUT_ON_DESTROY) {
             finishActivityOnCheckoutSuccess()
+            return
+        }
+        if (resultCode == ShopToggleActivity.REQUEST_DESTROY_CHECKOUT) {
+            closeActivity()
             return
         }
         navHostFrag.childFragmentManager.fragments.let {

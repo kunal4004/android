@@ -851,6 +851,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
                             activity,
                             CheckoutActivity::class.java
                         ).apply {
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                             savedAddressResponse?.defaultAddressNickname = selectedAddress?.nickname
                             putExtra(
                                 CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,

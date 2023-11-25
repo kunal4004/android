@@ -33,8 +33,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturni
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.components.ShopToggleScreen
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewmodel.ShopToggleViewModel
@@ -53,6 +53,7 @@ class ShopToggleActivity : ComponentActivity() {
 
     companion object {
         const val REQUEST_DELIVERY_TYPE = 105
+        const val REQUEST_DESTROY_CHECKOUT = 1014
         const val INTENT_DATA_TOGGLE_FULFILMENT = "INTENT_DATA_TOGGLE_FULFILMENT"
         const val INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE =
             "INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE"
@@ -254,6 +255,7 @@ class ShopToggleActivity : ComponentActivity() {
                             this,
                             CheckoutActivity::class.java
                         ).apply {
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                             putExtra(
                                 CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
                                 savedAddressResponse
@@ -296,16 +298,14 @@ class ShopToggleActivity : ComponentActivity() {
                         GeoUtils.getDelivertyType(),
                         placeId,
                         isComingFromCheckout = true,
-                        isMixedBasket = false, //TODO, setting static value for now (viewModel.isMixedBasket())
-                        isFBHOnly = false, //TODO, setting static value for now (viewModel.isFBHOnly())
                         isComingFromSlotSelection = false,
                         savedAddressResponse = savedAddressResponse,
                         defaultAddress = null,
                         whoISCollecting = "",
                         isLiquorOrder = getLiquorOrder(),
                         liquorImageUrl = getLiquorImageUrl(),
-                        cartItemList = null, //TODO, setting static for now (viewModel.getCartItemList())
                     )
+                    setResult(REQUEST_DESTROY_CHECKOUT)
                     finish()
                 }
             }
@@ -322,6 +322,7 @@ class ShopToggleActivity : ComponentActivity() {
             CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
             toJson
         )
+        checkoutActivityIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
         checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
         startActivityForResult(checkoutActivityIntent, CartFragment.REQUEST_PAYMENT_STATUS)
