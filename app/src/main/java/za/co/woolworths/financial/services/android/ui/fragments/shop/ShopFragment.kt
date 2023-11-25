@@ -621,9 +621,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     }
 
     private fun refreshAdapter() {
-        if (binding.viewpagerMain.currentItem == DASH_TAB.index || binding.viewpagerMain.currentItem == CLICK_AND_COLLECT_TAB.index) {
-            shopPagerAdapter?.notifyDataSetChanged()
-        }
+        shopPagerAdapter?.notifyDataSetChanged()
     }
 
     override fun onStop() {
