@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto.order_again
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -9,7 +10,7 @@ data class Item(
     val slotIndex: Int? = null,
     val itemGroupId: String? = null,
     val id: String? = null,
-    val ratings: Int? = null,
+    val ratings: Double? = null,
     val title: String? = null,
     val pattern: String? = null,
     val rawAffinity: Double? = null,
@@ -31,6 +32,7 @@ data class Item(
     val price: Double? = null,
     val badges: String? = null,
     val badgesImgLink: String? = null,
+    @SerializedName("PROMOTION")
     val promotion: String? = null,
     val promotionURL: String? = null,
     val bulkpromotion: String? = null,
@@ -38,3 +40,19 @@ data class Item(
     val promotion1: String? = null,
     val promotion1URL: String? = null
 ): Parcelable
+
+fun Item.toProductItem() : ProductItem {
+
+    val item = ProductItem(
+        id = id ?: "",
+        productName = title ?: "",
+        promotionalText = promotion?.uppercase() ?: "",
+        price = plist3620006 ?: 0.0,
+        wasPrice = plist3620006Wp ?: 0.0,
+        productImage = imageLink ?: ""
+    ).apply {
+        quantityInStock = -1
+        quantity = 1
+    }
+    return item
+}
