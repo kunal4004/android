@@ -55,6 +55,12 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
+                <ImageView
+                    android:id="@+id/blurEffectImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"/>
+
                 <androidx.viewpager.widget.ViewPager
                     android:id="@+id/wrewardsViewPager"
                     android:layout_width="match_parent"

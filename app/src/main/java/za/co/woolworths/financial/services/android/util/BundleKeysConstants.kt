@@ -52,6 +52,7 @@ class BundleKeysConstants {
         const val NICK_NAME = "nickname"
         const val KEY_ADDRESS2 = "ADDRESS2"
         const val IS_MIXED_BASKET = "is_mix_basket"
+        const val IS_ENDLESS_AISLE_JOURNEY = "is_endless_aisle_journey"
         const val IS_FBH_ONLY = "is_fbh_only"
 
         const val RECOMMENDATIONS_EVENT_DATA = "recommendations_event_data"

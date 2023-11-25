@@ -65,8 +65,8 @@
     </integer-array>
 
     <string-array name="tips_tricks_descriptions">
-        <item>@string/tips_tricks_desc_navigation</item>
-        <item>@string/tips_tricks_desc_barcode</item>
+        <item>@string/tips_tricks_desc_navigation_sign_in</item>
+        <item>@string/feature_barcode_scanning_desc</item>
         <item>@string/tips_tricks_desc_refine</item>
         <item>@string/tips_tricks_desc_stores</item>
         <item>@string/tips_tricks_desc_delivery</item>
@@ -183,13 +183,13 @@
     </integer-array>
 
     <string-array name="tips_tricks_item_names">
-        <item>@string/navigation</item>
+        <item>@string/get_shopping</item>
         <item>@string/tips_tricks_titles_barcode</item>
         <item>@string/tips_tricks_titles_refine_search</item>
         <item>@string/tips_tricks_titles_stores</item>
         <item>@string/tips_tricks_titles_delivery</item>
         <item>@string/tips_tricks_titles_vouchers</item>
-        <item>@string/my_accounts</item>
+        <item>@string/View_Your_Accounts</item>
         <item>@string/tips_tricks_titles_statements</item>
         <item>@string/tips_tricks_titles_shopping_list</item>
     </string-array>

@@ -27,12 +27,12 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.UserAccountResponse
 
 interface WfsApiService {
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json","cacheTime:7200")
+    @Headers("Content-Type: application/json", "Accept: application/vnd.appserver.api.v2+json", "Media-Type: application/json","cacheTime:7200")
     @GET("wfs/app/v4/user/accounts")
     suspend fun getAccounts(
         @Header("deviceIdentityToken") deviceIdentityToken: String): Response<UserAccountResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @Headers("Content-Type: application/json", "Accept: application/vnd.appserver.api.v2+json", "Media-Type: application/json")
     @GET("wfs/app/v4/user/accounts")
     suspend fun getUserAccountByProductOfferingId(
         @Header("deviceIdentityToken") deviceIdentityToken: String,
@@ -215,12 +215,6 @@ interface WfsApiService {
     suspend fun getPetInsurance(
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ):  Response<PetInsuranceModel>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/user/featureEnablement/PET")
-    suspend fun getFeatureEnablement(
-        @Header("deviceIdentityToken") deviceIdentityToken: String
-    ): Response<FeatureEnablementModel>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/user/fica/refreshStatus")

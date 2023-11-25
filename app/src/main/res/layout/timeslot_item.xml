@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/fourty_dp"
+    android:layout_marginTop="@dimen/five_dp"
+    android:fontFamily="@font/opensans_regular"
+    android:textColor="@color/black"
+    android:textSize="@dimen/twelve_sp"
+    tools:text="8am - 10am"
+    android:layoutDirection="rtl"
+    android:button="@color/transparent"
+    android:drawableStart="@drawable/timeslot_radio_btn" />
