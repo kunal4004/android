@@ -3,6 +3,12 @@ package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.f
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
 
 sealed class OrderAgainScreenEvents {
+    // On Screen events
+    object Idle : OrderAgainScreenEvents()
+    data class HideBottomBar(val hidden: Boolean = false) : OrderAgainScreenEvents()
+
+
+    // User interaction events
     object DeliveryLocationClick : OrderAgainScreenEvents()
     object SelectAllClick : OrderAgainScreenEvents()
     object AddToCartClicked : OrderAgainScreenEvents()
@@ -11,6 +17,10 @@ sealed class OrderAgainScreenEvents {
         val isChecked: Boolean = false,
         val productItem: ProductItem
     ) : OrderAgainScreenEvents()
+
+    data class ListItemRevealed(val item: ProductItem): OrderAgainScreenEvents()
+    data class ListItemCollapsed(val item: ProductItem): OrderAgainScreenEvents()
+    data class OnSwipeDeleteAction(val item: ProductItem): OrderAgainScreenEvents()
 
     data class ChangeProductQuantityBy(
         val count: Int = 0,

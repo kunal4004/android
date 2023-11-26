@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -57,6 +58,8 @@ import za.co.woolworths.financial.services.android.presentation.common.OpenSansT
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText13
 import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
 import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationViewState
+import za.co.woolworths.financial.services.android.shoppinglist.view.SwipeListActionItem
+import za.co.woolworths.financial.services.android.shoppinglist.view.SwipeToRevealView
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight12dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight16dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight24dp
@@ -65,10 +68,12 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth16dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth24dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth8dp
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.roundToPx
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema.OrderAgainScreenEvents
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema.OrderAgainScreenState
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema.OrderAgainUiState
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.OrderAgainViewModel
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color444444
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD0021B
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
@@ -88,6 +93,11 @@ fun OrderAgainScreen(
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
     val state by viewModel.orderAgainUiState.collectAsStateWithLifecycle()
+    val onScreenEvent by viewModel.onScreenEvent.collectAsStateWithLifecycle()
+    when (onScreenEvent) {
+        is OrderAgainScreenEvents.HideBottomBar -> onEvent(onScreenEvent)
+        else -> {}
+    }
 
     Scaffold(
         topBar = {
@@ -135,7 +145,12 @@ private fun OrderAgainStatelessScreen(
             OrderAgainScreenState.Loading -> {}
             OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White))
             OrderAgainScreenState.ShowOrderList -> {
-                OrderAgainList(Modifier.weight(1f), state.orderList.toMutableList(), onEvent)
+                OrderAgainList(
+                    Modifier.weight(1f),
+                    state.orderList.toMutableList(),
+                    state.revealedList,
+                    onEvent
+                )
             }
 
             else -> {}
@@ -215,6 +230,7 @@ fun DeliveryLocationView(
 fun OrderAgainList(
     modifier: Modifier = Modifier,
     orderList: List<ProductItem>,
+    revealedList: List<String>,
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
     val state = rememberLazyListState()
@@ -222,8 +238,41 @@ fun OrderAgainList(
     LazyColumn(modifier = modifier, state = state) {
         items(orderList) {
 
-            ProductItemView(it, onEvent = onEvent)
-
+            SwipeToRevealView(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
+                rowOffsetInPx = 116.dp.roundToPx(),
+                animationDurationInMillis = 600,
+                isRevealed = revealedList.contains(it.id),
+                onExpand = {
+                    onEvent(OrderAgainScreenEvents.ListItemRevealed(it))
+                },
+                onCollapse = {
+                    onEvent(OrderAgainScreenEvents.ListItemCollapsed(it))
+                },
+                rowContent = {
+                    ProductItemView(it, onEvent = onEvent)
+                },
+                actionContent = {
+                    SwipeListActionItem(
+                        modifier = Modifier
+                            .width(116.dp)
+                            .fillMaxHeight()
+                            .background(White),
+                        icon = R.drawable.cart_icon,
+                        textStyle = TextStyle(
+                            fontFamily = FuturaFontFamily,
+                            fontWeight = FontWeight.W600,
+                            fontSize = 12.sp,
+                            color = Black
+                        ),
+                        actionText = R.string.add_to_cart
+                    ) {
+                        onEvent(OrderAgainScreenEvents.OnSwipeDeleteAction(it))
+                    }
+                }
+            )
             Divider(color = colorResource(id = R.color.color_D8D8D8))
         }
     }
@@ -449,7 +498,7 @@ fun EmptyScreen(
 private fun PreviewOrderAgainScreen() {
     OneAppTheme {
         OrderAgainStatelessScreen(state = OrderAgainUiState()) {}
-        OrderAgainList(orderList = emptyList()) {}
+        OrderAgainList(orderList = emptyList(), revealedList = emptyList()) {}
     }
 }
 

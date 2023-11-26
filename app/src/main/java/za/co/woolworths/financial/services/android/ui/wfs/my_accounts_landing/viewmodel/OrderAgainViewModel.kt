@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.domain.usecase.AddToCartUC
 import za.co.woolworths.financial.services.android.domain.usecase.MultiSkuInventoryUC
 import za.co.woolworths.financial.services.android.domain.usecase.OrderAgainUC
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -17,6 +18,7 @@ import za.co.woolworths.financial.services.android.models.dto.SkuInventory
 import za.co.woolworths.financial.services.android.models.dto.order_again.Item
 import za.co.woolworths.financial.services.android.models.dto.order_again.OrderAgainResponse
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
+import za.co.woolworths.financial.services.android.models.dto.order_again.toAddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.order_again.toProductItem
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationViewState
@@ -34,11 +36,15 @@ import javax.inject.Inject
 @HiltViewModel
 class OrderAgainViewModel @Inject constructor(
     val orderAgainUC: OrderAgainUC,
-    val orderAgainInventoryUC: MultiSkuInventoryUC
+    val orderAgainInventoryUC: MultiSkuInventoryUC,
+    val addToCartUC: AddToCartUC
 ) : ViewModel() {
 
     private var _orderAgainUiState = MutableStateFlow(OrderAgainUiState())
     val orderAgainUiState = _orderAgainUiState.asStateFlow()
+
+    private var _onScreenEvent: MutableStateFlow<OrderAgainScreenEvents> = MutableStateFlow(OrderAgainScreenEvents.Idle)
+    val onScreenEvent = _onScreenEvent.asStateFlow()
 
     init {
         setDeliveryLocation()
@@ -55,11 +61,33 @@ class OrderAgainViewModel @Inject constructor(
                 onChangeProductQuantity(events.count, events.item)
             }
 
+            OrderAgainScreenEvents.AddToCartClicked -> onAddToCartClicked()
+            is OrderAgainScreenEvents.ListItemRevealed -> addToRevealItems(events.item)
+            is OrderAgainScreenEvents.ListItemCollapsed -> collapseRevealItems(events.item)
+
             OrderAgainScreenEvents.SelectAllClick -> {
                 onSelectAllClick()
             }
 
             else -> {}
+        }
+    }
+
+    private fun onAddToCartClicked() {
+        viewModelScope.launch {
+            val items = _orderAgainUiState.value.orderList
+                .filter { it.isSelected }
+                .map { it.toAddItemToCart() }
+
+            addToCartUC(items).collectLatest {
+                when (it.status) {
+                    Status.SUCCESS -> {}
+                    Status.ERROR -> {}
+                    Status.LOADING -> {
+
+                    }
+                }
+            }
         }
     }
 
@@ -94,6 +122,27 @@ class OrderAgainViewModel @Inject constructor(
         }
     }
 
+    private fun addToRevealItems(item: ProductItem) {
+        viewModelScope.launch {
+            _orderAgainUiState.update {
+                val newList = it.revealedList.toMutableList()
+                newList.add(item.id)
+                it.copy(revealedList = newList)
+            }
+        }
+    }
+
+    private fun collapseRevealItems(item: ProductItem) {
+        viewModelScope.launch {
+            _orderAgainUiState.update {
+                val newList = it.revealedList.toMutableList()
+                newList.remove(item.id)
+                it.copy(revealedList = newList)
+            }
+        }
+    }
+
+
     private fun onChangeProductQuantity(count: Int, productItem: ProductItem) {
         viewModelScope.launch {
             _orderAgainUiState.update {
@@ -101,7 +150,8 @@ class OrderAgainViewModel @Inject constructor(
                 updatedList.find { item -> item.id == productItem.id }?.let { item ->
                     if (item.id == productItem.id) {
                         item.quantity =
-                            (item.quantity + count).coerceAtLeast(1).coerceAtMost(item.quantityInStock)
+                            (item.quantity + count).coerceAtLeast(1)
+                                .coerceAtMost(item.quantityInStock)
                     }
                 }
                 it.copy(orderList = updatedList)
@@ -114,7 +164,7 @@ class OrderAgainViewModel @Inject constructor(
         viewModelScope.launch {
             _orderAgainUiState.update {
                 val totalItemsCount = it.orderList.filter { item -> item.isSelected }
-                    .sumOf { item ->  item.quantity }
+                    .sumOf { item -> item.quantity }
                 it.copy(
                     itemsToBeAddedCount = totalItemsCount
                 )

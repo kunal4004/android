@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import com.awfs.coordination.R
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 
 @Parcelize
 data class ProductItem(
@@ -21,9 +22,13 @@ data class ProductItem(
     val wasPriceString: String = "",
     val priceTextColor: @RawValue Color = Color.Black
 ) : Parcelable {
+
     var isSelected  by mutableStateOf(false)
     var quantityInStock by mutableStateOf(-1)
     var quantity by  mutableStateOf(1)
     var productAvailabilityResource by mutableStateOf(R.string.empty)
+}
 
+fun ProductItem.toAddItemToCart(): AddItemToCart {
+    return AddItemToCart(id, id, quantity)
 }

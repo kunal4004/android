@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.OrderAgainScreen
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema.OrderAgainScreenEvents
@@ -33,8 +34,19 @@ class OrderAgainFragment : Fragment() {
             }) {
                 when (it) {
                     OrderAgainScreenEvents.DeliveryLocationClick -> deliverySelectionIntent()
+                    is OrderAgainScreenEvents.HideBottomBar -> hideBottomNavigation(it.hidden)
                     else -> {}
                 }
+            }
+        }
+    }
+
+    private fun hideBottomNavigation(hide: Boolean) {
+        (requireActivity() as? BottomNavigationActivity)?.apply {
+            if (hide) {
+                hideBottomNavigationMenu()
+            } else {
+                showBottomNavigationMenu()
             }
         }
     }
