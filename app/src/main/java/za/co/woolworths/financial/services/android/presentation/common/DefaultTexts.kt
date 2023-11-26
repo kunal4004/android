@@ -2,10 +2,8 @@ package za.co.woolworths.financial.services.android.presentation.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -17,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -79,6 +78,31 @@ fun FuturaTextH15(
             color = Black,
             textAlign = textAlign
         )
+    )
+}
+
+@Composable
+fun OpenSansTitleText10(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = Black,
+    maxLines: Int = Int.MAX_VALUE,
+    textDecoration: TextDecoration? = null
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = TextStyle(
+            fontFamily = OpenSansFontFamily,
+            fontWeight = FontWeight.W600,
+            fontSize = 10.sp,
+            color = color,
+            textAlign = textAlign
+        ),
+        maxLines = maxLines,
+        overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
+        textDecoration = textDecoration
     )
 }
 

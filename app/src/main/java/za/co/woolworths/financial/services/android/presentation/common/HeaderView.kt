@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.presentation.common
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -19,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.HeaderGrey
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -34,10 +37,15 @@ fun HeaderView(
         is HeaderViewState.HeaderStateType1 -> HeaderType1(
             modifier = modifier,
             icon = headerViewState.icon,
-            title = headerViewState.title
-        ) {
-            onHeaderEvent(HeaderViewEvent.IconClick)
-        }
+            title = stringResource(id = headerViewState.titleRes),
+            rightButton = stringResource(id = headerViewState.rightButtonRes),
+            onIconClick = {
+                onHeaderEvent(HeaderViewEvent.IconClick)
+            },
+            onRightButtonClick = {
+                onHeaderEvent(HeaderViewEvent.RightButtonClick)
+            }
+        )
 
         is HeaderViewState.HeaderStateType2 -> HeaderType2(
             modifier = modifier,
@@ -54,29 +62,31 @@ private fun HeaderType1(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int = R.drawable.back24,
     title: String = "",
-    onIconClick: () -> Unit
+    rightButton: String = "",
+    onIconClick: () -> Unit,
+    onRightButtonClick: () -> Unit
 ) {
 
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .then(modifier),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .then(modifier)
     ) {
 
         Icon(
             painter = painterResource(id = icon),
             contentDescription = null,
-            modifier = Modifier.clickable {
-                onIconClick()
-            }
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .clickable {
+                    onIconClick()
+                }
         )
 
         Text(
             text = title.uppercase(),
-            modifier = Modifier.weight(0.6f),
+            modifier = Modifier.align(Alignment.Center),
             textAlign = TextAlign.Center,
             style = TextStyle(
                 fontFamily = FuturaFontFamily,
@@ -86,6 +96,24 @@ private fun HeaderType1(
             ),
             letterSpacing = 1.5.sp
         )
+
+        if (rightButton.isNotEmpty())
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .clickable {
+                        onRightButtonClick()
+                    },
+                text = rightButton,
+                style = TextStyle(
+                    color = Black,
+                    fontFamily = FuturaFontFamily,
+                    fontWeight = FontWeight.W500,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.End,
+                    letterSpacing = 1.sp
+                )
+            )
     }
 }
 

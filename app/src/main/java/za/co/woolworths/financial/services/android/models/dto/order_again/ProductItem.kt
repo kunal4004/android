@@ -4,8 +4,10 @@ import android.os.Parcelable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import com.awfs.coordination.R
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 @Parcelize
 data class ProductItem(
@@ -13,9 +15,11 @@ data class ProductItem(
     val productName: String = "",
     val promotionalText: String = "",
     val productImage: String = "",
-    val priceText: String = "",
     val price: Double = 0.0,
+    val priceString: String = "",
     val wasPrice: Double = 0.0,
+    val wasPriceString: String = "",
+    val priceTextColor: @RawValue Color = Color.Black
 ) : Parcelable {
     var isSelected  by mutableStateOf(false)
     var quantityInStock by mutableStateOf(-1)

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models.dto.order_again
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 
 @Parcelize
 data class Item(
@@ -39,16 +40,22 @@ data class Item(
     val bulkPromotionURL: String? = null,
     val promotion1: String? = null,
     val promotion1URL: String? = null
-): Parcelable
+) : Parcelable
 
-fun Item.toProductItem() : ProductItem {
+fun Item.toProductItem(): ProductItem {
 
+    var wasPriceString = CurrencyFormatter.formatAmountToRandAndCentWithSpace(plist3620006Wp ?: 0.0)
+    if(wasPriceString.equals("0.0", ignoreCase = true)) wasPriceString = ""
+    var priceString = CurrencyFormatter.formatAmountToRandAndCentWithSpace(plist3620006 ?: 0.0)
+    if(priceString.equals("0.0", ignoreCase = true)) priceString = ""
     val item = ProductItem(
         id = id ?: "",
         productName = title ?: "",
         promotionalText = promotion?.uppercase() ?: "",
         price = plist3620006 ?: 0.0,
+        priceString = priceString,
         wasPrice = plist3620006Wp ?: 0.0,
+        wasPriceString = wasPriceString,
         productImage = imageLink ?: ""
     ).apply {
         quantityInStock = -1

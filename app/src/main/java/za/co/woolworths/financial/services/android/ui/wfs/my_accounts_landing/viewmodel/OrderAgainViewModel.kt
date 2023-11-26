@@ -55,7 +55,33 @@ class OrderAgainViewModel @Inject constructor(
                 onChangeProductQuantity(events.count, events.item)
             }
 
+            OrderAgainScreenEvents.SelectAllClick -> {
+                onSelectAllClick()
+            }
+
             else -> {}
+        }
+    }
+
+    private fun onSelectAllClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            _orderAgainUiState.update {
+
+                val updatedList = it.orderList.toMutableList()
+                updatedList.map { item ->
+                    if (item.quantityInStock > 0) {
+                        item.isSelected = it.headerState.rightButtonRes == R.string.select_all
+                    }
+                }
+                it.copy(
+                    orderList = updatedList,
+                    headerState = it.headerState.copy(
+                        rightButtonRes = if (it.headerState.rightButtonRes == R.string.select_all)
+                            R.string.deselect_all
+                        else R.string.select_all
+                    )
+                )
+            }
         }
     }
 
@@ -235,6 +261,7 @@ class OrderAgainViewModel @Inject constructor(
                             Delivery.DASH -> R.string.unavailable_with_dash
                             else -> R.string.out_of_stock
                         }
+
                         0 -> R.string.out_of_stock
                         else -> R.string.empty
                     }
@@ -255,6 +282,7 @@ class OrderAgainViewModel @Inject constructor(
             val updatedList = it.orderList.toMutableList()
             updatedList.map { item ->
                 if (item.id == productItem.id) {
+                    item.quantity = item.quantity.coerceAtLeast(1)
                     item.isSelected = isChecked
                 }
             }

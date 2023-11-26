@@ -58,11 +58,6 @@ class OrderAgainFragment : Fragment() {
         )
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.setDeliveryLocation()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == AppConstant.REQUEST_CODE_DELIVERY_LOCATION_CHANGE) {

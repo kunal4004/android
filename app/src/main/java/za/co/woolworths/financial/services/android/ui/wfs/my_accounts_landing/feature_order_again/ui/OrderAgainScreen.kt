@@ -50,8 +50,9 @@ import za.co.woolworths.financial.services.android.presentation.common.FuturaTex
 import za.co.woolworths.financial.services.android.presentation.common.FuturaTextH14
 import za.co.woolworths.financial.services.android.presentation.common.FuturaTextH15
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
-import za.co.woolworths.financial.services.android.presentation.common.HeaderViewState
+import za.co.woolworths.financial.services.android.presentation.common.HeaderViewEvent
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansText14
+import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText10
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText13
 import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationViewState
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight12dp
@@ -70,6 +71,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.Color444444
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD0021B
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorFCF0F1
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ErrorLabel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -83,6 +85,7 @@ fun OrderAgainScreen(
     onBackPressed: () -> Unit,
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
+    val state by viewModel.orderAgainUiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -90,18 +93,20 @@ fun OrderAgainScreen(
                 SpacerHeight16dp()
                 HeaderView(
                     modifier = Modifier.background(White),
-                    headerViewState = HeaderViewState.HeaderStateType1(
-                        title = stringResource(id = R.string.order_again)
-                    )
-                ) {
-                    onBackPressed()
+                    headerViewState = state.headerState
+                ) { event ->
+                    when(event) {
+                        HeaderViewEvent.IconClick -> onBackPressed()
+                        HeaderViewEvent.RightButtonClick -> viewModel.onEvent(OrderAgainScreenEvents
+                            .SelectAllClick)
+                    }
                 }
                 SpacerHeight16dp()
                 Divider(color = ColorD8D8D8)
             }
         }
     ) {
-        val state by viewModel.orderAgainUiState.collectAsStateWithLifecycle()
+
         OrderAgainStatelessScreen(Modifier.padding(it), state) { event ->
             when (event) {
                 OrderAgainScreenEvents.DeliveryLocationClick -> onEvent(event)
@@ -109,7 +114,6 @@ fun OrderAgainScreen(
             }
         }
     }
-
 }
 
 @Composable
@@ -307,18 +311,33 @@ fun ProductItemDetails(
                 text = stringResource(id = productItem.productAvailabilityResource).uppercase()
             )
             Spacer(modifier = Modifier.weight(1f, true))
-        } else {
-            QuantitySelectionView(
-                modifier = Modifier.weight(1f, false),
-                productItem = productItem,
-                onLeftIconClick = {
-                    onEvent(OrderAgainScreenEvents.ChangeProductQuantityBy(-1, productItem))
-                },
-                onRightIconClick = {
-                    onEvent(OrderAgainScreenEvents.ChangeProductQuantityBy(1, productItem))
-                }
-            )
         }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
+            Column {
+                if (productItem.wasPrice > 0.0) {
+                    OpenSansTitleText10(
+                        text = productItem.wasPriceString,
+                        color = ErrorLabel,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+                }
+                FuturaTextH14(text = productItem.priceString)
+            }
+
+            if (productItem.isSelected)
+                QuantitySelectionView(
+                    modifier = Modifier.weight(1f, false),
+                    productItem = productItem,
+                    onLeftIconClick = {
+                        onEvent(OrderAgainScreenEvents.ChangeProductQuantityBy(-1, productItem))
+                    },
+                    onRightIconClick = {
+                        onEvent(OrderAgainScreenEvents.ChangeProductQuantityBy(1, productItem))
+                    }
+                )
+        }
+
     }
 }
 
@@ -337,7 +356,6 @@ fun QuantitySelectionView(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FuturaTextH14(text = productItem.priceText)
         CircleIcon(leftIcon, ShimmerColor) {
             onLeftIconClick()
         }
@@ -436,11 +454,11 @@ private fun PreviewProductItemView() {
             ProductItem(
                 productName = "Crumbed Trout Fish Cakes 600",
                 promotionalText = "offer: BUY ANY 2 SAVE 20% fresh fruit",
-
-                ).apply {
+                priceString = "R 99.86"
+            ).apply {
                 quantityInStock = 1
                 isSelected = true
-                productAvailabilityResource = R.string.unavailable_with_dash
+                productAvailabilityResource = R.string.empty
             }
         ) {}
     }
