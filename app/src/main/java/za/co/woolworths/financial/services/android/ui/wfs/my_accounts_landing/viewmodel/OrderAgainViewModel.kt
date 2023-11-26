@@ -70,7 +70,8 @@ class OrderAgainViewModel @Inject constructor(
                 var count = 0
                 updatedList.map { item ->
                     if (item.quantityInStock > 0) {
-                        item.quantity = item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
+                        item.quantity =
+                            item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
                         item.isSelected = it.headerState.rightButtonRes == R.string.select_all
                         // Calculate items count
                         if (item.isSelected) {
@@ -94,15 +95,30 @@ class OrderAgainViewModel @Inject constructor(
     }
 
     private fun onChangeProductQuantity(count: Int, productItem: ProductItem) {
-        _orderAgainUiState.update {
-            val updatedList = it.orderList.toMutableList()
-            updatedList.map { item ->
-                if (item.id == productItem.id) {
-                    item.quantity =
-                        (item.quantity + count).coerceAtLeast(1).coerceAtMost(item.quantityInStock)
+        viewModelScope.launch {
+            _orderAgainUiState.update {
+                val updatedList = it.orderList.toMutableList()
+                updatedList.find { item -> item.id == productItem.id }?.let { item ->
+                    if (item.id == productItem.id) {
+                        item.quantity =
+                            (item.quantity + count).coerceAtLeast(1).coerceAtMost(item.quantityInStock)
+                    }
                 }
+                it.copy(orderList = updatedList)
             }
-            it.copy(orderList = updatedList)
+            updateAddToListItemCount()
+        }
+    }
+
+    private fun updateAddToListItemCount() {
+        viewModelScope.launch {
+            _orderAgainUiState.update {
+                val totalItemsCount = it.orderList.filter { item -> item.isSelected }
+                    .sumOf { item ->  item.quantity }
+                it.copy(
+                    itemsToBeAddedCount = totalItemsCount
+                )
+            }
         }
     }
 
@@ -261,7 +277,7 @@ class OrderAgainViewModel @Inject constructor(
                         else -> 1
                     }.coerceAtLeast(1).coerceAtMost(productItem.quantityInStock)
 
-                    if(productItem.isSelected) {
+                    if (productItem.isSelected) {
                         count = count.plus(productItem.quantity)
                     }
 
@@ -279,13 +295,13 @@ class OrderAgainViewModel @Inject constructor(
                         else -> R.string.empty
                     }
                 }
-                val isAnyUnselected = updatedList.any{ productItem -> !productItem.isSelected }
+                val isAnyUnselected = updatedList.any { productItem -> !productItem.isSelected }
                 it.copy(
                     orderList = updatedList,
                     showAddToCart = updatedList.any { item -> item.isSelected },
                     itemsToBeAddedCount = count,
                     headerState = it.headerState.copy(
-                        rightButtonRes = if(isAnyUnselected) R.string.select_all else R.string.deselect_all
+                        rightButtonRes = if (isAnyUnselected) R.string.select_all else R.string.deselect_all
                     )
                 )
             }
@@ -301,13 +317,30 @@ class OrderAgainViewModel @Inject constructor(
     private fun onProductCheckedChange(isChecked: Boolean, productItem: ProductItem) {
         _orderAgainUiState.update {
             val updatedList = it.orderList.toMutableList()
+            var count = it.itemsToBeAddedCount
             updatedList.map { item ->
                 if (item.id == productItem.id) {
-                    item.quantity = item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
+                    item.quantity =
+                        item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
                     item.isSelected = isChecked
+                    if (isChecked) {
+                        count += item.quantity
+                    } else {
+                        count -= item.quantity
+                    }
                 }
             }
-            it.copy(orderList = updatedList)
+            val isAnyUnselected =
+                updatedList.any { item -> !item.isSelected && item.quantityInStock > 0 }
+            val isAnySelected = updatedList.any { item -> item.isSelected }
+            it.copy(
+                orderList = updatedList,
+                itemsToBeAddedCount = count,
+                showAddToCart = isAnySelected,
+                headerState = it.headerState.copy(
+                    rightButtonRes = if (isAnyUnselected) R.string.select_all else R.string.deselect_all
+                )
+            )
         }
     }
 

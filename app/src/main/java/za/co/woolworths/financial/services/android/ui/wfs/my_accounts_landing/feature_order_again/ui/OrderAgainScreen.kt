@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -98,10 +97,12 @@ fun OrderAgainScreen(
                     modifier = Modifier.background(White),
                     headerViewState = state.headerState
                 ) { event ->
-                    when(event) {
+                    when (event) {
                         HeaderViewEvent.IconClick -> onBackPressed()
-                        HeaderViewEvent.RightButtonClick -> viewModel.onEvent(OrderAgainScreenEvents
-                            .SelectAllClick)
+                        HeaderViewEvent.RightButtonClick -> viewModel.onEvent(
+                            OrderAgainScreenEvents
+                                .SelectAllClick
+                        )
                     }
                 }
                 SpacerHeight16dp()
@@ -125,40 +126,46 @@ private fun OrderAgainStatelessScreen(
     state: OrderAgainUiState,
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
-    Box(modifier.background(OneAppBackground)){
-
-        Column {
-            DeliveryLocationView(state.deliveryState) {
-                onEvent(OrderAgainScreenEvents.DeliveryLocationClick)
-            }
-            SpacerHeight8dp(bgColor = OneAppBackground)
-            when (state.screenState) {
-                OrderAgainScreenState.Loading -> {}
-                OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White))
-                OrderAgainScreenState.ShowOrderList -> {
-                    OrderAgainList(state.orderList.toMutableList(), onEvent)
-                }
-
-                else -> {}
-            }
+    Column(modifier.background(OneAppBackground)) {
+        DeliveryLocationView(state.deliveryState) {
+            onEvent(OrderAgainScreenEvents.DeliveryLocationClick)
         }
-        if(state.showAddToCart) {
-            Column(Modifier.background(White)) {
+        SpacerHeight8dp(bgColor = OneAppBackground)
+        when (state.screenState) {
+            OrderAgainScreenState.Loading -> {}
+            OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White))
+            OrderAgainScreenState.ShowOrderList -> {
+                OrderAgainList(Modifier.weight(1f), state.orderList.toMutableList(), onEvent)
+            }
+
+            else -> {}
+        }
+        if (state.showAddToCart) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .background(White)
+                    .padding(horizontal = 24.dp)
+            ) {
                 BlackButton(
+                    Modifier.fillMaxWidth(),
                     text = pluralStringResource(
                         id = R.plurals.plural_add_to_cart,
                         state.itemsToBeAddedCount,
-                        state.itemsToBeAddedCount)
+                        state.itemsToBeAddedCount
+                    )
                 ) {
                     onEvent(OrderAgainScreenEvents.AddToCartClicked)
                 }
-                UnderlineButton(text = stringResource(id = state.resIdCopyToList)) {
+                UnderlineButton(
+                    Modifier.fillMaxWidth(),
+                    text = stringResource(id = state.resIdCopyToList)
+                ) {
                     onEvent(OrderAgainScreenEvents.CopyToListClicked)
                 }
             }
         }
     }
-
 }
 
 @Composable
@@ -206,12 +213,13 @@ fun DeliveryLocationView(
 
 @Composable
 fun OrderAgainList(
+    modifier: Modifier = Modifier,
     orderList: List<ProductItem>,
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
     val state = rememberLazyListState()
 
-    LazyColumn(state = state) {
+    LazyColumn(modifier = modifier, state = state) {
         items(orderList) {
 
             ProductItemView(it, onEvent = onEvent)
@@ -441,7 +449,7 @@ fun EmptyScreen(
 private fun PreviewOrderAgainScreen() {
     OneAppTheme {
         OrderAgainStatelessScreen(state = OrderAgainUiState()) {}
-        OrderAgainList(emptyList()) {}
+        OrderAgainList(orderList = emptyList()) {}
     }
 }
 
