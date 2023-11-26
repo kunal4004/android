@@ -772,20 +772,30 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     //Just Browsing or Not Now for set location
                     showTooltipIfRequired()
                 }
-            }
-
-            else{
-                val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
-                if(toggleFulfilmentResultWithUnsellable!=null){
-                    UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
-                        toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
-                        binding.shopProgressbar,this,parentFragmentManager)
-                }
+            } else {
+                checkForUnsellableItems(data)
             }
         }
 
+        if (resultCode == RESULT_OK && requestCode == UPDATE_LOCATION_REQUEST) {
+            setDeliveryView()
+        }
 
-        if (resultCode == RESULT_OK && (requestCode == UPDATE_LOCATION_REQUEST || requestCode == UPDATE_STORE_REQUEST)) {
+        if (resultCode == RESULT_OK && requestCode == UPDATE_STORE_REQUEST) {
+            checkForUnsellableItems(data)
+        }
+    }
+
+    private fun checkForUnsellableItems(data: Intent?) {
+        val toggleFulfilmentResultWithUnsellable =
+            UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
+        if (toggleFulfilmentResultWithUnsellable != null) {
+            UnsellableAccess.navigateToUnsellableItemsFragment(
+                ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                toggleFulfilmentResultWithUnsellable.deliveryType, confirmAddressViewModel,
+                binding.shopProgressbar, this, parentFragmentManager
+            )
+        } else {
             setDeliveryView()
         }
     }
