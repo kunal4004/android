@@ -120,6 +120,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logEvent
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
@@ -1190,7 +1191,8 @@ class KotlinUtils {
             title: String = "",
             actionText: String = "",
             infoIcon: Int = 0,
-            isFromCheckoutScreen: Boolean = false
+            isFromCheckoutScreen: Boolean = false,
+            isOutOfStockDialog: Boolean = false
         ) {
             val dialog =
                 GeneralInfoDialogFragment.newInstance(
@@ -1201,6 +1203,10 @@ class KotlinUtils {
                     isFromCheckoutScreen
                 )
             dialog.isCancelable = !isFromCheckoutScreen
+            if (isOutOfStockDialog) {
+                // Firebase event to be triggered when displaying the out of stock dialog
+                FirebaseAnalyticsEventHelper.outOfStock()
+            }
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
                     fragmentTransaction,

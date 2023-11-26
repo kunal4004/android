@@ -1177,6 +1177,7 @@ class ProductDetailsFragment :
             hideProgressBar()
             var message = ""
             var title = ""
+            var isOutOfStockDialog = false
             when (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
                 true -> {
                     title = getString(R.string.product_unavailable)
@@ -1186,6 +1187,7 @@ class ProductDetailsFragment :
                     )
                 }
                 else -> {
+                    isOutOfStockDialog = true
                     title = getString(R.string.out_of_stock)
                     message =
                         getString(
@@ -1199,7 +1201,8 @@ class ProductDetailsFragment :
                     this,
                     CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
                     title,
-                    message
+                    message,
+                    isOutOfStockDialog
                 )
             }
             updateAddToCartButtonForSelectedSKU()
