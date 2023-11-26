@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
@@ -149,6 +150,32 @@ fun OpenSansText14(
         ),
         maxLines = maxLines,
         overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+fun ToolbarButton(
+    modifier: Modifier = Modifier,
+    alignment: TextAlign = TextAlign.Start,
+    letterSpacing: TextUnit = TextUnit.Unspecified,
+    fontWeight: FontWeight? = null,
+    text: String = "",
+    onClick: () -> Unit
+) {
+    Text(
+        modifier = modifier
+            .clickable {
+                onClick()
+            },
+        text = text,
+        style = TextStyle(
+            color = Black,
+            fontFamily = FuturaFontFamily,
+            fontWeight = fontWeight,
+            fontSize = 12.sp,
+            textAlign = alignment,
+            letterSpacing = letterSpacing
+        )
     )
 }
 

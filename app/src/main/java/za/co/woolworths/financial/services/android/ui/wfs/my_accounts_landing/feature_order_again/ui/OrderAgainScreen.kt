@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +56,7 @@ import za.co.woolworths.financial.services.android.presentation.common.HeaderVie
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansText14
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText10
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText13
+import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
 import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationViewState
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight12dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight16dp
@@ -122,23 +125,40 @@ private fun OrderAgainStatelessScreen(
     state: OrderAgainUiState,
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
+    Box(modifier.background(OneAppBackground)){
 
-    Column(modifier.background(OneAppBackground)) {
-        DeliveryLocationView(state.deliveryState) {
-            onEvent(OrderAgainScreenEvents.DeliveryLocationClick)
-        }
-        SpacerHeight8dp(bgColor = OneAppBackground)
-        when (state.screenState) {
-            OrderAgainScreenState.Loading -> {}
-            OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White))
-            OrderAgainScreenState.ShowOrderList -> {
-
-                OrderAgainList(state.orderList.toMutableList(), onEvent)
+        Column {
+            DeliveryLocationView(state.deliveryState) {
+                onEvent(OrderAgainScreenEvents.DeliveryLocationClick)
             }
+            SpacerHeight8dp(bgColor = OneAppBackground)
+            when (state.screenState) {
+                OrderAgainScreenState.Loading -> {}
+                OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White))
+                OrderAgainScreenState.ShowOrderList -> {
+                    OrderAgainList(state.orderList.toMutableList(), onEvent)
+                }
 
-            else -> {}
+                else -> {}
+            }
+        }
+        if(state.showAddToCart) {
+            Column(Modifier.background(White)) {
+                BlackButton(
+                    text = pluralStringResource(
+                        id = R.plurals.plural_add_to_cart,
+                        state.itemsToBeAddedCount,
+                        state.itemsToBeAddedCount)
+                ) {
+                    onEvent(OrderAgainScreenEvents.AddToCartClicked)
+                }
+                UnderlineButton(text = stringResource(id = state.resIdCopyToList)) {
+                    onEvent(OrderAgainScreenEvents.CopyToListClicked)
+                }
+            }
         }
     }
+
 }
 
 @Composable

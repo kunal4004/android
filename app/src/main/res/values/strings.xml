@@ -3157,5 +3157,6 @@
     <string name="order_again_empty_title">You Don’t Have Any Items In Your Order Again List Yet.</string>
     <string name="order_again_empty_desc">When you place an order, your most frequently purchased food items will display here.</string>
     <string name="cd_product_image">productImage</string>
+    <string name="copy_to_list">COPY TO A LIST</string>
 
 </resources>

@@ -17,5 +17,8 @@ data class OrderAgainUiState(
     ),
     val screenState: OrderAgainScreenState = OrderAgainScreenState.Loading,
     val deliveryState: DeliveryLocationViewState = DeliveryLocationViewState(),
-    val orderList: List<ProductItem> = emptyList()
+    val orderList: List<ProductItem> = emptyList(),
+    val showAddToCart: Boolean = false,
+    val itemsToBeAddedCount: Int = 0,
+    val resIdCopyToList: Int = R.string.copy_to_list
 ): Parcelable

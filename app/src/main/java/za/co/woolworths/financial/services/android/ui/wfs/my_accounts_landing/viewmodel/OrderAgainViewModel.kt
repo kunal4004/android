@@ -66,20 +66,28 @@ class OrderAgainViewModel @Inject constructor(
     private fun onSelectAllClick() {
         viewModelScope.launch(Dispatchers.Default) {
             _orderAgainUiState.update {
-
                 val updatedList = it.orderList.toMutableList()
+                var count = 0
                 updatedList.map { item ->
                     if (item.quantityInStock > 0) {
+                        item.quantity = item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
                         item.isSelected = it.headerState.rightButtonRes == R.string.select_all
+                        // Calculate items count
+                        if (item.isSelected) {
+                            count = count.plus(item.quantity)
+                        }
                     }
                 }
+
                 it.copy(
                     orderList = updatedList,
                     headerState = it.headerState.copy(
                         rightButtonRes = if (it.headerState.rightButtonRes == R.string.select_all)
                             R.string.deselect_all
                         else R.string.select_all
-                    )
+                    ),
+                    showAddToCart = updatedList.any { item -> item.isSelected },
+                    itemsToBeAddedCount = count
                 )
             }
         }
@@ -241,6 +249,7 @@ class OrderAgainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             _orderAgainUiState.update {
                 val updatedList = it.orderList.toMutableList()
+                var count = 0
                 updatedList.map { productItem ->
                     val availableQuantity = getQuantity(productItem.id, skuInventory)
                     productItem.quantityInStock = availableQuantity
@@ -250,6 +259,10 @@ class OrderAgainViewModel @Inject constructor(
                         productItem.quantity > availableQuantity -> availableQuantity
                         availableQuantity > productItem.quantity -> productItem.quantity
                         else -> 1
+                    }.coerceAtLeast(1).coerceAtMost(productItem.quantityInStock)
+
+                    if(productItem.isSelected) {
+                        count = count.plus(productItem.quantity)
                     }
 
                     val delivery =
@@ -266,7 +279,15 @@ class OrderAgainViewModel @Inject constructor(
                         else -> R.string.empty
                     }
                 }
-                it.copy(orderList = updatedList)
+                val isAnyUnselected = updatedList.any{ productItem -> !productItem.isSelected }
+                it.copy(
+                    orderList = updatedList,
+                    showAddToCart = updatedList.any { item -> item.isSelected },
+                    itemsToBeAddedCount = count,
+                    headerState = it.headerState.copy(
+                        rightButtonRes = if(isAnyUnselected) R.string.select_all else R.string.deselect_all
+                    )
+                )
             }
         }
     }
@@ -282,7 +303,7 @@ class OrderAgainViewModel @Inject constructor(
             val updatedList = it.orderList.toMutableList()
             updatedList.map { item ->
                 if (item.id == productItem.id) {
-                    item.quantity = item.quantity.coerceAtLeast(1)
+                    item.quantity = item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
                     item.isSelected = isChecked
                 }
             }

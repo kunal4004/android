@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.HeaderGrey
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -98,22 +97,15 @@ private fun HeaderType1(
         )
 
         if (rightButton.isNotEmpty())
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .clickable {
-                        onRightButtonClick()
-                    },
-                text = rightButton,
-                style = TextStyle(
-                    color = Black,
-                    fontFamily = FuturaFontFamily,
-                    fontWeight = FontWeight.W500,
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.End,
-                    letterSpacing = 1.sp
-                )
-            )
+            ToolbarButton(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                alignment = TextAlign.End,
+                letterSpacing = 1.sp,
+                fontWeight = FontWeight.W500,
+                text = rightButton
+            ) {
+                onRightButtonClick()
+            }
     }
 }
 

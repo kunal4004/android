@@ -5,6 +5,8 @@ import za.co.woolworths.financial.services.android.models.dto.order_again.Produc
 sealed class OrderAgainScreenEvents {
     object DeliveryLocationClick : OrderAgainScreenEvents()
     object SelectAllClick : OrderAgainScreenEvents()
+    object AddToCartClicked : OrderAgainScreenEvents()
+    object CopyToListClicked : OrderAgainScreenEvents()
     data class ProductItemCheckedChange(
         val isChecked: Boolean = false,
         val productItem: ProductItem
