@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,11 +15,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentClickAndCollectStoresBinding
+import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.cart.view.CartFragment
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
+import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -30,6 +37,8 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
@@ -37,6 +46,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErro
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_CNC
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
@@ -45,6 +55,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragmentBinding
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -62,6 +73,10 @@ class ClickAndCollectStoresFragment :
     private var isComingFromConfirmAddress: Boolean? = false
     private var isComingFromNewToggleFulfilment: Boolean? = false
     private var needStoreSelection: Boolean? = false
+    private var unSellableCommerceItems: List<UnSellableCommerceItem> = emptyList()
+    private var isComingFromCheckout: Boolean = false
+    private var isComingFromSlotSelection: Boolean = false
+    private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -84,6 +99,11 @@ class ClickAndCollectStoresFragment :
             isComingFromNewToggleFulfilment = this.getBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
             needStoreSelection = this.getBoolean(NEED_STORE_SELECTION, false)
             isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD, false)
+            isComingFromSlotSelection = getBoolean(BundleKeysConstants.IS_COMING_FROM_SLOT_SELECTION, false) ?: false
+            isComingFromCheckout = getBoolean(BundleKeysConstants.IS_COMING_FROM_CHECKOUT, false) ?: false
+            getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, null)?.let {
+                whoIsCollectingDetails = Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
+            }
             if (containsKey(VALIDATE_RESPONSE)) {
                 getSerializable(VALIDATE_RESPONSE)?.let {
                     mValidateLocationResponse =
@@ -180,12 +200,15 @@ class ClickAndCollectStoresFragment :
                     }
                     renderSuccess {
                         setBrowsingDataInformation(output)
-                        navigateToFulfillmentScreen()
+
+
                     }
                 }
             }
         }
     }
+
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -206,12 +229,15 @@ class ClickAndCollectStoresFragment :
             storeData?.forEach { listStore ->
                 if (listStore.storeId == browsingStoreList[0].storeId) {
                     KotlinUtils.setCncStoreValidateResponse(browsingStoreList[0], listStore)
+                    unSellableCommerceItems= browsingStoreList[0].unSellableCommerceItems!!
                     return@forEach
                 }
+
             }
         }
-    }
+        navigateToFulfillmentScreen()
 
+    }
     private fun callValidateStoreInventory() {
         lifecycleScope.launch {
             if (placeId.isNullOrEmpty() && dataStore?.storeId.isNullOrEmpty()) {
@@ -265,7 +291,11 @@ class ClickAndCollectStoresFragment :
 
     private fun navigateToFulfillmentScreen() {
         if (isComingFromNewToggleFulfilment == true) {
-            (mValidateLocationResponse ?: validateLocationResponse)?.let { confirmSetAddress(it) }
+            if(unSellableCommerceItems?.size!!>0){
+                sendResultBack()
+            } else {
+                (mValidateLocationResponse ?: validateLocationResponse)?.let { confirmSetAddress(it) }
+            }
         } else if (IS_FROM_STORE_LOCATOR) {
             dataStore?.let {
                 bundle?.putString(
@@ -347,9 +377,7 @@ class ClickAndCollectStoresFragment :
                             )
                         }
 
-                        // navigate to Dash home tab.
-                        activity?.setResult(Activity.RESULT_OK)
-                        activity?.finish()
+                        onConfirmLocationNavigation()
                     }
                 }
             } catch (e: Exception) {
@@ -360,6 +388,56 @@ class ClickAndCollectStoresFragment :
                 showErrorDialog()
             }
         }
+    }
+
+    private fun onConfirmLocationNavigation() {
+        if (isComingFromCheckout && isComingFromSlotSelection) {
+            val deliveryType = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+            if (deliveryType == Delivery.CNC) {
+                startCheckoutActivity(Utils.toJson(whoIsCollectingDetails))
+            } else {
+                sendResult()
+            }
+        } else {
+            sendResult()
+        }
+    }
+
+    private fun startCheckoutActivity(toJson: String?) {
+        val checkoutActivityIntent = Intent(requireActivity(), CheckoutActivity::class.java)
+        checkoutActivityIntent.putExtra(
+            CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
+            toJson
+        )
+        checkoutActivityIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+        checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
+        requireActivity().apply {
+            startActivityForResult(checkoutActivityIntent, CartFragment.REQUEST_PAYMENT_STATUS)
+            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left)
+            finish()
+        }
+    }
+
+    private fun getLiquorOrder(): Boolean {
+        var liquorOrder = false
+        bundle?.apply {
+            liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+        }
+        return liquorOrder
+    }
+
+    private fun getLiquorImageUrl(): String {
+        var liquorImageUrl = ""
+        bundle?.apply {
+            liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
+        }
+        return liquorImageUrl
+    }
+
+    private fun sendResult() {
+        activity?.setResult(Activity.RESULT_OK)
+        activity?.finish()
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -449,6 +527,28 @@ class ClickAndCollectStoresFragment :
     private fun firstTimeFBHCNCIntroDialog() {
         val fbh = FBHInfoBottomSheetDialog()
         activity?.supportFragmentManager?.let { fbh.show(it, AppConstant.TAG_FBH_CNC_FRAGMENT) }
+    }
+
+    private fun sendResultBack() {
+        val  deliveryType: Delivery=Delivery.CNC
+        //unSellableCommerceItems = store.unSellableCommerceItems!!
+        //  if(unSellableCommerceItems?.size!!>0)
+
+        val intent = Intent().apply {
+            putExtra(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE,
+                ShopToggleActivity.ToggleFulfilmentWIthUnsellable(
+                    unSellableCommerceItems,
+                    deliveryType
+                )
+            )
+            putExtra(DELIVERY_CNC, deliveryType)
+        }
+
+        activity?.setResult(Activity.RESULT_OK, intent)
+        activity?.finish()
+
+
+
     }
 
 }

@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 import androidx.annotation.NonNull
 import android.content.pm.PackageManager
 import com.awfs.coordination.databinding.NoQuantityFindStoreFragmentBinding
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 
 class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: IProductListing?) :
     WBottomSheetDialogFragment() {
@@ -49,7 +50,8 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        // Firebase event to be triggered when displaying the out of stock dialog
+        FirebaseAnalyticsEventHelper.outOfStock()
         FuseLocationAPISingleton.addLocationChangeListener(object : ILocationProvider {
             override fun onLocationChange(location: Location?) {
                 activity?.let { activity -> Utils.saveLastLocation(location, activity) }

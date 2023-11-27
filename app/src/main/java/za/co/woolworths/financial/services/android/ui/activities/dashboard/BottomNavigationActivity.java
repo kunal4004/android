@@ -200,6 +200,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private int currentTabIndex = INDEX_TODAY;
     private int previousTabIndex = INDEX_TODAY;
 
+    public static boolean preventShopTooltip = false;
+
     @Inject WfsBiometricManager biometricManager;
 
     @Override

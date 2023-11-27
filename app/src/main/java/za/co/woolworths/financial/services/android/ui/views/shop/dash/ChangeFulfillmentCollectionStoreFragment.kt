@@ -73,9 +73,7 @@ class ChangeFulfillmentCollectionStoreFragment :
 
     override fun onResume() {
         super.onResume()
-        if (parentFragment?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.CLICK_AND_COLLECT_TAB.index) {
-            init()
-        }
+        init()
     }
 
     override fun noConnectionLayout(isVisible: Boolean) {
@@ -86,48 +84,7 @@ class ChangeFulfillmentCollectionStoreFragment :
     }
 
     fun init() {
-        binding.layoutClickAndCollectStore.apply {
-            etEnterNewAddress.addTextChangedListener(this@ChangeFulfillmentCollectionStoreFragment)
-        }
-        binding.layoutClickAndCollectStore.tvConfirmStore.setOnClickListener(this)
-        binding.layoutClickAndCollectStore.btChange.setOnClickListener(this)
-
-        var isPermissionGranted = false
-        activity?.apply {
-            isPermissionGranted = ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-
-        if (isPermissionGranted && Utils.isLocationEnabled(context)) {
-
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.address?.placeId == null) {
-                // when user comes first time i.e. no location , no fulfillment type
-                // navigate to geo location flow
-                showSetLocationUi()
-            } else if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null && KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
-                /*when user comes with location but no store is selected yet*/
-                setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
-            } else if (KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
-                setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
-            } else {
-                showCategoryList()
-            }
-        } else {
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.address?.placeId == null) {
-                // when user comes first time i.e. no location , no fulfillment type
-                // navigate to geo location flow
-                showSetLocationUi()
-            } else if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null && KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
-                /*when user comes with location but no store is selected yet*/
-                setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
-            } else if (KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
-                setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
-            } else {
-                showCategoryList()
-            }
-        }
+        showCategoryList()
     }
 
     private fun addObserver() {

@@ -18,6 +18,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
@@ -34,6 +35,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_MODE
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
@@ -41,8 +43,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductsRequestPar
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
-import za.co.woolworths.financial.services.android.shoptoggle.presentation.ToggleFulfilmentResult
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -61,6 +63,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.Shop
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ShopLandingAutoNavigateCheckerImpl
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.TooltipShown
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment.Companion.DIALOG_BUTTON_CLICK_RESULT
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.ui.views.tooltip.CustomText
@@ -83,6 +86,7 @@ import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.StoreUtils
+import za.co.woolworths.financial.services.android.util.UnsellableUtils.Companion.ADD_TO_LIST_SUCCESS_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -277,6 +281,18 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             updateTabIconUI(currentTabPositionBasedOnDeliveryType())
             viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
         }
+
+        setFragmentResultListener(DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
+            if(result.equals(ADD_TO_LIST_SUCCESS_RESULT_CODE)){
+
+            }
+        }
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        UpdateScreenLiveData.removeObservers(viewLifecycleOwner)
     }
 
     private fun hideTooltipIfVisible() {
@@ -294,7 +310,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     tvSearchProduct.text = getString(R.string.shop_landing_product_all_search)
                     fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text = getString(R.string.standard_delivery)
                     fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.text = getString(R.string.shop_landing_fulfilment_title_cnc_and_standard)
-                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.default_location)
+                    fulfilmentAndLocationLayout.layoutLocation.tvTitle.text = location ?: getString(R.string.set_location_title)
                 }
                 CLICK_AND_COLLECT_TAB -> {
                     tvSearchProduct.text = getCncSearchText()
@@ -452,6 +468,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             } else {
                 setDeliveryView()
             }
+            refreshScreen()
         }
     }
 
@@ -484,15 +501,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             permissions,
             1
         )
-    }
-
-    fun checkRunTimePermissionForLocation(): Boolean {
-        permissionUtils?.apply {
-            val permissions = ArrayList<String>()
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-            return checkAndRequestPermissions(permissions, 3)
-        }
-        return false
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
@@ -541,7 +549,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         fulfillmentDetails?.apply {
             when (Delivery.getType(deliveryType)) {
                 Delivery.CNC -> {
-                        setSearchText(CLICK_AND_COLLECT_TAB, location = KotlinUtils.capitaliseFirstLetter(storeName))
+                    setSearchText(CLICK_AND_COLLECT_TAB, location = KotlinUtils.capitaliseFirstLetter(storeName))
                 }
 
                 Delivery.STANDARD -> {
@@ -605,10 +613,15 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 setSearchText(STANDARD_TAB)
             }
             binding.viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
+            refreshAdapter()
             setDeliveryView()
         } else {
             toggleScreenTimer?.cancel()
         }
+    }
+
+    private fun refreshAdapter() {
+        shopPagerAdapter?.notifyDataSetChanged()
     }
 
     override fun onStop() {
@@ -759,17 +772,37 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                     //Just Browsing or Not Now for set location
                     showTooltipIfRequired()
                 }
+            } else {
+                checkForUnsellableItems(data)
             }
         }
 
-        if (resultCode == RESULT_OK && (requestCode == UPDATE_LOCATION_REQUEST || requestCode == UPDATE_STORE_REQUEST)) {
+        if (resultCode == RESULT_OK && requestCode == UPDATE_LOCATION_REQUEST) {
+            setDeliveryView()
+        }
+
+        if (resultCode == RESULT_OK && requestCode == UPDATE_STORE_REQUEST) {
+            checkForUnsellableItems(data)
+        }
+    }
+
+    private fun checkForUnsellableItems(data: Intent?) {
+        val toggleFulfilmentResultWithUnsellable =
+            UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
+        if (toggleFulfilmentResultWithUnsellable != null) {
+            UnsellableAccess.navigateToUnsellableItemsFragment(
+                ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                toggleFulfilmentResultWithUnsellable.deliveryType, confirmAddressViewModel,
+                binding.shopProgressbar, this, parentFragmentManager
+            )
+        } else {
             setDeliveryView()
         }
     }
 
-    private fun getToggleFulfilmentResult(intent: Intent?): ToggleFulfilmentResult? {
+    private fun getToggleFulfilmentResult(intent: Intent?): ShopToggleActivity.ToggleFulfilmentResult? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT, ToggleFulfilmentResult::class.java)
+            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT, ShopToggleActivity.ToggleFulfilmentResult::class.java)
         } else {
             intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT)
         }
@@ -905,16 +938,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-    private fun formatToolTipTitle(context: Context, start: String, coloredText: String, end: String): Spanned {
-        val labelColor = ContextCompat.getColor(context, R.color.color_yellow_FEE600)
-        val сolor: String = String.format("%X", labelColor).substring(2)
-        return HtmlCompat.fromHtml(
-            "$start<font color=\"#$сolor\">$coloredText</font><br>$end",
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-    }
-
-
     private fun getCustomToolTipText(context: Context): SpannableString {
         val descriptionText=getString(R.string.description_tooltip)
 
@@ -925,7 +948,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
 
         val yellowColor = ContextCompat.getColor(context, R.color.color_yellow_FEE600)
         val whiteColor =  ContextCompat.getColor(context, R.color.white)
-      // Apply the custom typefaces to specific text
+        // Apply the custom typefaces to specific text
         spannableString.setSpan(CustomText(customTypeface1, whiteColor) , 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannableString.setSpan(CustomText(customTypeface1, yellowColor) , 2, 19, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannableString.setSpan(CustomText(customTypeface2, whiteColor) , 20, 29, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -948,16 +971,22 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
     }
-    //getting text with HtMl formate
-    private fun textToolTip(text:Int): Spanned{
-       return HtmlCompat.fromHtml(getString(text),HtmlCompat.FROM_HTML_MODE_LEGACY)
-    }
+
     fun showToggleFulfilmentScreen() {
+        if (BottomNavigationActivity.preventShopTooltip) {
+            BottomNavigationActivity.preventShopTooltip = false
+            return
+        }
         if (!shopLandingAutoNavigator.isShopLandingVisited()) {
             toggleScreenTimer = Timer()
             toggleScreenTimer?.schedule(timerTask {
-                shopLandingAutoNavigator.markShopLandingVisited()
-                launchShopToggleScreen(autoNavigation = true)
+                (activity as? BottomNavigationActivity)?.let {
+                    if (it.currentFragment !is ShopFragment || !isVisible || !isAdded) {
+                        return@let
+                    }
+                    shopLandingAutoNavigator.markShopLandingVisited()
+                    launchShopToggleScreen(autoNavigation = true)
+                }
             }, TOGGLE_SCREEN_DELAY)
         } else {
             showTooltipIfRequired()
@@ -1037,14 +1066,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 else -> "\n".plus(getString(R.string.tooltip_standard_delivery))
             }
 
-            val title = formatToolTipTitle(
-                it,
-                getString(R.string.you_re_shopping_with),
-                deliveryType,
-                getString(R.string.tooltip_fulfilment_message)
-            )
-
-          //New formatToolTip
+            //New formatToolTip
             val titleToolTip = formatNewToolTipTitle(
                 it,
                 getString(R.string.you_re_shopping_with),
@@ -1116,7 +1138,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 message = getString(R.string.tooltip_location_message_to_change_your_store)
             }
             else -> {
-                if(binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text == getString(R.string.default_location)) {
+                if(binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text == getString(R.string.set_location_title)) {
                     //Location is not yet set
                     title = getString(R.string.tooltip_location_title_set_location)
                     description = getString(R.string.tooltip_location_description)
@@ -1147,4 +1169,18 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     fun isUserAuthenticated() = SessionUtilities.getInstance().isUserAuthenticated
 
     fun getCurrentFragmentIndex() = binding.viewpagerMain?.currentItem
+
+    private fun refreshScreen(){
+        if(isVisible) {
+            UpdateScreenLiveData.observe(viewLifecycleOwner) {
+                if (it == 1) {
+                    executeValidateSuburb()
+                    UpdateScreenLiveData.value = 0
+                }
+            }
+        }
+    }
+
+
+
 }

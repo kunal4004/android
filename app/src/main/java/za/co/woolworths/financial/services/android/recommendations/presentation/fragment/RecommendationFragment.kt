@@ -232,6 +232,7 @@ class RecommendationFragment :
         val strProductList = Gson().toJson(productDetails)
         // Move to shop tab first.
         (requireActivity() as? BottomNavigationActivity)?.apply {
+            BottomNavigationActivity.preventShopTooltip = true
             onShopTabSelected(bottomNavigationById.menu[BottomNavigationActivity.INDEX_PRODUCT])
         }
         ScreenManager.openProductDetailFragment(requireActivity(), productName, strProductList)

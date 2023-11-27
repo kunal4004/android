@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.content.Intent
 import android.graphics.Color
@@ -66,6 +67,7 @@ import za.co.woolworths.financial.services.android.endlessaisle.service.network.
 import za.co.woolworths.financial.services.android.endlessaisle.utils.isEndlessAisleAvailable
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
@@ -75,6 +77,8 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.native_
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
@@ -127,6 +131,7 @@ class CheckoutAddAddressReturningUserFragment :
     private var orderTotalValue: Double = -1.0
     private lateinit var locator: Locator
 
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     @Inject
     lateinit var addShippingInfoEventsAnalytics: AddShippingInfoEventsAnalytics
 
@@ -351,10 +356,10 @@ class CheckoutAddAddressReturningUserFragment :
                         FirebaseManagerAnalyticsProperties.CHECKOUT,
                         hashMapOf(
                             FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                        FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                        KotlinUtils.getPreferredDeliveryType().toString(),
-                                FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString(),
+                            FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
                                     FirebaseManagerAnalyticsProperties.PropertyValues.SPECIAL_DELIVERY_INSTRUCTION
                         ),
                         activity
@@ -376,10 +381,10 @@ class CheckoutAddAddressReturningUserFragment :
                         FirebaseManagerAnalyticsProperties.CHECKOUT,
                         hashMapOf(
                             FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                        FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                        KotlinUtils.getPreferredDeliveryType().toString(),
-                                FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString(),
+                            FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
                                     FirebaseManagerAnalyticsProperties.PropertyValues.IS_THIS_GIFT
                         ),
                         activity
@@ -406,10 +411,10 @@ class CheckoutAddAddressReturningUserFragment :
                             FirebaseManagerAnalyticsProperties.CHECKOUT,
                             hashMapOf(
                                 FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                            KotlinUtils.getPreferredDeliveryType().toString(),
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
+                                        FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                                FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                        KotlinUtils.getPreferredDeliveryType().toString(),
+                                FirebaseManagerAnalyticsProperties.PropertyNames.TOGGLE_SELECTED to
                                         FirebaseManagerAnalyticsProperties.PropertyValues.NEED_SHOPPING_BAG
                             ),
                             activity
@@ -508,11 +513,15 @@ class CheckoutAddAddressReturningUserFragment :
                         }
                     }
                 }
-                binding.checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringTitle.text =
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text =
                     requireContext().getString(R.string.standard_delivery)
-                binding.checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringValue?.text =
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text =
                     deliveringToAddress
-                binding.checkoutDeliveryDetailsLayout?.root?.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.visibility = GONE
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = GONE
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.root.setBackgroundColor(Color.WHITE)
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener(this)
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener(this)
             }
         }
     }
@@ -528,18 +537,18 @@ class CheckoutAddAddressReturningUserFragment :
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
                     Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.CHECKOUT,
-                            hashMapOf(
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.PHONE_ME,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                            KotlinUtils.getPreferredDeliveryType().toString()
-                            ),
-                            activity
+                        FirebaseManagerAnalyticsProperties.CHECKOUT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.PHONE_ME,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString()
+                        ),
+                        activity
                     )
 
                     selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
@@ -548,35 +557,35 @@ class CheckoutAddAddressReturningUserFragment :
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
                     Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.CHECKOUT,
-                            hashMapOf(
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.SUBSTITUTE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                            KotlinUtils.getPreferredDeliveryType().toString()
-                            ),
-                            activity
+                        FirebaseManagerAnalyticsProperties.CHECKOUT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.SUBSTITUTE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString()
+                        ),
+                        activity
                     )
                 }
 
                 R.id.radioBtnNoThanks -> {
                     Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.CHECKOUT,
-                            hashMapOf(
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
-                                            FirebaseManagerAnalyticsProperties.PropertyValues.NO_THANKS,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                            KotlinUtils.getPreferredDeliveryType().toString()
-                            ),
-                            activity
+                        FirebaseManagerAnalyticsProperties.CHECKOUT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.FOOD_SUBSTITUTION,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.OPTION to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.NO_THANKS,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                                    KotlinUtils.getPreferredDeliveryType().toString()
+                        ),
+                        activity
                     )
                     selectedFoodSubstitution = FoodSubstitution.NO_THANKS
                 }
@@ -694,15 +703,7 @@ class CheckoutAddAddressReturningUserFragment :
             shimmerComponentArray = listOf(
                 Pair<ShimmerFrameLayout, View>(
                     checkoutDeliveryDetailsLayout.deliveringTitleShimmerFrameLayout,
-                    checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringTitle
-                ),
-                Pair<ShimmerFrameLayout, View>(
-                    checkoutDeliveryDetailsLayout.deliveringTitleValueShimmerFrameLayout,
-                    checkoutDeliveryDetailsLayout.tvNativeCheckoutDeliveringValue
-                ),
-                Pair<ShimmerFrameLayout, View>(
-                    checkoutDeliveryDetailsLayout.forwardImgViewShimmerFrameLayout,
-                    checkoutDeliveryDetailsLayout.imageViewCaretForward
+                    checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.root
                 ),
                 Pair<ShimmerFrameLayout, View>(
                     nativeCheckoutFoodSubstitutionLayout.foodSubstitutionTitleShimmerFrameLayout,
@@ -874,7 +875,7 @@ class CheckoutAddAddressReturningUserFragment :
                         confirmDeliveryAddressResponse = response
 
                         if (response.orderSummary != null && (response.orderSummary?.totalItemsCount
-                                        ?: 0) <= 0) {
+                                ?: 0) <= 0) {
                             showEmptyCart()
                             return@observe
                         }
@@ -1021,18 +1022,18 @@ class CheckoutAddAddressReturningUserFragment :
                 GONE
         }
         Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CHECKOUT,
-                hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.SELECT_TIMESLOT,
-                        FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
-                                KotlinUtils.getPreferredDeliveryType().toString(),
-                        FirebaseManagerAnalyticsProperties.PropertyNames.TIME_SELECTED to
-                                selectedSlot.stringShipOnDate + " " + selectedSlot.hourFrom
-                ),
-                activity
+            FirebaseManagerAnalyticsProperties.CHECKOUT,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.STEP to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.DELIVERY_PAGE,
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.SELECT_TIMESLOT,
+                FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_TYPE to
+                        KotlinUtils.getPreferredDeliveryType().toString(),
+                FirebaseManagerAnalyticsProperties.PropertyNames.TIME_SELECTED to
+                        selectedSlot.stringShipOnDate + " " + selectedSlot.hourFrom
+            ),
+            activity
         )
     }
 
@@ -1071,29 +1072,6 @@ class CheckoutAddAddressReturningUserFragment :
                 }
             }
 
-            R.id.checkoutDeliveryDetailsLayout -> {
-                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    SLOT_SELECTION_REQUEST_CODE,
-                    KotlinUtils.getPreferredDeliveryType(),
-                    placesId,
-                    false,
-                    isComingFromCheckout = true,
-                    isMixedBasket = false,
-                    isFBHOnly = false,
-                    isComingFromSlotSelection = true,
-                    savedAddressResponse = savedAddress,
-                    defaultAddress = defaultAddress,
-                    whoISCollecting = "",
-                    liquorCompliance = liquorOrder?.let { liquorOrder ->
-                        liquorImageUrl?.let { liquorImageUrl ->
-                            LiquorCompliance(liquorOrder, liquorImageUrl)
-                        }
-                    }
-                )
-                activity?.finish()
-            }
-
             R.id.txtContinueToPayment -> {
                 cartItemList?.let {
                     addShippingInfoEventsAnalytics.sendEventData(
@@ -1105,7 +1083,73 @@ class CheckoutAddAddressReturningUserFragment :
                 onCheckoutPaymentClick()
                 preparePaymentPageViewRequest(orderTotalValue)
             }
+
+            binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
+
+            binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
         }
+    }
+
+    private fun launchShopToggleScreen() {
+        val intent = ShopToggleActivity.getIntent(requireActivity(),
+            isComingFromCheckout = true,
+            isComingFromSlotSelection = true,
+            savedAddressResponse = savedAddress,
+            defaultAddress = defaultAddress,
+            liquorCompliance = liquorOrder?.let { liquorOrder ->
+                liquorImageUrl?.let { liquorImageUrl ->
+                    LiquorCompliance(liquorOrder, liquorImageUrl)
+                }
+            }
+        )
+        startActivityForResult(intent, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
+        //activity?.finish() //TODO, prevent multiple checkout screen lateron
+    }
+    private fun launchStoreOrLocationSelection() {
+        val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+        if (delivery == Delivery.CNC) {
+            launchStoreSelection()
+        } else {
+            launchGeoLocationFlow()
+        }
+    }
+    private fun launchStoreSelection() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            BundleKeysConstants.UPDATE_STORE_REQUEST,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.CNC,
+            needStoreSelection = true,
+        )
+    }
+
+    private fun launchGeoLocationFlow() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            SLOT_SELECTION_REQUEST_CODE,
+            KotlinUtils.getPreferredDeliveryType(),
+            placesId,
+            isLocationUpdateRequest = true,
+            isFromNewToggleFulfilmentScreen = true,
+            isFromDashTab = false,
+            isComingFromCheckout = true,
+            isMixedBasket = false,
+            isFBHOnly = false,
+            isComingFromSlotSelection = true,
+            savedAddressResponse = savedAddress,
+            defaultAddress = defaultAddress,
+            whoISCollecting = "",
+            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
+            liquorCompliance = liquorOrder?.let { liquorOrder ->
+                liquorImageUrl?.let { liquorImageUrl ->
+                    LiquorCompliance(liquorOrder, liquorImageUrl)
+                }
+            }
+        )
+        activity?.finish()
     }
 
     private fun preparePaymentPageViewRequest(orderTotalValue: Double) {
@@ -1596,8 +1640,15 @@ class CheckoutAddAddressReturningUserFragment :
 
 
         }
+        if (resultCode == Activity.RESULT_OK && requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE){
+            val toggleFulfilmentResultWithUnsellable=UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
+            if(toggleFulfilmentResultWithUnsellable!=null){
+                UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                    toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
+                    binding.loadingBar,this,parentFragmentManager)
+            }
+        }
     }
-
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         //single checkbox age confirmation
         if (!isChecked) {
@@ -1633,7 +1684,7 @@ class CheckoutAddAddressReturningUserFragment :
     private fun updateAgeConfirmationUI(isNoLiquorOrder: Boolean?) {
         binding.ageConfirmationLayout?.root?.visibility = View.GONE
         binding.ageConfirmationLayout.liquorComplianceBannerLayout?.root?.visibility =
-                View.GONE
+            View.GONE
         Utils.fadeInFadeOutAnimation(binding.txtContinueToPayment, false)
         liquorOrder = isNoLiquorOrder
         CheckoutAddressManagementBaseFragment.baseFragBundle?.apply {

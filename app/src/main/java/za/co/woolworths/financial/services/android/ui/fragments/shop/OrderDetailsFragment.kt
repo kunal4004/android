@@ -359,6 +359,7 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
         val strProductList = Gson().toJson(productDetails)
         // Move to shop tab first.
         (requireActivity() as? BottomNavigationActivity)?.apply {
+            BottomNavigationActivity.preventShopTooltip = true
             onShopTabSelected(bottomNavigationById.menu[INDEX_PRODUCT])
         }
         ScreenManager.openProductDetailFragment(requireActivity(), productName, strProductList)
