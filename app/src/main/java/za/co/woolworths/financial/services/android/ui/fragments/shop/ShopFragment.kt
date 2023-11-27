@@ -282,12 +282,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
         }
 
-        setFragmentResultListener(DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
-            if(result.equals(ADD_TO_LIST_SUCCESS_RESULT_CODE)){
-
-            }
-        }
-
     }
 
     override fun onPause() {

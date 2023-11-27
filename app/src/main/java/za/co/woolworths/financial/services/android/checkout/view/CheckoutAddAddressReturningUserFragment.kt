@@ -513,15 +513,16 @@ class CheckoutAddAddressReturningUserFragment :
                         }
                     }
                 }
-                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text =
-                    requireContext().getString(R.string.standard_delivery)
-                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.tvTitle.text =
-                    deliveringToAddress
-                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.visibility = GONE
-                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = GONE
-                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.root.setBackgroundColor(Color.WHITE)
-                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener(this)
-                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener(this)
+                binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.apply {
+                    layoutFulfilment.tvTitle.text = requireContext().getString(R.string.standard_delivery)
+                    layoutLocation.tvTitle.text = deliveringToAddress
+                    layoutFulfilment.tvSubTitle.visibility = View.GONE
+                    layoutLocation.ivLocation.visibility = View.GONE
+                    root.setBackgroundColor(Color.WHITE)
+                    layoutFulfilment.root.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
+                    layoutLocation.root.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
+                }
+
             }
         }
     }

@@ -641,12 +641,13 @@ class CheckoutReturningUserCollectionFragment :
 
     private fun initializeCollectingFromView() {
         val location = Utils.getPreferredDeliveryLocation()
-        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.visibility = View.GONE
-        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = View.GONE
-        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.root.setBackgroundColor(Color.WHITE)
-
-        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener(this)
-        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener(this)
+        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.apply {
+            layoutFulfilment.tvSubTitle.visibility = View.GONE
+            layoutLocation.ivLocation.visibility = View.GONE
+            root.setBackgroundColor(Color.WHITE)
+            layoutFulfilment.root.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+            layoutLocation.root.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        }
         if (location != null) {
             val selectedStore =
                 if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) location.fulfillmentDetails?.storeName else ""

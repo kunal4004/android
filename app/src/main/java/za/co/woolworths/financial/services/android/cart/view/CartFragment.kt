@@ -243,11 +243,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
             dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
 
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
-            if(result.equals(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE)){
-
-            }
-        }
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -425,11 +420,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     }
                 }
             }
-
-            /*R.id.deliveryLocationConstLayout -> CartUtils.onLocationSelectionClicked(
-                requireActivity(),
-                liquorCompliance
-            )*/
 
             binding.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
 

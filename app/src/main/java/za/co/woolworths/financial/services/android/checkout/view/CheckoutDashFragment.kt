@@ -810,12 +810,13 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     }
 
     private fun initializeDashingToView() {
-        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.visibility = GONE
-        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = GONE
-        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.root.setBackgroundColor(Color.WHITE)
-        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle.text =
-            requireContext().getString(R.string.dash_delivery)
-
+        binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.apply{
+            layoutFulfilment.tvSubTitle.visibility = GONE
+            layoutLocation.ivLocation.visibility = GONE
+            root.setBackgroundColor(Color.WHITE)
+            layoutFulfilment.tvTitle.text =
+                requireContext().getString(R.string.dash_delivery)
+        }
         binding.checkoutCollectingTimeDetailsLayout.chooseDateLayout?.root?.visibility = GONE
         if (arguments == null) {
             binding.checkoutCollectingFromLayout.root.visibility = GONE
