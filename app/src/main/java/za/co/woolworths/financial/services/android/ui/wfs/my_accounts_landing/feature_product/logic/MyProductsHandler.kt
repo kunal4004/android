@@ -42,20 +42,17 @@ class MyProductsHandlerImpl @Inject constructor(private val status: ViewApplicat
     override fun isC2User() = SessionUtilities.getInstance().isC2User
 
     override fun isNowWfsUser(userAccountResponse: UserAccountResponse?): Boolean {
-        userAccountResponse ?: return false
-        val productGroupCodes = mutableListOf(
+        if (userAccountResponse == null || !isC2User()) return true
+
+        val requiredProductGroupCodes = setOf(
             AccountProductKeys.PersonalLoan.value,
             AccountProductKeys.StoreCard.value,
             AccountProductKeys.BlackCreditCard.value
         )
-        val validAccounts = userAccountResponse.products
-        val unavailableAccounts = productGroupCodes.filterNot { productGroupCode ->
-            validAccounts?.any { productDetails ->
-                productGroupCode.contains(productDetails.productGroupCode)
-            } == true
-        }
-        return unavailableAccounts.isNotEmpty() && unavailableAccounts.size == 3
 
+        val validProductGroupCodes = userAccountResponse.products?.map { it.productGroupCode }.orEmpty()
+
+        return requiredProductGroupCodes.all { it !in validProductGroupCodes }
     }
 
     override fun listOfDefaultProductItems(productDetails: ProductDetails?): MutableMap<String, AccountProductCardsGroup?> = mutableMapOf(
