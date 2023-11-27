@@ -1127,14 +1127,6 @@ class CheckoutAddAddressReturningUserFragment :
     }
 
     private fun launchGeoLocationFlow() {
-//        KotlinUtils.presentEditDeliveryGeoLocationActivity(
-//            activity,
-//            BundleKeysConstants.UPDATE_LOCATION_REQUEST,
-//            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
-//            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
-//            isLocationUpdateRequest = true,
-//            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType
-//        )
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             requireActivity(),
             SLOT_SELECTION_REQUEST_CODE,
