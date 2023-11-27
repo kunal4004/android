@@ -39,60 +39,56 @@ class ProductListRecommendationAdapter(
     }
 
     override fun onViewAttachedToWindow(holder: MyRecycleViewHolder) {
-        if (holder is MyRecycleViewHolder) {
-            holder.setIsRecyclable(false)
-        }
+        holder.setIsRecyclable(false)
         super.onViewAttachedToWindow(holder)
     }
 
     override fun onBindViewHolder(holder: MyRecycleViewHolder, position: Int) {
         mProductsList[position]?.let { productList ->
-            if (holder is MyRecycleViewHolder) {
-                navigator?.let {
-                    holder.setProductItem(
-                        productList,
-                        it,
-                        if (position % 2 != 0) mProductsList.getOrNull(position + 1) else null,
-                        if (position % 2 == 0) mProductsList.getOrNull(position - 1) else null
-                    )
+            navigator?.let {
+                holder.setProductItem(
+                    productList,
+                    it,
+                    if (position % 2 != 0) mProductsList.getOrNull(position + 1) else null,
+                    if (position % 2 == 0) mProductsList.getOrNull(position - 1) else null
+                )
+            }
+
+            holder.mProductListingPageRowBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon.setOnClickListener {
+                if (recommendationViewModel.getQuickShopButtonPressed()) {
+                    updateRecyclerView()
+                    return@setOnClickListener
                 }
 
-                holder.mProductListingPageRowBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon.setOnClickListener {
-                    if (recommendationViewModel.getQuickShopButtonPressed()) {
-                        updateRecyclerView()
-                        return@setOnClickListener
-                    }
-
-                    activity?.apply {
-                        Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this
+                activity?.apply {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this
+                    )
+                }
+                val fulfilmentTypeId =
+                    AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
+                fulfilmentTypeId?.let { id ->
+                    navigator?.setMyRecycleViewHolder(holder)
+                    val addItemToCart = if (isEnhanceSubstitutionFeatureAvailable()) {
+                        AddItemToCart(
+                            productList.productId,
+                            productList.productId,
+                            0,
+                            SubstitutionChoice.SHOPPER_CHOICE.name,
+                            ""
+                        )
+                    } else {
+                        AddItemToCart(
+                            productList.productId,
+                            productList.productId,
+                            0
                         )
                     }
-                    val fulfilmentTypeId =
-                        AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
-                    fulfilmentTypeId?.let { id ->
-                        navigator?.setMyRecycleViewHolder(holder)
-                        val addItemToCart = if (isEnhanceSubstitutionFeatureAvailable()) {
-                            AddItemToCart(
-                                productList.productId,
-                                productList.productId,
-                                0,
-                                SubstitutionChoice.SHOPPER_CHOICE.name,
-                                ""
-                            )
-                        } else {
-                            AddItemToCart(
-                                productList.productId,
-                                productList.productId,
-                                0
-                            )
-                        }
-                        navigator?.queryInventoryForStore(
-                            id,
-                            addItemToCart,
-                            productList
-                        )
-                    }
+                    navigator?.queryInventoryForStore(
+                        id,
+                        addItemToCart,
+                        productList
+                    )
                 }
             }
             if (position >= mProductsList.size || position < 0) {
@@ -113,7 +109,7 @@ class ProductListRecommendationAdapter(
                     quantityItemClicked(selectedQuantity, addItemToCart)
                 }
             if (quantityInStock > 0) {
-                // replace quickshop button image to cross button image
+                // replace quick shop button image to cross button image
                 activity?.let {
                     recyclerViewViewHolderItems?.mProductListingPageRowBinding?.includeProductListingPriceLayout?.imQuickShopAddToCartIcon?.setImageDrawable(
                         ContextCompat.getDrawable(
@@ -147,8 +143,7 @@ class ProductListRecommendationAdapter(
                             rv: RecyclerView,
                             e: MotionEvent,
                         ): Boolean {
-                            val action = e.action
-                            when (action) {
+                            when (e.action) {
                                 MotionEvent.ACTION_MOVE -> rv.parent.requestDisallowInterceptTouchEvent(
                                     true
                                 )
