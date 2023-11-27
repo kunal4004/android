@@ -30,6 +30,10 @@ class ProductListRecommendationAdapter(
     private val recommendationViewModel: RecommendationViewModel,
 ) : RecyclerView.Adapter<MyRecycleViewHolder>() {
 
+    companion object {
+        private const val MAX_QUANTITY = 6
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyRecycleViewHolder {
         return MyRecycleViewHolder(
             RecommendationsProductListingPageRowBinding.inflate(
@@ -130,7 +134,7 @@ class ProductListRecommendationAdapter(
                 }
                 val imageViewHeight =
                     recyclerViewViewHolderItems.mProductListingPageRowBinding.imProductImage.height + recyclerViewViewHolderItems.mProductListingPageRowBinding.tvProductName.height + 50
-                if (quantityInStock >= 6) {
+                if (quantityInStock >= MAX_QUANTITY) {
                     layoutParams?.height = imageViewHeight
                 } else {
                     layoutParams?.height = RecyclerView.LayoutParams.WRAP_CONTENT
