@@ -22,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.*
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -61,6 +60,7 @@ import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.viewholder.MyRecycleViewHolder
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -84,7 +84,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.use
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
 import za.co.woolworths.financial.services.android.ui.views.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.util.*
@@ -105,8 +104,6 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
-import kotlin.collections.ArrayList
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
 
 @AndroidEntryPoint
 open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBinding::inflate),
@@ -163,6 +160,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var config: NetworkConfig? = null
     private var PLP_SCREEN_LOCATION: String? = "PLP Screen"
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
+    private var recyclerViewViewHolderItems: RecyclerViewViewHolderItems? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -451,6 +449,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     override fun onResume() {
         super.onResume()
+        if (confirmAddressViewModel.getQuickShopButtonPressed()){
+            confirmAddressViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
         FirebaseAnalyticsEventHelper.viewScreenEventForPLP(activity = activity, screenViewEventData = getScreenViewEventData())
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
@@ -835,7 +837,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                 mBannerImage,
                 mIsComingFromBLP,
                 mPromotionalCopy,
-                this@ProductListingFragment
+                this@ProductListingFragment,
+                confirmAddressViewModel
             )
         }
         val mRecyclerViewLayoutManager: GridLayoutManager?
@@ -872,7 +875,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     mBannerImage,
                     mIsComingFromBLP,
                     mPromotionalCopy,
-                    this@ProductListingFragment
+                    this@ProductListingFragment,
+                    confirmAddressViewModel
                 )
             }
         binding.productsRecyclerView.apply {
@@ -1133,6 +1137,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        if (!hidden && confirmAddressViewModel.getQuickShopButtonPressed()){
+            confirmAddressViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
                 true -> lockDrawerFragment()
@@ -1473,6 +1481,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         )
     }
 
+    override fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems) {
+        this.recyclerViewViewHolderItems = recyclerViewViewHolderItems
+    }
+
+    override fun setMyRecycleViewHolder(recyclerViewHolder: MyRecycleViewHolder) {
+        // Nothing to do
+    }
+
+    override fun updateMainRecyclerView() {
+        mProductAdapter?.notifyDataSetChanged()
+    }
 
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
@@ -1532,7 +1551,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         ).enqueue(CompletionHandler(object : IResponseListener<SkusInventoryForStoreResponse> {
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse?) {
                 if (!isAdded) return
-                dismissProgressBar()
+                binding.incCenteredProgress.root.visibility = GONE
                 oneTimeInventoryErrorDialogDisplay = false
                 with(activity.supportFragmentManager.beginTransaction()) {
                     when (skusInventoryForStoreResponse?.httpCode) {
@@ -1622,15 +1641,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                     }
 
                                 try {
-                                    val selectYourQuantityFragment =
-                                        SelectYourQuantityFragment.newInstance(
-                                            cartItem,
-                                            this@ProductListingFragment
-                                        )
-                                    selectYourQuantityFragment.show(
-                                        this,
-                                        SelectYourQuantityFragment::class.java.simpleName
-                                    )
+                                    mProductAdapter?.showQuantitySelector(recyclerViewViewHolderItems, cartItem)
                                 } catch (ex: IllegalStateException) {
                                     logException(ex)
                                 }
