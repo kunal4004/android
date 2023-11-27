@@ -2744,6 +2744,4 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         const val CASH_BACK_VOUCHERS = "cash_back_vouchers"
         const val BLACK_CARD_HOLDER = "black_card"
     }
-
-
 }
