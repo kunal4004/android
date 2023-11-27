@@ -178,12 +178,13 @@ class StartupActivity :
 
     private fun fetchFirebaseConfigData(isComingFromSuccess: Boolean) {
         firebaseRemoteConfig
-            .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
+            .fetchAndActivate()
+            //.fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
             .addOnCompleteListener { task ->
                 run {
                     if (task.isSuccessful) {
                         // set dynamic ui here
-                        firebaseRemoteConfig.activate()
+             //           firebaseRemoteConfig.activate()
                         remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
 
                         if (isComingFromSuccess) {
