@@ -71,6 +71,7 @@ class AppConstant {
         const val REQUEST_CODE_BARCODE_ACTIVITY = 1947
 
         const val REQUEST_CODE_CREATE_LIST = 9001
+        const val REQUEST_CODE_ORDER_AGAIN_LOGIN = 9002
 
         const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
@@ -148,6 +149,9 @@ class AppConstant {
         const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
 
         const val actionItemTnC = "ACTION_ITEMS_TnC"
+
+        // Shop Landing Standard / CnC
+        const val FOOD_CATEGORY_ID = "cat606520"
     }
 
     class Keys {

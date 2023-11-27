@@ -3242,4 +3242,6 @@
     <![CDATA[• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect]]>
 </string>
 
+    <string name="order_again_title">Reorder your favourite foods now.</string>
+    <string name="sign_in_to_order_again">sign in to order again</string>
 </resources>
