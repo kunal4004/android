@@ -504,10 +504,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
     }
 
-
-
-
-
     private fun toggleCartMode() {
         val isEditMode = toggleEditMode()
         binding.btnEditCart.setText(if (isEditMode) R.string.cancel else R.string.edit)
