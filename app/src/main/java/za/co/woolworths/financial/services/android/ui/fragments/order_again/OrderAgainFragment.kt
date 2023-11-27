@@ -30,6 +30,7 @@ class OrderAgainFragment : Fragment() {
     ) = contentView(ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)) {
         OneAppTheme {
             OrderAgainScreen(viewModel, onBackPressed = {
+                hideBottomNavigation(false)
                 requireActivity().onBackPressed()
             }) {
                 when (it) {

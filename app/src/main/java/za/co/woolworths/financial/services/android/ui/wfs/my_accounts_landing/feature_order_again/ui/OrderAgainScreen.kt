@@ -17,18 +17,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -49,8 +60,11 @@ import za.co.woolworths.financial.services.android.presentation.common.BlackRoun
 import za.co.woolworths.financial.services.android.presentation.common.BlackRoundedCornerText
 import za.co.woolworths.financial.services.android.presentation.common.CircleIcon
 import za.co.woolworths.financial.services.android.presentation.common.FuturaTextH1
+import za.co.woolworths.financial.services.android.presentation.common.FuturaTextH10
+import za.co.woolworths.financial.services.android.presentation.common.FuturaTextH12
 import za.co.woolworths.financial.services.android.presentation.common.FuturaTextH14
 import za.co.woolworths.financial.services.android.presentation.common.FuturaTextH15
+import za.co.woolworths.financial.services.android.presentation.common.FuturaTextH8
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewEvent
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansText14
@@ -64,10 +78,12 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight16dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight24dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight40dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight6dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight8dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth16dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth24dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidth8dp
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerWidthDp
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.roundToPx
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema.OrderAgainScreenEvents
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema.OrderAgainScreenState
@@ -83,7 +99,9 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ShimmerColor
+import za.co.woolworths.financial.services.android.ui.wfs.theme.SnackbarBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,10 +111,24 @@ fun OrderAgainScreen(
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
     val state by viewModel.orderAgainUiState.collectAsStateWithLifecycle()
-    val onScreenEvent by viewModel.onScreenEvent.collectAsStateWithLifecycle()
-    when (onScreenEvent) {
-        is OrderAgainScreenEvents.HideBottomBar -> onEvent(onScreenEvent)
-        else -> {}
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    LaunchedEffect(context) {
+         viewModel.onScreenEvent.collect { onScreenEvent ->
+             when (onScreenEvent) {
+                is OrderAgainScreenEvents.HideBottomBar -> onEvent(onScreenEvent)
+                is OrderAgainScreenEvents.ShowSnackBar -> {
+                    snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.add_to_cart).uppercase(),
+                        actionLabel = context.getString(R.string.view).uppercase(),
+                        duration = SnackbarDuration.Short,
+                        withDismissAction = true
+                    )
+                }
+                else -> {}
+            }
+        }
     }
 
     Scaffold(
@@ -118,6 +150,13 @@ fun OrderAgainScreen(
                 SpacerHeight16dp()
                 Divider(color = ColorD8D8D8)
             }
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState
+            ) {data ->
+                SnackbarView(data, state.itemsToBeAddedCount, state.maxItemLimit)
+            }
         }
     ) {
 
@@ -125,6 +164,46 @@ fun OrderAgainScreen(
             when (event) {
                 OrderAgainScreenEvents.DeliveryLocationClick -> onEvent(event)
                 else -> viewModel.onEvent(event)
+            }
+        }
+    }
+}
+
+@Composable
+fun SnackbarView(
+    data: SnackbarData,
+    count: Int,
+    maxItem: Int
+) {
+    Snackbar(
+        modifier = Modifier
+            .padding(horizontal = 18.dp, vertical = 16.dp)
+            .height(40.dp),
+        containerColor = SnackbarBackground,
+        contentColor = White
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            FuturaTextH10(
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(White, RoundedCornerShape(12.dp))
+                    .wrapContentHeight(),
+                text = count.toString(),
+                textAlign = TextAlign.Center
+            )
+            SpacerWidthDp(width = 12.dp, Color.Transparent)
+            Column {
+                FuturaTextH12(
+                    text = pluralStringResource(id = R.plurals.plural_add_to_cart, count, count),
+                    color = White
+                )
+                if(KotlinUtils.isDeliveryOptionDash()) {
+                    SpacerHeight6dp(bgColor = Color.Transparent)
+                    FuturaTextH8(
+                        text = stringResource(id = R.string.dash_item_limit_message, maxItem).uppercase(),
+                        color = White
+                    )
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ import za.co.woolworths.financial.services.android.models.dto.order_again.Produc
 sealed class OrderAgainScreenEvents {
     // On Screen events
     object Idle : OrderAgainScreenEvents()
+    data class ShowSnackBar(val count: Int = 0, val maxItemLimit: Int = 0) : OrderAgainScreenEvents()
     data class HideBottomBar(val hidden: Boolean = false) : OrderAgainScreenEvents()
 
 

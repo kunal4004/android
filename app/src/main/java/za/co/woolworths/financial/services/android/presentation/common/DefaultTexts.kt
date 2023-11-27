@@ -45,6 +45,67 @@ fun FuturaTextH1(
 }
 
 @Composable
+fun FuturaTextH10(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    textAlign: TextAlign = TextAlign.Start
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = TextStyle(
+            fontFamily = FuturaFontFamily,
+            fontWeight = FontWeight.W600,
+            fontSize = 10.sp,
+            color = Black,
+            textAlign = textAlign
+        )
+    )
+}
+
+@Composable
+fun FuturaTextH8(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = Black
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = TextStyle(
+            fontFamily = FuturaFontFamily,
+            fontWeight = FontWeight.W500,
+            fontSize = 8.sp,
+            color = color,
+            textAlign = textAlign,
+            letterSpacing = 0.8.sp
+        )
+    )
+}
+
+@Composable
+fun FuturaTextH12(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = Black
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = TextStyle(
+            fontFamily = FuturaFontFamily,
+            fontWeight = FontWeight.W500,
+            fontSize = 12.sp,
+            color = color,
+            textAlign = textAlign,
+            letterSpacing = 1.sp
+        )
+    )
+}
+
+@Composable
 fun FuturaTextH14(
     modifier: Modifier = Modifier,
     text: String = "",

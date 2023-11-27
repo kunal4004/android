@@ -21,5 +21,6 @@ data class OrderAgainUiState(
     val revealedList: List<String> = emptyList(),
     val showAddToCart: Boolean = false,
     val itemsToBeAddedCount: Int = 0,
+    val maxItemLimit: Int = 0,
     val resIdCopyToList: Int = R.string.copy_to_list
 ): Parcelable

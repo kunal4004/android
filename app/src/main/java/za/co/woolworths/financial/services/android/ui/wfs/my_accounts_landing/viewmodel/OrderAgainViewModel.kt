@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.awfs.coordination.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -81,7 +82,31 @@ class OrderAgainViewModel @Inject constructor(
 
             addToCartUC(items).collectLatest {
                 when (it.status) {
-                    Status.SUCCESS -> {}
+                    Status.SUCCESS -> {
+                        val productCountMap = it.data?.data?.getOrNull(0)?.productCountMap
+                        _orderAgainUiState.update  { state ->
+                            val orderList = state.orderList.toMutableList()
+                            orderList.filter { item -> item.isSelected }.map { item ->
+                                item.isSelected = false
+                                item.quantity = 1
+                            }
+                            state.copy(
+                                orderList = orderList,
+                                showAddToCart = false,
+                                maxItemLimit = productCountMap?.quantityLimit?.foodMaximumQuantity ?: 0
+                            )
+                        }
+                        _onScreenEvent.update {
+                            OrderAgainScreenEvents.HideBottomBar(false)
+                        }
+                        delay(500L)
+                        _onScreenEvent.update {
+                            OrderAgainScreenEvents.ShowSnackBar(
+                                count = _orderAgainUiState.value.itemsToBeAddedCount,
+                                maxItemLimit = productCountMap?.quantityLimit?.foodMaximumQuantity ?: 0
+                            )
+                        }
+                    }
                     Status.ERROR -> {}
                     Status.LOADING -> {
 
@@ -93,6 +118,13 @@ class OrderAgainViewModel @Inject constructor(
 
     private fun onSelectAllClick() {
         viewModelScope.launch(Dispatchers.Default) {
+
+            _onScreenEvent.update {
+                OrderAgainScreenEvents.HideBottomBar(
+                    _orderAgainUiState.value.headerState.rightButtonRes == R.string.select_all
+                )
+            }
+
             _orderAgainUiState.update {
                 val updatedList = it.orderList.toMutableList()
                 var count = 0
@@ -228,33 +260,27 @@ class OrderAgainViewModel @Inject constructor(
             }
 
             orderAgainUC(plistId).collectLatest {
-                _orderAgainUiState.value = when (it.status) {
-                    Status.SUCCESS -> {
+                _orderAgainUiState.update { state ->
+                    when (it.status) {
+                        Status.SUCCESS -> {
 
-                        // Get all product Ids for inventory call.
-                        val productIds = getProductIds(it.data)
+                            // Get all product Ids for inventory call.
+                            val productIds = getProductIds(it.data)
 
-                        // If no food product available in response show empty screen.
-                        if (productIds.isEmpty()) {
-                            orderAgainUiState.value.copy(
-                                screenState = OrderAgainScreenState.ShowEmptyScreen
-                            )
-                        } else {
-                            // get all product ids and make inventory call
-                            callInventoryApi(productIds)
-                            orderAgainUiState.value.copy(
-                                screenState = OrderAgainScreenState.Loading
-                            )
+                            // If no food product available in response show empty screen.
+                            if (productIds.isEmpty()) {
+                                state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen)
+                            } else {
+                                // get all product ids and make inventory call
+                                callInventoryApi(productIds)
+                                state.copy(screenState = OrderAgainScreenState.Loading)
+                            }
                         }
+
+                        Status.ERROR -> state.copy(screenState = OrderAgainScreenState.ShowErrorScreen)
+
+                        Status.LOADING -> state.copy(screenState = OrderAgainScreenState.Loading)
                     }
-
-                    Status.ERROR -> orderAgainUiState.value.copy(
-                        screenState = OrderAgainScreenState.ShowErrorScreen
-                    )
-
-                    Status.LOADING -> orderAgainUiState.value.copy(
-                        screenState = OrderAgainScreenState.Loading
-                    )
                 }
             }
         }
@@ -345,7 +371,7 @@ class OrderAgainViewModel @Inject constructor(
                         else -> R.string.empty
                     }
                 }
-                val isAnyUnselected = updatedList.any { productItem -> !productItem.isSelected }
+                val isAnyUnselected = isAnyUnselected()
                 it.copy(
                     orderList = updatedList,
                     showAddToCart = updatedList.any { item -> item.isSelected },
@@ -358,6 +384,10 @@ class OrderAgainViewModel @Inject constructor(
         }
     }
 
+    private fun isAnyUnselected(): Boolean = orderAgainUiState.value.orderList.any{
+        !it.isSelected && it.quantityInStock > 0
+    }
+
     private fun getQuantity(id: String, skuInventory: List<SkuInventory>?): Int {
         skuInventory ?: return -1
         val item = skuInventory.find { id == it.sku }
@@ -367,31 +397,29 @@ class OrderAgainViewModel @Inject constructor(
     private fun onProductCheckedChange(isChecked: Boolean, productItem: ProductItem) {
         _orderAgainUiState.update {
             val updatedList = it.orderList.toMutableList()
-            var count = it.itemsToBeAddedCount
-            updatedList.map { item ->
-                if (item.id == productItem.id) {
-                    item.quantity =
-                        item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
-                    item.isSelected = isChecked
-                    if (isChecked) {
-                        count += item.quantity
-                    } else {
-                        count -= item.quantity
-                    }
-                }
+            updatedList.find { item -> item.id == productItem.id }?.let { item ->
+                item.quantity =
+                    item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
+                item.isSelected = isChecked
             }
-            val isAnyUnselected =
-                updatedList.any { item -> !item.isSelected && item.quantityInStock > 0 }
+            // Determine toolbar button text
+            val isAnyUnselected = isAnyUnselected()
+            // Determine Add to cart button visibility and bottom nav bar
             val isAnySelected = updatedList.any { item -> item.isSelected }
+
+            _onScreenEvent.update {
+                OrderAgainScreenEvents.HideBottomBar(isAnySelected)
+            }
+
             it.copy(
                 orderList = updatedList,
-                itemsToBeAddedCount = count,
                 showAddToCart = isAnySelected,
                 headerState = it.headerState.copy(
                     rightButtonRes = if (isAnyUnselected) R.string.select_all else R.string.deselect_all
                 )
             )
         }
+        updateAddToListItemCount()
     }
 
     fun refreshInventory() {
