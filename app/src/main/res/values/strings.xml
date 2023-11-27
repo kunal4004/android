@@ -2540,6 +2540,11 @@
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
     <string name="dash_product_search">Search name, product code or brand</string>
+    <string name="shop_landing_fulfilment_title_cnc_and_standard">Food, Fashion, Beauty and Home</string>
+    <string name="shop_landing_fulfilment_title_dash">Food Only</string>
+    <string name="shop_landing_product_all_search">Search Food, Fashion, Beauty and Home</string>
+    <string name="shop_landing_product_other_search">Search Fashion, Beauty and Home</string>
+    <string name="shop_landing_product_food_search">Search Food</string>
     <string name="default_location">Default Location</string>
     <string name="set_your_address">Set your address</string>
     <string name="select_your_preferred_store">Select your preferred store</string>
@@ -3083,6 +3088,63 @@
     <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
     <string name="hint_list_name">List Name</string>
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
+    <string name="label_switch">Switch</string>
+    <string name="label_tap">Tap</string>
+    <string name="tooltip_location_to_set_your_location">To Set Your Location</string>
+    <string name="you_re_shopping_with">"You’re shopping with "</string>
+    <string name="tooltip_dash">Dash.</string>
+    <string name="tooltip_cnc">Click &amp; Collect.</string>
+    <string name="tooltip_standard_delivery">\nStandard Delivery.</string>
+    <string name="tooltip_fulfilment_message">Tap ‘Switch’ to choose between our 3 delivery options:</string>
+    <string name="tooltip_fulfilment_description"><![CDATA[You can switch between Standard Delivery, Click & Collect, or same day food delivery using Dash.]]></string>
+    <string name="tooltip_location_title_set_location">Set your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_description">We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="tooltip_location_title_usage">We use your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_message_to_change_your_location">to CHANGE YOUR LOCATION</string>
+    <string name="tooltip_location_title_cnc">Choose Your Collection Point</string>
+    <string name="tooltip_location_message_to_change_your_store">to CHANGE YOUR store</string>
+    <string name="tooltip_location_decription_cnc">We use your collection store details to give you the most accurate stock, availability and pricing.</string>
+
+    <!--shop toggle-->
+    <string name="use_standard_delivery">use standard delivery</string>
+    <string name="standard_shop_fashion"> shop FASHION, BEAUTY, HOME AND food</string>
+    <string name="earliest_standard_delivery_dates">Latest Standard Delivery Dates:</string>
+    <string name="delivery_cost">Delivery Cost:</string>
+    <string name="collection_cost">Collection Cost:</string>
+    <string name="determined_at_checkout">Determined at checkout. </string>
+    <string name="set_to_standard_delivery">SET TO STANDARD DELIVERY</string>
+    <string name="get_food_today">GET FOOD, TODAY</string>
+    <string name="next_dash_delivery_timeslot">Next Dash Delivery Timeslot:</string>
+    <string name="use_dash_delivery">Use Dash delivery</string>
+    <string name="set_to_dash_delivery">SET TO DASH DELIVERY</string>
+    <string name="use_click_collect">use click &amp; collect</string>
+    <string name="earliest_click_and_collect">Earliest Click &amp; Collect Dates:</string>
+    <string name="collect_fashion_food">Collect FASHION, BEAUTY, HOME AND food</string>
+    <string name="set_to_click_and_collect">SET TO CLICK &amp; COLLECT</string>
+    <string name="back_arrow"> Back Arrow</string>
+    <string name="what_would_you_like_to_shop">What Would You Like To Shop?</string>
+    <string name="you_can_choose_option">You can choose between our 3 delivery options here:</string>
+    <string name="down_arrow">Down Arrow</string>
+    <string name="learn_more_description">Between R0 - R80* delivery fee, or free for Fashion, Beauty and Home orders over R475. Free delivery for Woolies Black Card holders.\n<i>*This depends on your location / products.</i></string>
+    <string name="learn_more_dash_desc">R35 fixed delivery fee. Driver tipping available.</string>
+    <string name="learn_more_click_desc">Between R0 - R20 collection fee, or free for orders over R450.</string>
+    <string name="our_delivery_costs">Our Delivery Costs</string>
+    <string name="title_dash_set_location_modal">To shop accurately with Woolies Dash, we need your location.</string>
+    <string name="title_cnc_set_location_modal">To shop accurately using our \n Click &amp; Collect service, we need your location.</string>
+    <string name="title_standard_set_location_modal">To shop accurately with Woolies, we need your location.</string>
+    <string name="desc_standard_set_location_modal">Set your location for the most accurate stock, availability, and pricing. We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="desc_dash_set_location_modal">Set your location for the most accurate stock, availability, and pricing. We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="desc_cnc_set_location_modal">We’ll use this to give you the most accurate stock, availability, and pricing of our quality products from collection points near you.</string>
+    <string name="cta_set_my_location">Set My Location</string>
+    <string name="fashion_beauty_home_toggle_fulfilment">Fashion, Beauty, Home:</string>
+    <string name="food_toggle_fulfilment">Food:</string>
+    <string name="unlimited_items">*Unlimited items</string>
+    <string name="food_only_toggle_fulfilment">Food only</string>
+    <string name="limited_food_item_msg">*Limited shop of %1$s food items</string>
+    <string name="cnc_delivery_slots_not_available">Unfortunately, we can\'t load your collection timeslots right now.</string>
+    <string name="dash_delivery_slots_not_available">Unfortunately, we can\'t load your delivery timeslots right now.</string>
+    <string name="fulfillment_learn_more">Learn more</string>
+
 
     <string name="something_went_wrong">Something went wrong</string>
     <string name="location_error_msg">We are unable to access your location details.Please try again later.</string>
@@ -3175,5 +3237,9 @@
     <string name="time_slot">"timeSlot_"</string>
     <string name="check_box">"check_Box_"</string>
     <string name="button_confirm_delivery">"button_Confirm"</string>
+    <!--    // Tooltip-->
+    <string name="description_tooltip">
+    <![CDATA[• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect]]>
+</string>
 
 </resources>

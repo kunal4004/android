@@ -30,6 +30,8 @@ class ConfirmAddressViewModel @Inject constructor(
 ) :
     ViewModel(), ConfirmAddressRepository by confirmAddressRepositoryImp {
 
+    private var isQuickShopButtonPressed = false
+
     suspend fun getSavedAddress() =
         geoLocationApiHelper.getSavedAddress()
 
@@ -70,4 +72,12 @@ class ConfirmAddressViewModel @Inject constructor(
                 _validateStoreInventoryData.emit(it)
             }
         }
+
+    fun getQuickShopButtonPressed(): Boolean {
+        return isQuickShopButtonPressed
+    }
+
+    fun setQuickShopButtonPressed(value: Boolean) {
+        isQuickShopButtonPressed = value
+    }
 }
