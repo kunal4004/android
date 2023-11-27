@@ -39,7 +39,6 @@ interface GeneralIntent {
     fun createContactUsIntent()
     fun createUpdatePasswordIntent()
     fun UserAccountLandingViewModel.createMyPreferenceIntent(
-        isNowWfsUser: Boolean,
         activityLauncher: BetterActivityResult<Intent, ActivityResult>?
     )
     fun createSignOutIntent()
@@ -97,14 +96,13 @@ class GeneralIntentImpl @Inject constructor(private val activity: Activity?) : G
     }
 
     override fun UserAccountLandingViewModel.createMyPreferenceIntent(
-        isNowWfsUser: Boolean,
         activityLauncher: BetterActivityResult<Intent, ActivityResult>?
     ) {
         //RESULT_CODE_DELETE_ACCOUNT
         activity?.apply {
             val myPreferencesIntent = Intent(this, MyPreferencesActivity::class.java)
             myPreferencesIntent.putExtra(
-                MyPreferencesFragment.IS_NON_WFS_USER, isNowWfsUser)
+                MyPreferencesFragment.IS_NON_WFS_USER, isNowWfsUser())
             myPreferencesIntent.putExtra(
                 MyPreferencesFragment.DEVICE_LIST,
                 AppStateRepository().getLinkedDevices()

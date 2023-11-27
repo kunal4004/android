@@ -119,6 +119,7 @@ import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBotto
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
 import za.co.woolworths.financial.services.android.ui.vto.presentation.DataPrefViewModel
@@ -700,7 +701,7 @@ class ProductDetailsFragment :
             ScreenManager.presentSSOSigninActivity(activity,
                 SSO_REQUEST_WRITE_A_REVIEW,
                 isUserBrowsing)
-            return
+
         } else {
             (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productName, imagePath, productId)
         }
@@ -1176,6 +1177,7 @@ class ProductDetailsFragment :
             hideProgressBar()
             var message = ""
             var title = ""
+            var isOutOfStockDialog = false
             when (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
                 true -> {
                     title = getString(R.string.product_unavailable)
@@ -1185,6 +1187,7 @@ class ProductDetailsFragment :
                     )
                 }
                 else -> {
+                    isOutOfStockDialog = true
                     title = getString(R.string.out_of_stock)
                     message =
                         getString(
@@ -1198,7 +1201,8 @@ class ProductDetailsFragment :
                     this,
                     CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
                     title,
-                    message
+                    message,
+                    isOutOfStockDialog
                 )
             }
             updateAddToCartButtonForSelectedSKU()
@@ -1801,7 +1805,9 @@ class ProductDetailsFragment :
         isInventoryCalled: Boolean,
         substitutionProductItem: ProductList? = null
     ) {
-        if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false) {
+        if ((KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false)
+            || (productDetails?.fulfillmentType != getString(R.string.fullfilment_type_01) && productDetails?.productType !=getString(R.string.food_product_type))
+        ) {
             binding.productDetailOptionsAndInformation.substitutionLayout.root?.visibility = View.GONE
             return
         }
@@ -2868,6 +2874,9 @@ class ProductDetailsFragment :
                     SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION -> {
                         updateStockAvailability(true)
                     }
+                    SSO_REQUEST_WRITE_A_REVIEW -> {
+                        (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productDetails?.productName,productDetails?.externalImageRefV2, productDetails?.productId)
+                    }
                 }
             }
             RESULT_CANCELED -> {
@@ -3130,7 +3139,7 @@ class ProductDetailsFragment :
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(
                     it,
-                    WMaterialShowcaseView.Feature.VTO_TRY_IT,
+                    TooltipDialog.Feature.VTO_TRY_IT,
                     true
                 )
                     .setTarget(binding.imgVTOOpen)
@@ -3153,11 +3162,11 @@ class ProductDetailsFragment :
 
     }
 
-    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
+    override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature) {
         //Do Nothing
     }
 
-    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
+    override fun onPromptDismiss(feature: TooltipDialog.Feature) {
         binding.imgVTOOpen?.setImageResource(R.drawable.ic_camera_vto)
     }
 

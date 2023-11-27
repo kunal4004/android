@@ -41,33 +41,11 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/orderNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/futura_semi_bold"
-            android:text="@string/order_id"
-            android:textColor="@color/black"
-            android:textSize="@dimen/eighteen_sp"
-            app:layout_constraintStart_toStartOf="@id/guidelineStart"
-            app:layout_constraintTop_toTopOf="@id/guidelineTop" />
-
-        <androidx.appcompat.widget.AppCompatTextView
+        <androidx.compose.ui.platform.ComposeView
             android:id="@+id/orderState"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:gravity="center"
-            android:letterSpacing="@integer/point_eighteen"
-            android:lineSpacingExtra="@dimen/eight_sp"
-            android:minWidth="@dimen/_90sdp"
-            android:minHeight="@dimen/_15ssp"
-            android:paddingStart="@dimen/twelve_dp"
-            android:paddingEnd="@dimen/twelve_dp"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="@dimen/ten_sp"
-            app:fontFamily="@font/futura_semi_bold"
+            android:gravity="end|center_vertical"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
@@ -79,7 +57,7 @@
             android:background="@color/bg_light_overlay"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
-            app:layout_constraintTop_toBottomOf="@id/orderNumber" />
+            app:layout_constraintTop_toBottomOf="@id/orderState" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/orderTypeTitle"

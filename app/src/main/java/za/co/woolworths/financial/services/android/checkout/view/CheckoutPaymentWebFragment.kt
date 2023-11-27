@@ -44,6 +44,8 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Dynam
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_ENDLESS_AISLE_JOURNEY
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -64,6 +66,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     }
 
     enum class PaymentStatus(val type: String) {
+        PAY_IN_STORE("payinstore"),
         PAYMENT_SUCCESS("success"),
         PAYMENT_ABANDON("abandon"),
         PAYMENT_UNAUTHENTICATED("unauthenticated"),
@@ -76,6 +79,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
+    private var isEndlessAisleJourney: Boolean? = false
     private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +93,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCheckoutPaymentWebBinding.bind(view)
         cartItemList = arguments?.getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
+        isEndlessAisleJourney = arguments?.getBoolean(IS_ENDLESS_AISLE_JOURNEY)
         initPaymentWebView()
     }
 
@@ -101,7 +106,13 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             CookieManager.getInstance().flush()
 
             CookieManager.getInstance().acceptCookie()
-            val paymentUrl = AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+
+            var paymentUrl = when(isEndlessAisleJourney) {
+                true -> AppConfigSingleton.nativeCheckout?.checkoutPaymentUrlPayInStore
+                false -> AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+                else -> AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
+            }
+
             val webTokens =
                 arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
             val cookie = "TOKEN=${webTokens?.jsessionId};AUTHENTICATION=${webTokens?.auth};"
@@ -134,12 +145,17 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         }
     }
 
-    private fun navigateToOrderConfirmation() {
+    private fun navigateToOrderConfirmation(isEndlessAisle: Boolean = false) {
         binding.paymentSuccessConfirmationLayout?.root?.visibility = View.VISIBLE
+        if (isEndlessAisle) {
+            binding.paymentSuccessConfirmationLayout.txtOrderPaymentConfirmed.text = getString(R.string.barcode_generated)
+        }
         Handler(Looper.getMainLooper()).postDelayed({
             binding.paymentSuccessConfirmationLayout?.root?.visibility = View.GONE
+            val bundle = Bundle()
+            bundle.putBoolean(IS_ENDLESS_AISLE_JOURNEY, isEndlessAisle)
             view?.let {
-                GeoUtils.navigateSafe(it, R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment, null)
+                GeoUtils.navigateSafe(it, R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment, bundle)
             }
         }, AppConstant.DELAY_1500_MS)
     }
@@ -251,6 +267,12 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
                     )
                 }
                 navigateToOrderConfirmation()
+            }
+            PaymentStatus.PAY_IN_STORE.type ->{
+                // clearing the paymentArguments because need to avoid analytics for endless order
+                // and below we have check if its empty then don't call analytics
+                paymentArguments.clear()
+                navigateToOrderConfirmation(true)
             }
             PaymentStatus.PAYMENT_ABANDON.type -> {
                 view?.findNavController()?.navigateUp()

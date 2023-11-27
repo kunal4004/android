@@ -28,6 +28,7 @@ import com.google.android.material.tabs.TabLayout.OnTabSelectedListener;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
@@ -43,6 +44,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsSavingsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManagerImpl;
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.AppLifeCycleObserver;
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.BiometricSingleton;
+import za.co.woolworths.financial.services.android.ui.wfs.common.state.LifecycleTransitionType;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -75,6 +80,9 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	private FrameLayout joinWRewardLoggedInFrameLayout;
 	private RelativeLayout joinWRewardLoggedInRelativeLayout;
 
+	private final BiometricSingleton biometricSingleton = WoolworthsApplication.getInstance().biometricSingleton;
+
+	private AppLifeCycleObserver appLifecycleObserver;
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -119,6 +127,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				if (tab.getPosition() == TabState.OVERVIEW.tabState && tab.getCustomView() != null) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW, getActivity());
 				} else if (tab.getPosition() == TabState.VOUCHERS.tabState) {
+					showBiometricPrompt();
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSVOUCHERS, getActivity());
 				} else if (tab.getPosition() == TabState.SAVINGS.tabState) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS, getActivity());
@@ -197,10 +206,30 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		adapter.notifyDataSetChanged();
 		tabLayout.setupWithViewPager(viewPager);
 		viewPager.invalidate();
+
+		appLifecycleObserver = new AppLifeCycleObserver(biometricSingleton, lifecycleTransitionType -> {
+			if (lifecycleTransitionType == LifecycleTransitionType.BACKGROUND_TO_FOREGROUND) {
+				if (getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment &&
+						tabLayout.getSelectedTabPosition() == 1){
+					showBiometricPrompt();
+				}
+			}
+			return null;
+		});
+		getViewLifecycleOwner().getLifecycle().addObserver(appLifecycleObserver);
+
 		if (voucherResponse.voucherCollection.vouchers != null)
 			setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
 		else
 			setupTabIcons(DEFAULT_VOUCHER_COUNT);
+	}
+
+	private void showBiometricPrompt(){
+		WfsBiometricManagerImpl biometricManager = new WfsBiometricManagerImpl();
+		biometricManager.setupBiometricAuthenticationForWRewards(
+				biometricSingleton,
+				this,
+				wRewardViewModel);
 	}
 
 	private void setupTabIcons(int activeVoucherCount) {
