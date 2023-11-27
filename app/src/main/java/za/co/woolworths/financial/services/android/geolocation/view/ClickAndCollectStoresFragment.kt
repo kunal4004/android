@@ -404,14 +404,12 @@ class ClickAndCollectStoresFragment :
     }
 
     private fun startCheckoutActivity(toJson: String?) {
-        val checkoutActivityIntent = Intent(requireActivity(), CheckoutActivity::class.java)
-        checkoutActivityIntent.putExtra(
-            CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
-            toJson
-        )
-        checkoutActivityIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
-        checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
+        val checkoutActivityIntent = Intent(requireActivity(), CheckoutActivity::class.java).apply {
+            putExtra(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, toJson)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+            putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
+        }
         requireActivity().apply {
             startActivityForResult(checkoutActivityIntent, CartFragment.REQUEST_PAYMENT_STATUS)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left)

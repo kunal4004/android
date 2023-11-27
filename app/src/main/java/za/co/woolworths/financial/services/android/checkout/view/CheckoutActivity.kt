@@ -290,7 +290,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        screenRefresh()
+        unsellableUpdate()
     }
 
     override fun onPause() {
@@ -298,7 +298,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         UpdateScreenLiveData.removeObservers(this)
     }
 
-    private fun screenRefresh(){
+    private fun unsellableUpdate(){
         UpdateScreenLiveData.observe(this) {
             if(it==1)
             { UpdateScreenLiveData.value=0

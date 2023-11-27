@@ -57,15 +57,14 @@ fun ExpandedData(
                 color = Color.Black
             )
         )
-        if (item.deliveryType.lowercase() == Delivery.DASH.type.lowercase()) {
-            LoadDashDetails(item = item)
+        when (item.deliveryType.lowercase()) {
+            Delivery.DASH.type.lowercase() -> LoadDashDetails(item = item)
+            Delivery.CNC.type.lowercase() -> LoadCncDetails(item = item)
+            Delivery.STANDARD.type.lowercase() -> LoadStandardDetails(item = item)
+            else -> {}
         }
-        if (item.deliveryType.lowercase() == Delivery.CNC.type.lowercase()) {
-            LoadCncDetails(item = item)
-        }
-        if (item.deliveryType.lowercase() == Delivery.STANDARD.type.lowercase()) {
-            LoadStandardDetails(item = item)
-        }
+
+
         Spacer(modifier = Modifier.height(Dimens.eight_dp))
         Text(
             modifier = Modifier,
