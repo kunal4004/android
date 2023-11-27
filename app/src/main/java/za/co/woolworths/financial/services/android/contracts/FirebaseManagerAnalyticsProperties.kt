@@ -587,7 +587,7 @@ open class FirebaseManagerAnalyticsProperties {
 
     class PropertyValues {
         companion object {
-            const val OUT_OF_STOCK_MESSAGE = "out of stock, location retry, change delivery"
+            const val OUT_OF_STOCK_MESSAGE = "out of stock"
             const val NOT_APPLICABLE: String = "N/A"
 
             // Chanel
