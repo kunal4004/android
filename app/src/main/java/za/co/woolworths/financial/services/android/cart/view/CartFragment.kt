@@ -122,6 +122,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.Utils.*
 
 @AndroidEntryPoint
@@ -494,6 +495,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     )
                 }
             }
+            putExtra(Constant.IS_MIXED_BASKET, viewModel.isMixedBasket())
         }
 
         if (((getPreferredDeliveryType() == Delivery.STANDARD)
@@ -633,10 +635,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         substitutionSelection: String,
         commerceId: String,
         productId: String?,
-        catalogRefId: String?
+        catalogRefId: String?,
     ) {
         (activity as? BottomNavigationActivity)?.pushFragment(
-            ManageSubstitutionFragment.newInstance(substitutionSelection, commerceId, productId, catalogRefId)
+            ManageSubstitutionFragment.newInstance(
+                substitutionSelection,
+                commerceId,
+                productId,
+                catalogRefId
+            )
         )
     }
 
@@ -1361,7 +1368,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun prepareDynamicYieldCartViewRequestEvent() {
-        val user = User(dyServerId,dyServerId)
+        val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
         val productList: ArrayList<String>? = ArrayList()
@@ -1532,13 +1539,22 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             }
         }
 
-        if (resultCode == CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED || resultCode == ActionSheetDialogFragment.DIALOG_REQUEST_CODE) {
+        if (resultCode == CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED) {
             val activity: Activity = requireActivity()
             activity.setResult(CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED)
             activity.finish()
             activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay)
             return
         }
+        if (resultCode == DIALOG_REQUEST_CODE) {
+            // Sign in bottom dialog opens on cart and user closes it without login then move tab to last opened tab.
+            (requireActivity() as? BottomNavigationActivity)?.let { activity ->
+                val previousTabIndex = activity.previousTabIndex
+                activity.bottomNavigationById.currentItem = previousTabIndex
+            }
+            return
+        }
+
 
         // Retry callback when saved address api fails
         if (resultCode == ErrorHandlerActivity.RESULT_RETRY) {
@@ -2059,7 +2075,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     itemLimitsMessage,
                     itemLimitsCounter,
                     showBanner = (KotlinUtils.isDeliveryOptionClickAndCollect() ||
-                            (KotlinUtils.isDeliveryOptionDash() && productCountMap?.totalProductCount?: 0 > CartUtils.THRESHOLD_FOR_DASH_CART_LIMIT_BANNER))
+                            (KotlinUtils.isDeliveryOptionDash() && productCountMap?.totalProductCount ?: 0 > CartUtils.THRESHOLD_FOR_DASH_CART_LIMIT_BANNER))
                 )
             }
         }
@@ -2357,7 +2373,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun prepareDynamicYieldCheckoutRequest(deliveryType: Delivery?) {
-        val user = User(dyServerId,dyServerId)
+        val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config?.getDeviceModel())
         val productList: ArrayList<DataOther> = ArrayList()
@@ -2371,7 +2387,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     }
 
     private fun prepareDyRemoveFromCartRequestEvent(mCommerceItem: CommerceItem?) {
-        val user = User(dyServerId,dyServerId)
+        val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
         val context = Context(device, null, DY_CHANNEL)
@@ -2380,13 +2396,51 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             for (cartItemGroup: CartItemGroup in cartItems) {
                 val commerceItemList = cartItemGroup.commerceItems
                 for (cm: CommerceItem in commerceItemList) {
-                    val cart = Cart(cm.commerceItemInfo.catalogRefId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
+                    val cart = Cart(
+                        cm.commerceItemInfo.catalogRefId,
+                        cm.commerceItemInfo.quantity,
+                        cm.priceInfo.amount.toString()
+                    )
                     cartLinesValue.add(cart)
                 }
             }
         }
-        val properties = Properties(null,null,REMOVE_FROM_CART_V1,null,mCommerceItem?.priceInfo?.amount.toString(),Constants.CURRENCY_VALUE,mCommerceItem?.commerceItemInfo?.quantity,mCommerceItem?.commerceItemInfo?.productId,null,null,null,mCommerceItem?.commerceItemInfo?.size,null,null,null,null,null,cartLinesValue)
-        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,REMOVE_FROM_CART,properties)
+        val properties = Properties(
+            null,
+            null,
+            REMOVE_FROM_CART_V1,
+            null,
+            mCommerceItem?.priceInfo?.amount.toString(),
+            Constants.CURRENCY_VALUE,
+            mCommerceItem?.commerceItemInfo?.quantity,
+            mCommerceItem?.commerceItemInfo?.productId,
+            null,
+            null,
+            null,
+            mCommerceItem?.commerceItemInfo?.size,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue
+        )
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            REMOVE_FROM_CART,
+            properties
+        )
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
         val prepareDyAddToCartRequestEvent = PrepareChangeAttributeRequestEvent(
@@ -2398,23 +2452,61 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         dyChangeAttributeViewModel.createDyChangeAttributeRequest(prepareDyAddToCartRequestEvent)
     }
 
-    private fun  prepareSyncCartRequestEvent() {
-        val user = User(dyServerId,dyServerId)
+    private fun prepareSyncCartRequestEvent() {
+        val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
         val context = Context(device, null, DY_CHANNEL)
         val cartLinesValue: MutableList<Cart> = arrayListOf()
         cartItems?.let { cartItems ->
-          for (cartItemGroup: CartItemGroup in cartItems) {
-              val commerceItemList = cartItemGroup.commerceItems
-              for (cm: CommerceItem in commerceItemList) {
-                  val cart = Cart(cm.commerceItemInfo.catalogRefId, cm.commerceItemInfo.quantity,cm.priceInfo.amount.toString())
-                  cartLinesValue.add(cart)
-              }
-          }
+            for (cartItemGroup: CartItemGroup in cartItems) {
+                val commerceItemList = cartItemGroup.commerceItems
+                for (cm: CommerceItem in commerceItemList) {
+                    val cart = Cart(
+                        cm.commerceItemInfo.catalogRefId,
+                        cm.commerceItemInfo.quantity,
+                        cm.priceInfo.amount.toString()
+                    )
+                    cartLinesValue.add(cart)
+                }
+            }
         }
-        val properties = Properties(null,null,SYNC_CART_V1,null,null,Constants.CURRENCY_VALUE,null,null,null,null,null,null,null,null,null,null,null,cartLinesValue)
-        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,SYNC_CART,properties)
+        val properties = Properties(
+            null,
+            null,
+            SYNC_CART_V1,
+            null,
+            null,
+            Constants.CURRENCY_VALUE,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue
+        )
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            SYNC_CART,
+            properties
+        )
         val events = ArrayList<Event>()
         events.add(eventsDyChangeAttribute);
         val prepareDySyncCartRequestEvent = PrepareChangeAttributeRequestEvent(

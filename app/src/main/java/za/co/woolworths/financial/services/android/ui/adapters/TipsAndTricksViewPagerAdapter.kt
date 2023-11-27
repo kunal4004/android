@@ -26,6 +26,7 @@ class TipsAndTricksViewPagerAdapter(context: Activity) : PagerAdapter() {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val view = LayoutInflater.from(mContext).inflate(R.layout.tips_and_trics_viewpager_item, container, false)
         val imageView: ImageView = view.findViewById(R.id.tipsAndTrickImage)
+        imageView.contentDescription = mContext.getString(R.string.tips_and_tricks_image)
         imageView.setBackgroundResource(images.getResourceId(position, -1))
         container.addView(view)
         return view

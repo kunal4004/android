@@ -17,6 +17,11 @@ import za.co.woolworths.financial.services.android.contracts.IPresentOrderDetail
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
+import za.co.woolworths.financial.services.android.ui.views.order_again.OrderState
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Color4ABB77
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD85C11
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ErrorLabel
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -55,18 +60,34 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
     inner class UpcomingOrderViewHolder(val itemBinding: OrderHistoryTypeBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             val item = dataList[position].item as Order
-            itemBinding.orderNumber?.text = context.getString(R.string.order_id,
-                item.orderId.replaceFirstChar { it.uppercase() })
-            var itemState = item.state
-            itemBinding.orderState?.text = itemState?.replace(context.getString(R.string.order), "")
+            itemBinding.orderState.setContent {
+                OneAppTheme {
+                    val background =
+                            when {
+                                item.state?.contains(context.getString(R.string.cancelled)) == true -> ErrorLabel
+                                item.endlessAisleOrder
+                                        && item.state.contains(
+                                    context.getString(R.string.status_awaiting_payment),
+                                    ignoreCase = true
+                                ) -> ColorD85C11
+                                else -> Color4ABB77
+                            }
+
+                    OrderState(
+                        context.getString(R.string.order_id, item.orderId.replaceFirstChar { it.uppercase() }),
+                        item.state?.replace(context.getString(R.string.order), "")?.uppercase() ?:"",
+                        errorLabel = "",
+                        background
+                    )
+                }
+            }
 
             itemBinding.purchaseDate?.text = WFormatter.formatOrdersHistoryDate(item.submittedDate)
             itemBinding.orderAmount?.text =
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.total)
             itemBinding.root.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
-            itemBinding.orderState.setBackgroundResource(if (item.state?.contains(context.getString(R.string.cancelled)) == true) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
 
-            if (!item.deliveryDates?.isJsonNull!!) {
+            if (item.deliveryDates?.isJsonNull != true) {
                 val deliveryDates: HashMap<String, String> = hashMapOf()
                 deliveryDates.clear()
                 itemBinding.deliveryDateContainer.removeAllViews()
