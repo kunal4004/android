@@ -16,6 +16,7 @@ class Dimensions(
     val twenty_three_dp: Dp,
     val eighteen_sp: TextUnit,
     val thirteen_sp: TextUnit,
+    val ten_sp: TextUnit,
     val fifty_seven_dp: Dp,
     val sixty_dp: Dp,
     val eighty_dp: Dp,
@@ -31,6 +32,7 @@ class Dimensions(
     val fifteen_sp: TextUnit,
     val thirty_six_dp: Dp,
     val twenty_sp: TextUnit,
+    val twenty_six_sp: TextUnit,
     val fifty_dp: Dp,
     val eighty_five_dp: Dp,
     val twenty_six_dp: Dp,
@@ -51,7 +53,13 @@ class Dimensions(
     val button_height_twenty_six_dp : Dp,
     val fourteen_dp : Dp,
     val thirty_four_dp: Dp = 34.dp,
-    val forty_dp: Dp = 40.dp
+    val forty_dp: Dp = 40.dp,
+    val eighteen_dp : Dp,
+    val one_twenty_dp : Dp,
+    val point_five_dp : Dp,
+    val one_point_five_sp : TextUnit,
+    val dp40 : Dp,
+
 )
 
 val sw320Dimensions = Dimensions(
@@ -62,6 +70,7 @@ val sw320Dimensions = Dimensions(
     thirty_two_dp = 32.dp,
     twelve_sp = 12.sp,
     thirteen_sp = 13.sp,
+    ten_sp = 10.sp,
     sixteen_sp = 16.sp,
     twenty_three_dp = 23.dp,
     eighteen_sp = 18.sp,
@@ -80,6 +89,7 @@ val sw320Dimensions = Dimensions(
     fifteen_sp = 15.sp,
     thirty_six_dp = 36.dp,
     twenty_sp = 20.sp,
+    twenty_six_sp = 26.sp,
     fifty_dp = 50.dp,
     eighty_five_dp = 85.dp,
     twenty_six_dp = 26.dp,
@@ -98,7 +108,12 @@ val sw320Dimensions = Dimensions(
     pull_to_refresh_offset_dp = 60.dp,
     account_landing_my_offers_image_height_dp = 152.dp,
     button_height_twenty_six_dp = 25.dp,
-    fourteen_dp = 14.dp
+    fourteen_dp = 14.dp,
+    eighteen_dp = 18.dp,
+    one_twenty_dp = 120.dp,
+    point_five_dp = 0.5.dp,
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 )
 
 val sw360Dimensions = Dimensions(
@@ -110,6 +125,7 @@ val sw360Dimensions = Dimensions(
     icon_size_dp = 25.dp,
     twelve_sp = 12.sp,
     thirteen_sp = 13.sp,
+    ten_sp = 10.sp,
     sixteen_sp = 16.sp,
     twenty_three_dp = 23.dp,
     eighteen_sp = 18.sp,
@@ -128,6 +144,7 @@ val sw360Dimensions = Dimensions(
     fifteen_sp = 15.sp,
     thirty_six_dp = 36.dp,
     twenty_sp = 20.sp,
+    twenty_six_sp = 26.sp,
     fifty_dp = 50.dp,
     eighty_five_dp = 85.dp,
     twenty_six_dp = 26.dp,
@@ -145,7 +162,12 @@ val sw360Dimensions = Dimensions(
     pull_to_refresh_offset_dp = 60.dp,
     account_landing_my_offers_image_height_dp = 172.dp,
     button_height_twenty_six_dp = 26.dp,
-    fourteen_dp = 14.dp
+    fourteen_dp = 14.dp,
+    eighteen_dp = 18.dp,
+    one_twenty_dp = 120.dp,
+    point_five_dp = 0.5.dp,
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 )
 
 val sw400Dimensions = Dimensions(
@@ -171,10 +193,12 @@ val sw400Dimensions = Dimensions(
         six_dp = 6.dp,
         four_dp = 4.dp,
         thirteen_sp = 13.sp,
+        ten_sp = 10.sp,
         fourteen_sp = 14.sp,
         fifteen_sp = 15.sp,
         thirty_six_dp = 36.dp,
         twenty_sp = 20.sp,
+        twenty_six_sp = 26.sp,
         fifty_dp = 50.dp,
         eighty_five_dp = 85.dp,
         twenty_six_dp = 26.dp,
@@ -192,7 +216,12 @@ val sw400Dimensions = Dimensions(
         pull_to_refresh_offset_dp = 60.dp,
     account_landing_my_offers_image_height_dp = 178.dp,
     button_height_twenty_six_dp = 26.dp,
-    fourteen_dp = 14.dp
+    fourteen_dp = 14.dp,
+    eighteen_dp = 18.dp,
+    one_twenty_dp = 120.dp,
+    point_five_dp = 0.5.dp,
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 
 )
 
@@ -223,6 +252,7 @@ val sw420Dimensions = Dimensions(
     fifteen_sp = 15.sp,
     thirty_six_dp = 36.dp,
     twenty_sp = 20.sp,
+    twenty_six_sp = 26.sp,
     fifty_dp = 50.dp,
     eighty_five_dp = 85.dp,
     twenty_six_dp = 26.dp,
@@ -240,7 +270,13 @@ val sw420Dimensions = Dimensions(
     pull_to_refresh_offset_dp = 60.dp,
     account_landing_my_offers_image_height_dp = 190.dp,
     button_height_twenty_six_dp = 26.dp,
-    fourteen_dp = 14.dp
+    fourteen_dp = 14.dp,
+    eighteen_dp = 18.dp,
+    one_twenty_dp = 120.dp,
+    point_five_dp = 0.5.dp,
+    one_point_five_sp = 1.5.sp,
+    ten_sp = 10.sp,
+    dp40 = 40.dp
 )
 
 val sw440Dimensions = Dimensions(
@@ -266,10 +302,12 @@ val sw440Dimensions = Dimensions(
     six_dp = 6.dp,
     four_dp = 4.dp,
     thirteen_sp = 13.sp,
+    ten_sp = 10.sp,
     fourteen_sp = 14.sp,
     fifteen_sp = 15.sp,
     thirty_six_dp = 36.dp,
     twenty_sp = 20.sp,
+    twenty_six_sp = 26.sp,
     fifty_dp = 50.dp,
     eighty_five_dp = 85.dp,
     twenty_six_dp = 26.dp,
@@ -287,7 +325,12 @@ val sw440Dimensions = Dimensions(
     pull_to_refresh_offset_dp = 60.dp,
     account_landing_my_offers_image_height_dp = 178.dp,
     button_height_twenty_six_dp = 28.dp,
-    fourteen_dp = 14.dp
+    fourteen_dp = 14.dp,
+    eighteen_dp = 18.dp,
+    one_twenty_dp = 120.dp,
+    point_five_dp = 0.5.dp,
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 )
 
 
@@ -314,10 +357,12 @@ val sw480Dimensions = Dimensions(
     six_dp = 6.dp,
     four_dp = 4.dp,
     thirteen_sp = 13.sp,
+    ten_sp = 10.sp,
     fourteen_sp = 14.sp,
     fifteen_sp = 15.sp,
     thirty_six_dp = 36.dp,
     twenty_sp = 20.sp,
+    twenty_six_sp = 26.sp,
     fifty_dp = 50.dp,
     eighty_five_dp = 85.dp,
     twenty_six_dp = 26.dp,
@@ -335,5 +380,10 @@ val sw480Dimensions = Dimensions(
     pull_to_refresh_offset_dp = 60.dp,
     account_landing_my_offers_image_height_dp = 190.dp,
     button_height_twenty_six_dp = 28.dp,
-    fourteen_dp = 14.dp
+    fourteen_dp = 14.dp,
+    eighteen_dp = 18.dp,
+    one_twenty_dp = 120.dp,
+    point_five_dp = 0.5.dp,
+    one_point_five_sp = 1.5.sp,
+    dp40 = 40.dp
 )

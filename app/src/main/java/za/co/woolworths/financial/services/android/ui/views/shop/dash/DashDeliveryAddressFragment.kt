@@ -154,6 +154,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
         initViews()
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
+            if(result.equals(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE)){
+
+            }
+        }
     }
 
     override fun onResume() {
@@ -832,9 +837,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     private fun refreshInAppNotificationToast() {
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                removeNotificationToast()
-                return
-            }
+            removeNotificationToast()
+            return
+        }
         if (!isLastDashOrderAvailable) {
             viewModel.getLastDashOrderDetails()
             return
@@ -1054,10 +1059,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
                         this.placeId = responsePlaceId
                         isLocationPlaceIdSame = responsePlaceId.equals(savedPlaceId)
-                        isDeliveryLocationTabCrossClicked =
-                            responsePlaceId.equals(savedPlaceId)
-                        isCncTabCrossClicked = responsePlaceId.equals(savedPlaceId)
-                        isDashTabCrossClicked = responsePlaceId.equals(savedPlaceId)
                     }
                 }
 
@@ -1180,9 +1181,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             BundleKeysConstants.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     initViews()
-                viewModel.getOnDemandCategories()
-                 viewModel.getDashLandingDetails()
-               }
+                    viewModel.getOnDemandCategories()
+                    viewModel.getDashLandingDetails()
+                }
             }
         }
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {

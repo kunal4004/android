@@ -15,6 +15,7 @@
     <color name="black_overlay">#66000000</color>
     <color name="recent_search_bg">#efefef</color>
     <color name="semi_transparent_black">#50000000</color>
+    <color name="semi_transparent_black_e6000000">#E6000000</color>
     <color name="semi_per_black">#30000000</color>
     <color name="description_color">#80000000</color>
     <color name="black_desc_opacity">#75000000</color>

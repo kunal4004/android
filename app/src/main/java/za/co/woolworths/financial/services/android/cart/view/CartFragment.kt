@@ -11,6 +11,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.GONE
 import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.widget.ScrollView
@@ -54,6 +55,7 @@ import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companio
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedPlaceId
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.nativeCheckout
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -70,6 +72,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -93,6 +97,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -101,7 +106,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showGeneralInfoDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.updateCheckOutLink
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
@@ -122,6 +126,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAndLocation
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.Utils.*
 
@@ -237,6 +242,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
         if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
             dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -258,12 +264,50 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             mErrorHandlerView = ErrorHandlerView(activity, it.noConnectionLayout)
             mErrorHandlerView?.setMargin(it.noConnectionLayout, 0, 0, 0, 0)
             binding.btnCheckOut.setOnClickListener(this)
-            binding.deliveryLocationConstLayout.setOnClickListener(this)
+            binding.fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener(this)
+            binding.fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener(this)
             binding.emptyStateTemplate.apply {
                 btnDashSetAddress.text = getString(R.string.start_shopping)
                 btnDashSetAddress.setOnClickListener(this@CartFragment)
             }
         }
+    }
+
+    private fun launchShopToggleScreen() {
+        Intent(requireActivity(), ShopToggleActivity::class.java).apply {
+            startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
+        }
+    }
+    private fun launchStoreOrLocationSelection() {
+        val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+        if (delivery == Delivery.CNC) {
+            launchStoreSelection()
+        } else {
+            launchGeoLocationFlow()
+        }
+    }
+    private fun launchStoreSelection() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            BundleKeysConstants.UPDATE_STORE_REQUEST,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.CNC,
+            needStoreSelection = true,
+        )
+    }
+
+    private fun launchGeoLocationFlow() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            BundleKeysConstants.UPDATE_LOCATION_REQUEST,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isLocationUpdateRequest = true,
+            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType
+        )
     }
 
     private fun initializeBottomTab() {
@@ -377,10 +421,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 }
             }
 
-            R.id.deliveryLocationConstLayout -> CartUtils.onLocationSelectionClicked(
-                requireActivity(),
-                liquorCompliance
-            )
+            binding.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
+
+            binding.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
 
             R.id.btn_dash_set_address -> {
                 (requireActivity() as? BottomNavigator)?.navigateToTabIndex(
@@ -1475,6 +1518,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         loadShoppingCartAndSetDeliveryLocation()
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_CART, activity)
+        refreshScreen()
     }
 
     override fun onPause() {
@@ -1482,6 +1526,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         mConnectionBroadcast?.let {
             requireActivity().unregisterReceiver(it)
         }
+        UpdateScreenLiveData.removeObservers(viewLifecycleOwner)
     }
 
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
@@ -1560,8 +1605,23 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (resultCode == ErrorHandlerActivity.RESULT_RETRY) {
             viewModel.getSavedAddress()
         }
-    }
 
+        if (resultCode == Activity.RESULT_OK && (requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE ||
+                    requestCode == BundleKeysConstants.UPDATE_LOCATION_REQUEST || requestCode == BundleKeysConstants.UPDATE_STORE_REQUEST)) {
+
+            val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
+            refreshScreen()
+            if(toggleFulfilmentResultWithUnsellable!=null){
+                UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                    toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
+                    binding.cartProgressBar,this,parentFragmentManager)
+            }
+            initializeLoggedInUserCartUI()
+            loadShoppingCartAndSetDeliveryLocation()
+        }
+
+
+    }
     private fun loadShoppingCartAndSetDeliveryLocation() {
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
@@ -1577,6 +1637,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         if (!isVisible) {
             loadShoppingCart()
         }
+
     }
 
     override fun onConnectionChanged() {
@@ -1761,7 +1822,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 )
             }
         unsellableItemsBottomSheetDialog?.show(
-            requireFragmentManager(),
+            parentFragmentManager,
             UnsellableItemsBottomSheetDialog::class.java.simpleName
         )
     }
@@ -1782,7 +1843,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         Utils.deliveryLocationEnabled(
             requireActivity(),
             isEditMode,
-            binding.deliveryLocationConstLayout
+            binding.fulfilmentAndLocationLayout.root
         )
     }
 
@@ -1825,14 +1886,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
     private fun setDeliveryLocation(shoppingDeliveryLocation: ShoppingDeliveryLocation?) {
         //TODO: Redesign data mapping
+        binding.fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.visibility = GONE
+        binding.fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = GONE
         shoppingDeliveryLocation?.let {
             requireActivity().apply {
-                setDeliveryAddressView(
+                setDeliveryAndLocation(
                     this,
                     shoppingDeliveryLocation.fulfillmentDetails,
-                    binding.tvDeliveryTitle,
-                    binding.tvDeliverySubtitle,
-                    binding.imgCartDelivery
+                    binding.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle,
+                    binding.fulfilmentAndLocationLayout.layoutLocation.tvTitle,
                 )
             }
         }
@@ -1859,15 +1921,15 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             this.javaClass.simpleName
         )
         activity?.walkThroughPromtView =
-            WMaterialShowcaseView.Builder(activity, WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
-                .setTarget(binding.imgCartDelivery)
+            WMaterialShowcaseView.Builder(activity, TooltipDialog.Feature.DELIVERY_LOCATION)
+                .setTarget(binding.fulfilmentAndLocationLayout.layoutLocation.btnLocationEdit)
                 .setTitle(R.string.your_delivery_location)
                 .setDescription(R.string.walkthrough_delivery_location_desc)
                 .setActionText(R.string.tips_edit_delivery_location)
                 .setImage(R.drawable.tips_tricks_ic_stores)
                 .setAction(this)
                 .setShapePadding(24)
-                .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
                 .setMaskColour(
                     ContextCompat.getColor(
                         requireContext(),
@@ -1877,11 +1939,16 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         activity?.walkThroughPromtView?.show(activity)
     }
 
-    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
-        if (feature == WMaterialShowcaseView.Feature.DELIVERY_LOCATION) onClick((binding.deliveryLocationConstLayout)!!)
+    override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature) {
+        if (feature == TooltipDialog.Feature.DELIVERY_LOCATION) {
+            CartUtils.onLocationSelectionClicked(
+                requireActivity(),
+                liquorCompliance
+            )
+        }
     }
 
-    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
+    override fun onPromptDismiss(feature: TooltipDialog.Feature) {
         isMaterialPopUpClosed = true
         if (isAdded) showAvailableVouchersToast(voucherDetails?.activeTotalVouchersCount ?: 0)
     }
@@ -1929,7 +1996,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         }
         activity.walkThroughPromtView = WMaterialShowcaseView.Builder(
             activity,
-            WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS
+            TooltipDialog.Feature.CART_REDEEM_VOUCHERS
         )
             .setTarget(View(activity))
             .setTitle(R.string.redeem_voucher_walkthrough_title)
@@ -2370,6 +2437,18 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 loadShoppingCart()
             }
         }
+
+    }
+
+    private fun refreshScreen(){
+        if(isVisible) {
+            UpdateScreenLiveData.observe(viewLifecycleOwner) {
+                if (it == 1) {
+                    loadShoppingCart()
+                    UpdateScreenLiveData.value = 0
+                }
+            }
+        }
     }
 
     private fun prepareDynamicYieldCheckoutRequest(deliveryType: Delivery?) {
@@ -2524,6 +2603,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             setDeliveryLocationEnabled(true)
             setMinimumCartErrorMessage()
             resetItemDelete(true)
+            UpdateScreenLiveData.value=1
+
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, bundle ->
             val resultCode =

@@ -536,13 +536,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             KotlinUtils.let {
                 it.placeId = placeId
                 it.isLocationPlaceIdSame = oldLocationPlaceId?.equals(savedPlaceId)
-
-                if (it.isLocationPlaceIdSame == false) {
-                    KotlinUtils.isDeliveryLocationTabCrossClicked = false
-                    KotlinUtils.isCncTabCrossClicked = false
-                    KotlinUtils.isDashTabCrossClicked = false
-                    KotlinUtils.isStoreSelectedForBrowsing = false
-                }
             }
         } else {
             val anonymousUserPlaceId =
@@ -550,12 +543,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             KotlinUtils.let {
                 it.placeId = placeId
                 it.isLocationPlaceIdSame = oldLocationPlaceId?.equals(anonymousUserPlaceId)
-                if (it.isLocationPlaceIdSame == false) {
-                    KotlinUtils.isDeliveryLocationTabCrossClicked = false
-                    KotlinUtils.isCncTabCrossClicked = false
-                    KotlinUtils.isDashTabCrossClicked = false
-                    KotlinUtils.isStoreSelectedForBrowsing = false
-                }
             }
         }
 
@@ -586,7 +573,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     mStoreId,
                     validateLocationResponse?.validatePlace?.stores
                 )
-            KotlinUtils.isStoreSelectedForBrowsing = false
         }
 
         WoolworthsApplication.setValidatedSuburbProducts(

@@ -70,6 +70,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper;
 import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.MODAL_LAYOUT.BIOMETRICS_SECURITY_INFO;
@@ -332,6 +333,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 break;
 
             case NO_STOCK:
+                // Firebase event to be triggered when displaying the out of stock dialog
+                FirebaseAnalyticsEventHelper.INSTANCE.outOfStock();
                 setContentView(R.layout.error_title_desc_layout);
                 mRelRootContainer = findViewById(R.id.relContainerRootMessage);
                 mRelPopContainer = findViewById(R.id.relPopContainer);
