@@ -16,13 +16,11 @@ public interface ShoppingListItemsNavigator {
 
     void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse);
 
-    void onItemDeleteClick(String id, String productId, String catalogRefId, boolean shouldUpdateShoppingList);
+    void onItemDeleteClick(ShoppingListItem shoppingListItem);
 
     void onShoppingSearchClick();
 
     void openProductDetailFragment(String productName, ProductList productList);
-
-    void onDeleteItemFailed();
 
     void openSetSuburbProcess(ShoppingListItem shoppingListItem);
 
