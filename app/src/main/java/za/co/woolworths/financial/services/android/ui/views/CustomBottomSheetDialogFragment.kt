@@ -140,12 +140,13 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buttonAction -> {
-                UpdateScreenLiveData.value=1
+
                 setFragmentResult(
                     arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
                         ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf()
                 )
                 dismiss()
+             //   UpdateScreenLiveData.value=1
             }
 
             R.id.tvDismiss -> {

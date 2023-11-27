@@ -107,6 +107,7 @@ import za.co.woolworths.financial.services.android.util.PostItemToCart
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
@@ -765,6 +766,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
             onItemDeleteApiCall()
         }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            UpdateScreenLiveData.value=1
+        }
     }
 
     override fun onDetach() {
@@ -932,7 +936,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
             )
         }
-        screenRefresh()
+
     }
 
     override fun onPause() {
@@ -1030,6 +1034,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
                     val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
                     if(toggleFulfilmentResultWithUnsellable!=null){
+                        screenRefresh()
                         UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
                             toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
                             bindingListDetails.loadingBar,this,parentFragmentManager)
@@ -1043,39 +1048,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     viewModel.getShoppingListDetails()
                 }
             }
-        }
-        if (resultCode == Activity.RESULT_OK && requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE){
-            val toggleFulfilmentResultWithUnsellable=getToggleFulfilmentResultWithUnSellable(data)
-//            if(toggleFulfilmentResultWithUnsellable!=null){
-//                navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
-//                    toggleFulfilmentResultWithUnsellable.deliveryType)
-//            }
-        }
-
-    }
-
-    private fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
-        deliveryType: Delivery
-    ) {
-        val unsellableItemsBottomSheetDialog =
-            confirmAddressViewModel?.let { it1 ->
-                UnsellableItemsBottomSheetDialog.newInstance(
-                    unSellableCommerceItems, deliveryType, bindingListDetails.loadingBar,
-                    it1, this
-                )
-            }
-        unsellableItemsBottomSheetDialog?.show(
-            parentFragmentManager,
-            UnsellableItemsBottomSheetDialog::class.java.simpleName
-        )
-    }
-
-    private fun getToggleFulfilmentResultWithUnSellable(intent: Intent?): ShopToggleActivity.ToggleFulfilmentWIthUnsellable? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE, ShopToggleActivity.ToggleFulfilmentWIthUnsellable::class.java)
-        } else {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE)
         }
     }
 

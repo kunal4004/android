@@ -372,17 +372,6 @@ class ShopToggleActivity : ComponentActivity() {
         }
     }
 
-    private fun unsellable(storeID:String){
-        var unSellableCommerceItems: List<UnSellableCommerceItem>? = emptyList()
-        WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores?.forEach {
-            if (it.storeId==storeID) {
-                unSellableCommerceItems = it.unSellableCommerceItems
-                sendResultBackWithUnsellableItems(ArrayList(unSellableCommerceItems),delivery)
-
-            }
-        }
-    }
-
     private fun sendResultBack() {
         val deliveryType = KotlinUtils.getDeliveryType()?.deliveryType
         if (!deliveryType.isNullOrEmpty()) {

@@ -1519,7 +1519,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         loadShoppingCartAndSetDeliveryLocation()
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_CART, activity)
-        refreshScreen()
+
     }
 
     override fun onPause() {
@@ -1613,6 +1613,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
             refreshScreen()
             if(toggleFulfilmentResultWithUnsellable!=null){
+                refreshScreen()
                 UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
                     toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
                     binding.cartProgressBar,this,parentFragmentManager)

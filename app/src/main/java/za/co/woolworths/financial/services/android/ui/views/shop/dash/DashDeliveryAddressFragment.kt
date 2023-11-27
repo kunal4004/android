@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -154,11 +155,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
         initViews()
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
-            if(result.equals(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE)){
 
-            }
-        }
     }
 
     override fun onResume() {
@@ -243,6 +240,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun addFragmentListner() {
+
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             isQuickShopClicked = true
@@ -254,6 +252,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
             // Proceed with add to cart as we have moved unsellable items to List.
             addToCart(viewModel.addItemToCart.value) // This will again call addToCart
+            UpdateScreenLiveData.value=1
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
             val resultCode =
@@ -262,7 +261,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 // Proceed with add to cart as we have moved unsellable items to List.
                 addToCart(viewModel.addItemToCart.value) // This will again call addToCart
             }
+            UpdateScreenLiveData.value=1
         }
+
+
+
     }
 
     private fun callValidatePlace(placeId: String?) {
@@ -1230,15 +1233,16 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
-        if (!getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
-            if (isFragmentAttached()) {
-                KotlinUtils.showChangeDeliveryTypeDialog(
-                    requireContext(), requireFragmentManager(),
-                    KotlinUtils.browsingDeliveryType
-                )
-                return
-            }
-        }
+        //comment this code not using in latest code
+//        if (!getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
+//            if (isFragmentAttached()) {
+//                KotlinUtils.showChangeDeliveryTypeDialog(
+//                    requireContext(), requireFragmentManager(),
+//                    KotlinUtils.browsingDeliveryType
+//                )
+//                return
+//            }
+//        }
         addToCart(addItemToCart)
     }
 
