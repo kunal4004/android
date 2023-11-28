@@ -107,6 +107,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewForm;
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewSuccessScreenFragment;
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.view.WriteAReviewTnCFragment;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -130,11 +131,12 @@ import za.co.woolworths.financial.services.android.ui.views.NestedScrollableView
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
-import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.BiometricCallback;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManager;
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog;
+import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment;
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel;
 import za.co.woolworths.financial.services.android.util.AppConstant;
@@ -189,7 +191,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private ToastUtils mToastUtils;
     public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
     private QueryBadgeCounter mQueryBadgeCounter;
-    public WMaterialShowcaseView walkThroughPromtView = null;
+    public TooltipDialog walkThroughPromtView = null;
     public RefinementDrawerFragment drawerFragment;
     public JsonObject appLinkData;
     private BottomNavigationItemView accountNavigationView;
@@ -199,6 +201,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private Boolean isNewSession = false;
     private int currentTabIndex = INDEX_TODAY;
     private int previousTabIndex = INDEX_TODAY;
+
+    public static boolean preventShopTooltip = false;
 
     @Inject WfsBiometricManager biometricManager;
 
@@ -245,7 +249,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
         userAccountLandingViewModel = new ViewModelProvider(this).get(UserAccountLandingViewModel.class);
-        parseDeepLinkData();
         new AmplifyInit();
         mNavController = FragNavController.newBuilder(savedInstanceState,
                         getSupportFragmentManager(),
@@ -256,6 +259,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 .eager(true)
                 .rootFragmentListener(this, 5)
                 .build();
+        parseDeepLinkData();
         // Adding default position for WToday Tab with index(INDEX_TODAY that is position 1) (When open app)
         // Tab order remain same in order to Shop,Today, My Cart,WRewards,My Account
         getBottomNavigationById().setCurrentItem(INDEX_TODAY);
@@ -509,6 +513,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     public void setTitle(String title) {
         setToolbarTitle(title);
+        setToolbarContentDescription(getString(R.string.toolbar_text));
     }
 
     public  void  setToolbarContentDescription(String description) {
@@ -603,6 +608,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Utils.updateStatusBarBackground(this);
         pushFragmentNoAnim(writeAReviewForm);
     }
+
     @Override
     public void scrollableViewHelper(NestedScrollView nsv) {
         getSlidingLayout().setScrollableViewHelper(new NestedScrollableViewHelper(nsv));
@@ -737,6 +743,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     switchTab(INDEX_TODAY);
                     hideToolbar();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU, BottomNavigationActivity.this);
+                    checkLocation();
                     return true;
 
                 case R.id.navigate_to_shop:
@@ -798,25 +805,23 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     };
 
+    private void checkLocation(){
+        if(getCurrentFragment() instanceof WTodayFragment) {
+            WTodayFragment wTodayFragment = (WTodayFragment) getCurrentFragment();
+            if (Utils.isLocationEnabled(this)) {
+                wTodayFragment.checkRunTimePermissionForLocation();
+            }
+        }
+    }
     public void onShopTabSelected(MenuItem item) {
         replaceAccountIcon(item);
         setCurrentSection(R.id.navigate_to_shop);
         switchTab(INDEX_PRODUCT);
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
 
-        Fragment fragment = mNavController.getCurrentFrag();
-        if (isNewSession && fragment instanceof ShopFragment) {
-            isNewSession = false;
-            ((ShopFragment) fragment).setShopDefaultTab();
-        }
-
        if(getCurrentFragment() instanceof ShopFragment) {
-            ShopFragment fragment1 = (ShopFragment) getCurrentFragment();
-            fragment1.showShopFeatureWalkThrough();
-           // Check for location permission. if permission is rejected then never ask again.
-           if(Utils.isLocationEnabled(this)) {
-               fragment1.checkRunTimePermissionForLocation();
-           }
+           ShopFragment fragment1 = (ShopFragment) getCurrentFragment();
+           fragment1.showToggleFulfilmentScreen();
         }
     }
 
@@ -902,6 +907,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         if (walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
             walkThroughPromtView.hide();
+            final Fragment currentFragment = getCurrentFragment();
+            if(walkThroughPromtView.getFeature() == TooltipDialog.Feature.SHOP_FULFILMENT && currentFragment instanceof ShopFragment && currentFragment.isVisible()){
+                ((ShopFragment)currentFragment).showTooltipIfRequired(); // This is to display the location tooltip
+            }
             return;
         }
 
@@ -1053,7 +1062,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public void switchTab(int number) {
         previousTabIndex = currentTabIndex;
         currentTabIndex = number;
-        mNavController.switchTab(number);
+        if (mNavController != null)
+            mNavController.switchTab(number);
         SessionUtilities.getInstance().setBottomNavigationPosition(String.valueOf(number));
     }
 
@@ -1660,6 +1670,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         writeAReviewSuccessScreenFragment.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
         pushFragmentNoAnim(writeAReviewSuccessScreenFragment);
+    }
+
+    public void openWriteAReviewTnCScreenFragment(@NotNull String actionItems) {
+        Bundle bundle = new Bundle();
+        bundle.putString(AppConstant.actionItemTnC, actionItems);
+        WriteAReviewTnCFragment writeAReviewTnCFragment = WriteAReviewTnCFragment.Companion.newInstance();
+        writeAReviewTnCFragment.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragmentNoAnim(writeAReviewTnCFragment);
     }
 
 }

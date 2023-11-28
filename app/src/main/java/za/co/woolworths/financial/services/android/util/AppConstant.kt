@@ -147,6 +147,8 @@ class AppConstant {
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
         const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
 
+
+
         //Huawei Ratings
         const val APP_GALLERY_APP_NOT_RELEASED: Int = 101
         const val APP_GALLERY_RATING_SUBMITTED = 102
@@ -159,6 +161,8 @@ class AppConstant {
         const val HUAWEI_FLAVOR = "huaweiProduction"
         const val HUAWEI_APP_COMMENTS_APP_ACTION_NAME = "com.huawei.appmarket.intent.action.guidecomment"
         const val HUAWEI_APP_COMMENTS_APP_PACKAGE_NAME = "com.huawei.appmarket"
+
+        const val actionItemTnC = "ACTION_ITEMS_TnC"
     }
 
     class Keys {

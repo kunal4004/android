@@ -74,7 +74,8 @@ class ChatFloatingActionButtonBubbleView(
 
     @SuppressLint("InflateParams")
     private fun showChatToolTip() {
-        if (chatBubbleVisibility?.isInAppChatTooltipVisible(applyNowState) == false || (scrollableView as? NestedScrollView)?.scrollY ?: 0 > 30) return
+        if (chatBubbleVisibility?.isInAppChatTooltipVisible(applyNowState) == false || ((scrollableView as? NestedScrollView)?.scrollY
+                        ?: 0) > 30) return
         chatBubbleToolTip = activity?.let { act -> Dialog(act) }
         chatBubbleToolTip?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)

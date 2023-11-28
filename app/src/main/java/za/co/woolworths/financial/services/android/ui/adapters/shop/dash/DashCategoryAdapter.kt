@@ -11,7 +11,12 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.*
+import com.awfs.coordination.databinding.ItemBannerCarouselBinding
+import com.awfs.coordination.databinding.ItemBannerGridBinding
+import com.awfs.coordination.databinding.ItemLongBannerCarouselBinding
+import com.awfs.coordination.databinding.ItemLongBannerListBinding
+import com.awfs.coordination.databinding.ItemProductCarouselListBinding
+import com.awfs.coordination.databinding.TodayWithWooliesListItemBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -26,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
 import za.co.woolworths.financial.services.android.recommendations.presentation.fragment.RecommendationFragment
+import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.holder.PriceItem
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter.Companion.TYPE_EMPTY
@@ -37,12 +43,12 @@ import za.co.woolworths.financial.services.android.util.Utils
 class DashCategoryAdapter(
     val context: Context,
     private val dashLandingNavigationListener: OnDashLandingNavigationListener?,
-    private val iProductListing: IProductListing?
+    private val iProductListing: IProductListing?,
+    private val recommendationViewModel: RecommendationViewModel?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var headerText: String? = null
     private var type: String? = null
-
 
     private val diffCallback = object : DiffUtil.ItemCallback<Any>() {
 
@@ -72,7 +78,6 @@ class DashCategoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_BANNER_CAROUSEL ->
                 BannerCarouselItemViewHolder(
                     ItemBannerCarouselBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -86,13 +91,21 @@ class DashCategoryAdapter(
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL, DashDeliveryAdapter.TYPE_DASH_RECOMMENDATION_SLOT -> {
                 ProductCarouselItemViewHolder(
-                    ItemProductCarouselListBinding.inflate(LayoutInflater.from(context), parent, false)
+                    ItemProductCarouselListBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
                 )
             }
 
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_CAROUSEL -> {
                 LongBannerCarouselItemViewHolder(
-                    ItemLongBannerCarouselBinding.inflate(LayoutInflater.from(context), parent, false)
+                    ItemLongBannerCarouselBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
                 )
             }
 
@@ -104,9 +117,14 @@ class DashCategoryAdapter(
 
             DashDeliveryAdapter.TYPE_DASH_TODAY_WITH_WOOLIES -> {
                 TodayWooliesListItemViewHolder(
-                    TodayWithWooliesListItemBinding.inflate(LayoutInflater.from(context), parent, false)
+                    TodayWithWooliesListItemBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
                 )
             }
+
             else -> EmptyViewHolder(View(context))
         }
     }
@@ -155,7 +173,9 @@ class DashCategoryAdapter(
                     position,
                     list[position] as ProductList,
                     list as List<ProductList>,
-                    iProductListing
+                    iProductListing,
+                    dashLandingNavigationListener,
+                    recommendationViewModel
                 )
             }
             is TodayWooliesListItemViewHolder -> {
@@ -339,13 +359,15 @@ class LongBannerListItemViewHolder(val itemBinding: ItemLongBannerListBinding) :
 }
 
 class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBinding) : RecyclerView.ViewHolder(itemBinding.root) {
-
+    private var productlistingNavigator: IProductListing? = null
     fun bind(
         context: Context,
         position: Int,
         productList: ProductList,
         list: List<ProductList>,
-        iProductListing: IProductListing?
+        iProductListing: IProductListing?,
+        dashLandingNavigationListener: OnDashLandingNavigationListener?,
+        recommendationViewModel: RecommendationViewModel?
     ) {
         val nextProduct = if (position % 2 != 0) list.getOrNull(position + 1) else null
         val previousProduct = if (position % 2 == 0) list.getOrNull(position - 1) else null
@@ -362,45 +384,73 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
             quickShopAddToCartSwitch(this)
             iProductListing?.let { navigator ->
 
+                productlistingNavigator = navigator
                 itemBinding.rowLayout?.let {
                     it.brandName.setOnClickListener { navigator.openProductDetailView(this) }
                     it.tvRangeName.setOnClickListener { navigator.openProductDetailView(this) }
                     it.tvProductName.setOnClickListener { navigator.openProductDetailView(this) }
                     it.mainImgLayout.setOnClickListener { navigator.openProductDetailView(this) }
                 }
-                setQuickshopListener(context, navigator, this)
+                itemBinding.rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.let { quickShopButton ->
+                    quickShopButton.setOnClickListener {
+                        if (recommendationViewModel?.getQuickShopButtonPressed() == true) {
+                            updateMainRecyclerView()
+                            return@setOnClickListener
+                        }
+                        setQuickshopListener(
+                            context,
+                            navigator,
+                            this,
+                            this@ProductCarouselItemViewHolder,
+                            dashLandingNavigationListener
+                        )
+                    }
+                }
+                }
             }
         }
-    }
 
     private fun setQuickshopListener(
         context: Context,
         navigator: IProductListing?,
-        productList: ProductList
+        productList: ProductList,
+        viewHolder: ProductCarouselItemViewHolder,
+        dashLandingNavigationListener: OnDashLandingNavigationListener?,
     ) {
-        itemBinding.rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
-
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART,
-                context as? BottomNavigationActivity
-            )
-            val fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
-            fulfilmentTypeId?.let { id ->
-                if (productList.sku.isNullOrEmpty()) {
-                    // This might be the case of th recommendation product where we do not have sku from API so we'll add productId as a sku here
-                    productList.sku = productList.productId
-                }
-                navigator?.queryInventoryForStore(
-                    id,
-                    if (isEnhanceSubstitutionFeatureAvailable()){
-                        AddItemToCart(productList.productId, productList.sku, 0, SubstitutionChoice.SHOPPER_CHOICE.name, "")
-                    } else {
-                        AddItemToCart(productList.productId, productList.sku, 0)
-                    },
-                    productList
-                )
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART,
+            context as? BottomNavigationActivity
+        )
+        val fulfilmentTypeId =
+            AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
+        fulfilmentTypeId?.let { id ->
+            if (productList.sku.isNullOrEmpty()) {
+                // This might be the case of th recommendation product where we do not have sku from API so we'll add productId as a sku here
+                productList.sku = productList.productId
             }
+
+            val addItemToCartData = if (isEnhanceSubstitutionFeatureAvailable()) {
+                AddItemToCart(
+                    productList.productId,
+                    productList.sku,
+                    0,
+                    SubstitutionChoice.SHOPPER_CHOICE.name,
+                    ""
+                )
+            } else {
+                AddItemToCart(productList.productId, productList.sku, 0)
+            }
+            dashLandingNavigationListener?.setProductCarousalItemViewHolder(viewHolder)
+            navigator?.queryInventoryForStore(
+                id,
+                addItemToCartData,
+                productList
+            )
         }
+    }
+
+    private fun updateMainRecyclerView() {
+        productlistingNavigator?.updateMainRecyclerView()
     }
 
     private fun setProductName(productList: ProductList?) = itemBinding.rowLayout.apply {

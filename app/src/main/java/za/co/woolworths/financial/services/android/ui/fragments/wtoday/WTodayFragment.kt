@@ -28,20 +28,24 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.extension.isEmailValid
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.util.PermissionResultCallback
+import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
-class WTodayFragment : WTodayExtension(), IWTodayInterface {
+class WTodayFragment : WTodayExtension(), IWTodayInterface, PermissionResultCallback {
 
     @Inject
     lateinit var notificationPermission: NotificationPermission
+    private lateinit var permissionUtils: PermissionUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.let {
             Utils.updateStatusBarBackground(it)
+            permissionUtils = PermissionUtils(it, this@WTodayFragment)
         }
 
 
@@ -51,7 +55,17 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         super.onViewCreated(view, savedInstanceState)
         binding.configureUI()
         binding.setClient()
+        checkRunTimePermissionForLocation()
         askNotificationPermission()
+    }
+
+    fun checkRunTimePermissionForLocation(): Boolean {
+        permissionUtils?.apply {
+            val permissions = ArrayList<String>()
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            return checkAndRequestPermissions(permissions, 3)
+        }
+        return false
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -208,6 +222,10 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                 notificationPermission.launchNotificationPermission()
             }
         }
+    }
+
+    override fun permissionGranted(requestCode: Int) {
+
     }
 
 }

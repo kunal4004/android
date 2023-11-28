@@ -49,7 +49,7 @@ interface IAccountCardDetailsContract {
         fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse) {}
         fun showUnBlockStoreCardCardDialog() {}
         fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse, requestUnblockStoreCardCall: Boolean = false)
-        fun showBalanceProtectionInsurance(insuranceCovered: Boolean?)
+        fun hideBalanceProtectionInsurance()
         fun navigateToBalanceProtectionInsuranceApplication(accountInfo: String?, bpiInsuranceStatus: BpiInsuranceApplicationStatusType?)
     }
 

@@ -386,19 +386,12 @@ open class AccountsOptionFragment : BaseFragmentBinding<AccountCardDetailFragmen
         MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, storeCardResponse, requestUnblockStoreCardCall)
     }
 
-    override fun showBalanceProtectionInsurance(insuranceCovered: Boolean?) {
-        binding.includeCommonAccountDetails.includeAccountPaymentOption.includeBPICoveredTag.apply {
-            when (insuranceCovered) {
-                true -> {
-                    bpiCoveredTextView?.visibility = VISIBLE
-                    bpiNotCoveredGroup?.visibility = GONE
-                }
-                false -> {
-                    bpiCoveredTextView?.visibility = GONE
-                    bpiNotCoveredGroup?.visibility = VISIBLE
-                }
-                else -> {}
-            }
+    override fun hideBalanceProtectionInsurance() {
+        binding.includeCommonAccountDetails.includeAccountPaymentOption.apply {
+            balanceProtectionInsuranceView.visibility = GONE
+            balanceLabelTextView.visibility = GONE
+            includeBPICoveredTag.root.visibility = GONE
+            logoProtectionInsurance.visibility = GONE
         }
     }
 
