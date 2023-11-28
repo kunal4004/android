@@ -49,6 +49,8 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import com.awfs.coordination.BuildConfig
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -104,6 +106,7 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
             retryLinkDeviceLinearLayout?.setOnClickListener(this@MyPreferencesFragment)
             viewAllLinkedDevicesRelativeLayout?.setOnClickListener(this@MyPreferencesFragment)
             deleteAccountLayout?.setOnClickListener(this@MyPreferencesFragment)
+            showHuaweiToken()
         }
 
         activity?.apply {
@@ -546,5 +549,15 @@ class MyPreferencesFragment : BaseFragmentBinding<FragmentMyPreferencesBinding>(
                 getString(R.string.retry_label)
             )
         }
+    }
+
+    private fun showHuaweiToken() {
+        //need to un comment before merging the code
+         if (BuildConfig.DEBUG && BuildConfig.FLAVOR == AppConstant.HUAWEI_FLAVOR) {
+            binding.apply {
+                huaweiTokenLayout.visibility = View.VISIBLE
+                huaweiTokenTv.text = WoolworthsApplication.getInstance().userManager.huaweiPushToken
+            }
+       }
     }
 }
