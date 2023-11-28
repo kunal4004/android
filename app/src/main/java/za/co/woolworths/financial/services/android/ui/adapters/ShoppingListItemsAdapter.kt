@@ -110,12 +110,7 @@ class ShoppingListItemsAdapter(
     }
 
     private fun deleteItemFromList(shoppingListItem: ShoppingListItem, adapterPosition: Int) {
-        navigator.onItemDeleteClick(
-            shoppingListItem.Id,
-            shoppingListItem.productId,
-            shoppingListItem.catalogRefId,
-            true
-        )
+        navigator.onItemDeleteClick(shoppingListItem)
     }
 
     private fun enableClickEvent(shoppingListItem: ShoppingListItem): Boolean {
@@ -206,12 +201,7 @@ class ShoppingListItemsAdapter(
                 tvDelete.setOnClickListener {
                     if (!mAdapterIsClickable) return@setOnClickListener
                     val item = getItem(position) ?: return@setOnClickListener
-                    navigator.onItemDeleteClick(
-                        item.Id,
-                        item.productId,
-                        item.catalogRefId,
-                        true
-                    )
+                    navigator.onItemDeleteClick(item)
                 }
             }
         }
@@ -410,15 +400,5 @@ class ShoppingListItemsAdapter(
         }
         notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
         navigator.onItemSelectionChange(false)
-    }
-
-    fun deleteListItem(mCatalogRefId: String) {
-        val item = shoppingListItems?.find { it.catalogRefId.equals(mCatalogRefId, ignoreCase = true) }
-        val index = shoppingListItems?.indexOf(item) ?: -1
-        if(index < 0 || index >= (shoppingListItems?.size ?: -1)) {
-                return
-        }
-        shoppingListItems?.remove(item)
-        notifyItemRemoved(index + 1)
     }
 }
