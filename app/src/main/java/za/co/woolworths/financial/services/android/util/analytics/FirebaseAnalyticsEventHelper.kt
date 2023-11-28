@@ -6,6 +6,8 @@ import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DELIVERY_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SET_Location
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.analytics.dto.*
@@ -469,5 +471,12 @@ object FirebaseAnalyticsEventHelper {
                 subSubCategory = subSubCat
             )
         }
+    }
+
+    fun setLocationEvent(deliveryMode: String) {
+        val analyticsParams = Bundle().apply {
+            putString(DELIVERY_MODE, deliveryMode)
+        }
+        AnalyticsManager.logEvent(SET_Location, analyticsParams)
     }
 }

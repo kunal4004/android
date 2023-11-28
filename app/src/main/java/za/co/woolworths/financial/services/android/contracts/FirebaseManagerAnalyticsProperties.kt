@@ -413,6 +413,8 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_STANDARD_CLICK_COLLECT_CONFIRM = "shop_stnd_cnfrm"
         const val SHOP_CONFIRM_STORE = "shop_cnfrm_store"
         const val SHOP_EDIT_LOCATION = "shop_edit_locatn"
+        const val SET_Location = "set_location"
+        const val DELIVERY_MODE ="delivery_mode"
 
 
         //GeoLocation_CHECKOUT

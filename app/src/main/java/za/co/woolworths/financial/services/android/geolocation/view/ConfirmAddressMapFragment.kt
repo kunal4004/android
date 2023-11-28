@@ -70,6 +70,7 @@ import za.co.woolworths.financial.services.android.util.Constant.Companion.POI
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.setLocationEvent
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.location.Event
@@ -613,6 +614,7 @@ class ConfirmAddressMapFragment :
                             // navigate to Dash home tab.
                             activity?.setResult(Activity.RESULT_OK)
                             activity?.finish()
+                            deliveryType?.let { setLocationEvent(it) }
                         }
                     }
                 }
