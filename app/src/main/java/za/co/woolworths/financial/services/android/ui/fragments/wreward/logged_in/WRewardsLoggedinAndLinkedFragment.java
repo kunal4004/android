@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in;
 
-import static za.co.woolworths.financial.services.android.util.AppConstant.RESULT_OK_HUAWEI_REQUEST_CODE;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -54,7 +52,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OneAppEvents;
-import za.co.woolworths.financial.services.android.util.RequestInAppReviewKt;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
@@ -487,7 +484,5 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public ViewPager getWrewardsViewPager() {
 		return wrewardsViewPager;
 	}
-
-
 
 }
