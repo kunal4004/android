@@ -20,6 +20,7 @@ data class AnalyticProductItem(
     val price: Double? = 0.0,
     val affiliation: String? = null,
     val index: Int = 1,
+    val productType: String? = null,
 ) : Parcelable
 
 fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
@@ -47,6 +48,7 @@ fun ProductList.toAnalyticItem(category: String?): AnalyticProductItem {
         itemVariant = productVariants,
         quantity = 1, // Required quantity set to 1
         price = price?.toDouble(),
+        productType = productType,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
     )
@@ -114,6 +116,10 @@ fun AnalyticProductItem.toBundle(): Bundle {
     }
 
     category?.let {
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, it)
+    }
+
+    productType?.let {
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, it)
     }
 

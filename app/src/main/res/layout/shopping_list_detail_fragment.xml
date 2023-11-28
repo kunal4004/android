@@ -116,84 +116,22 @@
             android:layout_height="@dimen/dimen_0_5dp"
             android:background="@color/color_E5E5E5" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <include
+            android:id="@+id/fulfilmentAndLocationLayout"
+            layout="@layout/layout_fulfilment_and_location"
+            android:layout_width="match_parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar_separator"
             android:layout_marginTop="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/deliveryLocationConstLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:paddingVertical="@dimen/eight_dp"
-            android:paddingStart="@dimen/seven_dp">
-
-            <ImageView
-                android:id="@+id/imgDelivery"
-                android:layout_width="@dimen/twenty_six_dp"
-                android:layout_height="@dimen/twenty_six_dp"
-                android:layout_marginStart="@dimen/twenty_four_dp"
-                android:layout_marginTop="@dimen/eighteen_dp"
-                android:layout_marginBottom="@dimen/eighteen_dp"
-                android:src="@drawable/ic_delivery_circle"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tvDeliveryTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:fontFamily="@font/opensans_regular"
-                android:gravity="top"
-                android:text="@string/standard_delivery"
-                android:textColor="@color/black"
-                android:textSize="@dimen/eleven_sp"
-                app:layout_constraintBottom_toTopOf="@+id/tvDeliverySubtitle"
-                app:layout_constraintStart_toEndOf="@id/imgDelivery"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
-
-            <TextView
-                android:id="@+id/tvDeliverySubtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginTop="@dimen/two_dp"
-                android:fontFamily="@font/opensans_semi_bold"
-                android:gravity="center"
-                android:lineHeight="@dimen/sixteen_dp"
-                android:text="@string/cart_default_location"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/thirteen_sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/imgDelivery"
-                app:layout_constraintTop_toBottomOf="@+id/tvDeliveryTitle" />
-
-            <ImageView
-                android:id="@+id/iconLocationRight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="@dimen/eighteen_dp"
-                android:layout_marginEnd="@dimen/twenty_six_dp"
-                android:layout_marginBottom="@dimen/eighteen_dp"
-                android:src="@drawable/ic_caret_black"
-                app:layout_constraintBottom_toBottomOf="@id/tvDeliveryTitle"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tvDeliverySubtitle" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="wrap_content"/>
 
         <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/deliveryLocationConstLayout"
+            app:layout_constraintTop_toBottomOf="@id/fulfilmentAndLocationLayout"
             app:layout_constraintStart_toStartOf="parent"
             android:fillViewport="true">
             <LinearLayout
@@ -205,7 +143,6 @@
                     android:id="@+id/rcvShoppingListItems"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/eight_dp"
                     android:overScrollMode="never"
                     android:background="@color/transparent"
                     tools:itemCount="3"
@@ -237,11 +174,11 @@
             tools:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/deliveryLocationConstLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/fulfilmentAndLocationLayout" />
 
         <LinearLayout
             tools:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/deliveryLocationConstLayout"
+            app:layout_constraintTop_toBottomOf="@id/fulfilmentAndLocationLayout"
             app:layout_constrainedHeight="true"
             android:layout_marginTop="@dimen/eight_dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -371,7 +308,7 @@
 
         <RelativeLayout
             android:id="@+id/no_connection_layout"
-            app:layout_constraintTop_toBottomOf="@id/deliveryLocationConstLayout"
+            app:layout_constraintTop_toBottomOf="@id/fulfilmentAndLocationLayout"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
