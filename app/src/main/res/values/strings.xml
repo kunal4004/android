@@ -3219,27 +3219,5 @@
     <string name="please_enter_a_review_title.">Please enter a review title.</string>
     <string name="please_enter_a_display_name.">Please enter a display name.</string>
     <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
-    <string name="barcode_generated">Barcode Generated</string>
-    <string name="endless_aisle_order_error_label">Unfortunately, your online order has been cancelled because your barcode has expired.</string>
-    <string name="endless_aisle_barcode_title">Scan Your Barcode At The Till Point</string>
-    <string name="endless_aisle_barcode_desc">Scan your barcode at the till point for in store payments. Barcode expires when the store closes.</string>
-    <string name="by_submitting_you_agree_to_our">By submitting, you agree to our</string>
-    <string name="terms_and_Conditions_for_write_a_review">Terms and Conditions.</string>
-
-    <string name="choose_a_timeslot">Choose a timeslot</string>
-    <string name="date_picker_today">Today</string>
-    <string name="date_picker_tomorrow">Tomorrow</string>
-    <string name="navigate_up">"Navigate up"</string>
-    <string name="day_slot">"day_lot_"</string>
-    <string name="month_slot">"month_slot_"</string>
-    <string name="day_and_Time_slot">"day_And_Time_Slot_"</string>
-    <string name="choose_time_slot">"lableChooseTimeSlot"</string>
-    <string name="time_slot">"timeSlot_"</string>
-    <string name="check_box">"check_Box_"</string>
-    <string name="button_confirm_delivery">"button_Confirm"</string>
-    <!--    // Tooltip-->
-    <string name="description_tooltip">
-    <![CDATA[• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect]]>
-</string>
-
+    <string name="huawei_push_token">Huawei Push Token</string>
 </resources>
