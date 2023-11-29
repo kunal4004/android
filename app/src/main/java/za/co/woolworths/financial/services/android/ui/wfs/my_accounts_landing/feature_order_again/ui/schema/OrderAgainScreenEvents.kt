@@ -21,7 +21,7 @@ sealed class OrderAgainScreenEvents {
 
     data class ListItemRevealed(val item: ProductItem): OrderAgainScreenEvents()
     data class ListItemCollapsed(val item: ProductItem): OrderAgainScreenEvents()
-    data class OnSwipeDeleteAction(val item: ProductItem): OrderAgainScreenEvents()
+    data class OnSwipeAddAction(val item: ProductItem): OrderAgainScreenEvents()
 
     data class ChangeProductQuantityBy(
         val count: Int = 0,

@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.domain.usecase.AddToCartUC
 import za.co.woolworths.financial.services.android.domain.usecase.MultiSkuInventoryUC
 import za.co.woolworths.financial.services.android.domain.usecase.OrderAgainUC
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory
 import za.co.woolworths.financial.services.android.models.dto.order_again.Item
 import za.co.woolworths.financial.services.android.models.dto.order_again.OrderAgainResponse
@@ -62,7 +63,15 @@ class OrderAgainViewModel @Inject constructor(
                 onChangeProductQuantity(events.count, events.item)
             }
 
-            OrderAgainScreenEvents.AddToCartClicked -> onAddToCartClicked()
+            OrderAgainScreenEvents.AddToCartClicked -> {
+                val items = _orderAgainUiState.value.orderList
+                    .filter { it.isSelected }
+                    .map { it.toAddItemToCart() }
+                onAddToCartClicked(items)
+            }
+            is OrderAgainScreenEvents.OnSwipeAddAction -> {
+                onAddToCartClicked(listOf(events.item.toAddItemToCart()))
+            }
             is OrderAgainScreenEvents.ListItemRevealed -> addToRevealItems(events.item)
             is OrderAgainScreenEvents.ListItemCollapsed -> collapseRevealItems(events.item)
 
@@ -74,11 +83,11 @@ class OrderAgainViewModel @Inject constructor(
         }
     }
 
-    private fun onAddToCartClicked() {
+    private fun onAddToCartClicked(items: List<AddItemToCart>) {
         viewModelScope.launch {
-            val items = _orderAgainUiState.value.orderList
-                .filter { it.isSelected }
-                .map { it.toAddItemToCart() }
+            if(items.isEmpty()) {
+                return@launch
+            }
 
             addToCartUC(items).collectLatest {
                 when (it.status) {
@@ -158,7 +167,9 @@ class OrderAgainViewModel @Inject constructor(
         viewModelScope.launch {
             _orderAgainUiState.update {
                 val newList = it.revealedList.toMutableList()
-                newList.add(item.id)
+                if(item.quantityInStock > 1) {
+                    newList.add(item.id)
+                }
                 it.copy(revealedList = newList)
             }
         }
@@ -210,16 +221,7 @@ class OrderAgainViewModel @Inject constructor(
                 var textDeliveryLocation = ""
                 val deliveryTypeResource: Int = when (Delivery.getType(deliveryType)) {
                     Delivery.STANDARD -> {
-
-//                        val fullAddress = KotlinUtils.capitaliseFirstLetter(address?.address1 ?: "")
-//
-//                        val formmmatedNickName = KotlinUtils.getFormattedNickName(
-//                            address?.nickname,
-//                            fullAddress, context
-//                        )
-//
-//                        formmmatedNickName.append(fullAddress)
-                        textDeliveryLocation = address?.nickname?.plus(address.address1) ?: ""
+                        textDeliveryLocation = address?.nickname ?: ""
                         R.string.standard_delivery
                     }
 
@@ -279,7 +281,12 @@ class OrderAgainViewModel @Inject constructor(
 
                         Status.ERROR -> state.copy(screenState = OrderAgainScreenState.ShowErrorScreen)
 
-                        Status.LOADING -> state.copy(screenState = OrderAgainScreenState.Loading)
+                        Status.LOADING -> state.copy(
+                            screenState = OrderAgainScreenState.Loading,
+                            headerState = state.headerState.copy(
+                                rightButtonRes = R.string.empty
+                            )
+                        )
                     }
                 }
             }

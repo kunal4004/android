@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment
+import za.co.woolworths.financial.services.android.ui.fragments.order_again.OrderAgainFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_AGAIN_LOGIN
@@ -266,6 +267,7 @@ class SubCategoryFragment :
     override fun onOrderAgainClicked() {
         if(SessionUtilities.getInstance().isUserAuthenticated) {
             // TODO: Implement and navigate user to Order Again List screen.
+            pushFragment(OrderAgainFragment())
         } else {
             ScreenManager.presentSSOSignin(requireActivity(), REQUEST_CODE_ORDER_AGAIN_LOGIN)
         }
