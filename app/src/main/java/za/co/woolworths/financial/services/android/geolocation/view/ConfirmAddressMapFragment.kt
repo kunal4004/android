@@ -614,7 +614,7 @@ class ConfirmAddressMapFragment :
                             // navigate to Dash home tab.
                             activity?.setResult(Activity.RESULT_OK)
                             activity?.finish()
-                            deliveryType?.let { setLocationEvent(it) }
+                             setLocationEvent(deliveryType,newDeliveryType)
                         }
                     }
                 }

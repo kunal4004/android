@@ -892,7 +892,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             // navigate to shop/list/cart tab
             sendResult()
         }
-        deliveryType?.let { setLocationEvent(it) }
+       setLocationEvent()
     }
 
     private fun getLiquorOrder(): Boolean {
@@ -1124,5 +1124,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+    private fun setLocationEvent(){
+        setLocationEvent(deliveryType,newDeliveryType)
     }
 }

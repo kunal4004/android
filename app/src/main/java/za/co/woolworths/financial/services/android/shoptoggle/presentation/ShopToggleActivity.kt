@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
@@ -221,6 +222,7 @@ class ShopToggleActivity : ComponentActivity() {
                                             sendResultBack(this@ShopToggleActivity, delivery = deliveryType, needRefresh = true)
                                         }
                                     }
+                                    deliveryType?.let { switchDeliverModeEvent(it) }
                                 }
                             }
                         }

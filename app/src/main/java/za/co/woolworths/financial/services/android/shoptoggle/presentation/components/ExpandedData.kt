@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.shoptoggle.presentation.viewm
 import za.co.woolworths.financial.services.android.ui.wfs.theme.*
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchBrowseModeEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,6 +44,7 @@ fun ExpandedData(
     var showSetLocationBottomSheet by remember { mutableStateOf(false) }
 
     if (isExpanded) {
+        switchBrowseModeEvent(item.deliveryType)
         Spacer(modifier = Modifier.height(Dimens.sixteen_dp))
         Divider(color = ColorD8D8D8, thickness = Dimens.oneDp)
         Spacer(modifier = Modifier.height(Dimens.sixteen_dp))

@@ -86,6 +86,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.fromShopWithSetDeliveryBrowseMode
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -188,7 +189,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             DASH_DELIVERY_BROWSE_MODE,
             dashParams
         )
-    }
+      }
 
     private fun setEventsForSwitchingBrowsingType(browsingType: String?) {
         if (KotlinUtils.getPreferredDeliveryType() == null) {
@@ -758,6 +759,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         needToDisplayTooltip = true
                         executeValidateSuburb()
                     }
+                    setAnalyticsBrowsingDeliveryEvent()
                 } else {
                     //DO nothing here, will keep the standard selected by default
                     //Just Browsing or Not Now for set location
@@ -1172,6 +1174,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
     }
 
-
+private fun setAnalyticsBrowsingDeliveryEvent()
+{ fromShopWithSetDeliveryBrowseMode(KotlinUtils.browsingDeliveryType?.type,
+    getDeliveryType()?.deliveryType)
+}
 
 }

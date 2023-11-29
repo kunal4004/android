@@ -53,6 +53,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEED_STORE_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -434,6 +435,7 @@ class ClickAndCollectStoresFragment :
     }
 
     private fun sendResult() {
+        switchDeliverModeEvent(Delivery.CNC.toString())
         activity?.setResult(Activity.RESULT_OK)
         activity?.finish()
     }
