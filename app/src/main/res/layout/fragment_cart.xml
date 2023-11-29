@@ -98,75 +98,11 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/deliveryLocationConstLayout"
+                <include
+                    android:id="@+id/fulfilmentAndLocationLayout"
+                    layout="@layout/layout_fulfilment_and_location"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/eight_dp"
-                    android:layout_marginStart="@dimen/seven_dp">
-
-                    <ImageView
-                        android:id="@+id/imgCartDelivery"
-                        android:layout_width="@dimen/thirty_two_dp"
-                        android:layout_height="@dimen/thirty_two_dp"
-                        android:layout_margin="@dimen/five_dp"
-                        android:layout_marginStart="@dimen/twenty_six_dp"
-                        android:layout_marginTop="@dimen/eighteen_dp"
-                        android:layout_marginBottom="@dimen/eighteen_dp"
-                        android:src="@drawable/ic_delivery_circle"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvDeliveryTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/ten_dp"
-                        android:fontFamily="@font/opensans_regular"
-                        android:gravity="top"
-                        android:text="@string/standard_delivery"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/eleven_sp"
-                        app:layout_constraintBottom_toTopOf="@+id/tvDeliverySubtitle"
-                        app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_chainStyle="packed" />
-
-                    <TextView
-                        android:id="@+id/tvDeliverySubtitle"
-                        android:layout_width="@dimen/zero_dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/ten_dp"
-                        android:layout_marginTop="@dimen/two_dp"
-                        android:layout_marginEnd="@dimen/sixteen_dp"
-                        android:fontFamily="@font/opensans_semi_bold"
-                        android:lineHeight="@dimen/sixteen_dp"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:text="@string/cart_default_location"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/thirteen_sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/iconLocationRight"
-                        app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
-                        app:layout_constraintTop_toBottomOf="@+id/tvDeliveryTitle" />
-
-                    <ImageView
-                        android:id="@+id/iconLocationRight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginTop="@dimen/eighteen_dp"
-                        android:layout_marginEnd="@dimen/twenty_six_dp"
-                        android:layout_marginBottom="@dimen/eighteen_dp"
-                        android:src="@drawable/ic_caret_black"
-                        app:layout_constraintBottom_toBottomOf="@id/tvDeliveryTitle"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tvDeliverySubtitle" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_height="wrap_content"/>
 
                 <include
                     android:id="@+id/cart_item_limits_banner"

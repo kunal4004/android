@@ -117,8 +117,10 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDia
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog;
 import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
 import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
@@ -448,7 +450,11 @@ public class Utils {
         ((AppCompatActivity) context).overridePendingTransition(0, 0);
     }
 
-    public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description) {
+    public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, boolean isOutOfStockDialog) {
+        if (isOutOfStockDialog) {
+            // Firebase event to be triggered when displaying the out of stock dialog
+            FirebaseAnalyticsEventHelper.INSTANCE.outOfStock();
+        }
         Intent openMsg = new Intent(context, CustomPopUpWindow.class);
         Bundle args = new Bundle();
         args.putSerializable("key", key);
@@ -1252,9 +1258,7 @@ public class Utils {
         return AppInstanceObject.get().featureWalkThrough.showTutorials;
     }
 
-
-
-    public static boolean isFeatureTutorialsDismissed(WMaterialShowcaseView wMaterialShowcaseView) {
+    public static boolean isFeatureTutorialsDismissed(TooltipDialog wMaterialShowcaseView) {
         if (wMaterialShowcaseView == null)
             return true;
         else

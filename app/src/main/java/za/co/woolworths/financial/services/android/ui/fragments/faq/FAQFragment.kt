@@ -60,10 +60,12 @@ class FAQFragment : BaseFragmentBinding<FaqFragmentBinding>(FaqFragmentBinding::
             showBackNavigationIcon(true)
             setToolbarBackgroundDrawable(R.drawable.appbar_background)
             setTitle(getString(R.string.drawer_faq))
+            setToolbarContentDescription(getString(R.string.toolbar_text))
             showToolbar()
         }
 
         (activity as? MyAccountActivity)?.setToolbarTitle(activity?.resources?.getString(R.string.drawer_faq))
+        (activity as? MyAccountActivity)?.setToolbarTitle(getString(R.string.toolbar_text))
 
     }
 

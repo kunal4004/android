@@ -75,6 +75,7 @@ object AppConfigSingleton {
     var enableWriteReviews: EnableWriteReview? = null
 
     var enhanceSubstitution: EnhanceSubstitution? = null
+    var endlessAisle: EndlessAisle? = null
     @JvmStatic
     var searchApiSettings: SearchApiSettings? = null
     var glassBox: GlassBox? = null
@@ -241,6 +242,7 @@ object AppConfigSingleton {
 
             this.tooltipSettings = appConfig.toolTipSettings
             this.enhanceSubstitution = appConfig.enhanceSubstitution
+            this.endlessAisle = appConfig.endlessAisle
 
             appConfig.ratingsAndReviews?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
