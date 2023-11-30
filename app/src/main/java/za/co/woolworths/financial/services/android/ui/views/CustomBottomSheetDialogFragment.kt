@@ -146,7 +146,6 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                         ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf()
                 )
                 dismiss()
-             //   UpdateScreenLiveData.value=1
             }
 
             R.id.tvDismiss -> {

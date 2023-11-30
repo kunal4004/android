@@ -353,10 +353,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         if(isVisible) {
             UpdateScreenLiveData.observe(viewLifecycleOwner) {
                 if (it == updateUnsellableLiveData)
-                { UpdateScreenLiveData.value = resetUnsellableLiveData
-                    viewModel.getShoppingListDetails()
+                {   viewModel.getShoppingListDetails()
                     setDeliveryLocation()
                     switchDeliverModeEvent(KotlinUtils.getDeliveryType()?.deliveryType)
+                    UpdateScreenLiveData.value = resetUnsellableLiveData
                 }
             }
         }

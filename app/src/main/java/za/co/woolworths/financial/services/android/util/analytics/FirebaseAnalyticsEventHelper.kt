@@ -482,7 +482,7 @@ object FirebaseAnalyticsEventHelper {
             putString(BROWSE_MODE,browseMode)
             putString(DELIVERY_MODE, deliveryMode)
         }
-       // AnalyticsManager.logEvent(SET_Location, analyticsParams)
+        AnalyticsManager.logEvent(SET_Location, analyticsParams)
     }
 
     fun fromShopWithSetDeliveryBrowseMode(browseMode:String?, deliveryMode: String?) {

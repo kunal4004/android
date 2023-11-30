@@ -286,9 +286,9 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         }
 
 
-        setFragmentResultListener(ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
-            UpdateScreenLiveData.value= updateUnsellableLiveData
-        }
+//        setFragmentResultListener(ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+//            UpdateScreenLiveData.value= updateUnsellableLiveData
+//        }
 
 
     }
@@ -794,6 +794,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         val toggleFulfilmentResultWithUnsellable =
             UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
         if (toggleFulfilmentResultWithUnsellable != null) {
+            refreshScreen()
             UnsellableAccess.navigateToUnsellableItemsFragment(
                 ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
                 toggleFulfilmentResultWithUnsellable.deliveryType, confirmAddressViewModel,

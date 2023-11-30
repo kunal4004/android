@@ -37,8 +37,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
 import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 
 /**
  * Created by Kunal Uttarwar on 26/05/21.
