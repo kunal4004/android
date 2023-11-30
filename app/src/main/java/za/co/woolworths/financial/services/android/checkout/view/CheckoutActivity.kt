@@ -34,6 +34,8 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
 import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 
 /**
  * Created by Kunal Uttarwar on 26/05/21.
@@ -302,6 +304,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         UpdateScreenLiveData.observe(this) {
             if(it==1)
             { UpdateScreenLiveData.value=0
+                switchDeliverModeEvent(KotlinUtils.getDeliveryType()?.deliveryType)
                 onBackPressed()
             }
         }

@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.util
 
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
-
 class BundleKeysConstants {
 
     companion object {
@@ -22,6 +20,7 @@ class BundleKeysConstants {
         const val STORE_ID = "STORE_ID"
         const val DELIVERY_CNC = "CNC"
         const val IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN = "new_toggle"
+        const val IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC = "new_toggle_switch_cnc"
         const val LOCATION_UPDATE_REQUEST = "location_update_request"
         const val NEED_STORE_SELECTION = "store_selection"
         const val KEY_PLACE_ID = "placeId"

@@ -43,6 +43,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     private var navHostFragment = NavHostFragment()
     private var needStoreSelection: Boolean = false
     private var isFromNewToggleFulfilmentScreen: Boolean = false
+    private var isFromNewToggleFulfilmentScreenSwitchCnc: Boolean = false
     private var isLocationUpdateRequest: Boolean = false
     private var validateLocationResponse: ValidateLocationResponse? = null
 
@@ -58,6 +59,8 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
             isComingFromCheckout =  this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
             isComingFromSlotSelection =  this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isFromNewToggleFulfilmentScreen = this.getBoolean(BundleKeysConstants.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
+            isFromNewToggleFulfilmentScreenSwitchCnc = this.getBoolean(BundleKeysConstants.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC, false)
+
             isLocationUpdateRequest = this.getBoolean(BundleKeysConstants.LOCATION_UPDATE_REQUEST, false)
             needStoreSelection = this.getBoolean(NEED_STORE_SELECTION, false)
             if (bundle?.containsKey(BundleKeysConstants.VALIDATE_RESPONSE) == true) {

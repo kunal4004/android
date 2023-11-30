@@ -129,6 +129,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Dynam
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAndLocation
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.Utils.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 
 @AndroidEntryPoint
 class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBinding::inflate),
@@ -2445,6 +2446,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             UpdateScreenLiveData.observe(viewLifecycleOwner) {
                 if (it == 1) {
                     loadShoppingCart()
+                    switchDeliverModeEvent(KotlinUtils.getDeliveryType()?.deliveryType)
                     UpdateScreenLiveData.value = 0
                 }
             }

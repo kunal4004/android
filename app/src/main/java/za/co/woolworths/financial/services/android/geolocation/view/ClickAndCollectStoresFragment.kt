@@ -49,10 +49,12 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_CNC
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEED_STORE_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.setLocationEvent
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseDialogFragmentBinding
@@ -73,6 +75,7 @@ class ClickAndCollectStoresFragment :
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
     private var isComingFromNewToggleFulfilment: Boolean? = false
+    private var isFromNewToggleFulfilmentScreenSwitchCnc: Boolean = false
     private var needStoreSelection: Boolean? = false
     private var unSellableCommerceItems: List<UnSellableCommerceItem> = emptyList()
     private var isComingFromCheckout: Boolean = false
@@ -98,6 +101,8 @@ class ClickAndCollectStoresFragment :
         bundle?.apply {
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromNewToggleFulfilment = this.getBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
+            isFromNewToggleFulfilmentScreenSwitchCnc = this.getBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC, false)
+
             needStoreSelection = this.getBoolean(NEED_STORE_SELECTION, false)
             isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD, false)
             isComingFromSlotSelection = getBoolean(BundleKeysConstants.IS_COMING_FROM_SLOT_SELECTION, false) ?: false
@@ -435,9 +440,12 @@ class ClickAndCollectStoresFragment :
     }
 
     private fun sendResult() {
-        switchDeliverModeEvent(Delivery.CNC.toString())
-        activity?.setResult(Activity.RESULT_OK)
-        activity?.finish()
+        if(isFromNewToggleFulfilmentScreenSwitchCnc)
+         switchDeliverModeEvent(Delivery.CNC.toString())
+        else
+         setLocationEvent(KotlinUtils.browsingDeliveryType?.type,KotlinUtils.getDeliveryType()?.deliveryType)
+         activity?.setResult(Activity.RESULT_OK)
+         activity?.finish()
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

@@ -3118,7 +3118,7 @@
     <string name="use_dash_delivery">Use Dash delivery</string>
     <string name="set_to_dash_delivery">SET TO DASH DELIVERY</string>
     <string name="use_click_collect">use click &amp; collect</string>
-    <string name="earliest_click_and_collect">Earliest Click &amp; Collect Dates:</string>
+    <string name="earliest_click_and_collect">Latest Click &amp; Collect Dates:</string>
     <string name="collect_fashion_food">Collect FASHION, BEAUTY, HOME AND food</string>
     <string name="set_to_click_and_collect">SET TO CLICK &amp; COLLECT</string>
     <string name="back_arrow"> Back Arrow</string>

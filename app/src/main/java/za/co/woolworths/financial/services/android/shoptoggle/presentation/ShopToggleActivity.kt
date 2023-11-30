@@ -240,6 +240,7 @@ class ShopToggleActivity : ComponentActivity() {
                 ?: KotlinUtils.browsingDeliveryType,
             KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
             isFromNewToggleFulfilmentScreen = true,
+            isFromNewToggleFulfilmentScreenSwitchCnc =true,
             newDelivery = Delivery.CNC,
             needStoreSelection = true,
             validateLocationResponse = viewModel.validateLocationResponse()
