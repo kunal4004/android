@@ -149,6 +149,8 @@ class AppConstant {
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
         const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
 
+        const val actionItemTnC = "ACTION_ITEMS_TnC"
+
         // Shop Landing Standard / CnC
         const val FOOD_CATEGORY_ID = "cat606520"
     }

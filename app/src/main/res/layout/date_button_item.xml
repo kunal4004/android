@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dateContainer"
+    android:layout_width="@dimen/hundred_dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/eight_dp"
+    android:layout_marginEnd="@dimen/eight_dp"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="@dimen/fifteen_dp">
+
+    <TextView
+        android:id="@+id/dayText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/opensans_bold"
+        tools:text="Tomorrow"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp" />
+
+    <TextView
+        android:id="@+id/dateText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/opensans_regular"
+        tools:text="30 April"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp" />
+</LinearLayout>

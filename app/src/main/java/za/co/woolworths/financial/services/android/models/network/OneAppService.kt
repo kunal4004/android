@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -83,7 +84,6 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse
 import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
 import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestType
 import za.co.woolworths.financial.services.android.models.dto.account.FeatureEnablementModel
-import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
 import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
 import za.co.woolworths.financial.services.android.models.dto.account.getRequestBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
@@ -651,9 +651,6 @@ open class OneAppService(
         }
     }
 
-    fun getShoppingCart(): Call<ShoppingCartResponse> {
-        return mApiInterface.getShoppingCart(getSessionToken(), getDeviceIdentityToken())
-    }
 
     suspend fun getShoppingCartV2() : retrofit2.Response<ShoppingCartResponse>{
         return withContext(Dispatchers.IO){
@@ -869,7 +866,7 @@ open class OneAppService(
         body: OrderToShoppingListRequestBody
     ): retrofit2.Response<OrderToListReponse> = mApiInterface.addToListByOrderId(
         getSessionToken(), getDeviceIdentityToken(), orderId, body
-    ).execute()
+    )
 
     fun getOrderTaxInvoice(taxNoteNumber: String): Call<OrderTaxInvoiceResponse> {
         return mApiInterface.getTaxInvoice(
@@ -1297,13 +1294,6 @@ open class OneAppService(
         )
     }
 
-    fun getFicaResponse(): Call<FicaModel> {
-        return mApiInterface.getFica(
-            getSessionToken(),
-            getDeviceIdentityToken()
-        )
-    }
-
     fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse> {
         return mApiInterface.confirmLocation(
             "",
@@ -1383,6 +1373,17 @@ open class OneAppService(
             getSessionToken(),
             getDeviceIdentityToken(),
             dyPrepareChangeAttributeRequestEvent
+        )
+    }
+
+    fun verifyUserIsInStore(latitude: Double, longitude: Double): Call<UserLocationResponse> {
+        return mApiInterface.verifyUserIsInStore(
+                "",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                latitude,
+                longitude
         )
     }
 

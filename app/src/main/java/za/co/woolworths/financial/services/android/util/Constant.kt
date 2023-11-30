@@ -18,5 +18,6 @@ class Constant {
         const val ALL_WOOL_WORTHS_PRODUCTS_ONLY="All Woolworths Products"
         const val PARGO="pargo"
         const val AUTO_SHOPPING_LIST_NAME = "Saved Shopping"
+        const val IS_MIXED_BASKET = "is Mixed Basket"
     }
 }
