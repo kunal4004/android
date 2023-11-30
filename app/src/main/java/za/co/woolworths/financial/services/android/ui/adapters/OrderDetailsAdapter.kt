@@ -249,7 +249,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                 val status by remember { mutableStateOf(orderStatus.ifEmpty { state }) }
                                 val error by remember { mutableStateOf(errorLabel) }
                                 OrderState(
-                                    stringResource(R.string.order_id, it.orderId?.replaceFirstChar { it.uppercase() } ?: ""),
+                                    stringResource(R.string.order_id, it.orderId ?: ""),
                                     status.replace(context.getString(R.string.order), "").uppercase(),
                                     error,
                                     background
