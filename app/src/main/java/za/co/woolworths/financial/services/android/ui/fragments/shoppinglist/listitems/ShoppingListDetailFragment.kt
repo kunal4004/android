@@ -935,7 +935,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
             )
         }
-
     }
 
     override fun onPause() {

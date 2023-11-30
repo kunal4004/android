@@ -10,7 +10,6 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCustomBottomsheetDialogBinding
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
@@ -140,7 +139,6 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buttonAction -> {
-
                 setFragmentResult(
                     arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
                         ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf()

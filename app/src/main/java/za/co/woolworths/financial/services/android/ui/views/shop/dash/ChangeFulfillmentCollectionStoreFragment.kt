@@ -75,7 +75,6 @@ class ChangeFulfillmentCollectionStoreFragment :
         requireActivity().supportFragmentManager.setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT,viewLifecycleOwner) { _, _ ->
             UpdateScreenLiveData.value=updateUnsellableLiveData
             }
-
     }
 
     override fun onResume() {

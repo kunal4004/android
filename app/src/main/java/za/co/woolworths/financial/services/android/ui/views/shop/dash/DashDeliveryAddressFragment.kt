@@ -241,7 +241,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun addFragmentListner() {
-
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             isQuickShopClicked = true
@@ -264,9 +263,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
             UpdateScreenLiveData.value=updateUnsellableLiveData
         }
-
-
-
     }
 
     private fun callValidatePlace(placeId: String?) {
@@ -1231,19 +1227,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             AppConfigSingleton.productItemForLiquorInventory = productList
             return
         }
-
-        // Now first check for if delivery location and browsing location is same.
-        // if same no issues. If not then show changing delivery location popup.
-        //comment this code not using in latest code
-//        if (!getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
-//            if (isFragmentAttached()) {
-//                KotlinUtils.showChangeDeliveryTypeDialog(
-//                    requireContext(), requireFragmentManager(),
-//                    KotlinUtils.browsingDeliveryType
-//                )
-//                return
-//            }
-//        }
         addToCart(addItemToCart)
     }
 

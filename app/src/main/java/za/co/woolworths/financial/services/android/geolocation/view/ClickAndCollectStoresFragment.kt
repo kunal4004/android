@@ -102,7 +102,6 @@ class ClickAndCollectStoresFragment :
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromNewToggleFulfilment = this.getBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
             isFromNewToggleFulfilmentScreenSwitchCnc = this.getBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC, false)
-
             needStoreSelection = this.getBoolean(NEED_STORE_SELECTION, false)
             isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD, false)
             isComingFromSlotSelection = getBoolean(BundleKeysConstants.IS_COMING_FROM_SLOT_SELECTION, false) ?: false

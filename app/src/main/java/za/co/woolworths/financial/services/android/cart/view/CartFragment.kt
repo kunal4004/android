@@ -1521,7 +1521,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         loadShoppingCartAndSetDeliveryLocation()
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_CART, activity)
-
     }
 
     override fun onPause() {

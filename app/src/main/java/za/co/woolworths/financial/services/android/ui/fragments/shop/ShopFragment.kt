@@ -284,13 +284,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             updateTabIconUI(currentTabPositionBasedOnDeliveryType())
             viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
         }
-
-
-//        setFragmentResultListener(ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
-//            UpdateScreenLiveData.value= updateUnsellableLiveData
-//        }
-
-
     }
 
     override fun onPause() {
@@ -472,7 +465,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                 setDeliveryView()
             }
         }
-
     }
 
     private fun updateCurrentTab(deliveryType: String?) {

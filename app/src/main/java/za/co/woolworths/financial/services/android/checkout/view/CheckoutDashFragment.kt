@@ -236,7 +236,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
         setFragmentResultListener(DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
             UpdateScreenLiveData.value= UnsellableAccess.updateUnsellableLiveData
         }
-
     }
 
     //LiquorCompliance

@@ -60,7 +60,6 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
             isComingFromSlotSelection =  this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isFromNewToggleFulfilmentScreen = this.getBoolean(BundleKeysConstants.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
             isFromNewToggleFulfilmentScreenSwitchCnc = this.getBoolean(BundleKeysConstants.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC, false)
-
             isLocationUpdateRequest = this.getBoolean(BundleKeysConstants.LOCATION_UPDATE_REQUEST, false)
             needStoreSelection = this.getBoolean(NEED_STORE_SELECTION, false)
             if (bundle?.containsKey(BundleKeysConstants.VALIDATE_RESPONSE) == true) {

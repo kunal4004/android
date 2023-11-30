@@ -19,7 +19,6 @@ class UnsellableAccess {
 
         var updateUnsellableLiveData: Int = 1
         var resetUnsellableLiveData: Int = 0
-
         public fun launchShopToggleScreen(autoNavigation: Boolean = false,activity:FragmentActivity) {
             Intent(activity, ShopToggleActivity::class.java).apply {
                 putExtra(BundleKeysConstants.TOGGLE_FULFILMENT_AUTO_NAVIGATION, autoNavigation)
