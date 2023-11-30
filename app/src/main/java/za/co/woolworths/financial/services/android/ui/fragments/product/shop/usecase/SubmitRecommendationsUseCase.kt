@@ -21,7 +21,7 @@ class SubmitRecommendationsUseCase @Inject constructor(
 
     suspend operator fun invoke(submittedOrderResponse: SubmittedOrderResponse): Resource<RecommendationResponse> {
         val recommendationRequest = prepareSubmitRecommendationRequest(submittedOrderResponse)
-        return recommendationsRepository.getRecommendationResponse(recommendationRequest)
+        return recommendationsRepository.getRecommendationResponse(recommendationRequest, false, null)
     }
 
     private fun prepareSubmitRecommendationRequest(response: SubmittedOrderResponse): RecommendationRequest? {
