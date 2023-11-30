@@ -1326,7 +1326,7 @@ open class OneAppService(
 
     suspend fun recommendation(recommendationRequest: RecommendationRequest, requestData: Boolean, fulfillmentStoreId: String?): retrofit2.Response<RecommendationResponse> {
         return withContext(Dispatchers.IO) {
-            if (requestData) {
+            if (requestData && !fulfillmentStoreId.isNullOrEmpty()) {
                 mApiInterface.recommendation(
                     getSessionToken(),
                     getDeviceIdentityToken(),
