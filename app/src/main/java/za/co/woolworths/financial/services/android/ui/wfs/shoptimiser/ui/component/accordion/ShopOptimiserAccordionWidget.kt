@@ -3,15 +3,26 @@ package za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.compon
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import za.co.woolworths.financial.services.android.ui.wfs.core.NetworkStatusUI
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.dto.ShopOptimiserVisibleUiType
-import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.helper.enterExpandVerticallyFadeInAnimation
-import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.helper.exitShrinkVerticallyFadeOutAnimation
+import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.helper.ShopOptimiserConstant
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.component.standalone.ShopOptimiserPayFlexStandAloneUI
 import za.co.woolworths.financial.services.android.ui.wfs.shoptimiser.ui.viewmodel.ShopOptimiserViewModel
 /**
@@ -39,15 +50,30 @@ fun ShopOptimiserViewModel.ShopOptimiserAccordionWidget() {
 @Composable
 private fun ShopOptimiserViewModel.ShopOptimiserAccordionUI() {
 
-    val enterTransition: EnterTransition = enterExpandVerticallyFadeInAnimation()
-    val exitTransition: ExitTransition = exitShrinkVerticallyFadeOutAnimation()
+
+    val enterTransition: EnterTransition  = remember {  expandVertically(
+        expandFrom = Alignment.Top,
+        animationSpec = tween(ShopOptimiserConstant.EXPAND_TRANSITION_DURATION)
+    ) + fadeIn(
+        initialAlpha = 0.3f,
+        animationSpec = tween(ShopOptimiserConstant.EXPAND_TRANSITION_DURATION)
+    )
+    }
+
+    val exitTransition: ExitTransition =  remember {
+        shrinkVertically(
+            shrinkTowards = Alignment.Top,
+            animationSpec = tween(ShopOptimiserConstant.EXPAND_TRANSITION_DURATION)
+        ) + fadeOut(
+            animationSpec = tween(ShopOptimiserConstant.EXPAND_TRANSITION_DURATION)
+        )
+    }
 
     val listOfProductsOnDisplay = remember { shoptimiserProductsList }
 
     Column {
         // Render the parent item for the accordion
         ShopOptimiserAccordionParentItem(viewModel = this@ShopOptimiserAccordionUI)
-
         // Animate visibility of the accordion content
         AnimatedVisibility(
             visible = isExpanded,
