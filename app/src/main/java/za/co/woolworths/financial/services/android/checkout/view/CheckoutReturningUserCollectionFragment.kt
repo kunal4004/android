@@ -1169,7 +1169,6 @@ class CheckoutReturningUserCollectionFragment :
                 }
             }
         )
-        activity?.finish()
     }
 
     private fun launchGeoLocationFlow() {
@@ -1232,7 +1231,8 @@ class CheckoutReturningUserCollectionFragment :
                 }
             }
         }
-        if (resultCode == Activity.RESULT_OK && requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE){
+        if (resultCode == Activity.RESULT_OK && (requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE
+                    || requestCode == COLLECTION_SLOT_SLECTION_REQUEST_CODE)){
             val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
             if(toggleFulfilmentResultWithUnsellable!=null){
                 UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
