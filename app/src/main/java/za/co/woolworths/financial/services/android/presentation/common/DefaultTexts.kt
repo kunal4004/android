@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.presentation.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,16 +13,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD0021B
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorFCF0F1
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
@@ -288,3 +296,44 @@ fun BlackRoundedCornerIcon(
         tint = tintColor
     )
 }
+
+
+@Composable
+fun PromotionalText(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    textDecoration: TextDecoration? = null
+) {
+    val annotationString = buildAnnotatedString {
+        val spanStyle = SpanStyle(
+            fontWeight = FontWeight.W600,
+            textDecoration = null
+        )
+        val promotionalSpanStyle = SpanStyle(
+            fontWeight = FontWeight.W500,
+            textDecoration = textDecoration
+        )
+        withStyle(spanStyle) {
+            append(stringResource(id = R.string.offer).uppercase())
+            append(stringResource(id = R.string.semicolon))
+            append(" ")
+        }
+        withStyle(promotionalSpanStyle) {
+            append(text)
+        }
+    }
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .background(ColorFCF0F1)
+            .padding(vertical = 8.dp, horizontal = 16.dp),
+        text = annotationString,
+        style = TextStyle(
+            fontFamily = FuturaFontFamily,
+            color = ColorD0021B,
+            fontSize = 11.sp,
+        )
+    )
+}
+

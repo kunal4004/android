@@ -33,7 +33,6 @@ import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,6 +71,7 @@ import za.co.woolworths.financial.services.android.presentation.common.HeaderVie
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansText14
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText10
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText13
+import za.co.woolworths.financial.services.android.presentation.common.PromotionalText
 import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
 import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationViewState
 import za.co.woolworths.financial.services.android.shoppinglist.view.SwipeListActionItem
@@ -93,9 +93,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.fe
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.OrderAgainViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color444444
-import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD0021B
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
-import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorFCF0F1
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ErrorLabel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
@@ -117,8 +115,8 @@ fun OrderAgainScreen(
     val context = LocalContext.current
 
     LaunchedEffect(context) {
-         viewModel.onScreenEvent.collect { onScreenEvent ->
-             when (onScreenEvent) {
+        viewModel.onScreenEvent.collect { onScreenEvent ->
+            when (onScreenEvent) {
                 is OrderAgainScreenEvents.HideBottomBar -> onEvent(onScreenEvent)
                 is OrderAgainScreenEvents.ShowSnackBar -> {
                     snackbarHostState.showSnackbar(
@@ -128,6 +126,7 @@ fun OrderAgainScreen(
                         withDismissAction = true
                     )
                 }
+
                 else -> {}
             }
         }
@@ -156,7 +155,7 @@ fun OrderAgainScreen(
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarHostState
-            ) {data ->
+            ) { data ->
                 SnackbarView(data, state.itemsToBeAddedCount, state.maxItemLimit)
             }
         }
@@ -165,6 +164,7 @@ fun OrderAgainScreen(
         OrderAgainStatelessScreen(Modifier.padding(it), state) { event ->
             when (event) {
                 OrderAgainScreenEvents.DeliveryLocationClick -> onEvent(event)
+                OrderAgainScreenEvents.StartShoppingClicked -> onEvent(event)
                 else -> viewModel.onEvent(event)
             }
         }
@@ -199,10 +199,13 @@ fun SnackbarView(
                     text = pluralStringResource(id = R.plurals.plural_add_to_cart, count, count),
                     color = White
                 )
-                if(KotlinUtils.isDeliveryOptionDash()) {
+                if (KotlinUtils.isDeliveryOptionDash()) {
                     SpacerHeight6dp(bgColor = Color.Transparent)
                     FuturaTextH8(
-                        text = stringResource(id = R.string.dash_item_limit_message, maxItem).uppercase(),
+                        text = stringResource(
+                            id = R.string.dash_item_limit_message,
+                            maxItem
+                        ).uppercase(),
                         color = White
                     )
                 }
@@ -225,7 +228,9 @@ private fun OrderAgainStatelessScreen(
         when (state.screenState) {
             OrderAgainScreenState.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize().background(White),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(White),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
@@ -233,7 +238,10 @@ private fun OrderAgainStatelessScreen(
                     )
                 }
             }
-            OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White))
+
+            OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White)){
+                onEvent(OrderAgainScreenEvents.StartShoppingClicked)
+            }
             OrderAgainScreenState.ShowOrderList -> {
                 OrderAgainList(
                     Modifier.weight(1f),
@@ -264,7 +272,8 @@ private fun OrderAgainStatelessScreen(
                 }
                 UnderlineButton(
                     Modifier.fillMaxWidth(),
-                    text = stringResource(id = state.resIdCopyToList)
+                    text = stringResource(id = state.resIdCopyToList),
+                    texColor = Black
                 ) {
                     onEvent(OrderAgainScreenEvents.CopyToListClicked)
                 }
@@ -306,7 +315,13 @@ fun DeliveryLocationView(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            OpenSansTitleText13(text = deliveryState.textDeliveryLocation)
+            OpenSansTitleText13(
+                text = deliveryState.textDeliveryLocation.ifEmpty {
+                    stringResource(
+                        id = deliveryState.textDeliveryLocationRes
+                    )
+                }
+            )
             BlackRoundedCornerIcon(
                 icon = R.drawable.ic_edit_black, tintColor = White
             ) {
@@ -424,20 +439,9 @@ fun ProductItemView(
 
         if (productItem.promotionalText.isNotEmpty()) {
             SpacerHeight24dp()
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .background(ColorFCF0F1)
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
+            PromotionalText(
                 text = productItem.promotionalText,
-                style = TextStyle(
-                    fontFamily = FuturaFontFamily,
-                    color = ColorD0021B,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.W500,
-                    textDecoration = TextDecoration.Underline
-                )
+                textDecoration = TextDecoration.Underline
             )
         }
     }
@@ -496,6 +500,10 @@ fun ProductItemDetails(
                 QuantitySelectionView(
                     modifier = Modifier.weight(1f, false),
                     productItem = productItem,
+                    leftIcon = if(productItem.quantity == 1) R.drawable.delete_24
+                    else R.drawable.ic_minus_black,
+                    leftIconEnabled = productItem.quantity > 1,
+                    rightIconEnabled = productItem.quantity < productItem.quantityInStock,
                     onLeftIconClick = {
                         onEvent(OrderAgainScreenEvents.ChangeProductQuantityBy(-1, productItem))
                     },
@@ -512,7 +520,9 @@ fun ProductItemDetails(
 fun QuantitySelectionView(
     modifier: Modifier = Modifier,
     leftIcon: Int = R.drawable.ic_minus_black,
+    leftIconEnabled: Boolean = false,
     rightIcon: Int = R.drawable.add_black,
+    rightIconEnabled: Boolean = false,
     productItem: ProductItem,
     onLeftIconClick: () -> Unit,
     onRightIconClick: () -> Unit
@@ -523,7 +533,7 @@ fun QuantitySelectionView(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircleIcon(leftIcon, ShimmerColor) {
+        CircleIcon(leftIcon, leftIconEnabled, ShimmerColor) {
             onLeftIconClick()
         }
         SpacerWidth8dp()
@@ -532,7 +542,7 @@ fun QuantitySelectionView(
             text = productItem.quantity.toString()
         )
         SpacerWidth8dp()
-        CircleIcon(rightIcon, ShimmerColor) {
+        CircleIcon(rightIcon,rightIconEnabled, ShimmerColor) {
             onRightIconClick()
         }
     }
@@ -540,7 +550,8 @@ fun QuantitySelectionView(
 
 @Composable
 fun EmptyScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
 
     Column(
@@ -576,7 +587,7 @@ fun EmptyScreen(
                 .padding(horizontal = 24.dp),
             text = stringResource(id = R.string.start_shopping).uppercase()
         ) {
-
+            onClick()
         }
     }
 
@@ -596,7 +607,7 @@ private fun PreviewOrderAgainScreen() {
 @Composable
 private fun PreviewEmptyScreen() {
     OneAppTheme {
-        EmptyScreen(Modifier.background(White))
+        EmptyScreen(Modifier.background(White)) {}
     }
 }
 

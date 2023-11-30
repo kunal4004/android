@@ -7,6 +7,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class DeliveryLocationViewState(
-    @StringRes val resDeliveryType: Int = R.string.empty,
-    val textDeliveryLocation: String = ""
+    @StringRes val resDeliveryType: Int = R.string.standard_delivery,
+    val textDeliveryLocation: String = "",
+    @StringRes val textDeliveryLocationRes: Int = R.string.default_location
 ) : Parcelable

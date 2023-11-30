@@ -217,35 +217,46 @@ class OrderAgainViewModel @Inject constructor(
 
     fun setDeliveryLocation() {
         viewModelScope.launch {
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.apply {
-                var textDeliveryLocation = ""
-                val deliveryTypeResource: Int = when (Delivery.getType(deliveryType)) {
-                    Delivery.STANDARD -> {
-                        textDeliveryLocation = address?.nickname ?: ""
-                        R.string.standard_delivery
-                    }
+            val fulfillmentDetails = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails
+            if(fulfillmentDetails != null) {
+                with(fulfillmentDetails) {
+                    var textDeliveryLocation = ""
+                    val deliveryTypeResource: Int = when (Delivery.getType(deliveryType)) {
+                        Delivery.STANDARD -> {
+                            textDeliveryLocation = address?.nickname ?: ""
+                            R.string.standard_delivery
+                        }
 
-                    Delivery.CNC -> {
-                        textDeliveryLocation = storeName ?: ""
-                        R.string.click_and_collect
-                    }
+                        Delivery.CNC -> {
+                            textDeliveryLocation = storeName ?: ""
+                            R.string.click_and_collect
+                        }
 
-                    Delivery.DASH -> {
-                        textDeliveryLocation =
-                            WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
-                                ?: address?.address1 ?: ""
-                        R.string.dash_delivery
-                    }
+                        Delivery.DASH -> {
+                            textDeliveryLocation =
+                                WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                    ?: address?.address1 ?: ""
+                            R.string.dash_delivery
+                        }
 
-                    null -> {
-                        R.string.standard_delivery
+                        null -> {
+                            R.string.standard_delivery
+                        }
+                    }
+                    _orderAgainUiState.update {
+                        it.copy(
+                            deliveryState = DeliveryLocationViewState(
+                                resDeliveryType = deliveryTypeResource,
+                                textDeliveryLocation = textDeliveryLocation.capitaliseFirstLetterInEveryWord()
+                            )
+                        )
                     }
                 }
-                _orderAgainUiState.update {
-                    it.copy(
-                        deliveryState = DeliveryLocationViewState(
-                            resDeliveryType = deliveryTypeResource,
-                            textDeliveryLocation = textDeliveryLocation.capitaliseFirstLetterInEveryWord()
+            } else {
+                _orderAgainUiState.update { state ->
+                    state.copy(
+                        headerState = state.headerState.copy(
+                            rightButtonRes = R.string.empty
                         )
                     )
                 }
@@ -258,6 +269,9 @@ class OrderAgainViewModel @Inject constructor(
             val plistId = KotlinUtils.extractPlistFromDeliveryDetails() ?: ""
             if (plistId.isEmpty()) {
                 FirebaseManager.logException(Exception("Invalid plistId on Order Again Api."))
+                _orderAgainUiState.update { state ->
+                    state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen)
+                }
                 return@launch
             }
 
@@ -431,7 +445,10 @@ class OrderAgainViewModel @Inject constructor(
 
     fun refreshInventory() {
         val productIds = orderAgainUiState.value.orderList.map { it.id }
-        if (productIds.isEmpty()) return
+        if (productIds.isEmpty()) {
+            callOrderAgainApi()
+            return
+        }
         callInventoryApi(productIds)
     }
 }

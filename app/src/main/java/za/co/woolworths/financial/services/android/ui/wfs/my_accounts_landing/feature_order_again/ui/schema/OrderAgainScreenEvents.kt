@@ -11,6 +11,7 @@ sealed class OrderAgainScreenEvents {
 
     // User interaction events
     object DeliveryLocationClick : OrderAgainScreenEvents()
+    object StartShoppingClicked : OrderAgainScreenEvents()
     object SelectAllClick : OrderAgainScreenEvents()
     object AddToCartClicked : OrderAgainScreenEvents()
     object CopyToListClicked : OrderAgainScreenEvents()
