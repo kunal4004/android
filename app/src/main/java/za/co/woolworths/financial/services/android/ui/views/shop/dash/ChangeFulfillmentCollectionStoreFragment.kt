@@ -1,15 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -46,6 +42,7 @@ import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreIn
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -73,10 +70,10 @@ class ChangeFulfillmentCollectionStoreFragment :
         this.saveInstanceState = savedInstanceState
         addObserver()
         requireActivity().supportFragmentManager.setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE,viewLifecycleOwner) { _, _ ->
-            UpdateScreenLiveData.value=1
+            UpdateScreenLiveData.value=updateUnsellableLiveData
         }
         requireActivity().supportFragmentManager.setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT,viewLifecycleOwner) { _, _ ->
-            UpdateScreenLiveData.value=1
+            UpdateScreenLiveData.value=updateUnsellableLiveData
             }
 
     }
