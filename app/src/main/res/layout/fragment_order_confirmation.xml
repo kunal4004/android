@@ -39,12 +39,14 @@
             <TextView
                 android:id="@+id/orderIdText"
                 style="@style/appToolbarStyle"
+                android:textAllCaps="false"
                 android:layout_gravity="center|center_vertical" />
 
             <ImageView
                 android:id="@+id/btnClose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/five_dp"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="@dimen/sixteen_dp"
                 android:src="@drawable/close_24"
