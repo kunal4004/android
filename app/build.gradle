@@ -425,6 +425,9 @@ dependencies {
     //leak canary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
     debugImplementation 'com.squareup.leakcanary:leakcanary-object-watcher-android:2.12'
+
+    // Compose image lib
+    implementation "io.coil-kt:coil-compose:2.4.0"
 }
 
 apply plugin: 'com.google.gms.google-services'

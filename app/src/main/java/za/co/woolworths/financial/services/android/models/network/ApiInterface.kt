@@ -36,6 +36,8 @@ import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDev
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
+import za.co.woolworths.financial.services.android.models.dto.order_again.OrderAgainRequestBody
+import za.co.woolworths.financial.services.android.models.dto.order_again.OrderAgainResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
@@ -1080,6 +1082,18 @@ interface ApiInterface {
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): retrofit2.Response<ShoppingListsResponse>
+
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json",
+    )
+    @POST("/wfs/app/recommendations/order-again")
+    suspend fun getOrderAgainList(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body body: OrderAgainRequestBody
+    ): retrofit2.Response<OrderAgainResponse>
 
     @Headers(
         "Content-Type: application/json",
