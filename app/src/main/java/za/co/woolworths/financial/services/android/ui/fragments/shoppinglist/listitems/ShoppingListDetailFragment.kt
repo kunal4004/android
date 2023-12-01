@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Spannable
@@ -53,7 +52,6 @@ import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
-import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
@@ -63,6 +61,8 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.resetUnsellableLiveData
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -87,7 +87,6 @@ import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDia
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
-import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
@@ -107,7 +106,10 @@ import za.co.woolworths.financial.services.android.util.PostItemToCart
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
@@ -350,10 +352,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private fun screenRefresh(){
         if(isVisible) {
             UpdateScreenLiveData.observe(viewLifecycleOwner) {
-                if (it == 1)
-                { UpdateScreenLiveData.value = 0
-                    viewModel.getShoppingListDetails()
+                if (it == updateUnsellableLiveData)
+                {   viewModel.getShoppingListDetails()
                     setDeliveryLocation()
+                    switchDeliverModeEvent(KotlinUtils.getDeliveryType()?.deliveryType)
+                    UpdateScreenLiveData.value = resetUnsellableLiveData
                 }
             }
         }
@@ -762,6 +765,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
             onItemDeleteApiCall()
         }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            UpdateScreenLiveData.value=updateUnsellableLiveData
+        }
     }
 
     override fun onDetach() {
@@ -929,7 +935,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
             )
         }
-        screenRefresh()
     }
 
     override fun onPause() {
@@ -1027,6 +1032,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
                     val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
                     if(toggleFulfilmentResultWithUnsellable!=null){
+                        screenRefresh()
                         UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
                             toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
                             bindingListDetails.loadingBar,this,parentFragmentManager)
@@ -1040,39 +1046,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     viewModel.getShoppingListDetails()
                 }
             }
-        }
-        if (resultCode == Activity.RESULT_OK && requestCode == ShopToggleActivity.REQUEST_DELIVERY_TYPE){
-            val toggleFulfilmentResultWithUnsellable=getToggleFulfilmentResultWithUnSellable(data)
-//            if(toggleFulfilmentResultWithUnsellable!=null){
-//                navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
-//                    toggleFulfilmentResultWithUnsellable.deliveryType)
-//            }
-        }
-
-    }
-
-    private fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
-        deliveryType: Delivery
-    ) {
-        val unsellableItemsBottomSheetDialog =
-            confirmAddressViewModel?.let { it1 ->
-                UnsellableItemsBottomSheetDialog.newInstance(
-                    unSellableCommerceItems, deliveryType, bindingListDetails.loadingBar,
-                    it1, this
-                )
-            }
-        unsellableItemsBottomSheetDialog?.show(
-            parentFragmentManager,
-            UnsellableItemsBottomSheetDialog::class.java.simpleName
-        )
-    }
-
-    private fun getToggleFulfilmentResultWithUnSellable(intent: Intent?): ShopToggleActivity.ToggleFulfilmentWIthUnsellable? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE, ShopToggleActivity.ToggleFulfilmentWIthUnsellable::class.java)
-        } else {
-            intent?.extras?.getParcelable(ShopToggleActivity.INTENT_DATA_TOGGLE_FULFILMENT_UNSELLABLE)
         }
     }
 

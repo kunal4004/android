@@ -18,7 +18,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
@@ -44,6 +43,8 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.resetUnsellableLiveData
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -63,7 +64,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.Shop
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.ShopLandingAutoNavigateCheckerImpl
 import za.co.woolworths.financial.services.android.ui.fragments.shop.domain.TooltipShown
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
-import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment.Companion.DIALOG_BUTTON_CLICK_RESULT
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFulfillmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.ui.views.tooltip.CustomText
@@ -89,6 +89,9 @@ import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.UnsellableUtils.Companion.ADD_TO_LIST_SUCCESS_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.fromShopWithSetDeliveryBrowseMode
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -191,7 +194,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             DASH_DELIVERY_BROWSE_MODE,
             dashParams
         )
-    }
+      }
 
     private fun setEventsForSwitchingBrowsingType(browsingType: String?) {
         if (KotlinUtils.getPreferredDeliveryType() == null) {
@@ -281,7 +284,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             updateTabIconUI(currentTabPositionBasedOnDeliveryType())
             viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
         }
-
     }
 
     override fun onPause() {
@@ -462,7 +464,6 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             } else {
                 setDeliveryView()
             }
-            refreshScreen()
         }
     }
 
@@ -761,6 +762,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
                         needToDisplayTooltip = true
                         executeValidateSuburb()
                     }
+                    setAnalyticsBrowsingDeliveryEvent()
                 } else {
                     //DO nothing here, will keep the standard selected by default
                     //Just Browsing or Not Now for set location
@@ -784,6 +786,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
         val toggleFulfilmentResultWithUnsellable =
             UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
         if (toggleFulfilmentResultWithUnsellable != null) {
+            refreshScreen()
             UnsellableAccess.navigateToUnsellableItemsFragment(
                 ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
                 toggleFulfilmentResultWithUnsellable.deliveryType, confirmAddressViewModel,
@@ -1167,14 +1170,20 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     private fun refreshScreen(){
         if(isVisible) {
             UpdateScreenLiveData.observe(viewLifecycleOwner) {
-                if (it == 1) {
+                if (it == updateUnsellableLiveData) {
                     executeValidateSuburb()
-                    UpdateScreenLiveData.value = 0
+                    switchDeliverModeEvent(getDeliveryType()?.deliveryType)
+                    UpdateScreenLiveData.value = resetUnsellableLiveData
+
                 }
             }
         }
+
     }
 
-
+private fun setAnalyticsBrowsingDeliveryEvent()
+{ fromShopWithSetDeliveryBrowseMode(KotlinUtils.browsingDeliveryType?.type,
+    getDeliveryType()?.deliveryType)
+}
 
 }
