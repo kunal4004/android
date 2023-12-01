@@ -31,6 +31,7 @@ data class Item(
     val isNewImagery: Boolean? = null,
     val isLiquor: Boolean? = null,
     val price: Double? = null,
+    val wasPrice: Double? = null,
     val badges: String? = null,
     val badgesImgLink: String? = null,
     @SerializedName("PROMOTION")
@@ -44,9 +45,9 @@ data class Item(
 
 fun Item.toProductItem(): ProductItem {
 
-    var wasPriceString = CurrencyFormatter.formatAmountToRandAndCentWithSpace(plist3620006Wp ?: 0.0)
+    var wasPriceString = CurrencyFormatter.formatAmountToRandAndCentWithSpace(wasPrice ?: 0.0)
     if(wasPriceString.equals("0.0", ignoreCase = true)) wasPriceString = ""
-    var priceString = CurrencyFormatter.formatAmountToRandAndCentWithSpace(plist3620006 ?: price ?: 0.0)
+    var priceString = CurrencyFormatter.formatAmountToRandAndCentWithSpace( price ?: 0.0)
     if(priceString.equals("0.0", ignoreCase = true)) priceString = ""
     val item = ProductItem(
         id = id ?: "",
