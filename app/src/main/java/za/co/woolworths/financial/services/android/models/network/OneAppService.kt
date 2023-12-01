@@ -1324,13 +1324,22 @@ open class OneAppService(
         }
     }
 
-    suspend fun recommendation(recommendationRequest: RecommendationRequest): retrofit2.Response<RecommendationResponse> {
+    suspend fun recommendation(recommendationRequest: RecommendationRequest, requestData: Boolean, fulfillmentStoreId: String?): retrofit2.Response<RecommendationResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.recommendation(
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                recommendationRequest
-            )
+            if (requestData && !fulfillmentStoreId.isNullOrEmpty()) {
+                mApiInterface.recommendation(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    fulfillmentStoreId,
+                    recommendationRequest
+                )
+            } else {
+                mApiInterface.recommendationAnalytics(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    recommendationRequest
+                )
+            }
         }
     }
 
