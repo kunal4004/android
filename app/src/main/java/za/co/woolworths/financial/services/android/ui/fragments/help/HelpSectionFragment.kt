@@ -82,6 +82,7 @@ class HelpSectionFragment : BaseFragmentBinding<NeedHelpFragmentBinding>(
             showBackNavigationIcon(true)
             setToolbarBackgroundDrawable(R.drawable.appbar_background)
             setTitle(getString(R.string.need_help))
+            setToolbarContentDescription(getString(R.string.toolbar_text))
             showToolbar()
         }
 
@@ -89,6 +90,7 @@ class HelpSectionFragment : BaseFragmentBinding<NeedHelpFragmentBinding>(
             (activity as? MyAccountActivity)?.apply {
                 supportActionBar?.show()
                 setToolbarTitle(activity?.resources?.getString(R.string.need_help))
+                setToolbarContentDescription(getString(R.string.toolbar_text))
             }
         }
     }

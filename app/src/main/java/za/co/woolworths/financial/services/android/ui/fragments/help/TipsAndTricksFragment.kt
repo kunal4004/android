@@ -41,10 +41,13 @@ class TipsAndTricksFragment : Fragment(R.layout.tips_tricks_fragment), ITipsAndT
             showBackNavigationIcon(true)
             setToolbarBackgroundDrawable(R.drawable.appbar_background)
             setTitle(getString(R.string.tips_tricks))
+            setToolbarContentDescription(getString(R.string.toolbar_text))
             showToolbar()
         }
-        if (activity is MyAccountActivity)
+        if (activity is MyAccountActivity) {
             (activity as? MyAccountActivity)?.setToolbarTitle(activity?.resources?.getString(R.string.tips_tricks))
+            (activity as? MyAccountActivity)?.setToolbarContentDescription(activity?.resources?.getString(R.string.toolbar_text))
+        }
     }
 
     override fun onResume() {

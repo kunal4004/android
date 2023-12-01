@@ -15,22 +15,24 @@ import com.awfs.coordination.databinding.RecommendationsLayoutBinding
 import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
-import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationsProductListingListener
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductCategoryAdapter
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.ProductListRecommendationAdapter
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.viewholder.MyRecycleViewHolder
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -38,7 +40,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerVi
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -50,7 +51,7 @@ import java.util.*
 @AndroidEntryPoint
 class RecommendationFragment :
     BaseFragmentBinding<RecommendationsLayoutBinding>(RecommendationsLayoutBinding::inflate),
-    RecommendationsProductListingListener {
+    IProductListing {
 
     companion object {
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
@@ -66,6 +67,7 @@ class RecommendationFragment :
     private var mProductListRecommendationAdapter: ProductListRecommendationAdapter? = null
     private var recommendationLayoutManager: LinearLayoutManager? = null
     private var isViewItemListEventTriggeredOnPageLoad = false
+    private var recyclerViewHolder: MyRecycleViewHolder? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -116,7 +118,7 @@ class RecommendationFragment :
         }
     }
 
-    private fun showRecProductsList(productsList: List<Product>?) {
+    private fun showRecProductsList(productsList: List<ProductList>?) {
         if (productsList.isNullOrEmpty()) {
             recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.visibility =
                 View.GONE
@@ -134,7 +136,7 @@ class RecommendationFragment :
                     recommendationLayoutManager
 
                 mProductListRecommendationAdapter =
-                    ProductListRecommendationAdapter(productsList, this, activity)
+                    ProductListRecommendationAdapter(productsList, this, activity, recommendationViewModel)
             }
             recommendationsLayoutBinding?.recommendationsProductsRecyclerview?.adapter =
                 mProductListRecommendationAdapter
@@ -204,7 +206,23 @@ class RecommendationFragment :
         super.onDestroyView()
     }
 
-    override fun openProductDetailView(productList: Product) {
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && recommendationViewModel.getQuickShopButtonPressed()){
+            recommendationViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (recommendationViewModel.getQuickShopButtonPressed()){
+            recommendationViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
+    }
+
+    override fun openProductDetailView(productList: ProductList) {
         if(isConnectedToNetwork() == true) {
             WoolworthsApplication.getInstance().recommendationAnalytics.submitRecClicks(products = listOf(productList))
         }
@@ -230,9 +248,23 @@ class RecommendationFragment :
         val strProductList = Gson().toJson(productDetails)
         // Move to shop tab first.
         (requireActivity() as? BottomNavigationActivity)?.apply {
+            BottomNavigationActivity.preventShopTooltip = true
             onShopTabSelected(bottomNavigationById.menu[BottomNavigationActivity.INDEX_PRODUCT])
         }
         ScreenManager.openProductDetailFragment(requireActivity(), productName, strProductList)
+    }
+
+    override fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setMyRecycleViewHolder(recyclerViewHolder: MyRecycleViewHolder) {
+        this.recyclerViewHolder = recyclerViewHolder
+    }
+
+
+    override fun updateMainRecyclerView() {
+        mProductListRecommendationAdapter?.notifyDataSetChanged()
     }
 
     override fun queryInventoryForStore(
@@ -323,29 +355,48 @@ class RecommendationFragment :
                                     productOutOfStockErrorMessage()
                                 }
                             } else if (skuInventoryList[0].quantity == 1) {
-                                addFoodProductTypeToCart(
-                                    AddItemToCart(
-                                        addItemToCart?.productId,
-                                        addItemToCart?.catalogRefId,
-                                        1
-                                    )
-                                )
-                            } else {
-                                val cartItem = AddItemToCart(
-                                    addItemToCart?.productId
-                                        ?: "", addItemToCart?.catalogRefId
-                                        ?: "", skuInventoryList[0].quantity
-                                )
-                                try {
-                                    val selectYourQuantityFragment =
-                                        SelectYourQuantityFragment.newInstance(
-                                            cartItem,
-                                            this@RecommendationFragment
+                                if (isEnhanceSubstitutionFeatureAvailable()) {
+                                    addFoodProductTypeToCart(
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1,
+                                            SubstitutionChoice.SHOPPER_CHOICE.name,
+                                            ""
+
                                         )
-                                    selectYourQuantityFragment.show(
-                                        this,
-                                        SelectYourQuantityFragment::class.java.simpleName
                                     )
+                                } else {
+                                    addFoodProductTypeToCart(
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1
+                                        )
+                                    )
+                                }
+
+                            } else {
+                                val cartItem =
+                                    if (isEnhanceSubstitutionFeatureAvailable()) {
+                                        AddItemToCart(
+                                            addItemToCart?.productId
+                                                ?: "", addItemToCart?.catalogRefId
+                                                ?: "", skuInventoryList[0].quantity,
+                                            SubstitutionChoice.SHOPPER_CHOICE.name,
+                                            ""
+                                        )
+                                    } else {
+                                        AddItemToCart(
+                                            addItemToCart?.productId
+                                                ?: "", addItemToCart?.catalogRefId
+                                                ?: "", skuInventoryList[0].quantity
+                                        )
+                                    }
+
+                                try {
+                                    mProductListRecommendationAdapter?.showQuantitySelector(recyclerViewHolder, cartItem)
+
                                 } catch (ex: IllegalStateException) {
                                     FirebaseManager.logException(ex)
                                 }
@@ -571,10 +622,6 @@ class RecommendationFragment :
     }
 
     override fun openBrandLandingPage() {
-        // No implementation is required for now
-    }
-
-    override fun openProductDetailView(productList: ProductList) {
         // No implementation is required for now
     }
 

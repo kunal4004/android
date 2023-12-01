@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.UnsellableItemsBottomSheetDialogBinding
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
@@ -40,6 +41,7 @@ class UnsellableItemsBottomSheetDialog(
     val progressBar: ProgressBar,
     val confirmAddressViewModel: ConfirmAddressViewModel,
     val currentFragment: Fragment,
+    val confirmLocationRequest: ConfirmLocationRequest? = null,
 ) : WBottomSheetDialogFragment(),
     View.OnClickListener {
 
@@ -57,12 +59,14 @@ class UnsellableItemsBottomSheetDialog(
             progressBar: ProgressBar,
             viewModel: ConfirmAddressViewModel,
             fragment: Fragment,
+            confirmLocationRequest: ConfirmLocationRequest? = null,
         ) =
             UnsellableItemsBottomSheetDialog(
                 deliveryType,
                 progressBar,
                 viewModel,
-                fragment
+                fragment,
+                confirmLocationRequest
             ).withArgs {
                 putSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS, unsellableItemsList)
             }
@@ -175,13 +179,24 @@ class UnsellableItemsBottomSheetDialog(
                 commerceItems?.let { unsellableItems ->
                     FirebaseAnalyticsEventHelper.removeFromCartUnsellable(unsellableItems)
                 }
+                //comment because coming from  togglescreen
+//                if (currentFragment is CartFragment) {
+//                    // If it is coming from Cart means we will not call confirm Location API. We will remove items from cart and then will process the same flow.
+//                    UnsellableUtils.removeItemsFromCart(progressBar, commerceItems, isCheckBoxSelected, currentFragment, confirmAddressViewModel)
+//                } else
+
                 UnsellableUtils.callConfirmPlace(
                     currentFragment,
-                    if (isCheckBoxSelected) ConfirmLocationParams(commerceItems, null) else null,
+                    ConfirmLocationParams(
+                        commerceItems,
+                        confirmLocationRequest
+                    ),
                     progressBar,
                     confirmAddressViewModel,
-                    deliveryType
+                    deliveryType,
+                    isCheckBoxSelected
                 )
+
                 confirmRemoveItems()
             }
         }

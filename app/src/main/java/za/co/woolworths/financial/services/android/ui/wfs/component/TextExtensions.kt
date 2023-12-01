@@ -6,10 +6,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -18,7 +19,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.testAutomationTag
-import za.co.woolworths.financial.services.android.ui.wfs.theme.*
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Dimens
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FontDimensions
+import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Obsidian
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.theme.WhiteWithOpacity30
+import za.co.woolworths.financial.services.android.ui.wfs.theme.WhiteWithOpacity70
+import za.co.woolworths.financial.services.android.ui.wfs.theme.futuraFamilyHeader1
 
 
 @Composable
@@ -98,7 +107,8 @@ fun TextOpenSansSemiBoldH3(
     isUpperCased: Boolean = false,
     color: Color? = null,
     letterSpacing: TextUnit? = TextUnit.Unspecified,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
+    locator: String
 ) {
     val value = if (isUpperCased) text?.uppercase() ?: "" else text ?: ""
     Text(
@@ -109,7 +119,7 @@ fun TextOpenSansSemiBoldH3(
         style = MaterialTheme.typography.titleMedium,
         textAlign = textAlign,
         letterSpacing = letterSpacing ?: Dimens.point_five_sp,
-        modifier = modifier.testAutomationTag(text ?: "")
+        modifier = modifier.testAutomationTag(locator.ifEmpty { value })
     )
 }
 
@@ -139,7 +149,7 @@ fun TextOpenSansFontFamily(
 
     Text(
         text = text,
-        modifier = modifier.testAutomationTag(locator = locator),
+        modifier = modifier.testAutomationTag(locator.ifEmpty { text }),
         color = color,
         fontSize = fontSize,
         fontStyle = fontStyle,
@@ -174,7 +184,6 @@ fun TextFuturaFamilyHeader1(
     textAlign: TextAlign? = TextAlign.Start,
     lineHeight: TextUnit = TextUnit.Unspecified,
     isLoading: Boolean = false,
-    brush: Brush? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
@@ -183,7 +192,7 @@ fun TextFuturaFamilyHeader1(
 ) {
 
     if (isLoading){
-        HeaderItemShimmer(brush, locator)
+        HeaderItemShimmer(locator)
     }
 
     if (!isLoading) {
@@ -226,7 +235,6 @@ fun TextFuturaFamilySemiBoldHeader1(
     textAlign: TextAlign? = TextAlign.Start,
     lineHeight: TextUnit = TextUnit.Unspecified,
     isLoading: Boolean = false,
-    brush: Brush? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
@@ -235,7 +243,7 @@ fun TextFuturaFamilySemiBoldHeader1(
 ) {
 
     if (isLoading){
-        HeaderItemShimmer(brush, locator)
+        HeaderItemShimmer(locator)
     }
 
     if (!isLoading) {
@@ -258,5 +266,43 @@ fun TextFuturaFamilySemiBoldHeader1(
             style = style
         )
     }
+}
 
+@Composable
+fun TextOpenSansFontFamilyAnnotateString(
+    modifier: Modifier = Modifier,
+    annotatedString: AnnotatedString? = buildAnnotatedString {  },
+    isUpperCased: Boolean = false,
+    color: Color = WhiteWithOpacity70,
+    fontSize: TextUnit = FontDimensions.sp15,
+    fontStyle: FontStyle? = null,
+    locator: String,
+    fontWeight: FontWeight? = FontWeight.SemiBold,
+    fontFamily: FontFamily? = OpenSansFontFamily,
+    letterSpacing: TextUnit = Dimens.point_five_sp,
+    textDecoration: TextDecoration? = null,
+    textAlign: TextAlign? = TextAlign.Center,
+    lineHeight: TextUnit = TextUnit.Unspecified,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    style: TextStyle? = LocalTextStyle.current) {
+    Text(text = annotatedString ?: buildAnnotatedString {  },
+        color = color,
+        modifier = modifier.testAutomationTag(locator = locator),
+        fontSize = fontSize,
+        fontStyle = fontStyle,
+        fontWeight = fontWeight ?: FontWeight.SemiBold,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        textDecoration = textDecoration,
+        textAlign = textAlign,
+        lineHeight = lineHeight,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        onTextLayout = onTextLayout,
+        style = style ?: MaterialTheme.typography.titleMedium
+    )
 }

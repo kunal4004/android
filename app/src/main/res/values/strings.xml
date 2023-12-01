@@ -528,32 +528,33 @@
     <string name="need_help">Need Help</string>
     <string name="faq">FAQ</string>
     <string name="tips_tricks">Tips &amp; Tricks</string>
-    <string name="tips_tricks_titles_vouchers">Vouchers</string>
-    <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
+    <string name="tips_tricks_titles_vouchers">Your Vouchers</string>
+    <string name="tips_tricks_titles_stores">Find a Product In-Store</string>
     <string name="tips_tricks_titles_barcode">Barcode Scanning</string>
-    <string name="tips_tricks_titles_delivery">Delivery Location</string>
+    <string name="tips_tricks_titles_delivery"> Your Delivery Location</string>
     <string name="tips_tricks_titles_navigation">My Cart</string>
     <string name="tips_tricks_titles_my_accounts">Accounts</string>
-    <string name="tips_tricks_titles_statements">Statements</string>
+    <string name="tips_tricks_titles_statements">Access Your Statements</string>
     <string name="tips_tricks_titles_shopping_list">Shopping Lists</string>
-    <string name="tips_tricks_titles_refine_search">Refine Search</string>
+    <string name="tips_tricks_titles_refine_search">Filter Your Search</string>
     <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store before they expire.</string>
     <string name="tips_tricks_desc_stores">Track down the product you’re looking for in the app – save yourself a drive to the wrong store!</string>
-    <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlesslyc.</string>
     <string name="tips_tricks_desc_refine">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, carb clever.</string>
     <string name="tips_tricks_desc_delivery">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="tips_tricks_desc_navigation">Tap the cart icon in the bottom menu to see the items you’ve added to your cart.</string>
     <string name="tips_tricks_desc_my_accounts">See all your active Woolworths accounts and check your available balance, amount due and credit limit.</string>
     <string name="tips_tricks_desc_statements">View and send your latest statements for your Woolworths accounts.</string>
-    <string name="tips_tricks_desc_shopping_list">Create and manage shopping lists and easily add a list to your cart.</string>
+    <string name="tips_tricks_desc_shopping_list">Create and manage your shopping lists, and add a list to your cart.</string>
     <string name="tips_tricks_button_stores">check in-Store availability</string>
     <string name="tips_tricks_button_barcode">Scan a product</string>
     <string name="tips_tricks_button_refine">Refine</string>
     <string name="tips_tricks_button_navigation">LET’S GO</string>
     <string name="Dont_show_these_tips">Don’t show these tips</string>
     <string name="new_feature_tutorials">New Feature Tutorials</string>
-    <string name="navigation">Navigation</string>
     <string name="my_accounts">My Accounts</string>
+    <string name="get_shopping">Get Shopping</string>
+    <string name="View_Your_Accounts">View Your Accounts</string>
     <string name="ways_to_pay_your_account_cc_sc">There are 4 easy ways to pay your account:</string>
     <string name="how_to_pay_1">By Debit Order</string>
 
@@ -1540,8 +1541,8 @@
     <string name="manage_my_delivery">Manage My Delivery</string>
     <string name="confirm_address">Confirm Address</string>
     <string name="edit_address"><u>Edit Address</u></string>
-    <string name="time_slots_page_title">When Would Like Your \nCard Delivered?</string>
-    <string name="time_slots_page_desc">Choose a date and select a preferred timeslot for when you would like your card delivered.</string>
+    <string name="time_slots_page_title">When Would Like Your Card \nDelivered?</string>
+    <string name="time_slots_page_desc">Choose a date and select a preferred time slot to have your card delivered.</string>
     <string name="processing_error">Processing Error</string>
     <string name="time_slots_error_desc">We were unable to find available time slots.</string>
     <string name="validate_address_error_desc">We were unable to confirm your \nrequest at this time.</string>
@@ -1895,8 +1896,8 @@
     <string name="chat_greeting_problems_paying_installement_desc">Having problems paying installments? Chat to us Now.</string>
     <string name="chat_greeting_description">Having problems paying your account?\nWe can assist you.</string>
     <string name="chat_send_message_session_var_params">PRS_AccountNumber=%1$s,PRS_CardNumber=%2$s,PRS_C2Id=%3$s,PRS_Firstname=%4$s,PRS_Surname=%5$s,PRS_ProductOfferingId=%6$s,PRS_ProductOfferingDescription=%7$s</string>
-    <string name="end_session_title">"End Session  "</string>
-    <string name="end_session_desc">"Leaving the Chat window will end your conversation. Are you sure you want to end your session?  "</string>
+    <string name="end_session_title">End Session</string>
+    <string name="end_session_desc">Leaving the Chat window will end your conversation. Are you sure you want to end your session?</string>
     <string name="no_continue_session">No, continue session</string>
     <string name="end_session_button_caption">yes, end session</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
@@ -2539,6 +2540,11 @@
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
     <string name="dash_product_search">Search name, product code or brand</string>
+    <string name="shop_landing_fulfilment_title_cnc_and_standard">Food, Fashion, Beauty and Home</string>
+    <string name="shop_landing_fulfilment_title_dash">Food Only</string>
+    <string name="shop_landing_product_all_search">Search Food, Fashion, Beauty and Home</string>
+    <string name="shop_landing_product_other_search">Search Fashion, Beauty and Home</string>
+    <string name="shop_landing_product_food_search">Search Food</string>
     <string name="default_location">Default Location</string>
     <string name="set_your_address">Set your address</string>
     <string name="select_your_preferred_store">Select your preferred store</string>
@@ -2576,7 +2582,7 @@
     <string name="hint_street_address_dash">Home • 28 Eastlake Island Drive</string>
     <string name="continue_browsing">CONTINUE BROWSING</string>
 
-    <string name="change_your_delivery_method_title">You’re About To Change Your Delivery Method</string>
+    <string name="change_your_delivery_method_title">You’re About To Change Your\n Delivery Method</string>
     <string name="change_your_delivery_method_standard">By adding this item to your cart, you will checkout using <b><font color='#000000'>Standard Delivery</font></b> instead.</string>
     <string name="change_your_delivery_method_dash">By adding this item to your cart, you will checkout using <b><font color='#000000'>Dash Delivery</font></b> instead.</string>
     <string name="change_your_delivery_method_cnc">By adding this item to your cart, you will checkout using <b><font color='#000000'>Click &amp; Collect.</font></b> instead.</string>
@@ -2586,18 +2592,18 @@
     <string name="remove_items_standard_dialog_title">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</string>
 
     <plurals name="remove_items_dash_dialog_title">
-        <item quantity="one">This Item Isn’t Available Using Dash Delivery.\n Save It To A Shopping List Instead.</item>
-        <item quantity="other">These Items Aren’t Available Using Dash Delivery.\n Save It To A Shopping List Instead.</item>
+        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_standard_dialog_title">
-        <item quantity="one">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</item>
-        <item quantity="other">These Items Aren’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</item>
+        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_cnc_dialog_title">
-        <item quantity="one">This Item Isn’t Available Using Click &amp; Collect.\n Save It To A Shopping List Instead.</item>
-        <item quantity="other">These Items Aren’t Available Using Click &amp; Collect.\n Save It To A Shopping List Instead.</item>
+        <item quantity="one">This item can’t be collected from the chosen location.\n Save it to a shopping list instead.</item>
+        <item quantity="other">These items can’t be collected from the chosen location.\n Save it to a shopping list instead.</item>
     </plurals>
 
     <string name="unsellable_subtitle">The following will be removed from your cart.</string>
@@ -2688,7 +2694,7 @@
     <string name="send">SEND</string>
     <string name="email_us_name">Name: *</string>
     <string name="email_us_email">Email Address: *</string>
-    <string name="email_us_email_validation">Please ensure that the email address is correct</string>
+    <string name="email_us_email_validation">Please ensure that this email address is correct.</string>
     <string name="email_us_enquiry">Enquiry Type: *</string>
     <string name="email_us_message">Message: *</string>
     <string name="sending_enquiry">Sending Enquiry</string>
@@ -2705,7 +2711,7 @@
 
     <!-- Feature Walkthrough : Barcode Scanning  -->
     <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
-    <string name="feature_barcode_scanning_desc">Scan a product\'s barcode to view it\'s information or add it straight to your shopping list.</string>
+    <string name="feature_barcode_scanning_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
     <string name="feature_barcode_scanning_action_text">SCAN A PRODUCT</string>
 
     <!-- Feature Walkthrough : MY List  -->
@@ -2840,6 +2846,8 @@
     <string name="retry_txt">RETRY</string>
     <string name="reported">REPORTED</string>
     <string name="cancelled">Cancelled</string>
+    <string name="processing">Processing</string>
+    <string name="status_awaiting_payment">Awaiting Payment</string>
     <string name="order">Order\u0020</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
 
@@ -3005,9 +3013,14 @@
     <string name="enhanced_substitution_desc">Add or remove substitutes as you shop your favourite products, or let our shoppers choose for you!</string>
     <string name="enhanced_substitution_btn">Manage substitutions</string>
     <string name="got_it_btn"><u>GOT IT</u></string>
+    <string name="substitution_work_info">How Do Substitutions Work?</string>
+    <string name="substitution_how_it_works_title">How It Works</string>
+    <string name="substitution_how_it_works_subtitle">If no substitutions are selected, our shoppers will choose one for you. If you don’t want an alternative product, you can edit your choice to “I don’t want a substitute” instead.</string>
 
     <string name="substitutions">Substitutions</string>
     <string name="let_my_shooper_choose_for_me">Let My Shopper Choose For Me</string>
+    <string name="item_outofstock_error">You can’t set this product as a substitute because it is out of stock. Please find another item to use instead.</string>
+    <string name="food_substitution_message">If an item is out of stock, our shoppers might contact you in the app about an alternative. Keep your phone close to chat with them.</string>
 
     <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
     <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>
@@ -3075,4 +3088,157 @@
     <string name="add_to_list_failure">Failed to add to list. Please try again later.</string>
     <string name="hint_list_name">List Name</string>
     <string name="create_list_name_error">Unfortunately, this list name already exists.\nPlease try another option.</string>
+    <string name="label_switch">Switch</string>
+    <string name="label_tap">Tap</string>
+    <string name="tooltip_location_to_set_your_location">To Set Your Location</string>
+    <string name="you_re_shopping_with">"You’re shopping with "</string>
+    <string name="tooltip_dash">Dash.</string>
+    <string name="tooltip_cnc">Click &amp; Collect.</string>
+    <string name="tooltip_standard_delivery">\nStandard Delivery.</string>
+    <string name="tooltip_fulfilment_message">Tap ‘Switch’ to choose between our 3 delivery options:</string>
+    <string name="tooltip_fulfilment_description"><![CDATA[You can switch between Standard Delivery, Click & Collect, or same day food delivery using Dash.]]></string>
+    <string name="tooltip_location_title_set_location">Set your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_description">We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="tooltip_location_title_usage">We use your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_message_to_change_your_location">to CHANGE YOUR LOCATION</string>
+    <string name="tooltip_location_title_cnc">Choose Your Collection Point</string>
+    <string name="tooltip_location_message_to_change_your_store">to CHANGE YOUR store</string>
+    <string name="tooltip_location_decription_cnc">We use your collection store details to give you the most accurate stock, availability and pricing.</string>
+
+    <!--shop toggle-->
+    <string name="use_standard_delivery">use standard delivery</string>
+    <string name="standard_shop_fashion"> shop FASHION, BEAUTY, HOME AND food</string>
+    <string name="earliest_standard_delivery_dates">Latest Standard Delivery Dates:</string>
+    <string name="delivery_cost">Delivery Cost:</string>
+    <string name="collection_cost">Collection Cost:</string>
+    <string name="determined_at_checkout">Determined at checkout. </string>
+    <string name="set_to_standard_delivery">SET TO STANDARD DELIVERY</string>
+    <string name="get_food_today">GET FOOD, TODAY</string>
+    <string name="next_dash_delivery_timeslot">Next Dash Delivery Timeslot:</string>
+    <string name="use_dash_delivery">Use Dash delivery</string>
+    <string name="set_to_dash_delivery">SET TO DASH DELIVERY</string>
+    <string name="use_click_collect">use click &amp; collect</string>
+    <string name="earliest_click_and_collect">Earliest Click &amp; Collect Dates:</string>
+    <string name="collect_fashion_food">Collect FASHION, BEAUTY, HOME AND food</string>
+    <string name="set_to_click_and_collect">SET TO CLICK &amp; COLLECT</string>
+    <string name="back_arrow"> Back Arrow</string>
+    <string name="what_would_you_like_to_shop">What Would You Like To Shop?</string>
+    <string name="you_can_choose_option">You can choose between our 3 delivery options here:</string>
+    <string name="down_arrow">Down Arrow</string>
+    <string name="learn_more_description">Between R0 - R80* delivery fee, or free for Fashion, Beauty and Home orders over R475. Free delivery for Woolies Black Card holders.\n<i>*This depends on your location / products.</i></string>
+    <string name="learn_more_dash_desc">R35 fixed delivery fee. Driver tipping available.</string>
+    <string name="learn_more_click_desc">Between R0 - R20 collection fee, or free for orders over R450.</string>
+    <string name="our_delivery_costs">Our Delivery Costs</string>
+    <string name="title_dash_set_location_modal">To shop accurately with Woolies Dash, we need your location.</string>
+    <string name="title_cnc_set_location_modal">To shop accurately using our \n Click &amp; Collect service, we need your location.</string>
+    <string name="title_standard_set_location_modal">To shop accurately with Woolies, we need your location.</string>
+    <string name="desc_standard_set_location_modal">Set your location for the most accurate stock, availability, and pricing. We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="desc_dash_set_location_modal">Set your location for the most accurate stock, availability, and pricing. We’ll gather your full delivery address later on, when you checkout.</string>
+    <string name="desc_cnc_set_location_modal">We’ll use this to give you the most accurate stock, availability, and pricing of our quality products from collection points near you.</string>
+    <string name="cta_set_my_location">Set My Location</string>
+    <string name="fashion_beauty_home_toggle_fulfilment">Fashion, Beauty, Home:</string>
+    <string name="food_toggle_fulfilment">Food:</string>
+    <string name="unlimited_items">*Unlimited items</string>
+    <string name="food_only_toggle_fulfilment">Food only</string>
+    <string name="limited_food_item_msg">*Limited shop of %1$s food items</string>
+    <string name="cnc_delivery_slots_not_available">Unfortunately, we can\'t load your collection timeslots right now.</string>
+    <string name="dash_delivery_slots_not_available">Unfortunately, we can\'t load your delivery timeslots right now.</string>
+    <string name="fulfillment_learn_more">Learn more</string>
+
+
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="location_error_msg">We are unable to access your location details.Please try again later.</string>
+
+
+
+    <string name="fullfilment_type_01">"01"</string>
+    <string name="substitute_default">Let My Shopper Choose For Me</string>
+    <string name="search_alternative_product">Search for an alternative product</string>
+    <string name="choose_substitute">Choose My Own Substitute</string>
+    <string name="dont_want_substitute"><u>i don\'t want a substitute</u></string>
+    <string name="dont_substitute">Don\'t Substitute</string>
+    <string name="more_details">More Details</string>
+    <string name="promotion_txt">you have saved</string>
+    <string name="item_found">\t ITEMS FOUND</string>
+    <string name="tap_to_retry">tap to retry</string>
+    <string name="substitution_retry_msg">Unfortunately, we can’t load our substitution recommendations. Search for a suitable alternative, or tap to retry.</string>
+    <string name="sign_in_label">Sign in to add substitute items</string>
+    <string name="oos_label">Only available when product is in stock.
+</string>
+    <string name="empty_subst_list_title">We Can’t Recommend Any Substitutes For This Item Yet.</string>
+    <string name="empty_subst_list_desc">Please use the search bar to browse our food catalogue to find a suitable alternative. </string>
+    <string name="add_substitution_error_msg">Failed to add substitute</string>
+    <string name="add_substitution_success_msg">Substitute Added</string>
+    <string name="back">BACK</string>
+
+    <string name="add_your_favourite_Food_items_to_your_shopping_lists">Add Your Favourite Food Items To Your Shopping Lists</string>
+    <string name="create_custom_shopping_lists_for_quick_access">Create custom shopping lists for quick access.</string>
+
+    <string name="sim_label">+ Free Vodacom Sim</string>
+    <string name="free_sim_with_purchase">Free %S Sim with Purchase</string>
+    <string name="digital_product_type">digitalProducts</string>
+    <string name="enter_valid_sa_number">Enter a valid 10 digit SA number(e.g 0xxxxxxxxx)</string>
+
+    <!--  Write a Review Details -->
+    <string name="write_a_review">Write a Review</string>
+    <string name="leave_us_a_review">Leave us a review</string>
+    <string name="subtitle_leave_us_a_review">Share with us your experience with this product.</string>
+    <string name="write_a_review_success_screen_text_view2">It is currently being moderated and we will notify you when it is published.</string>
+    <string name="share_this_product"><u>SHARE THIS PRODUCT</u></string>
+    <string name="add_a_review">Add A Review</string>
+    <string name="organic_banana">Organic Banana</string>
+    <string name="how_much_did_you_like_this_product_overall">How much did you like this product overall?</string>
+    <string name="rating_star">Rating: *</string>
+    <string name="rating_value">Value :</string>
+    <string name="zero">0</string>
+    <string name="box_1">1</string>
+    <string name="box_2">2</string>
+    <string name="box_3">3</string>
+    <string name="box_4">4</string>
+    <string name="box_5">5</string>
+    <string name="Would_you_recommend_this_product_to_a_friend">Would you recommend this product to a friend? *</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="write_a_review2">Write a review</string>
+    <string name="review_title">Review Title: *</string>
+    <string name="review_title_hint">Review Title</string>
+    <string name="review_title_edit_counter">/150</string>
+    <string name="review_desc">Review Description: *</string>
+    <string name="please_enter_your_full_review">Please enter your full review</string>
+    <string name="min_ten_char">Min 10 Characters,</string>
+    <string name="fifteen_hundred">1500</string>
+    <string name="characters_left">Characters Left</string>
+    <string name="display_name">Display name: *</string>
+    <string name="add_photos">Add Photos</string>
+    <string name="optional">Optional</string>
+    <string name="submit_review">Submit Review</string>
+    <string name="tips_For_writing_great_reviews">Tips For Writing Great Reviews</string>
+    <string name="close">CLOSE</string>
+    <string name="please_select_a_rating">Please select a rating.</string>
+    <string name="please_select_an_option.">Please select an option.</string>
+    <string name="please_enter_a_review_title.">Please enter a review title.</string>
+    <string name="please_enter_a_display_name.">Please enter a display name.</string>
+    <string name="please_enter_a_minimum_0f_10_characters">Please enter a minimum of 10 characters</string>
+    <string name="barcode_generated">Barcode Generated</string>
+    <string name="endless_aisle_order_error_label">Unfortunately, your online order has been cancelled because your barcode has expired.</string>
+    <string name="endless_aisle_barcode_title">Scan Your Barcode At The Till Point</string>
+    <string name="endless_aisle_barcode_desc">Scan your barcode at the till point for in store payments. Barcode expires when the store closes.</string>
+    <string name="by_submitting_you_agree_to_our">By submitting, you agree to our</string>
+    <string name="terms_and_Conditions_for_write_a_review">Terms and Conditions.</string>
+    <string name="choose_a_timeslot">Choose a timeslot</string>
+    <string name="date_picker_today">Today</string>
+    <string name="date_picker_tomorrow">Tomorrow</string>
+    <string name="navigate_up">"Navigate up"</string>
+    <string name="day_slot">"day_lot_"</string>
+    <string name="month_slot">"month_slot_"</string>
+    <string name="day_and_Time_slot">"day_And_Time_Slot_"</string>
+    <string name="choose_time_slot">"lableChooseTimeSlot"</string>
+    <string name="time_slot">"timeSlot_"</string>
+    <string name="check_box">"check_Box_"</string>
+    <string name="button_confirm_delivery">"button_Confirm"</string>
+    <!--    // Tooltip-->
+    <string name="description_tooltip">
+    <![CDATA[• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect]]>
+    </string>
+    <string name="huawei_push_token">Huawei Push Token</string>
 </resources>

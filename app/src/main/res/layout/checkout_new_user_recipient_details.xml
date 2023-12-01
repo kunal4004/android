@@ -38,6 +38,7 @@
         android:hint="@string/recipient_name_hint"
         android:layout_marginTop="@dimen/_4sdp"
         android:maxLength="@integer/twenty"
+        android:contentDescription="@string/cd_delivery_details_recipient_name_value"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/recipientNamePlaceHolder" />

@@ -9,11 +9,13 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Spannable
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
@@ -21,6 +23,7 @@ import androidx.core.view.contains
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,9 +34,11 @@ import com.awfs.coordination.databinding.LayoutInappOrderNotificationBinding
 import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
@@ -56,16 +61,24 @@ import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivi
 import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Recommendation
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
+import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.viewholder.MyRecycleViewHolder
+import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
+import za.co.woolworths.financial.services.android.ui.adapters.SelectQuantityAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
+import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.ProductCarouselItemViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderTrackingWebViewActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
@@ -74,7 +87,6 @@ import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDia
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
@@ -106,6 +118,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     DashOrderReceiverListener {
 
     private lateinit var viewModel: ShopViewModel
+    private val recommendationViewModel: RecommendationViewModel by viewModels()
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private lateinit var binding: FragmentDashDeliveryBinding
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
@@ -116,6 +129,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private var inAppNotificationViewBinding: LayoutInappOrderNotificationBinding? = null
     private var isRetrievedUnreadMessagesOnLaunch: Boolean = false
     private var isLastDashOrderAvailable: Boolean = false
+    private var recyclerViewViewHolderItems: ProductCarouselItemViewHolder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,8 +137,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         if (isFragmentAttached()) {
             dashDeliveryAdapter =
                 DashDeliveryAdapter(
-                    requireContext(), onDemandNavigationListener = this,
-                    dashLandingNavigationListener = this, onDataUpdateListener = onDataUpdateListener, this
+                    requireContext(), onDemandNavigationListener = this@DashDeliveryAddressFragment,
+                    dashLandingNavigationListener = this@DashDeliveryAddressFragment, onDataUpdateListener = onDataUpdateListener, this@DashDeliveryAddressFragment,
+                    activity = activity,
+                    recommendationViewModel
                 )
         }
     }
@@ -138,10 +154,19 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
         initViews()
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
+            if(result.equals(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE)){
+
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        if (confirmAddressViewModel.getQuickShopButtonPressed()){
+            confirmAddressViewModel.setQuickShopButtonPressed(false)
+            updateMainRecyclerView()
+        }
         val parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         if (!isVisible || parentFragment?.getCurrentFragmentIndex() != ShopFragment.SelectedTabIndex.DASH_TAB.index || !isAdded) {
             return
@@ -154,6 +179,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         super.onHiddenChanged(hidden)
         if (!hidden){
             refreshInAppNotificationToast()
+            if (confirmAddressViewModel.getQuickShopButtonPressed()){
+                confirmAddressViewModel.setQuickShopButtonPressed(false)
+                updateMainRecyclerView()
+            }
         }
     }
 
@@ -285,7 +314,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 binding.progressBar?.visibility = View.GONE
                 dashDeliveryAdapter.setData(
                     viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
-                    viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues
+                    viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
+                    recommendedProducts = recommendationCatalogue()
                 )
             }
             // Either of API data available
@@ -309,6 +339,46 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         subscribeToObservers()
     }
 
+    private fun fetchRecommendations() {
+        val recommendationRequest = RecommendationRequest(
+            events = listOf(
+                Recommendation.PageView(
+                    pageType = Constants.EVENT_PAGE_TYPE_MAIN,
+                    eventType = Constants.EVENT_TYPE_PAGEVIEW,
+                    url = Constants.EVENT_URL_MAIN
+                ),
+            ).plus(CommonRecommendationEvent.commonRecommendationEvents()),
+            monetateId = Utils.getMonetateId()
+        )
+        recommendationViewModel.getRecommendationResponse(recommendationRequest)
+
+        recommendationViewModel.recommendationResponseData.observe(viewLifecycleOwner) { actionItems ->
+            if (!actionItems.isNullOrEmpty()) {
+                dashDeliveryAdapter.setData(
+                    onDemandCategories = viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
+                    dashCategories = viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
+                    recommendedProducts = recommendationCatalogue()
+                )
+            }
+        }
+    }
+
+    private fun recommendationCatalogue(): ProductCatalogue? {
+        val actions = recommendationViewModel.recommendationResponseData.value
+        if (actions.isNullOrEmpty()) {
+            return  null
+        }
+        val products = actions[0].products
+        if (products.isNullOrEmpty()) {
+            return  null
+        }
+        return ProductCatalogue(
+            name = DashDeliveryAdapter.TYPE_NAME_RECOMMENDATION_SLOT,
+            headerText = recommendationViewModel.recommendationTitle(),
+            products = products
+        )
+    }
+
     private fun subscribeToObservers() {
 
         //Dash API.
@@ -320,16 +390,25 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
+                        recommendationViewModel.clearRecommendations()
                         binding.layoutDashSetAddress?.root?.visibility = View.GONE
+                        resource.data?.productCatalogues?.let { productCatalog ->
+                            val recommendationNeeded = productCatalog.any { catalog -> catalog.name == DashDeliveryAdapter.TYPE_NAME_RECOMMENDATION_SLOT } && SessionUtilities.getInstance().isUserAuthenticated
+                            if (recommendationNeeded) {
+                                fetchRecommendations()
+                            }
+                        }
                         if (viewModel.isOnDemandCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
-                                resource.data?.productCatalogues
+                                resource.data?.productCatalogues,
+                                recommendedProducts = recommendationCatalogue()
                             )
                         } else {
                             dashDeliveryAdapter.setData(
                                 null,
-                                resource.data?.productCatalogues
+                                resource.data?.productCatalogues,
+                                recommendedProducts = recommendationCatalogue()
                             )
                         }
                         binding.progressBar.visibility = View.GONE
@@ -357,6 +436,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             dashDeliveryAdapter.setData(
                                 resource.data?.onDemandCategories,
                                 viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
+                                recommendedProducts = recommendationCatalogue()
                             )
                         }
                         binding.progressBar.visibility = View.GONE
@@ -369,6 +449,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             dashDeliveryAdapter.setData(
                                 null,
                                 viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
+                                recommendedProducts = recommendationCatalogue()
                             )
                         }
                         binding.progressBar.visibility = View.GONE
@@ -400,31 +481,45 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             }
                             skuInventoryList?.get(0)?.quantity == 1 -> {
                                 addFoodProductTypeToCart(
-                                    AddItemToCart(
-                                        addItemToCart?.productId,
-                                        addItemToCart?.catalogRefId,
-                                        1
-                                    )
+                                    if (isEnhanceSubstitutionFeatureAvailable()) {
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1,
+                                            SubstitutionChoice.SHOPPER_CHOICE.name,
+                                            ""
+                                        )
+                                    } else {
+                                        AddItemToCart(
+                                            addItemToCart?.productId,
+                                            addItemToCart?.catalogRefId,
+                                            1
+                                        )
+                                    }
+
                                 )
                             }
                             else -> {
                                 try {
-                                    val cartItem = AddItemToCart(
-                                        addItemToCart?.productId ?: "",
-                                        addItemToCart?.catalogRefId ?: "",
-                                        skuInventoryList?.get(0)?.quantity ?: 0
-                                    )
-                                    val selectYourQuantityFragment =
-                                        SelectYourQuantityFragment.newInstance(
-                                            cartItem,
-                                            this@DashDeliveryAddressFragment
-                                        )
-                                    activity?.supportFragmentManager?.beginTransaction()?.apply {
-                                        selectYourQuantityFragment.show(
-                                            this,
-                                            SelectYourQuantityFragment::class.java.simpleName
-                                        )
-                                    }
+                                    val cartItem =
+                                        if (isEnhanceSubstitutionFeatureAvailable()) {
+                                            AddItemToCart(
+                                                addItemToCart?.productId ?: "",
+                                                addItemToCart?.catalogRefId ?: "",
+                                                skuInventoryList?.getOrNull(0)?.quantity ?: 0,
+                                                SubstitutionChoice.SHOPPER_CHOICE.name,
+                                                ""
+                                            )
+                                        } else {
+                                            AddItemToCart(
+                                                addItemToCart?.productId ?: "",
+                                                addItemToCart?.catalogRefId ?: "",
+                                                skuInventoryList?.getOrNull(0)?.quantity ?: 0
+                                            )
+                                        }
+
+                                    showQuantitySelector(cartItem)
+
                                 } catch (ex: IllegalStateException) {
                                     FirebaseManager.logException(ex)
                                 }
@@ -649,11 +744,102 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
     }
 
+    private fun showQuantitySelector(
+        addItemToCart: AddItemToCart?,
+    ) {
+        recommendationViewModel.setQuickShopButtonPressed(true)
+        var selectQuantityViewAdapter = SelectQuantityAdapter { selectedQuantity: Int ->
+                quantityItemClicked(selectedQuantity, addItemToCart)
+            }
+        if (addItemToCart != null) {
+            val quantityInStock = addItemToCart.quantity
+            if (quantityInStock > 0) {
+                // replace quickshop button image to cross button image
+                context?.let {
+                    recyclerViewViewHolderItems?.itemBinding?.rowLayout?.includeProductListingPriceLayout?.imQuickShopAddToCartIcon?.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            it,
+                            R.drawable.cross_button_bg
+                        )
+                    )
+                }
+            }
+            recyclerViewViewHolderItems?.itemBinding?.rowLayout?.quantitySelectorView?.apply {
+                visibility = View.VISIBLE
+                layoutManager = context?.let { activity ->
+                    LinearLayoutManager(
+                        activity,
+                        LinearLayoutManager.VERTICAL,
+                        false
+                    )
+                }
+                val imageViewHeight =
+                    (recyclerViewViewHolderItems?.itemBinding?.rowLayout?.imProductImage?.height
+                        ?: 0) + (recyclerViewViewHolderItems?.itemBinding?.rowLayout?.tvProductName?.height
+                        ?: 0)
+                if (quantityInStock >= 5) {
+                    layoutParams?.height = imageViewHeight
+                } else {
+                    layoutParams?.height = RecyclerView.LayoutParams.WRAP_CONTENT
+                }
+                adapter = selectQuantityViewAdapter
+
+                val mScrollTouchListener: RecyclerView.OnItemTouchListener =
+                    object : RecyclerView.OnItemTouchListener {
+                        override fun onInterceptTouchEvent(
+                            rv: RecyclerView,
+                            e: MotionEvent,
+                        ): Boolean {
+                            val action = e.action
+                            when (action) {
+                                MotionEvent.ACTION_MOVE -> rv.parent.requestDisallowInterceptTouchEvent(
+                                    true
+                                )
+                            }
+                            return false
+                        }
+
+                        override fun onTouchEvent(
+                            rv: RecyclerView,
+                            e: MotionEvent,
+                        ) {
+                        }
+
+                        override fun onRequestDisallowInterceptTouchEvent(
+                            disallowIntercept: Boolean,
+                        ) {
+                        }
+                    }
+                addOnItemTouchListener(mScrollTouchListener)
+            }
+            selectQuantityViewAdapter?.setItem(quantityInStock)
+        }
+    }
+
+    private fun quantityItemClicked(quantity: Int, addItemToCart: AddItemToCart?) {
+        addItemToCart?.apply {
+            addFoodProductTypeToCart(
+                if (isEnhanceSubstitutionFeatureAvailable()) {
+                    AddItemToCart(
+                        productId,
+                        catalogRefId,
+                        quantity,
+                        SubstitutionChoice.SHOPPER_CHOICE.name,
+                        ""
+                    )
+                } else {
+                    AddItemToCart(productId, catalogRefId, quantity)
+                }
+            )
+        }
+        updateMainRecyclerView()
+    }
+
     private fun refreshInAppNotificationToast() {
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                removeNotificationToast()
-                return
-            }
+            removeNotificationToast()
+            return
+        }
         if (!isLastDashOrderAvailable) {
             viewModel.getLastDashOrderDetails()
             return
@@ -873,10 +1059,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
                         this.placeId = responsePlaceId
                         isLocationPlaceIdSame = responsePlaceId.equals(savedPlaceId)
-                        isDeliveryLocationTabCrossClicked =
-                            responsePlaceId.equals(savedPlaceId)
-                        isCncTabCrossClicked = responsePlaceId.equals(savedPlaceId)
-                        isDashTabCrossClicked = responsePlaceId.equals(savedPlaceId)
                     }
                 }
 
@@ -948,6 +1130,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     override fun openProductDetailView(productList: ProductList) {
+        if (!productList.recToken.isNullOrEmpty() && productList.sku.isNullOrEmpty()) {
+            // This is recommendation product which does not have sku so will add it here
+            productList.sku = productList.productId
+        }
         val productDetailsFragment = newInstance()
         productDetailsFragment.arguments = bundleOf(
             ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList),
@@ -995,9 +1181,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             BundleKeysConstants.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     initViews()
-                viewModel.getOnDemandCategories()
-                 viewModel.getDashLandingDetails()
-               }
+                    viewModel.getOnDemandCategories()
+                    viewModel.getDashLandingDetails()
+                }
             }
         }
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
@@ -1005,6 +1191,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             // Use Case: If first user does not have any order, Second user should update Last order details
             viewModel.getLastDashOrderDetails()
         }
+    }
+
+    override fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems) {
+        // Nothing to do.
+    }
+
+    override fun setMyRecycleViewHolder(recyclerViewHolder: MyRecycleViewHolder) {
+        // Nothing to do.
     }
 
     override fun queryInventoryForStore(
@@ -1246,6 +1440,15 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 )
             )
         }
+    }
+
+    override fun setProductCarousalItemViewHolder(viewHolder: ProductCarouselItemViewHolder) {
+        this.recyclerViewViewHolderItems = viewHolder
+    }
+
+    override fun updateMainRecyclerView() {
+        recommendationViewModel?.setQuickShopButtonPressed(false)
+        dashDeliveryAdapter?.notifyDataSetChanged()
     }
 
     override fun onClick(v: View?) {

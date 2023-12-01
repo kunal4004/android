@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.sign_out_container
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.sign_out_on_boarding_toolbar_title
@@ -29,8 +30,11 @@ import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 fun SignedOutScreen(
     viewModel: UserAccountLandingViewModel,
     onClick: (OnAccountItemClickListener) -> Unit) {
-    val listOfSignedOutItems = viewModel.listOfSignedOutItem()
+    val listOfSignedOutItems = remember {viewModel.listOfSignedOutItem()}
     ClearBadgeCountInLogoutState()
+    LaunchedEffect(true) {
+        viewModel.clearShoptimiser()
+    }
     Column(
         modifier = Modifier
             .testAutomationTag(locator = sign_out_container)

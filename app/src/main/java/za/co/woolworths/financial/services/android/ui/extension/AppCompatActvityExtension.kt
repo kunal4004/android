@@ -2,10 +2,11 @@
 
 package za.co.woolworths.financial.services.android.ui.extension
 
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.graphics.Paint
-
+import android.net.Uri
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.InputFilter
@@ -19,25 +20,20 @@ import androidx.annotation.AnimRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
-
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-
 import androidx.fragment.app.FragmentManager
-
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
-
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
-
 import androidx.viewpager2.widget.ViewPager2
 import com.amplifyframework.core.Amplify
 import com.awfs.coordination.R
@@ -67,7 +63,7 @@ fun <T : Fragment> AppCompatActivity.addFragment(
     @AnimRes enterAnimation: Int = 0,
     @AnimRes exitAnimation: Int = 0,
     @AnimRes popEnterAnimation: Int = 0,
-    @AnimRes popExitAnimation: Int = 0
+    @AnimRes popExitAnimation: Int = 0,
 ): T? {
     if (!existsFragmentByTag(tag)) {
         val ft = supportFragmentManager.beginTransaction()
@@ -96,14 +92,15 @@ fun AppCompatActivity.replaceFragmentSafely(
     @AnimRes enterAnimation: Int = 0,
     @AnimRes exitAnimation: Int = 0,
     @AnimRes popEnterAnimation: Int = 0,
-    @AnimRes popExitAnimation: Int = 0
+    @AnimRes popExitAnimation: Int = 0,
 ) {
     val ft = supportFragmentManager
         .beginTransaction()
         .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
         .replace(containerViewId, fragment, tag)
-    if (allowBackStack)
+    if (allowBackStack) {
         ft.addToBackStack(null)
+    }
     if (!supportFragmentManager.isStateSaved) {
         ft.commit()
     } else if (allowStateLoss) {
@@ -120,14 +117,15 @@ fun AppCompatActivity.addFragment(
     @AnimRes enterAnimation: Int = 0,
     @AnimRes exitAnimation: Int = 0,
     @AnimRes popEnterAnimation: Int = 0,
-    @AnimRes popExitAnimation: Int = 0
+    @AnimRes popExitAnimation: Int = 0,
 ) {
     val ft = supportFragmentManager
         .beginTransaction()
         .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
         .add(containerViewId, fragment, tag)
-    if (allowBackStack)
+    if (allowBackStack) {
         ft.addToBackStack(null)
+    }
     if (!supportFragmentManager.isStateSaved) {
         ft.commit()
     } else if (allowStateLoss) {
@@ -168,11 +166,10 @@ fun EditText.hideKeyboard(activity: AppCompatActivity) {
         if (currentFocusedView != null) {
             inputManager?.hideSoftInputFromWindow(
                 currentFocusedView.windowToken,
-                InputMethodManager.HIDE_NOT_ALWAYS
+                InputMethodManager.HIDE_NOT_ALWAYS,
             )
         }
     }
-
 }
 
 inline fun <reified T> Gson.fromJson(json: String): T =
@@ -207,7 +204,7 @@ fun EditText.onAction(action: Int, runAction: () -> Unit) {
 fun EditText.afterTypingStateChanged(
     millisInFuture: Long,
     countDownInterval: Long = 10000,
-    afterTypingStateChanged: (Boolean) -> Unit
+    afterTypingStateChanged: (Boolean) -> Unit,
 ) {
     this.addTextChangedListener(object : TextWatcher {
         var timer: CountDownTimer? = null
@@ -237,21 +234,26 @@ fun EditText.afterTypingStateChanged(
 
 inline fun <reified RESPONSE_OBJECT> request(
     call: Call<RESPONSE_OBJECT>?,
-    requestListener: IGenericAPILoaderView<Any>? = null
+    requestListener: IGenericAPILoaderView<Any>? = null,
 ): Call<RESPONSE_OBJECT>? {
     val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
     requestListener?.showProgress()
-    call?.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
-        override fun onSuccess(response: RESPONSE_OBJECT?) {
-            requestListener?.hideProgress()
-            requestListener?.onSuccess(response)
-        }
+    call?.enqueue(
+        CompletionHandler(
+            object : IResponseListener<RESPONSE_OBJECT> {
+                override fun onSuccess(response: RESPONSE_OBJECT?) {
+                    requestListener?.hideProgress()
+                    requestListener?.onSuccess(response)
+                }
 
-        override fun onFailure(error: Throwable?) {
-            requestListener?.hideProgress()
-            requestListener?.onFailure(error)
-        }
-    }, classType))
+                override fun onFailure(error: Throwable?) {
+                    requestListener?.hideProgress()
+                    requestListener?.onFailure(error)
+                }
+            },
+            classType,
+        ),
+    )
 
     return call
 }
@@ -289,12 +291,10 @@ fun String.isEmailValid(): Boolean {
     return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
 
-
 fun navOptions() = NavOptions.Builder().setEnterAnim(R.anim.slide_in_from_right)
     .setExitAnim(R.anim.slide_out_to_left)
     .setPopEnterAnim(R.anim.slide_from_left)
     .setPopExitAnim(R.anim.slide_to_right).build()
-
 
 fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
     launch {
@@ -317,11 +317,10 @@ fun Fragment.setNavigationResult(key: String = "result", result: String) {
     findNavController().previousBackStackEntry?.savedStateHandle?.set(key, result)
 }
 
-
 fun <T> Fragment.setNavigationResult(key: String, value: T) {
     findNavController().previousBackStackEntry?.savedStateHandle?.set(
         key,
-        value
+        value,
     )
 }
 
@@ -329,8 +328,8 @@ fun <T> Fragment.getNavigationResult(@IdRes id: Int, key: String, onResult: (res
     val navBackStackEntry = findNavController().getBackStackEntry(id)
 
     val observer = LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_RESUME
-            && navBackStackEntry.savedStateHandle.contains(key)
+        if (event == Lifecycle.Event.ON_RESUME &&
+            navBackStackEntry.savedStateHandle.contains(key)
         ) {
             val result = navBackStackEntry.savedStateHandle.get<T>(key)
             result?.let(onResult)
@@ -339,21 +338,23 @@ fun <T> Fragment.getNavigationResult(@IdRes id: Int, key: String, onResult: (res
     }
     navBackStackEntry.lifecycle.addObserver(observer)
 
-    viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_DESTROY) {
-            navBackStackEntry.lifecycle.removeObserver(observer)
-        }
-    })
+    viewLifecycleOwner.lifecycle.addObserver(
+        LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                navBackStackEntry.lifecycle.removeObserver(observer)
+            }
+        },
+    )
 }
 
 fun RecyclerView.setDivider(@DrawableRes drawableRes: Int) {
     val divider = DividerItemDecoration(
         this.context,
-        DividerItemDecoration.VERTICAL
+        DividerItemDecoration.VERTICAL,
     )
     val drawable = ContextCompat.getDrawable(
         this.context,
-        drawableRes
+        drawableRes,
     )
     drawable?.let {
         divider.setDrawable(it)
@@ -381,7 +382,7 @@ fun ViewPager2.findCurrentFragment(fragmentManager: FragmentManager): Fragment? 
 
 fun ViewPager2.findFragmentAtPosition(
     fragmentManager: FragmentManager,
-    position: Int
+    position: Int,
 ): Fragment? {
     return fragmentManager.findFragmentByTag("f$position")
 }
@@ -412,7 +413,7 @@ fun View.setSafeOnClickListener(onSafeClick: (View) -> Unit) {
  *
  * @param max
  */
-fun EditText.maxLength(max: Int){
+fun EditText.maxLength(max: Int) {
     this.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(max))
 }
 
@@ -432,14 +433,29 @@ fun NavController.navigateUpOrFinish(activity: AppCompatActivity?): Boolean {
  * To be able to tell Amplify is already configured will be perfect! For now I've implemented
  * this extension method as a temporary workaround:
  */
-fun isAWSAmplifyConfigured() = Amplify.API.plugins.isEmpty()
-        &&  Amplify.Auth.plugins.isEmpty()
+fun isAWSAmplifyConfigured() = Amplify.API.plugins.isEmpty() &&
+    Amplify.Auth.plugins.isEmpty()
 
 fun View.onClick(result: (View) -> Unit) {
     AnimationUtilExtension.animateViewPushDown(this)
-    setOnClickListener{
+    setOnClickListener {
         result(it)
     }
 }
 
 inline fun <reified T : Any> T.json(): String = GsonBuilder().disableHtmlEscaping().create().toJson(this, T::class.java)
+
+/**
+ * Call up the dialer and call the [phoneNumber]
+ *
+ * @author Adebayo Oloyede
+ * @param [phoneNumber] The Phone number to call
+ * @receiver [Context] Intended to be used only in UI components like Fragments and Activities
+ * @since 9.12.0
+ * */
+fun Context.makeCall(phoneNumber: String) {
+    val intent = Intent(Intent.ACTION_DIAL)
+
+    intent.data = Uri.parse("tel:${phoneNumber.trim()}")
+    startActivity(intent)
+}

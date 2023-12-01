@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentShopDepartmentBinding
@@ -14,22 +17,24 @@ import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
-import za.co.woolworths.financial.services.android.util.GetCartSummary
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -45,6 +50,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var localPlaceId: String? = null
+    private val dyHomePageViewModel: DyHomePageViewModel by viewModels()
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -64,6 +70,22 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
         if (parentFragment?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.STANDARD_TAB.index) {
             initView()
         }
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
+            if(result.equals(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE)){
+
+            }
+        }
+    }
+
+    private fun prepareDynamicYieldRequestEvent() {
+        val config = NetworkConfig(AppContextProviderImpl())
+        val dyData = ArrayList<String>()
+        val device = Device(Utils.IPAddress, config.getDeviceModel())
+        val page = Page(dyData, Utils.MOBILE_LANDING_PAGE, Utils.HOME_PAGE, null, null)
+        val context = Context(device, page, Utils.DY_CHANNEL)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(null, null, context, options)
+        dyHomePageViewModel.createDyRequest(homePageRequestEvent)
     }
 
     override fun noConnectionLayout(isVisible: Boolean) {
@@ -80,6 +102,11 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
 
         if (isFragmentVisible) {
             initializeRootCategoryList()
+        }
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true) {
+                prepareDynamicYieldRequestEvent()
+            }
         }
     }
 

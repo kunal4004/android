@@ -67,7 +67,7 @@ class ProductInformationActivity : AppCompatActivity() {
                     arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = ACTION_PRODUCTDETAILS_INFORMATION
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAILS_INFORMATION, arguments, this@ProductInformationActivity)
                     addFragment(
-                            fragment = ProductDetailsInformationFragment.newInstance(longDescription, productId),
+                            fragment = ProductDetailsInformationFragment.newInstance(longDescription, productId,productType),
                             tag = ProductDetailsInformationFragment::class.java.simpleName,
                             containerViewId = R.id.fragmentContainer)
                 }

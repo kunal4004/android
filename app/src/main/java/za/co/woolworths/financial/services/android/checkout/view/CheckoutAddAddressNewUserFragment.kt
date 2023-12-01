@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -32,6 +33,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -78,11 +80,21 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_HOME
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_OFFICE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedDefaultName
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationParams
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.poi.PoiBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_100_MS
@@ -90,7 +102,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.FIFTY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TEN
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
@@ -103,11 +114,15 @@ import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboardIfVisible
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.UnIndexedAddressIdentifiedListener
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
+import za.co.woolworths.financial.services.android.util.UnsellableUtils.Companion.ADD_TO_LIST_SUCCESS_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.isAValidSouthAfricanNumber
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.value
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.regex.Pattern
 import kotlin.coroutines.CoroutineContext
@@ -122,6 +137,8 @@ class CheckoutAddAddressNewUserFragment :
     PoiBottomSheetDialog.ClickListener,
     UnIndexedAddressIdentifiedListener {
 
+    private var isLocationUpdateRequest: Boolean = false
+    private var isComingFromNewToggleFulfilment: Boolean = false
     private lateinit var binding: CheckoutAddAddressNewUserBinding
     private var deliveringOptionsList: List<String>? = null
     private var navController: NavController? = null
@@ -146,6 +163,8 @@ class CheckoutAddAddressNewUserFragment :
     private var oldNickName: String? = ""
     private var unIndexedAddressIdentified: Boolean = false
     private val unIndexedLiveData = MutableLiveData<Boolean>()
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
+    private var validateLocationResponse: ValidateLocationResponse? = null
 
 
     companion object {
@@ -173,6 +192,8 @@ class CheckoutAddAddressNewUserFragment :
         bundle?.apply {
             isComingFromCheckout = getBoolean(IS_COMING_FROM_CHECKOUT, false)
             isComingFromSlotSelection = getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
+            isComingFromNewToggleFulfilment = getBoolean(BundleKeysConstants.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
+            isLocationUpdateRequest = getBoolean(BundleKeysConstants.LOCATION_UPDATE_REQUEST, false)
             if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
                 val editSavedAddress = getString(EDIT_SAVED_ADDRESS_RESPONSE_KEY)
@@ -428,7 +449,7 @@ class CheckoutAddAddressNewUserFragment :
                             }.addOnFailureListener { exception ->
                                 if (exception is ApiException) {
                                     Toast.makeText(
-                                        AuthenticateUtils.mContext,
+                                        requireContext(),
                                         exception.message + "",
                                         Toast.LENGTH_SHORT
                                     )
@@ -442,7 +463,6 @@ class CheckoutAddAddressNewUserFragment :
     }
 
     private fun addFragmentResultListener() {
-
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
             if (selectedAddress.provinceName.isNullOrEmpty()) return@setFragmentResultListener
             provinceSuburbEnableType = ONLY_SUBURB
@@ -457,7 +477,59 @@ class CheckoutAddAddressNewUserFragment :
                     deleteAddress()
                 }
             }
+        }
+        setFragmentResultListener(ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            relaunchCheckoutActivity()
+        }
 
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                relaunchCheckoutActivity()
+            }
+        }
+
+        UpdateScreenLiveData.observe(viewLifecycleOwner) {
+            if (it == 1) {
+                UpdateScreenLiveData.value = 0
+                relaunchCheckoutActivity()
+            }
+        }
+    }
+
+    private fun relaunchCheckoutActivity() {
+        savedAddressResponse?.defaultAddressNickname = validateLocationResponse?.validatePlace?.placeDetails?.nickname
+        val checkoutActivityIntent =
+            Intent(requireActivity(),
+                CheckoutActivity::class.java
+            ).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra(
+                    SAVED_ADDRESS_KEY,
+                    savedAddressResponse
+                )
+                val result = when (Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)) {
+                    Delivery.STANDARD -> GEO_SLOT_SELECTION
+                    else -> DASH_SLOT_SELECTION
+                }
+                putExtra(result, true)
+                putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+                putExtra(
+                    Constant.NO_LIQUOR_IMAGE_URL,
+                    getLiquorImageUrl()
+                )
+            }
+        requireActivity().apply {
+            startActivityForResult(
+                checkoutActivityIntent,
+                BundleKeysConstants.FULLFILLMENT_REQUEST_CODE
+            )
+            overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
+            finish()
         }
     }
 
@@ -891,7 +963,12 @@ class CheckoutAddAddressNewUserFragment :
             showErrorDialog()
             return
         }
-        if (!isValidAddress) {
+        if(selectedAddress.savedAddress.address2.isNullOrEmpty() && binding.recipientAddressLayout.unitComplexFloorPlaceHolder?.text ==
+                getString(R.string.additional_details)){
+            showErrorInputField(binding.recipientAddressLayout.unitComplexFloorEditText, View.VISIBLE)
+            return
+        }
+       if (!isValidAddress) {
             binding.autocompletePlaceErrorMsg.text =
                 getString(R.string.geo_loc_error_msg_on_edit_address)
             showAnimationErrorMessage(binding.autocompletePlaceErrorMsg, View.VISIBLE, 0)
@@ -914,12 +991,12 @@ class CheckoutAddAddressNewUserFragment :
 
         FirebaseAnalyticsEventHelper.setFirebaseEventForm(selectedDeliveryAddressType,
                 FirebaseManagerAnalyticsProperties.FORM_COMPLETE, isComingFromCheckout)
-        if (binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString().trim()
-                .isNotEmpty()
-            && binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString()
-                .trim().length < TEN
-        ) {
-            showErrorPhoneNumber()
+        val isValidNumber = isAValidSouthAfricanNumber(
+            binding.recipientDetailsLayout.cellphoneNumberEditText.text.toString().trim()
+        )
+
+        if (!isValidNumber) {
+            showErrorPhoneNumber(R.string.enter_valid_sa_number)
         }
         if (binding.autoCompleteTextView?.text.toString().trim()
                 .isNotEmpty() && binding.recipientAddressLayout.addressNicknameEditText?.text.toString()
@@ -931,6 +1008,7 @@ class CheckoutAddAddressNewUserFragment :
                 .isNotEmpty() && selectedDeliveryAddressType != null
             && binding.recipientDetailsLayout.cellphoneNumberEditText?.text.toString()
                 .trim().length == TEN
+            && isValidNumber
         ) {
             if (isNickNameExist())
                 return
@@ -959,13 +1037,7 @@ class CheckoutAddAddressNewUserFragment :
                                         SAVED_ADDRESS_KEY,
                                         Utils.toJson(savedAddressResponse)
                                     )
-                                    response.address.nickname?.let { nickName ->
-                                        navigateToAddressConfirmation(
-                                            response.address.placesId,
-                                            response.address
-                                        )
-
-                                    }
+                                    callValidatePlaceApi(response.address)
                                     hideKeyboardIfVisible(activity)
                                 }
 
@@ -1209,7 +1281,85 @@ class CheckoutAddAddressNewUserFragment :
             }
     }
 
-    private fun navigateToAddressConfirmation(placesId: String?, address: Address) {
+    private fun callValidatePlaceApi(address: Address?){
+        if (address?.placesId.isNullOrEmpty())
+            return
+
+        // Make Validate Location Call
+        lifecycleScope.launch {
+            binding.loadingProgressBar?.visibility = View.VISIBLE
+            try {
+                validateLocationResponse =
+                    confirmAddressViewModel.getValidateLocation(address?.placesId!!)
+                binding.loadingProgressBar?.visibility = View.GONE
+                if (validateLocationResponse != null) {
+                    when (validateLocationResponse?.httpCode) {
+                        AppConstant.HTTP_OK -> {
+                            validateLocationResponse?.validatePlace?.let { place ->
+                                val delivery =
+                                    Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                                when (delivery) {
+                                    Delivery.STANDARD -> {
+                                        if (place.deliverable == true){
+                                            validateUnsellable(
+                                                address?.placesId,
+                                                address,
+                                                place
+                                            )
+                                        }
+                                        else {
+                                            showChangeLocationDialog()
+                                        }
+                                    }
+
+                                    Delivery.DASH -> {
+                                        if (place.onDemand != null && place.onDemand!!.deliverable) {
+                                            validateUnsellable(
+                                                address?.placesId,
+                                                address,
+                                                place
+                                            )
+                                        } else {
+                                            // Show not deliverable Bottom Dialog.
+                                            showChangeLocationDialog()
+                                        }
+                                    }
+
+                                    else -> {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+               binding.loadingProgressBar?.visibility = View.GONE
+                showErrorDialog()
+            } catch (e: JsonSyntaxException) {
+                FirebaseManager.logException(e)
+                binding.loadingProgressBar?.visibility = View.GONE
+                showErrorDialog()
+            }
+        }
+    }
+
+    private fun showChangeLocationDialog() {
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                getString(R.string.no_location_title),
+                getString(R.string.no_location_desc),
+                getString(R.string.change_location),
+                R.drawable.location_disabled, getString(R.string.dismiss)
+            )
+        customBottomSheetDialogFragment.show(
+            requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName
+        )
+    }
+
+    private fun validateUnsellable(placesId: String?, address: Address, place: ValidatePlace) {
         baseFragBundle?.putString(KEY_PLACE_ID, placesId)
         baseFragBundle?.putBoolean(
             IS_COMING_FROM_CHECKOUT,
@@ -1227,17 +1377,121 @@ class CheckoutAddAddressNewUserFragment :
         if (bundle?.containsKey(DELIVERY_TYPE) == true) {
             baseFragBundle?.putString(DELIVERY_TYPE, bundle?.getString(DELIVERY_TYPE))
         }
-        findNavController().navigate(
-            R.id.action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment,
-            bundleOf(BUNDLE to baseFragBundle)
+        if (isComingFromNewToggleFulfilment && isLocationUpdateRequest && isComingFromCheckout) {
+            val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+            if (isComingFromSlotSelection && (delivery == Delivery.STANDARD || delivery == Delivery.DASH)) {
+
+                var unSellableCommerceItems = when (delivery) {
+                    Delivery.STANDARD -> {
+                            place?.unSellableCommerceItems
+                    }
+
+                    Delivery.DASH -> {
+                        place?.onDemand?.unSellableCommerceItems
+                    }
+                    else -> {
+                        place?.unSellableCommerceItems
+                    }
+                }
+
+                if (unSellableCommerceItems?.isNullOrEmpty() == false) {
+                    // show unsellable items
+                    unSellableCommerceItems?.let {
+                        navigateToUnsellableItemsFragment(
+                            it as ArrayList<UnSellableCommerceItem>,
+                            delivery,
+                            getConfirmLocationRequest(placesId, address, delivery, place)
+                        )
+                    }
+
+                } else {
+                    val confirmLocationRequest = getConfirmLocationRequest(placesId, address, delivery, place)
+                    UnsellableUtils.callConfirmPlace(
+                        this@CheckoutAddAddressNewUserFragment,
+                        ConfirmLocationParams(null, confirmLocationRequest),
+                        binding.loadingProgressBar, confirmAddressViewModel,
+                        delivery
+                    )
+                }
+            }
+        } else {
+            findNavController().navigate(
+                R.id.action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment,
+                bundleOf(BUNDLE to baseFragBundle)
+            )
+        }
+    }
+
+    private fun getConfirmLocationRequest(placesId: String?, address: Address, delivery: Delivery, place: ValidatePlace): ConfirmLocationRequest {
+        val confirmLocationAddress =
+            ConfirmLocationAddress(placesId, address.nickname, address.address2)
+        return when (delivery) {
+            Delivery.STANDARD -> {
+                ConfirmLocationRequest(
+                    BundleKeysConstants.STANDARD,
+                    confirmLocationAddress,
+                    ""
+                )
+            }
+
+            Delivery.DASH -> {
+                ConfirmLocationRequest(
+                    BundleKeysConstants.DASH,
+                    confirmLocationAddress,
+                    place.onDemand?.storeId
+                )
+            }
+
+            else -> {
+                ConfirmLocationRequest(
+                    BundleKeysConstants.STANDARD,
+                    confirmLocationAddress,
+                    ""
+                )
+            }
+        }
+    }
+    private fun navigateToUnsellableItemsFragment(
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
+        currentDeliveryType: Delivery,
+        confirmLocationRequest: ConfirmLocationRequest,
+    ) {
+        val unsellableItemsBottomSheetDialog =
+            UnsellableItemsBottomSheetDialog.newInstance(
+                unSellableCommerceItems,
+                currentDeliveryType,
+                binding.loadingProgressBar,
+                confirmAddressViewModel,
+                this,
+                confirmLocationRequest
+            )
+        unsellableItemsBottomSheetDialog.show(
+            requireFragmentManager(),
+            UnsellableItemsBottomSheetDialog::class.java.simpleName
         )
     }
 
-    private fun showErrorPhoneNumber() {
+    private fun getLiquorOrder(): Boolean {
+        var liquorOrder = false
+        arguments?.apply {
+            liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+        }
+        return liquorOrder
+    }
+
+    private fun getLiquorImageUrl(): String {
+        var liquorImageUrl = ""
+        arguments?.apply {
+            liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
+        }
+        return liquorImageUrl
+    }
+
+    private fun showErrorPhoneNumber(resourceId:Int) {
         binding.recipientDetailsLayout.cellphoneNumberEditText?.setBackgroundResource(R.drawable.input_error_background)
         binding.recipientDetailsLayout.cellphoneNumberErrorMsg?.visibility = View.VISIBLE
         binding.recipientDetailsLayout.cellphoneNumberErrorMsg?.text =
-            bindString(R.string.phone_number_invalid_error_msg)
+            bindString(resourceId)
         showAnimationErrorMessage(
             binding.recipientDetailsLayout.cellphoneNumberErrorMsg,
             View.VISIBLE,
@@ -1284,7 +1538,7 @@ class CheckoutAddAddressNewUserFragment :
 
                 R.id.cellphoneNumberEditText -> {
                     binding.recipientDetailsLayout.cellphoneNumberErrorMsg.text =
-                        bindString(R.string.mobile_number_error_msg)
+                        bindString(R.string.enter_valid_sa_number)
                     showAnimationErrorMessage(
                         binding.recipientDetailsLayout.cellphoneNumberErrorMsg,
                         visible,

@@ -10,6 +10,7 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentCustomBottomsheetDialogBinding
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
@@ -58,6 +59,23 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 putCharSequence(DIALOG_SUB_TITLE, subTitle)
                 putString(DIALOG_BUTTON_TEXT, dialog_button_text)
                 putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
+                putString(DIALOG_BUTTON_CLICK_RESULT, dialogResultCode)
+            }
+
+        fun newInstance(
+            title: String,
+            subTitle: CharSequence,
+            dialog_button_text: String,
+            dismissLinkText: String?,
+            dialog_title_img: Int,
+            dialogResultCode: String,
+        ) =
+            CustomBottomSheetDialogFragment().withArgs {
+                putString(DIALOG_TITLE, title)
+                putCharSequence(DIALOG_SUB_TITLE, subTitle)
+                putString(DIALOG_BUTTON_TEXT, dialog_button_text)
+                putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
+                putInt(DIALOG_TITLE_IMG, dialog_title_img)
                 putString(DIALOG_BUTTON_CLICK_RESULT, dialogResultCode)
             }
     }
@@ -122,6 +140,7 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buttonAction -> {
+                UpdateScreenLiveData.value=1
                 setFragmentResult(
                     arguments?.getString(DIALOG_BUTTON_CLICK_RESULT)
                         ?: DIALOG_BUTTON_CLICK_RESULT, bundleOf()

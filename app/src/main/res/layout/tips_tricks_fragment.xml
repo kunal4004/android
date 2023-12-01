@@ -20,6 +20,7 @@
 
             <TextView
                 style="@style/tipsAndTricks"
+                android:contentDescription="@string/new_feature_tutorials_text"
                 android:text="@string/new_feature_tutorials" />
 
             <androidx.appcompat.widget.SwitchCompat

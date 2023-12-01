@@ -21,6 +21,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -282,7 +283,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceWebViewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+            android:theme="@style/MaintenanceWebActivityStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity"
             android:screenOrientation="portrait"
@@ -374,7 +375,6 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation"
-            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/bottomNavigationStyle"
             android:windowSoftInputMode="adjustNothing" />
@@ -642,6 +642,12 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+
 
         <!--Glassbox SDK for recording screen session-->
         <service android:name="com.clarisite.mobile.GlassboxJobX"

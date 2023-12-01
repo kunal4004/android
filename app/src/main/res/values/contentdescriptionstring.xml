@@ -200,7 +200,6 @@
     <string name="activate_vtsc_upsell_card_image_text_label_on_overlay">activate_vtsc_upsell_card_image_text_label_on_overlay</string>
     <string name="activate_vtsc_upsell_card_image_action_button_text_label_on_overlay">activate_vtsc_upsell_card_image_action_button_text_label_on_overlay</string>
     <string name="activate_vtsc_upsell_card_image_action_button_on_overlay">activate_vtsc_upsell_card_image_action_button_on_overlay</string>
-
     <string name="active_vtsc_card_image_temp_card_label_text_on_overlay">active_vtsc_card_image_temp_card_label_text_on_overlay</string>
     <string name="active_vtsc_card_image_embossed_name_label_text_on_overlay">active_vtsc_card_image_embossed_name_label_text_on_overlay</string>
     <string name="pay_with_card_vtsc_action_button_card_icon_image_on_overlay">pay_with_card_vtsc_action_button_card_icon_image_on_overlay</string>
@@ -218,4 +217,122 @@
     <string name="active_vtsc_card_image_on_overlay">active_vtsc_card_image_on_overlay</string>
     <string name="button_my_card_has_arrived">button_my_card_has_arrived</string>
     <string name="active_store_card_image_on_overlay_new_card">active_store_card_image_on_overlay_new_card</string>
+
+    <!-- Common id's -->
+    <string name="title">title</string>
+    <string name="subtitle">subtitle</string>
+    <string name="text">text</string>
+    <string name="button">button</string>
+    <string name="nextArrow">next_arrow</string>
+    <string name="description">description</string>
+    <string name="image_icon">image_icon</string>
+    <string name="checkBox">checkbox</string>
+    <string name="toolbarText">toolbar_text</string>
+    <string name="send_button">send_button</string>
+
+    <!-- Unique Ids for contact us-->
+    <string name="name_text">name_text</string>
+    <string name="name_input_field">name_input_field</string>
+    <string name="email_address_text">email_address_text</string>
+    <string name="email_address_input_field">email_address_input_field</string>
+    <string name="email_address_description">email_address_description</string>
+    <string name="enquiry_type_text">enquiry_type_text</string>
+    <string name="enquiry_type_dropdown">enquiry_type_dropdown</string>
+    <string name="message_text">message_text</string>
+    <string name="message_input_field">message_input_field</string>
+    <string name="enquiry_successfully_sent_image_icon">enquiry_successfully_sent_image_icon</string>
+    <string name="enquiry_successfully_sent_title_text">enquiry_successfully_sent_title_text</string>
+    <string name="enquiry_successfully_sent_description">enquiry_successfully_sent_description</string>
+    <string name="got_it_button">got_it_button</string>
+    <string name="toolbar_text">toolbar_text</string>
+
+    <string name="chat_to_us_on_whatsapp_image">chat_to_us_on_whatsapp_image</string>
+    <string name="chat_to_us_on_title_text">chat_to_us_on_title_text</string>
+    <string name="chat_to_us_on_whatsapp_description">chat_to_us_on_whatsapp_description</string>
+    <string name="how_to_pay_your_woolies_account_image_icon">how_to_pay_your_woolies_account_image_icon</string>
+    <string name="how_to_pay_your_woolies_account_image_desc">how_to_pay_your_woolies_account_image_desc</string>
+    <string name="unable_to_pay_woolies_account_image_icon">unable_to_pay_woolies_account_image_icon</string>
+    <string name="unable_to_pay_woolies_account_image_desc">unable_to_pay_woolies_account_image_desc</string>
+    <string name="payment_not_reflecting_image_icon">payment_not_reflecting_image_icon</string>
+    <string name="payment_not_reflecting_desc">payment_not_reflecting_desc</string>
+    <string name="chat_to_us_now_button">chat_to_us_now_button</string>
+    <string name="whatsapp_number_image_icon">whatsapp_number_image_icon</string>
+    <string name="whatsapp_number_text">whatsapp_number_text</string>
+    <string name="whatsapp_number_number">whatsapp_number_number</string>
+    <string name="back_button">back_button</string>
+
+    <!-- Product Details - Shoptimiser   -->
+    <string name="shoptimiser_chevron_up_icon">shoptimiser_chevron_up_icon</string>
+    <string name="shoptimiser_parent_accordion_container_row">shoptimiser_parent_accordion_container_row</string>
+    <string name="shoptimiser_parent_accordion_container_column">shoptimiser_parent_accordion_container_column</string>
+    <string name="shoptimiser_parent_accordion_title_text">shoptimiser_parent_accordion_title_text</string>
+    <string name="shoptimiser_parent_accordion_subtitle_text">shoptimiser_parent_accordion_subtitle_text</string>
+    <string name="shoptimiser_child_accordion_column">shoptimiser_child_accordion_column</string>
+    <string name="shoptimiser_child_accordion_row">shoptimiser_child_accordion_row</string>
+    <string name="shoptimiser_child_accordion_icon">shoptimiser_child_accordion_icon_%1s</string>
+    <string name="shoptimiser_child_accordion_text">shoptimiser_child_accordion_text_%1s</string>
+    <string name="shoptimiser_child_accordion_currency_text">shoptimiser_child_accordion_currency_text_%1s</string>
+    <string name="shoptimiser_child_accordion_image">shoptimiser_child_accordion_image</string>
+
+    <!-- Delivery Address Fulfillment   -->
+    <string name="cd_fulfillment_delivery_icon">fulfillmentDeliveryIcon</string>
+    <string name="cd_fulfillment_earliest_food_delivery_date_value">fulfillmentEarliestFoodDeliveryDate</string>
+    <string name="cd_fulfillment_earliest_fashion_delivery_date_value">fulfillmentEarliestFashionDeliveryDate</string>
+    <string name="cd_fulfillment_earliest_delivery_date_value">fulfillmentEarliestDeliveryDate</string>
+    <string name="cd_fulfillment_location_icon">fulfillmentLocationIcon</string>
+    <string name="cd_fulfillment_delivery_location_text">fulfillmentDeliveryLocationText</string>
+    <string name="cd_progress_bar">progressBar</string>
+    <string name="cd_navigate_back">navigateBack</string>
+
+    <!-- Location Selection     -->
+    <string name="cd_enable_current_location_switch">enableCurrentLocationSwitch</string>
+    <string name="cd_btn_radio_selection">btnRadioSelection</string>
+    <string name="cd_address_nickname">addressNicknameLabel</string>
+    <string name="cd_address_value">addressValueLabel</string>
+    <string name="cd_edit_address_icon">editAddressIcon</string>
+
+    <!-- Delivery Details   -->
+    <string name="cd_delivery_details_suburb_value">deliveryDetailsSuburbValue</string>
+    <string name="cd_delivery_details_street_address_value">deliveryDetailsStreetAddressValue</string>
+    <string name="cd_delivery_details_province_value">deliveryDetailsProvinceValue</string>
+    <string name="cd_delivery_details_address_nickname_value">deliveryDetailsAddressNicknameValue</string>
+    <string name="cd_delivery_details_additional_location_details_value">deliveryDetailsAdditionalLocationDetailsValue</string>
+    <string name="cd_delivery_details_recipient_name_value">deliveryDetailsRecipientNameValue</string>
+    <string name="cd_delivery_details_vehicle_color_value">deliveryDetailsVehicleColorValue</string>
+    <string name="cd_delivery_details_vehicle_model_value">deliveryDetailsVehicleModelValue</string>
+    <string name="cd_delivery_details_vehicle_registration_value">deliveryDetailsVehicleRegistrationValue</string>
+
+    <!-- Unsellable Popup    -->
+    <string name="cd_unsellable_product_name_label">unsellableProductNameLabel</string>
+    <string name="cd_unsellable_product_price_label">unsellableProductPriceLabel</string>
+    <string name="cd_unsellable_product_quantity_label">unsellableProductQuantityLabel</string>
+
+    <!-- Checkout   -->
+    <string name="cd_checkout_delivery_address">checkoutDeliveryAddressLabel</string>
+    <string name="cd_checkout_user_profile_icon">checkoutUserProfileIcon</string>
+    <string name="cd_checkout_user_name">checkoutUserName</string>
+    <string name="cd_checkout_user_mobile_number">checkoutUserMobileNumber</string>
+    <string name="cd_checkout_order_total_value">checkoutOrderTotalValueLabel</string>
+    <string name="cd_checkout_shopping_bag_switch">checkoutShoppingBagSwitch</string>
+    <string name="cd_checkout_special_instructions_switch">checkoutSpecialInstructionsSwitch</string>
+    <string name="cd_checkout_gift_switch">checkoutGiftSwitch</string>
+    <string name="cd_checkout_gift_instruction_value">checkoutGiftInstructionsText</string>
+    <string name="cd_checkout_delivery_instruction_value">checkoutSpecialDeliveryInstructionsText</string>
+
+    <!-- Unique Ids for need help-->
+    <string name="next_title">next</string>
+    <string name="previous_title">previous</string>
+    <string name="page_number">pageNumber</string>
+    <string name="tipsAndTricks">tipsAndTricks</string>
+    <string name="tipsAndTricksImage">tipsAndTricksImage</string>
+    <string name="faqTitle">faqTitle</string>
+    <string name="faqDescription">faqDescription</string>
+    <string name="tips_and_tricks_text">app_tips_&amp;_tricks_text</string>
+    <string name="tips_and_tricks_next_arrow">app_tips_&amp;_tricks_next_arrow</string>
+    <string name="faq_text">faq_text</string>
+    <string name="faq_next_arrow">faq_next_arrow</string>
+    <string name="new_feature_tutorials_text">new_feature_tutorials_text</string>
+    <string name="tips_and_tricks_image">tips_and_tricks_image</string>
+    <string name="faq_title">faq_title</string>
+    <string name="faq_description">faq_description</string>
 </resources>

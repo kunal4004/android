@@ -33,6 +33,11 @@ class RecommendationViewModel @Inject constructor(
 
     private val _visibleRecommendationItemRequest = MutableLiveData<Boolean?>()
     val visibleRecommendationItemRequest: LiveData<Boolean?> = _visibleRecommendationItemRequest
+    private var isQuickShopButtonPressed = false
+
+    fun clearRecommendations() {
+        _recommendationResponseData.value = null
+    }
 
     fun setCurrentSelectedTab(tabPosition: Int) {
         currentSelectedTab = tabPosition
@@ -157,6 +162,14 @@ class RecommendationViewModel @Inject constructor(
             )
         }
         submittedRecImpressions.addAll(recTokens)
+    }
+
+    fun getQuickShopButtonPressed(): Boolean {
+        return isQuickShopButtonPressed
+    }
+
+    fun setQuickShopButtonPressed(value: Boolean) {
+        isQuickShopButtonPressed = value
     }
 
 }

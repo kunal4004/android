@@ -381,6 +381,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val ADD_TO_CART_PDP: String = "add_to_cart"
         const val VIEW_CART: String = "view_cart"
         const val ADD_TO_WISHLIST: String = "add_to_wishlist"
+        const val IN_APP_POP_UP = "in_app_pop_up"
         const val VIEW_PROMOTION: String = "view_promotion"
         const val SELECT_PROMOTION: String = "select_promotion"
         const val IN_STORE_AVAILABILITY: String ="in_store_availability"
@@ -442,6 +443,10 @@ open class FirebaseManagerAnalyticsProperties {
         //Address Checkout
         const val FORM_START = "form_start"
         const val FORM_COMPLETE = "form_complete"
+
+        /*enhance substitution*/
+        const val SUBSTITUTION: String = "substitution"
+        const val ADD_SUBSTITUTION: String = "add_substitute"
     }
 
     class PropertyNames {
@@ -547,6 +552,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val CATEGORY_NAME = "category"
             const val SUB_CATEGORY_NAME = "sub_category"
             const val SUB_SUB_CATEGORY_NAME = "sub_sub_category"
+            const val MESSAGE_TYPE = "message_type"
 
             const val DELIVERY_MODE = "delivery_mode"
             const val BROWSE_MODE = "browse_mode"
@@ -572,11 +578,16 @@ open class FirebaseManagerAnalyticsProperties {
             const val STEP = "step"
             const val OPTION = "option"
             const val DELIVERY_TYPE = "delivery_type"
+
+            const val SEARCH_RESULT_COUNT: String = "search_result_count"
+            const val LOCATION_ID: String = "location_id"
+            const val PRODUCT_NAME: String = "product_name"
         }
     }
 
     class PropertyValues {
         companion object {
+            const val OUT_OF_STOCK_MESSAGE = "out of stock"
             const val NOT_APPLICABLE: String = "N/A"
 
             // Chanel
@@ -713,6 +724,9 @@ open class FirebaseManagerAnalyticsProperties {
             //checkout promo step
             const val BASKET = "basket"
 
+            const val BACK = "back"
+
+
         }
     }
 
@@ -808,6 +822,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
             const val SSO_FORGOT_PASSWORD: String = "SSO Forgot Password"
+
         }
     }
 
@@ -829,6 +844,9 @@ open class FirebaseManagerAnalyticsProperties {
             const val PRODUCT_SKU: String = "Product SKU"
             const val SELECTED_SKU_QUANTITY: String = "Selected SKU Quantity"
             const val LAST_KNOWN_LOCATION: String = "Last Known Location"
+            const val URL = "URL"
+            const val ExceptionResponse = "ExceptionResponse"
+            const val ExceptionMessage = "ExceptionMessage"
         }
     }
 

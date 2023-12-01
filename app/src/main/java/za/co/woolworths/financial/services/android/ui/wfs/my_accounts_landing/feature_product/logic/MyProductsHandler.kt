@@ -41,21 +41,23 @@ class MyProductsHandlerImpl @Inject constructor(private val status: ViewApplicat
 
     override fun isC2User() = SessionUtilities.getInstance().isC2User
 
+    // Function to check if the user is now a WFS user.
     override fun isNowWfsUser(userAccountResponse: UserAccountResponse?): Boolean {
-        userAccountResponse ?: return false
-        val productGroupCodes = mutableListOf(
+        // If the user account response is null or the user is not a C2 user, return true.
+        if (userAccountResponse == null || !isC2User()) return true
+
+        // Define a set of required product group codes for the user to be considered a WFS user.
+        val requiredProductGroupCodes = setOf(
             AccountProductKeys.PersonalLoan.value,
             AccountProductKeys.StoreCard.value,
             AccountProductKeys.BlackCreditCard.value
         )
-        val validAccounts = userAccountResponse.products
-        val unavailableAccounts = productGroupCodes.filterNot { productGroupCode ->
-            validAccounts?.any { productDetails ->
-                productGroupCode.contains(productDetails.productGroupCode)
-            } == true
-        }
-        return unavailableAccounts.isNotEmpty() && unavailableAccounts.size == 3
 
+        // Extract the product group codes from the user account response, defaulting to an empty list if none.
+        val validProductGroupCodes = userAccountResponse.products?.map { it.productGroupCode }.orEmpty()
+
+        // Return true if all required product group codes are not present in the valid product group codes.
+        return requiredProductGroupCodes.all { it !in validProductGroupCodes }
     }
 
     override fun listOfDefaultProductItems(productDetails: ProductDetails?): MutableMap<String, AccountProductCardsGroup?> = mutableMapOf(

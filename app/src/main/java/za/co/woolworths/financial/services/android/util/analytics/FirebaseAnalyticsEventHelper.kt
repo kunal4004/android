@@ -4,9 +4,9 @@ import android.app.Activity
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
+import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.analytics.dto.*
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -83,6 +83,71 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
+    fun cartBeginEventAnalytics(orderSummary: OrderSummary?, viewModel: CartViewModel) {
+        val beginCheckoutParams = Bundle()
+        beginCheckoutParams.apply {
+            putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            )
+            orderSummary?.total?.let {
+                putDouble(
+                    FirebaseAnalytics.Param.VALUE,
+                    it
+                )
+            }
+
+            viewModel?.getCartItemList()?.let {
+                val itemArrayEvent = arrayListOf<Bundle>()
+                for (cartItem in it) {
+                    val beginCheckoutItem = Bundle()
+                    beginCheckoutItem.apply {
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_ID,
+                            cartItem.commerceItemInfo?.productId
+                        )
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_NAME,
+                            cartItem.commerceItemInfo.productDisplayName
+                        )
+                        putDouble(
+                            FirebaseAnalytics.Param.PRICE,
+                            cartItem.priceInfo.amount
+                        )
+
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_BRAND,
+                            cartItem.commerceItemInfo?.productDisplayName
+                        )
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_VARIANT,
+                            cartItem.commerceItemInfo?.size
+                        )
+
+                        putString(
+                            FirebaseAnalytics.Param.ITEM_CATEGORY,
+                            cartItem.commerceItemInfo.productDisplayName
+                        )
+                        putInt(
+                            FirebaseAnalytics.Param.QUANTITY,
+                            cartItem.commerceItemInfo.quantity
+                        )
+                        itemArrayEvent.add(this)
+                    }
+                }
+                putParcelableArray(
+                    FirebaseAnalytics.Param.ITEMS,
+                    itemArrayEvent.toTypedArray()
+                )
+            }
+
+            AnalyticsManager.logEvent(
+                FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
+                this
+            )
+        }
+    }
+
     fun refund(
         commerceItems: List<CommerceItem>?,
         value: Double?,
@@ -152,7 +217,7 @@ object FirebaseAnalyticsEventHelper {
     }
 
     fun viewItemListRecommendations(
-        products: List<Product>?, category: String?
+        products: List<ProductList>?, category: String?
     ) {
         if (products.isNullOrEmpty()) {
             return
@@ -353,6 +418,18 @@ object FirebaseAnalyticsEventHelper {
         AnalyticsManager.logEvent(eventName, formTypeParams)
     }
 
+    fun outOfStock() {
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.MESSAGE_TYPE,
+                FirebaseManagerAnalyticsProperties.PropertyValues.OUT_OF_STOCK_MESSAGE
+            )
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.IN_APP_POP_UP, analyticsParams
+        )
+    }
     object Utils {
         private fun stringToFirebaseEventName(string: String?): String? {
             return string?.filter { it.isLetterOrDigit() }?.lowercase()
