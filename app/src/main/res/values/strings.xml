@@ -3219,7 +3219,6 @@
     <string name="endless_aisle_barcode_desc">Scan your barcode at the till point for in store payments. Barcode expires when the store closes.</string>
     <string name="by_submitting_you_agree_to_our">By submitting, you agree to our</string>
     <string name="terms_and_Conditions_for_write_a_review">Terms and Conditions.</string>
-
     <string name="choose_a_timeslot">Choose a timeslot</string>
     <string name="date_picker_today">Today</string>
     <string name="date_picker_tomorrow">Tomorrow</string>
@@ -3234,7 +3233,8 @@
     <!--    // Tooltip-->
     <string name="description_tooltip">
     <![CDATA[• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect]]>
-</string>
+    </string>
+    <string name="huawei_push_token">Huawei Push Token</string>
 
     <string name="order_again_title">Reorder your favourite foods now.</string>
     <string name="sign_in_to_order_again">sign in to order again</string>

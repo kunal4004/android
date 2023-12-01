@@ -41,9 +41,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatOfflineFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatRetrieveABSACardTokenFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.WhatsAppChatToUsFragment
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.ServiceTools
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 @AndroidEntryPoint
@@ -304,5 +302,12 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
     fun updateToolbarTitle(@IntegerRes title: Int?) {
         binding.agentNameTextView?.text = title?.let { name -> bindString(name) }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AppConstant.RESULT_OK_HUAWEI_REQUEST_CODE) {
+            huaweiRatingsWindowResult(resultCode)
+        }
     }
 }

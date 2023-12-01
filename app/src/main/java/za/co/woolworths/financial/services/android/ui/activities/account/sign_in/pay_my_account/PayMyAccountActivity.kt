@@ -24,8 +24,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAManageCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.huaweiRatingsWindowResult
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 
 class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAccountView {
@@ -189,6 +191,10 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                     }
                 }
             }
+            AppConstant.RESULT_OK_HUAWEI_REQUEST_CODE-> {
+                huaweiRatingsWindowResult(resultCode)
+            }
+
 
         }
     }
