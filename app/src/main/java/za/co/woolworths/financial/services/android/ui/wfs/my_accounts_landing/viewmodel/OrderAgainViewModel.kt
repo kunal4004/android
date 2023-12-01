@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awfs.coordination.R
@@ -45,7 +46,10 @@ class OrderAgainViewModel @Inject constructor(
     private var _orderAgainUiState = MutableStateFlow(OrderAgainUiState())
     val orderAgainUiState = _orderAgainUiState.asStateFlow()
 
-    private var _onScreenEvent: MutableStateFlow<OrderAgainScreenEvents> = MutableStateFlow(OrderAgainScreenEvents.Idle)
+    var orderList = mutableStateListOf<ProductItem>()
+
+    private var _onScreenEvent: MutableStateFlow<OrderAgainScreenEvents> =
+        MutableStateFlow(OrderAgainScreenEvents.Idle)
     val onScreenEvent = _onScreenEvent.asStateFlow()
 
     init {
@@ -64,14 +68,14 @@ class OrderAgainViewModel @Inject constructor(
             }
 
             OrderAgainScreenEvents.AddToCartClicked -> {
-                val items = _orderAgainUiState.value.orderList
-                    .filter { it.isSelected }
-                    .map { it.toAddItemToCart() }
+                val items = orderList.filter { it.isSelected }.map { it.toAddItemToCart() }
                 onAddToCartClicked(items)
             }
+
             is OrderAgainScreenEvents.OnSwipeAddAction -> {
                 onAddToCartClicked(listOf(events.item.toAddItemToCart()))
             }
+
             is OrderAgainScreenEvents.ListItemRevealed -> addToRevealItems(events.item)
             is OrderAgainScreenEvents.ListItemCollapsed -> collapseRevealItems(events.item)
 
@@ -85,7 +89,7 @@ class OrderAgainViewModel @Inject constructor(
 
     private fun onAddToCartClicked(items: List<AddItemToCart>) {
         viewModelScope.launch {
-            if(items.isEmpty()) {
+            if (items.isEmpty()) {
                 return@launch
             }
 
@@ -93,16 +97,15 @@ class OrderAgainViewModel @Inject constructor(
                 when (it.status) {
                     Status.SUCCESS -> {
                         val productCountMap = it.data?.data?.getOrNull(0)?.productCountMap
-                        _orderAgainUiState.update  { state ->
-                            val orderList = state.orderList.toMutableList()
+                        _orderAgainUiState.update { state ->
                             orderList.filter { item -> item.isSelected }.map { item ->
                                 item.isSelected = false
                                 item.quantity = 1
                             }
                             state.copy(
-                                orderList = orderList,
                                 showAddToCart = false,
-                                maxItemLimit = productCountMap?.quantityLimit?.foodMaximumQuantity ?: 0
+                                maxItemLimit = productCountMap?.quantityLimit?.foodMaximumQuantity
+                                    ?: 0
                             )
                         }
                         _onScreenEvent.update {
@@ -112,10 +115,12 @@ class OrderAgainViewModel @Inject constructor(
                         _onScreenEvent.update {
                             OrderAgainScreenEvents.ShowSnackBar(
                                 count = _orderAgainUiState.value.itemsToBeAddedCount,
-                                maxItemLimit = productCountMap?.quantityLimit?.foodMaximumQuantity ?: 0
+                                maxItemLimit = productCountMap?.quantityLimit?.foodMaximumQuantity
+                                    ?: 0
                             )
                         }
                     }
+
                     Status.ERROR -> {}
                     Status.LOADING -> {
 
@@ -135,9 +140,8 @@ class OrderAgainViewModel @Inject constructor(
             }
 
             _orderAgainUiState.update {
-                val updatedList = it.orderList.toMutableList()
                 var count = 0
-                updatedList.map { item ->
+                orderList.map { item ->
                     if (item.quantityInStock > 0) {
                         item.quantity =
                             item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
@@ -150,13 +154,11 @@ class OrderAgainViewModel @Inject constructor(
                 }
 
                 it.copy(
-                    orderList = updatedList,
                     headerState = it.headerState.copy(
-                        rightButtonRes = if (it.headerState.rightButtonRes == R.string.select_all)
-                            R.string.deselect_all
+                        rightButtonRes = if (it.headerState.rightButtonRes == R.string.select_all) R.string.deselect_all
                         else R.string.select_all
                     ),
-                    showAddToCart = updatedList.any { item -> item.isSelected },
+                    showAddToCart = orderList.any { item -> item.isSelected },
                     itemsToBeAddedCount = count
                 )
             }
@@ -167,7 +169,7 @@ class OrderAgainViewModel @Inject constructor(
         viewModelScope.launch {
             _orderAgainUiState.update {
                 val newList = it.revealedList.toMutableList()
-                if(item.quantityInStock > 1) {
+                if (item.quantityInStock > 1) {
                     newList.add(item.id)
                 }
                 it.copy(revealedList = newList)
@@ -188,16 +190,11 @@ class OrderAgainViewModel @Inject constructor(
 
     private fun onChangeProductQuantity(count: Int, productItem: ProductItem) {
         viewModelScope.launch {
-            _orderAgainUiState.update {
-                val updatedList = it.orderList.toMutableList()
-                updatedList.find { item -> item.id == productItem.id }?.let { item ->
-                    if (item.id == productItem.id) {
-                        item.quantity =
-                            (item.quantity + count).coerceAtLeast(1)
-                                .coerceAtMost(item.quantityInStock)
-                    }
+            orderList.find { item -> item.id == productItem.id }?.let { item ->
+                if (item.id == productItem.id) {
+                    item.quantity =
+                        (item.quantity + count).coerceAtLeast(1).coerceAtMost(item.quantityInStock)
                 }
-                it.copy(orderList = updatedList)
             }
             updateAddToListItemCount()
         }
@@ -206,8 +203,8 @@ class OrderAgainViewModel @Inject constructor(
     private fun updateAddToListItemCount() {
         viewModelScope.launch {
             _orderAgainUiState.update {
-                val totalItemsCount = it.orderList.filter { item -> item.isSelected }
-                    .sumOf { item -> item.quantity }
+                val totalItemsCount =
+                    orderList.filter { item -> item.isSelected }.sumOf { item -> item.quantity }
                 it.copy(
                     itemsToBeAddedCount = totalItemsCount
                 )
@@ -218,7 +215,7 @@ class OrderAgainViewModel @Inject constructor(
     fun setDeliveryLocation() {
         viewModelScope.launch {
             val fulfillmentDetails = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails
-            if(fulfillmentDetails != null) {
+            if (fulfillmentDetails != null) {
                 with(fulfillmentDetails) {
                     var textDeliveryLocation = ""
                     val deliveryTypeResource: Int = when (Delivery.getType(deliveryType)) {
@@ -270,7 +267,12 @@ class OrderAgainViewModel @Inject constructor(
             if (plistId.isEmpty()) {
                 FirebaseManager.logException(Exception("Invalid plistId on Order Again Api."))
                 _orderAgainUiState.update { state ->
-                    state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen)
+                    state.copy(
+                        screenState = OrderAgainScreenState.ShowEmptyScreen,
+                        headerState = state.headerState.copy(
+                            rightButtonRes = R.string.empty
+                        )
+                    )
                 }
                 return@launch
             }
@@ -279,9 +281,13 @@ class OrderAgainViewModel @Inject constructor(
                 _orderAgainUiState.update { state ->
                     when (it.status) {
                         Status.SUCCESS -> {
-
                             // Get all product Ids for inventory call.
                             val productIds = getProductIds(it.data)
+
+                            val items = getOrderList(it.data)
+                            val updatedList = items.map { it.toProductItem() }
+                            orderList.clear()
+                            orderList.addAll(updatedList)
 
                             // If no food product available in response show empty screen.
                             if (productIds.isEmpty()) {
@@ -289,11 +295,15 @@ class OrderAgainViewModel @Inject constructor(
                             } else {
                                 // get all product ids and make inventory call
                                 callInventoryApi(productIds)
-                                state.copy(screenState = OrderAgainScreenState.Loading)
+                                state.copy(
+                                    screenState = OrderAgainScreenState.Loading
+                                )
                             }
                         }
 
-                        Status.ERROR -> state.copy(screenState = OrderAgainScreenState.ShowErrorScreen)
+                        Status.ERROR -> state.copy(
+                            screenState = OrderAgainScreenState.ShowErrorScreen, isLoading = false
+                        )
 
                         Status.LOADING -> state.copy(
                             screenState = OrderAgainScreenState.Loading,
@@ -309,19 +319,11 @@ class OrderAgainViewModel @Inject constructor(
 
     private fun getProductIds(response: OrderAgainResponse?): List<String> {
         val items = getOrderList(response)
-        val updatedList = items.map { it.toProductItem() }
-        _orderAgainUiState.update {
-            it.copy(
-                orderList = updatedList
-            )
-        }
         return items.mapNotNull { item -> item.id }
     }
 
     private fun getOrderList(response: OrderAgainResponse?): List<Item> {
-        return response?.data?.responses?.getOrNull(0)
-            ?.actions?.getOrNull(0)
-            ?.items ?: emptyList()
+        return response?.data?.responses?.getOrNull(0)?.actions?.getOrNull(0)?.items ?: emptyList()
     }
 
     private fun callInventoryApi(productIds: List<String>) {
@@ -361,9 +363,7 @@ class OrderAgainViewModel @Inject constructor(
     private fun updateInventoryStock(skuInventory: List<SkuInventory>?) {
         viewModelScope.launch(Dispatchers.Default) {
             _orderAgainUiState.update {
-                val updatedList = it.orderList.toMutableList()
-                var count = 0
-                updatedList.map { productItem ->
+                orderList.map { productItem ->
                     val availableQuantity = getQuantity(productItem.id, skuInventory)
                     productItem.quantityInStock = availableQuantity
                     productItem.isSelected =
@@ -373,10 +373,6 @@ class OrderAgainViewModel @Inject constructor(
                         availableQuantity > productItem.quantity -> productItem.quantity
                         else -> 1
                     }.coerceAtLeast(1).coerceAtMost(productItem.quantityInStock)
-
-                    if (productItem.isSelected) {
-                        count = count.plus(productItem.quantity)
-                    }
 
                     val delivery =
                         Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
@@ -392,11 +388,10 @@ class OrderAgainViewModel @Inject constructor(
                         else -> R.string.empty
                     }
                 }
+                updateAddToListItemCount()
                 val isAnyUnselected = isAnyUnselected()
                 it.copy(
-                    orderList = updatedList,
-                    showAddToCart = updatedList.any { item -> item.isSelected },
-                    itemsToBeAddedCount = count,
+                    showAddToCart = orderList.any { item -> item.isSelected },
                     headerState = it.headerState.copy(
                         rightButtonRes = if (isAnyUnselected) R.string.select_all else R.string.deselect_all
                     )
@@ -405,7 +400,7 @@ class OrderAgainViewModel @Inject constructor(
         }
     }
 
-    private fun isAnyUnselected(): Boolean = orderAgainUiState.value.orderList.any{
+    private fun isAnyUnselected(): Boolean = orderList.any {
         !it.isSelected && it.quantityInStock > 0
     }
 
@@ -417,23 +412,20 @@ class OrderAgainViewModel @Inject constructor(
 
     private fun onProductCheckedChange(isChecked: Boolean, productItem: ProductItem) {
         _orderAgainUiState.update {
-            val updatedList = it.orderList.toMutableList()
-            updatedList.find { item -> item.id == productItem.id }?.let { item ->
-                item.quantity =
-                    item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
+            orderList.find { item -> item.id == productItem.id }?.let { item ->
+                item.quantity = item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
                 item.isSelected = isChecked
             }
             // Determine toolbar button text
             val isAnyUnselected = isAnyUnselected()
             // Determine Add to cart button visibility and bottom nav bar
-            val isAnySelected = updatedList.any { item -> item.isSelected }
+            val isAnySelected = orderList.any { item -> item.isSelected }
 
             _onScreenEvent.update {
                 OrderAgainScreenEvents.HideBottomBar(isAnySelected)
             }
 
             it.copy(
-                orderList = updatedList,
                 showAddToCart = isAnySelected,
                 headerState = it.headerState.copy(
                     rightButtonRes = if (isAnyUnselected) R.string.select_all else R.string.deselect_all
@@ -444,7 +436,7 @@ class OrderAgainViewModel @Inject constructor(
     }
 
     fun refreshInventory() {
-        val productIds = orderAgainUiState.value.orderList.map { it.id }
+        val productIds = orderList.map { it.id }
         if (productIds.isEmpty()) {
             callOrderAgainApi()
             return

@@ -161,7 +161,7 @@ fun OrderAgainScreen(
         }
     ) {
 
-        OrderAgainStatelessScreen(Modifier.padding(it), state) { event ->
+        OrderAgainStatelessScreen(Modifier.padding(it), state, viewModel.orderList) { event ->
             when (event) {
                 OrderAgainScreenEvents.DeliveryLocationClick -> onEvent(event)
                 OrderAgainScreenEvents.StartShoppingClicked -> onEvent(event)
@@ -218,6 +218,7 @@ fun SnackbarView(
 private fun OrderAgainStatelessScreen(
     modifier: Modifier = Modifier,
     state: OrderAgainUiState,
+    orderList: List<ProductItem>,
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
     Column(modifier.background(OneAppBackground)) {
@@ -245,7 +246,7 @@ private fun OrderAgainStatelessScreen(
             OrderAgainScreenState.ShowOrderList -> {
                 OrderAgainList(
                     Modifier.weight(1f),
-                    state.orderList.toMutableList(),
+                    orderList,
                     state.revealedList,
                     onEvent
                 )
@@ -598,8 +599,7 @@ fun EmptyScreen(
 @Composable
 private fun PreviewOrderAgainScreen() {
     OneAppTheme {
-        OrderAgainStatelessScreen(state = OrderAgainUiState()) {}
-        OrderAgainList(orderList = emptyList(), revealedList = emptyList()) {}
+        OrderAgainStatelessScreen(state = OrderAgainUiState(), orderList = emptyList()) {}
     }
 }
 
@@ -632,7 +632,8 @@ private fun PreviewProductItemView() {
             ProductItem(
                 productName = "Crumbed Trout Fish Cakes 600",
                 promotionalText = "offer: BUY ANY 2 SAVE 20% fresh fruit",
-                priceString = "R 99.86"
+                priceString = "R 99.86",
+//                isSelected = true
             ).apply {
                 quantityInStock = 1
                 isSelected = true

@@ -4,7 +4,6 @@ import android.os.Parcelable
 import com.awfs.coordination.R
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
-import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewState
 import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationViewState
 
@@ -17,7 +16,6 @@ data class OrderAgainUiState(
     ),
     val screenState: OrderAgainScreenState = OrderAgainScreenState.Loading,
     val deliveryState: DeliveryLocationViewState = DeliveryLocationViewState(),
-    val orderList: List<ProductItem> = emptyList(),
     val revealedList: List<String> = emptyList(),
     val showAddToCart: Boolean = false,
     val itemsToBeAddedCount: Int = 0,
