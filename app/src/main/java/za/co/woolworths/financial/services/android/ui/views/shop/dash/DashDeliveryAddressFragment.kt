@@ -770,7 +770,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     LinearLayoutManager(
                         activity,
                         LinearLayoutManager.VERTICAL,
-                        false
+                        true
                     )
                 }
                 val imageViewHeight =
