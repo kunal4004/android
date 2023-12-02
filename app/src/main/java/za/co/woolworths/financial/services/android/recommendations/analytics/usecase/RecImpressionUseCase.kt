@@ -16,7 +16,7 @@ class RecImpressionUseCase @Inject constructor(
 
     suspend operator fun invoke(recTokens: List<String>): Resource<RecommendationResponse> {
         val event = prepareEvent(recTokens)
-        return recommendationsRepository.getRecommendationResponse(event)
+        return recommendationsRepository.getRecommendationResponse(event, false, null)
     }
 
     private fun prepareEvent(recTokens: List<String>): RecommendationRequest? {

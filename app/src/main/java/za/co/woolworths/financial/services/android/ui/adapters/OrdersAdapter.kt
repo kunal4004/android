@@ -74,7 +74,7 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
                             }
 
                     OrderState(
-                        context.getString(R.string.order_id, item.orderId.replaceFirstChar { it.uppercase() }),
+                        context.getString(R.string.order_id, item.orderId),
                         item.state?.replace(context.getString(R.string.order), "")?.uppercase() ?:"",
                         errorLabel = "",
                         background
