@@ -3241,4 +3241,6 @@
     <![CDATA[• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect]]>
     </string>
     <string name="huawei_push_token">Huawei Push Token</string>
+    <string name="item_out_of_stock">Item Out of Stock?</string>
+    <string name="notify_me">Notify Me</string>
 </resources>

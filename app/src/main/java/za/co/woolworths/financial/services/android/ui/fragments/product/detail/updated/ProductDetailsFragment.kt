@@ -550,6 +550,7 @@ class ProductDetailsFragment :
         sizeColorSelectorLayout.apply {
             moreColor?.setOnClickListener(this@ProductDetailsFragment)
             sizeGuide?.setOnClickListener(this@ProductDetailsFragment)
+            outOfStockLayout.notifyMe?.setOnClickListener(this@ProductDetailsFragment)
         }
         vtoLayout.apply {
             imgCloseVTO?.setOnClickListener(this@ProductDetailsFragment)
@@ -693,6 +694,7 @@ class ProductDetailsFragment :
             R.id.iv_like -> likeButtonClicked()
             R.id.txt_substitution_edit -> substitutionEditButtonClick()
             R.id.writeAReviewLink -> openWriteAReviewFragment(productDetails?.productName,productDetails?.externalImageRefV2, productDetails?.productId)
+            R.id.notifyMe -> navigateToNotifyMeScreen()
         }
     }
 
@@ -1563,6 +1565,17 @@ class ProductDetailsFragment :
             }
 
             sizeSelectorLayout?.visibility = View.VISIBLE
+        }
+
+        val isZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.any {
+            (it.quantity == 0)
+        }
+        binding.outOfStockLayout.apply {
+            if (isZeroQuantity == true) {
+                binding.outOfStockLayout.root.visibility = View.VISIBLE
+                if (SessionUtilities.getInstance().isUserAuthenticated)
+                binding.outOfStockLayout.outOfStockItems.setPadding(0,0,0,0)
+            } else binding.outOfStockLayout.root.visibility = View.GONE
         }
     }
 
@@ -4550,6 +4563,17 @@ class ProductDetailsFragment :
             }
         } else {
             ScreenManager.presentSSOSignin(activity, SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION)
+        }
+    }
+
+    private fun navigateToNotifyMeScreen() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSigninActivity(activity,
+                    SSO_REQUEST_ADD_TO_CART,
+                    isUserBrowsing)
+            return
+        } else {
+            //TODO in APP2-1575 ticket
         }
     }
 }
