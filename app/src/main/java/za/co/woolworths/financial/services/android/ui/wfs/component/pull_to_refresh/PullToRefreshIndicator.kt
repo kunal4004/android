@@ -78,7 +78,7 @@ private fun PullToRefreshIndicator(
         scaleFraction = LinearOutSlowInEasing.transform(progress)
         alphaFraction = progress
     } else {
-        val transition = rememberInfiniteTransition()
+        val transition = rememberInfiniteTransition(label = "")
         val rotationAnimation by transition.animateFloat(
             initialValue = 0f,
             targetValue = 360f,
@@ -87,7 +87,7 @@ private fun PullToRefreshIndicator(
                     durationMillis = 1332, // 1 and 1/3 second
                     easing = LinearEasing
                 )
-            )
+            ), label = ""
         )
         rotation = rotationAnimation
         scaleFraction = 1f
