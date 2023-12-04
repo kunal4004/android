@@ -550,7 +550,6 @@ class ProductDetailsFragment :
         sizeColorSelectorLayout.apply {
             moreColor?.setOnClickListener(this@ProductDetailsFragment)
             sizeGuide?.setOnClickListener(this@ProductDetailsFragment)
-            outOfStockLayout.notifyMe?.setOnClickListener(this@ProductDetailsFragment)
         }
         vtoLayout.apply {
             imgCloseVTO?.setOnClickListener(this@ProductDetailsFragment)
@@ -572,6 +571,7 @@ class ProductDetailsFragment :
         ratingLayout.tvTotalReviews.setOnClickListener(this@ProductDetailsFragment)
         productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.tvReport.setOnClickListener(
             this@ProductDetailsFragment)
+        outOfStockLayout.notifyMe?.setOnClickListener(this@ProductDetailsFragment)
     }
 
 
@@ -1574,7 +1574,7 @@ class ProductDetailsFragment :
             if (isZeroQuantity == true) {
                 binding.outOfStockLayout.root.visibility = View.VISIBLE
                 if (SessionUtilities.getInstance().isUserAuthenticated)
-                binding.outOfStockLayout.outOfStockItems.setPadding(0,0,0,0)
+                    outOfStockItems.setPadding(0, 0, 0, 0)
             } else binding.outOfStockLayout.root.visibility = View.GONE
         }
     }
