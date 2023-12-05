@@ -318,14 +318,16 @@ class AddToListViewModel @Inject constructor(
         listDetails: List<ShoppingList>
     ) {
          val listId = StringBuilder()
-         listDetails.forEach {
-             listId.append(it.listId).append(",")
-         }
 
-        if (listId.isEmpty()) {
-            return
+        listDetails.forEachIndexed {
+                index, shoppingList ->
+           listId.apply {
+               this.append(shoppingList.listId)
+               if (listDetails.lastIndex !=index) {
+                   this.append(",")
+               }
+           }
         }
-        listId.deleteCharAt(listId.length-1)
 
         viewModelScope.launch {
             addToListByOrderIdUC(
