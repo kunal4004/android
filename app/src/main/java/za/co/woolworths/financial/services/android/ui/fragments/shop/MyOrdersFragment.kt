@@ -271,7 +271,7 @@ class MyOrdersFragment : BaseFragmentBinding<FragmentShopMyOrdersBinding>(Fragme
     }
 
     override fun onErrorDialogDismiss() {
-        parentFragment?.switchToDepartmentTab()
+        //parentFragment?.switchToDepartmentTab() //browsing tabs have been removed from the Shop page so can not change it, also TBC if this class is even still being used, since there's no usage of it
     }
 
     override fun presentOrderDetailsPage(item: Order) {

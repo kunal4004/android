@@ -472,7 +472,8 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
             getString(R.string.out_of_stock_dialog_title),
             getString(R.string.got_it),
             R.drawable.es_no_stock_available,
-            false
+            false,
+            isOutOfStockDialog = true
         )
     }
 

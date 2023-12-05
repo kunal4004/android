@@ -51,6 +51,15 @@
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/optionLocation" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/standardAndCncItemsGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="oneDeliveryLinearLayout, foodDeliveryLinearLayout,
+        otherDeliveryLinearLayout, infoDeliveryDateTimeTextView,
+        dashDeliveryLinearLayout, continueBrowsingStandardLinearLayout"/>
+
     <LinearLayout
         android:id="@+id/oneDeliveryLinearLayout"
         android:layout_width="0dp"
@@ -316,6 +325,16 @@
             android:contentDescription="@string/continue_browsing"
             android:text="@string/continue_browsing" />
     </LinearLayout>
+
+    <include
+        android:id="@+id/endlessAisleOrderConfirmationLayout"
+        layout="@layout/endless_aisle_order_confirmation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/separator"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"

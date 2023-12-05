@@ -34,11 +34,11 @@ class AppConstant {
          * Durations
          *****************************************************************************************/
         const val DURATION_1000_MS: Long = 1000
-        const val DURATION_120000_MS: Long = 120000
-        const val DURATION_0_MS: Long = 0L
+        const val DURATION_120000_MS:Long=120000
+        const val DURATION_0_MS:Long=0L
 
-        const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL: Long = 15
-        const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL: Long = 7200
+        const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15
+        const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
 
         /*****************************************************************************************
          * API Response Code
@@ -65,10 +65,8 @@ class AppConstant {
         const val REQUEST_CODE_QUERY_INVENTORY_FOR_STORE = 3343
         const val SET_DELIVERY_LOCATION_REQUEST_CODE = 3346
         const val REQUEST_CODE_QUERY_STORE_FINDER = 3344
-
         //order details
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
-
         //Barcode scanning
         const val REQUEST_CODE_BARCODE_ACTIVITY = 1947
 
@@ -130,19 +128,17 @@ class AppConstant {
         const val ORDER_SHIPPING_TOTAL = "Order_Shipping_Total"
         const val QUICK_LINK = "Quick Link - Slot "
 
-        const val RED_HEX_COLOR = "#ff0000"
-        const val DEFAULT_TAG_HEX_COLOR = "#b2b2b2"
-
+        const val RED_HEX_COLOR ="#ff0000"
+        const val DEFAULT_TAG_HEX_COLOR="#b2b2b2"
         // delete my profile
         const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
         const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"
         const val RESULT_CODE_DELETE_ACCOUNT = 444
-        const val FIFTY = 50
-        const val TEN = 10
+        const val FIFTY=50
+        const val TEN=10
 
         // pargo store
-        const val TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT: String =
-            "ChangeFullfilmentCollectionStoreFragment"
+        const val TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT: String = "ChangeFullfilmentCollectionStoreFragment"
         const val TAG_FBH_CNC_FRAGMENT: String = "FBHCNC"
 
         // My List
@@ -160,6 +156,23 @@ class AppConstant {
         const val SCREEN_NAME_DELETE_LIST_CONFIRMATION = "Delete List Confirmation Screen"
         const val SCREEN_NAME_DELETE_LIST_PROGRESS_BAR = "Delete List Progress Bar Screen"
         const val SCREEN_NAME_DELETE_ITEM_CONFIRMATION = "Delete Item Confirmation Screen"
+
+
+
+        //Huawei Ratings
+        const val APP_GALLERY_APP_NOT_RELEASED: Int = 101
+        const val APP_GALLERY_RATING_SUBMITTED = 102
+        const val APP_GALLERY_COMMENT_SUBMITTED = 103
+        const val APP_GALLERY_SIGN_IN_INVALID = 104
+        const val APP_GALLERY_USER_DOES_NOT_ALLOWED = 105
+        const val APP_GALLERY_COMMENT_FUNCTION_DISABLED = 106
+        const val APP_GALLERY_USER_CANCELLED = 108
+        const val RESULT_OK_HUAWEI_REQUEST_CODE = 1001
+        const val HUAWEI_FLAVOR = "huaweiProduction"
+        const val HUAWEI_APP_COMMENTS_APP_ACTION_NAME = "com.huawei.appmarket.intent.action.guidecomment"
+        const val HUAWEI_APP_COMMENTS_APP_PACKAGE_NAME = "com.huawei.appmarket"
+
+        const val actionItemTnC = "ACTION_ITEMS_TnC"
     }
 
     class Keys {
@@ -175,7 +188,6 @@ class AppConstant {
             const val EXTRA_PRODUCT_NAME = "PRODUCT_NAME"
             const val EXTRA_SEARCH_TYPE = "searchType"
             const val EXTRA_SEARCH_TERM = "searchTerm"
-
             /*****************************************************************************************
              * Bundle Keys
              * const val BUNDLE_EXAMPLE_NAME = "BUNDLE_KEY_NAME"
