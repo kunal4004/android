@@ -79,6 +79,7 @@ import za.co.woolworths.financial.services.android.presentation.addtolist.AddToL
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -651,7 +652,7 @@ class ProductDetailsFragment :
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
             R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
-            R.id.editDeliveryLocation -> updateDeliveryLocation()
+            R.id.editDeliveryLocation -> updateDeliveryLocation(launchNewToggleScreen = false)
             R.id.productDetailsInformation -> showDetailsInformation(
                 ProductInformationActivity.ProductInformationType.DETAILS
             )
@@ -2746,7 +2747,7 @@ class ProductDetailsFragment :
                     FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS -> {
                         findItemInStore()
                     }
-                    REQUEST_SUBURB_CHANGE_FOR_STOCK -> {
+                    REQUEST_SUBURB_CHANGE_FOR_STOCK, ShopToggleActivity.REQUEST_DELIVERY_TYPE -> {
 
                         updateStockAvailabilityLocation()
                         showSubstituteItemCell(true, substitutionProductItem)
@@ -3221,15 +3222,19 @@ class ProductDetailsFragment :
         }
     }
 
-    override fun updateDeliveryLocation() {
+    override fun updateDeliveryLocation(launchNewToggleScreen: Boolean) {
         activity?.apply {
             when (SessionUtilities.getInstance().isUserAuthenticated) {
-                true -> KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    this,
-                    REQUEST_SUBURB_CHANGE_FOR_STOCK,
-                    KotlinUtils.getPreferredDeliveryType(),
-                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                )
+                true -> if (launchNewToggleScreen) {
+                    launchShopToggleScreen()
+                } else {
+                    KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                        this,
+                        REQUEST_SUBURB_CHANGE_FOR_STOCK,
+                        KotlinUtils.getPreferredDeliveryType(),
+                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                    )
+                }
                 false -> ScreenManager.presentSSOSigninActivity(this,
                     SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK, isUserBrowsing)
             }
@@ -3550,7 +3555,17 @@ class ProductDetailsFragment :
     }
 
     override fun onChangeDeliveryOption() {
-        this.updateDeliveryLocation()
+        this.updateDeliveryLocation(launchNewToggleScreen = false)
+    }
+
+    override fun onChangeDeliveryOptionFromNewToggleFulfilment() {
+        updateDeliveryLocation(launchNewToggleScreen = true)
+    }
+
+    private fun launchShopToggleScreen() {
+        Intent(requireActivity(), ShopToggleActivity::class.java).apply {
+            startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
+        }
     }
 
     override fun onFindInStore() {
@@ -3558,7 +3573,7 @@ class ProductDetailsFragment :
     }
 
     override fun openChangeFulfillmentScreen() {
-        this.updateDeliveryLocation()
+        this.updateDeliveryLocation(launchNewToggleScreen = false)
     }
 
     override fun clearStockAvailability() {
