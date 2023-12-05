@@ -82,7 +82,6 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse
 import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel
 import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestType
 import za.co.woolworths.financial.services.android.models.dto.account.FeatureEnablementModel
-import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
 import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
 import za.co.woolworths.financial.services.android.models.dto.account.getRequestBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
@@ -133,6 +132,9 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
+import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemDetail
+import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.presentation.addtolist.response.CopyListResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
@@ -397,6 +399,12 @@ open class OneAppService(
             getSessionToken(), getDeviceIdentityToken(), listId,
             addToListRequest
         )
+
+    suspend fun addProductsToListV2(
+       copyItemToListRequest: CopyItemToListRequest
+    ): retrofit2.Response<CopyListResponse> = mApiInterface.addProductsToListV2(
+        getSessionToken(), getDeviceIdentityToken(), copyItemToListRequest
+    )
 
     fun getPromotions(): Call<PromotionsResponse> {
         return mApiInterface.getPromotions(
