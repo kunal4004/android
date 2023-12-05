@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.text.TextUtils
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.JsonSyntaxException
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode.Companion.getEnum
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import javax.inject.Inject
 
 interface DeepLinkingRedirection {
@@ -27,10 +29,13 @@ class DeepLinkingRedirectionImpl @Inject constructor() : DeepLinkingRedirection 
         if (TextUtils.isEmpty(data)) {
             return null
         }
-
-        val deepLinkParams = Gson().fromJson(data, JsonObject::class.java)
-        deepLinkParams.addProperty("feature", bundle.getString("feature"))
-
+        var deepLinkParams: JsonObject? = null
+        try {
+            deepLinkParams = Gson().fromJson(data, JsonObject::class.java)
+            deepLinkParams?.addProperty("feature", bundle.getString("feature"))
+        } catch (e: JsonSyntaxException) {
+            FirebaseManager.logException(e)
+        }
         return deepLinkParams
     }
 

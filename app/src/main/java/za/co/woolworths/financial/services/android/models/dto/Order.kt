@@ -14,5 +14,7 @@ data class Order(
     var requestCancellation: Boolean,
     var deliveryDates: JsonElement?,
     var clickAndCollectOrder: Boolean,
-    var deliveryStatus: MyOrderDeliveryStatus?
+    var deliveryStatus: MyOrderDeliveryStatus?,
+    val endlessAisleOrder: Boolean = false,
+    val barcode: String = ""
 ) : Serializable

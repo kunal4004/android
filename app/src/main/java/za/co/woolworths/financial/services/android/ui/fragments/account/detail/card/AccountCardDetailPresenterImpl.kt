@@ -66,11 +66,10 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun showBalanceProtectionInsuranceLead() {
         val balanceProtectionInsurance = getBpiInsuranceApplication()
-        val account = getAccount()
         if (balanceProtectionInsurance != null)
             mainView?.showBalanceProtectionInsuranceLead(balanceProtectionInsurance)
         else
-            mainView?.showBalanceProtectionInsurance(account?.insuranceCovered)
+            mainView?.hideBalanceProtectionInsurance()
 
     }
 
@@ -395,6 +394,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         if (balanceProtectionInsurance != null)
             mainView?.showBalanceProtectionInsuranceLead(balanceProtectionInsurance)
         else
-            mainView?.showBalanceProtectionInsurance(account?.insuranceCovered)
+            mainView?.hideBalanceProtectionInsurance()
     }
 }

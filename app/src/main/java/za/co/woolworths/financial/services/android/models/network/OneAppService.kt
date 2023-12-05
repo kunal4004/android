@@ -133,6 +133,9 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
@@ -651,9 +654,6 @@ open class OneAppService(
         }
     }
 
-    fun getShoppingCart(): Call<ShoppingCartResponse> {
-        return mApiInterface.getShoppingCart(getSessionToken(), getDeviceIdentityToken())
-    }
 
     suspend fun getShoppingCartV2() : retrofit2.Response<ShoppingCartResponse>{
         return withContext(Dispatchers.IO){
@@ -1295,13 +1295,6 @@ open class OneAppService(
         )
     }
 
-    fun getFicaResponse(): Call<FicaModel> {
-        return mApiInterface.getFica(
-            getSessionToken(),
-            getDeviceIdentityToken()
-        )
-    }
-
     fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse> {
         return mApiInterface.confirmLocation(
             "",
@@ -1381,6 +1374,17 @@ open class OneAppService(
             getSessionToken(),
             getDeviceIdentityToken(),
             dyPrepareChangeAttributeRequestEvent
+        )
+    }
+
+    fun verifyUserIsInStore(latitude: Double, longitude: Double): Call<UserLocationResponse> {
+        return mApiInterface.verifyUserIsInStore(
+                "",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                latitude,
+                longitude
         )
     }
 

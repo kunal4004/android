@@ -418,6 +418,18 @@ object FirebaseAnalyticsEventHelper {
         AnalyticsManager.logEvent(eventName, formTypeParams)
     }
 
+    fun outOfStock() {
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.MESSAGE_TYPE,
+                FirebaseManagerAnalyticsProperties.PropertyValues.OUT_OF_STOCK_MESSAGE
+            )
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.IN_APP_POP_UP, analyticsParams
+        )
+    }
     object Utils {
         private fun stringToFirebaseEventName(string: String?): String? {
             return string?.filter { it.isLetterOrDigit() }?.lowercase()

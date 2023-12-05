@@ -5,6 +5,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.use
 class BundleKeysConstants {
 
     companion object {
+        const val TOGGLE_FULFILMENT_AUTO_NAVIGATION = "TOGGLE_FULFILMENT_AUTO_NAVIGATION"
         const val BUNDLE = "bundle"
 
         //AccountsOptionFragment Keys
@@ -18,6 +19,11 @@ class BundleKeysConstants {
         const val CREDITCARD_TOKEN = "creditCardToken"
 
         //geo location
+        const val STORE_ID = "STORE_ID"
+        const val DELIVERY_CNC = "CNC"
+        const val IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN = "new_toggle"
+        const val LOCATION_UPDATE_REQUEST = "location_update_request"
+        const val NEED_STORE_SELECTION = "store_selection"
         const val KEY_PLACE_ID = "placeId"
         const val KEY_LATITUDE = "latitude"
         const val KEY_LONGITUDE = "longitude"
@@ -32,9 +38,12 @@ class BundleKeysConstants {
         const val IS_COMING_CONFIRM_ADD = "conform_add"
         var IS_FROM_STORE_LOCATOR = false
         const val REQUEST_CODE = 1515
+        const val UPDATE_LOCATION_REQUEST = 106
+        const val UPDATE_STORE_REQUEST = 107
         const val DASH_SET_ADDRESS_REQUEST_CODE = 1516
         const val CNC_SET_ADDRESS_REQUEST_CODE = 1517
         const val DELIVERY_TYPE = "DELIVERY_TYPE"
+        const val NEW_DELIVERY_TYPE = "NEW_DELIVERY_TYPE"
         const val IS_COMING_FROM_CHECKOUT = "isComingFromCheckout"
         const val IS_COMING_FROM_SLOT_SELECTION = "isComingFromSlotSelection"
         const val IS_FROM_DASH_TAB = "isFromDashTab"
@@ -45,6 +54,7 @@ class BundleKeysConstants {
         const val NICK_NAME = "nickname"
         const val KEY_ADDRESS2 = "ADDRESS2"
         const val IS_MIXED_BASKET = "is_mix_basket"
+        const val IS_ENDLESS_AISLE_JOURNEY = "is_endless_aisle_journey"
         const val IS_FBH_ONLY = "is_fbh_only"
 
         const val RECOMMENDATIONS_EVENT_DATA = "recommendations_event_data"

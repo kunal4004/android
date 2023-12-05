@@ -100,8 +100,8 @@ fun OfferViewMainList(
     isBottomSpacerShown : Boolean = false,
     onClick: (OfferClickEvent) -> Unit) {
 
-    val listOfOffers = remember { items.values.toMutableList()}
-    val listOfOfferSize = remember { listOfOffers.size }
+    val listOfOffers =  items.values.toMutableList()
+    val listOfOfferSize =  listOfOffers.size
 
     if (listOfOfferSize == 1) {
         val offer = remember {listOfOffers[0]}

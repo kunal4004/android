@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util.pushnotification
 import android.os.Build
 import com.huawei.hms.push.HmsMessageService
 import com.huawei.hms.push.RemoteMessage
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.fcm.PushNotificationMessageType
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -12,6 +13,7 @@ class WHuaweiMessagingService: HmsMessageService() {
         token?.let {
             NotificationUtils.sendRegistrationToServer(it)
             Utils.setOCChatFCMToken(token)
+            WoolworthsApplication.getInstance()?.userManager?.huaweiPushToken = it
         }
     }
 
