@@ -186,9 +186,10 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                         getString(R.string.food_product_type) -> {
                             includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
                         }
-                        getString(R.string.digital_product_type) -> {
+                        /* commenting it for quick fix in production*/
+                       /* getString(R.string.digital_product_type) -> {
                             includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
-                        }
+                        }*/
                         else -> {
                             includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
                         }
