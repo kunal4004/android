@@ -709,6 +709,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             // User Substitute product from search screen and came back to cart
             loadShoppingCart()
         }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with reload cart as unsellable items are removed.
+            loadShoppingCart()
+        }
     }
 
     override fun openAddToListPopup(
