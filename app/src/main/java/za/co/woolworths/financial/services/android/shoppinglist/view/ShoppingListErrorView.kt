@@ -61,5 +61,5 @@ fun ShoppingListErrorView(title:String) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewShowErrorView() {
-    ShoppingListErrorView("An error occurred while removing your item. \n Please try again later.")
+    ShoppingListErrorView(LocalContext.current.getString(R.string.remove_copy_msg))
 }
