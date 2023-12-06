@@ -42,7 +42,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Compani
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
-import java.lang.StringBuilder
 import javax.inject.Inject
 
 @HiltViewModel
@@ -183,12 +182,6 @@ class AddToListViewModel @Inject constructor(
             _addedToListState.update { emptyList() }
             // Specific to Order Details Page
             val orderId = savedStateHandle.get<String>(ARG_ORDER_ID) ?: ""
-
-            if (orderId.isNotEmpty()) {
-                addToListByOrderId(orderId, listState.value.selectedListItem)
-                return@launch
-            }
-
             listState.value.selectedListItem.forEach {
 
                 mAddToWishListEventData?.let { eventData ->
@@ -196,6 +189,11 @@ class AddToListViewModel @Inject constructor(
                         eventData.shoppingListName = it.listName
                         FirebaseAnalyticsEventHelper.addToWishlistEvent(eventData)
                     }
+                }
+
+                if (orderId.isNotEmpty()) {
+                    addToListByOrderId(orderId, it)
+                    return@launch
                 }
 
                 if (items.isEmpty()) {
@@ -310,22 +308,13 @@ class AddToListViewModel @Inject constructor(
 
     private suspend fun addToListByOrderId(
         orderId: String,
-        listDetails: List<ShoppingList>
+        listDetails: ShoppingList
     ) {
-         val listId = StringBuilder()
-         listDetails.forEach {
-             listId.append(it.listId).append(",")
-         }
-
-        if (listId.isEmpty()) {
-            return
-        }
-        listId.deleteCharAt(listId.length-1)
-
         viewModelScope.launch {
             addToListByOrderIdUC(
                 orderId, OrderToShoppingListRequestBody(
-                    shoppingListId = listId.toString()
+                    shoppingListId = listDetails.listId,
+                    shoppingListName = listDetails.listName
                 )
             ).collect {
                 viewModelScope.launch(Dispatchers.Main) {
@@ -335,7 +324,8 @@ class AddToListViewModel @Inject constructor(
                                 val updatedList = list.toMutableList()
                                 updatedList.add(
                                     AddedToListState(
-                                        isSuccess = true
+                                        isSuccess = true,
+                                        listId = listDetails.listId
                                     )
                                 )
                                 return@update updatedList
@@ -346,7 +336,6 @@ class AddToListViewModel @Inject constructor(
                                 isAddToListInProgress = false,
                                 isAddToListSuccess = isSuccess
                             )
-
                             AppConfigSingleton.dynamicYieldConfig?.apply {
                                 if (isDynamicYieldEnabled == true) {
                                     items.forEach { item ->
@@ -361,7 +350,8 @@ class AddToListViewModel @Inject constructor(
                                 val updatedList = list.toMutableList()
                                 updatedList.add(
                                     AddedToListState(
-                                        isSuccess = false
+                                        isSuccess = false,
+                                        listId = listDetails.listId
                                     )
                                 )
                                 return@update updatedList

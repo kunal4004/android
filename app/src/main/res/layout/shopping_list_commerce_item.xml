@@ -109,8 +109,8 @@
 
         <ImageView
             android:id="@+id/icon_kebab"
-            android:layout_width="@dimen/sixteen_dp"
-            android:layout_height="@dimen/sixteen_dp"
+            android:layout_width="@dimen/fifty_dp"
+            android:layout_height="@dimen/twenty_four_dp"
             android:layout_marginEnd="@dimen/sixteen_dp"
             android:src="@drawable/icon_kebab_active"
             android:visibility="gone"

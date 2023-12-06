@@ -187,16 +187,6 @@ class ShoppingListItemsAdapter(
                     navigator.openProductDetailFragment(listItem.displayName, productList)
                 }
 
-                // Item Container
-                llItemContainer.setOnClickListener {
-                    val listItem = getItem(position) ?: return@setOnClickListener
-                    val isUnavailable = ProductAvailability.UNAVAILABLE.value.equals(
-                        listItem.availability,
-                        ignoreCase = true
-                    )
-                    if (isUnavailable) navigator.showListBlackToolTip()
-                }
-
                 // Swipe delete click
                 tvDelete.setOnClickListener {
                     if (!mAdapterIsClickable) return@setOnClickListener

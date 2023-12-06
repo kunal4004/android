@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorE2624D
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
 @Composable
-fun ShoppingListErrorView() {
+fun ShoppingListErrorView(title:String) {
     val context = LocalContext.current
     Box(
         modifier = Modifier
@@ -43,7 +43,7 @@ fun ShoppingListErrorView() {
                 contentDescription = "",
             )
             Text(
-                text = context.getString(R.string.remove_error_msg),
+                text = title,
                 style = TextStyle(
                     fontFamily = OpenSansFontFamily,
                     fontSize = 11.sp,
@@ -61,5 +61,5 @@ fun ShoppingListErrorView() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewShowErrorView() {
-    ShoppingListErrorView()
+    ShoppingListErrorView("An error occurred while removing your item. \n Please try again later.")
 }

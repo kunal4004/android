@@ -1166,7 +1166,6 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json",
     )
-
     @DELETE("wfs/app/v4/list/{id}")
     suspend fun deleteShoppingList(
         @Header("sessionToken") sessionToken: String,
