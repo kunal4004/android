@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.response.Co
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
@@ -58,6 +59,8 @@ class ShopToggleUseCase @Inject constructor(
                 when (validateLocationResponse?.httpCode) {
                     AppConstant.HTTP_OK -> {
                         val validatePlace = validateLocationResponse?.validatePlace
+                        WoolworthsApplication.setValidatedSuburbProducts(
+                            validateLocationResponse?.validatePlace)
                         KotlinUtils.placeId = validatePlace?.placeDetails?.placeId
                         val nickname = validatePlace?.placeDetails?.nickname
                         val fulfillmentDeliveryLocation = Utils.getPreferredDeliveryLocation()

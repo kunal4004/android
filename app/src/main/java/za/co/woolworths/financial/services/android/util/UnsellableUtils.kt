@@ -298,8 +298,6 @@ class UnsellableUtils {
                         }
 
                     }
-                    else{
-                        UpdateScreenLiveData.value=updateUnsellableLiveData}
                 } catch (e: Exception) {
                     FirebaseManager.logException(e)
                     hideLoadingProgress()
