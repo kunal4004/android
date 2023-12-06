@@ -247,19 +247,13 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                             when (stockAvailable) {
                                 -1 -> {
                                     outOfStockTag.visibility = GONE
-                                   /* imAddToList.visibility = GONE
-                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE*/
                                     imProductImage.alpha = 0.5f
                                 }
                                 0 -> {
                                     outOfStockTag.visibility = VISIBLE
-                                   /* imAddToList.visibility = VISIBLE
-                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE*/
                                 }
                                 else -> {
                                     outOfStockTag.visibility = GONE
-                                   /* imAddToList.visibility = VISIBLE
-                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE*/
                                 }
                             }
                         }
