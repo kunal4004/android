@@ -610,6 +610,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             binding.viewpagerMain.currentItem = currentTabPositionBasedOnDeliveryType()
             refreshAdapter()
             setDeliveryView()
+            setAnalyticsBrowsingDeliveryEvent()
         } else {
             toggleScreenTimer?.cancel()
         }
