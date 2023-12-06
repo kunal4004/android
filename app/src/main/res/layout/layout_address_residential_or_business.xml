@@ -149,9 +149,9 @@
         android:id="@+id/cityTownEdtTV"
         style="@style/credi_card_delivery_edittext_style"
         android:contentDescription="@string/hint_city_town"
-        android:hint="@string/hint_city_town"
         android:textColorHint="@color/black30"
         app:layout_constraintEnd_toEndOf="parent"
+        android:hint="@string/hint_city_town"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvCityTown" />
 
