@@ -98,7 +98,6 @@ import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBotto
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView.IWalkthroughActionListener
 import za.co.woolworths.financial.services.android.ui.views.WTextView
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
@@ -709,9 +708,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             // User Substitute product from search screen and came back to cart
             loadShoppingCart()
         }
-        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
-            // Proceed with reload cart as unsellable items are removed.
-            loadShoppingCart()
+        if (!hidden) {
+           listenerForUnsellable()
         }
     }
 
@@ -2613,23 +2611,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             UpdateScreenLiveData.value=updateUnsellableLiveData
 
         }
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, bundle ->
-            val resultCode =
-                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
-            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
-                // Proceed with reload cart as unsellable items are removed.
-                loadShoppingCart()
-            } else {
-                fadeCheckoutButton(false)
-                setDeliveryLocationEnabled(true)
-                setMinimumCartErrorMessage()
-                resetItemDelete(true)
-            }
-        }
-        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
-            // Proceed with reload cart as unsellable items are removed.
-            loadShoppingCart()
-        }
+        listenerForUnsellable()
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_PRESSED) { _, _ ->
             enableItemDelete(false)
             mCommerceItem?.let { removeItemAPI(it) }
@@ -2740,5 +2722,25 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         const val VOUCHER_DETAILS = "VoucherDetails"
         const val CASH_BACK_VOUCHERS = "cash_back_vouchers"
         const val BLACK_CARD_HOLDER = "black_card"
+    }
+    private fun listenerForUnsellable(){
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with reload cart as unsellable items are removed.
+                loadShoppingCart()
+            } else {
+                fadeCheckoutButton(false)
+                setDeliveryLocationEnabled(true)
+                setMinimumCartErrorMessage()
+                resetItemDelete(true)
+            }
+        }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with reload cart as unsellable items are removed.
+            loadShoppingCart()
+        }
     }
 }
