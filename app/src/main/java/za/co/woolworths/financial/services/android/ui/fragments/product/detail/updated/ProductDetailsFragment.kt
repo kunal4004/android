@@ -4577,6 +4577,7 @@ class ProductDetailsFragment :
             reloadFragment()
         }
     }
+
     private fun listenerForUnsellable(){
         setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
             // Proceed with add to cart as we have moved unsellable items to List.
