@@ -54,13 +54,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import retrofit2.HttpException
-import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
@@ -110,6 +108,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
@@ -469,6 +468,7 @@ class KotlinUtils {
             liquorCompliance: LiquorCompliance? = null,
             cartItemList: ArrayList<CommerceItem>? = null,
             isFromNewToggleFulfilmentScreen: Boolean = false,
+            isFromNewToggleFulfilmentScreenSwitchCnc: Boolean = false,
             needStoreSelection: Boolean = false,
             newDelivery: Delivery? = null,
             validateLocationResponse: ValidateLocationResponse? = null
@@ -493,6 +493,7 @@ class KotlinUtils {
                 mBundle.putBoolean(IS_FBH_ONLY, isFBHOnly)
                 mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
                 mBundle.putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, isFromNewToggleFulfilmentScreen)
+                mBundle.putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC, isFromNewToggleFulfilmentScreenSwitchCnc)
                 mBundle.putBoolean(LOCATION_UPDATE_REQUEST, isLocationUpdateRequest)
                 mBundle.putBoolean(NEED_STORE_SELECTION, needStoreSelection)
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
