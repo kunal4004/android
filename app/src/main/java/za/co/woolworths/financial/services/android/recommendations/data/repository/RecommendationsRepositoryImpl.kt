@@ -14,10 +14,10 @@ class RecommendationsRepositoryImpl @Inject constructor(
 
 ) : RecommendationsRepository {
 
-    override suspend fun getRecommendationResponse(recommendationRequest: RecommendationRequest?): Resource<RecommendationResponse> {
+    override suspend fun getRecommendationResponse(recommendationRequest: RecommendationRequest?, requestData: Boolean, fulfillmentStoreId: String?): Resource<RecommendationResponse> {
 
         return try {
-            val response = recommendationRequest?.let { OneAppService().recommendation(it) }
+            val response = recommendationRequest?.let { OneAppService().recommendation(it, requestData, fulfillmentStoreId) }
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     return when (it.httpCode) {
