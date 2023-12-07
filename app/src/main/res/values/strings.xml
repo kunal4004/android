@@ -3118,7 +3118,7 @@
     <string name="use_dash_delivery">Use Dash delivery</string>
     <string name="set_to_dash_delivery">SET TO DASH DELIVERY</string>
     <string name="use_click_collect">use click &amp; collect</string>
-    <string name="earliest_click_and_collect">Earliest Click &amp; Collect Dates:</string>
+    <string name="earliest_click_and_collect">Latest Click &amp; Collect Dates:</string>
     <string name="collect_fashion_food">Collect FASHION, BEAUTY, HOME AND food</string>
     <string name="set_to_click_and_collect">SET TO CLICK &amp; COLLECT</string>
     <string name="back_arrow"> Back Arrow</string>
@@ -3199,7 +3199,7 @@
     <string name="Would_you_recommend_this_product_to_a_friend">Would you recommend this product to a friend? *</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="write_a_review2">Write a review</string>
+    <string name="write_a_review2">Write Review</string>
     <string name="review_title">Review Title: *</string>
     <string name="review_title_hint">Review Title</string>
     <string name="review_title_edit_counter">/150</string>
@@ -3208,7 +3208,7 @@
     <string name="min_ten_char">Min 10 Characters,</string>
     <string name="fifteen_hundred">1500</string>
     <string name="characters_left">Characters Left</string>
-    <string name="display_name">Display name: *</string>
+    <string name="display_name">Display Name: *</string>
     <string name="add_photos">Add Photos</string>
     <string name="optional">Optional</string>
     <string name="submit_review">Submit Review</string>
@@ -3223,7 +3223,7 @@
     <string name="endless_aisle_order_error_label">Unfortunately, your online order has been cancelled because your barcode has expired.</string>
     <string name="endless_aisle_barcode_title">Scan Your Barcode At The Till Point</string>
     <string name="endless_aisle_barcode_desc">Scan your barcode at the till point for in store payments. Barcode expires when the store closes.</string>
-    <string name="by_submitting_you_agree_to_our">By submitting, you agree to our</string>
+    <string name="by_submitting_you_agree_to_our">By submitting,you agree to our</string>
     <string name="terms_and_Conditions_for_write_a_review">Terms and Conditions.</string>
     <string name="choose_a_timeslot">Choose a timeslot</string>
     <string name="date_picker_today">Today</string>
