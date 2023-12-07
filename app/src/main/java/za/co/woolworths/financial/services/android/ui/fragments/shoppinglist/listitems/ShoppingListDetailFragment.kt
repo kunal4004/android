@@ -758,13 +758,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     requireActivity(), bindingListDetails.rlCheckOut, listName!!, count
                 )
             }
+            listenerForUnsellable()
             viewModel.getShoppingListDetails()
         }
 
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
             onItemDeleteApiCall()
         }
-       listenerForUnsellable()
     }
 
     override fun onDetach() {

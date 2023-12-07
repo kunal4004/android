@@ -2611,7 +2611,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             UpdateScreenLiveData.value=updateUnsellableLiveData
 
         }
-        listenerForUnsellable()
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_PRESSED) { _, _ ->
             enableItemDelete(false)
             mCommerceItem?.let { removeItemAPI(it) }
