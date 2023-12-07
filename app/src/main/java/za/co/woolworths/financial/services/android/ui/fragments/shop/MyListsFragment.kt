@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -30,12 +29,9 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_CREATE_LIST
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_CODE
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.GetCartSummary
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -94,7 +90,6 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             MY_LIST_SIGN_IN_REQUEST_CODE  -> {
-                setYourDeliveryLocation()
                 getShoppingList(true)
             }
         }
@@ -136,7 +131,6 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
 
     private fun setListener() {
         binding.apply {
-            locationSelectedLayout.setOnClickListener(this@MyListsFragment)
             binding.includeSignOutTemplate.btnGoToProduct.setOnClickListener(this@MyListsFragment)
             rlCreateAList.setOnClickListener(this@MyListsFragment)
             binding.incConnectionLayout.btnRetry.setOnClickListener(this@MyListsFragment)
@@ -212,62 +206,15 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        setYourDeliveryLocation()
-    }
-
     private fun loadShoppingList(state: Boolean) {
         binding.loadingBar?.visibility = if (state) VISIBLE else GONE
         binding.rcvShoppingLists?.visibility = if (state) GONE else VISIBLE
         if (state) mAddToShoppingListAdapter?.clear()
     }
 
-    private fun setYourDeliveryLocation() {
-        if (Utils.getPreferredDeliveryLocation() == null) {
-            GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
-                override fun onSuccess(response: CartSummaryResponse?) {
-                    when (response?.httpCode) {
-                        AppConstant.HTTP_OK -> {
-                            activity?.let {
-                                KotlinUtils.getDeliveryType()?.let { fulfillmentDetails ->
-                                    KotlinUtils.setDeliveryAddressView(
-                                        it,
-                                        fulfillmentDetails,
-                                        binding.tvDeliveringTo,
-                                        binding.tvDeliveryLocation,
-                                        binding.deliverLocationIcon
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                override fun onFailure(error: Throwable?) {
-                }
-            })
-        } else {
-            activity?.let {
-                KotlinUtils.getDeliveryType()?.let { fulfillmentDetails ->
-                    KotlinUtils.setDeliveryAddressView(
-                        it,
-                        fulfillmentDetails,
-                        binding.tvDeliveringTo,
-                        binding.tvDeliveryLocation,
-                        binding.deliverLocationIcon
-                    )
-                }
-            }
-        }
-    }
-
     override fun onClick(view: View?) {
         when (view?.id) {
 
-            R.id.locationSelectedLayout -> {
-                locationSelectionClicked()
-            }
             R.id.btnGoToProduct -> {
                 when (binding.includeSignOutTemplate.btnGoToProduct.tag) {
                     0 -> activity?.let { ScreenManager.presentSSOSignin(it, MY_LIST_SIGN_IN_REQUEST_CODE) }
@@ -296,15 +243,6 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
         }
     }
 
-    private fun locationSelectionClicked() {
-        KotlinUtils.presentEditDeliveryGeoLocationActivity(
-            requireActivity(),
-            0,
-            KotlinUtils.getPreferredDeliveryType(),
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-        )
-    }
-
     private fun showEmptyShoppingListView() {
         binding.apply {
             rlCreateAList?.visibility = GONE
@@ -312,17 +250,6 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
             includeSignOutTemplate.clSignOutTemplate.setBackgroundColor(
                 ContextCompat.getColor(requireContext(), R.color.white)
             )
-            Utils.getPreferredDeliveryLocation()?.apply {
-                activity?.let {
-                    KotlinUtils.setDeliveryAddressView(
-                        it,
-                        this.fulfillmentDetails,
-                        binding.tvDeliveringTo,
-                        binding.tvDeliveryLocation,
-                        binding.deliverLocationIcon
-                    )
-                }
-            }
             includeSignOutTemplate.apply {
                 imEmptyIcon.setImageResource(R.drawable.empty_list_icon)
                 imEmptyIcon.alpha = 1.0f
@@ -331,7 +258,6 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
                 btnGoToProduct.text = getString(R.string.button_no_shopping_lists)
                 btnGoToProduct.tag = 1
                 btnGoToProduct.visibility = VISIBLE
-                locationSelectedLayout.visibility = VISIBLE
             }
         }
     }
@@ -350,7 +276,6 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
                 btnGoToProduct.visibility = VISIBLE
                 btnGoToProduct.tag = 0
                 btnGoToProduct.text = getString(R.string.sign_in)
-                locationSelectedLayout.visibility = GONE
             }
         }
     }

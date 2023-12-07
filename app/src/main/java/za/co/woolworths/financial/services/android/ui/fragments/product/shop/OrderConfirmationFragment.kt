@@ -14,19 +14,21 @@ import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.DeliveringToCollectionFromBinding
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.endlessaisle.utils.getBarcodeMessage
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -49,16 +51,17 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.viewmodel.OrderConfirmationViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -81,11 +84,13 @@ class OrderConfirmationFragment :
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
+    private var isEndlessAisleJourney: Boolean? = false
     private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isEndlessAisleJourney = arguments?.getBoolean(BundleKeysConstants.IS_ENDLESS_AISLE_JOURNEY)
         getOrderDetails()
         addFragmentResultListener()
     }
@@ -121,7 +126,7 @@ class OrderConfirmationFragment :
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
-                                    if (!isPurchaseEventTriggered)
+                                    if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
                                     {
                                         showPurchaseEvent(response)
                                         isPurchaseEventTriggered = false
@@ -134,6 +139,12 @@ class OrderConfirmationFragment :
                                             prepareDYConfirmationPageViewRequest(response)
                                             prepareDYPurchaseOrderRequest(response)
                                         }
+                                    }
+                                    // Update Layout depending on endless aisle journey is enabled or not
+                                    if(isEndlessAisleJourney == true &&
+                                        response?.orderSummary?.endlessAisleOrder == true &&
+                                        !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()){
+                                        updateLayoutForEndlessAisleJourney(response)
                                     }
                                 }
                                 else -> {
@@ -160,10 +171,8 @@ class OrderConfirmationFragment :
         val context = Context(device, null, DY_CHANNEL)
         val cartValue: MutableList<Cart> = arrayListOf()
         itemsOrder?.forEach {
-            cartValue.addAll(itemsOrder!!.map {
-                Cart(it.productId,it.quantity,it.priceInfo?.amount.toString())
-            }
-            )
+            val cart = Cart(it.commerceItemInfo?.catalogRefId,it.commerceItemInfo?.quantity,it.priceInfo?.amount.toString())
+            cartValue.add(cart)
         }
         val properties = Properties(null,null,PURCHASE_V1,null,response.orderSummary?.total.toString(),ZAR,null,null,null,null, null,null,null,null,null,null,response.orderSummary?.orderId,cartValue)
         val eventsDyPurchase = Event(null,null,null,null,null,null,null,null,null,null,null,null,PURCHASE,properties)
@@ -182,7 +191,7 @@ class OrderConfirmationFragment :
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
-        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null)
+        val dataOther = DataOther(response.orderSummary?.orderId.toString(),response.orderSummary?.total,ZAR,null,null,null)
         val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
         dataOtherArray?.add(dataOther)
         val page = Page(null, ORDER_CONFIRMATION_PAGE, OTHER, null, dataOtherArray)
@@ -251,7 +260,7 @@ class OrderConfirmationFragment :
             activity,
             KotlinUtils.vocShoppingHandling(deliveryType)
         )
-        if (Delivery.getType(deliveryType) == Delivery.CNC) {
+        if (Delivery.getType(deliveryType) == Delivery.CNC && isEndlessAisleJourney == false) {
             Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm,
                 activity
@@ -306,8 +315,7 @@ class OrderConfirmationFragment :
                             optionTitle.text = it.getString(R.string.collecting_from)
                             setUpCncOrderDetailsLayout(response)
                             continueBrowsingStandardLinearLayout.setOnClickListener {
-                                requireActivity().setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                                requireActivity().finish()
+                                startShopping()
                             }
                         }
                 }
@@ -334,8 +342,7 @@ class OrderConfirmationFragment :
                         optionLocation.text = formattedNickNameWithAddress
                         optionTitle.text = it.getString(R.string.delivering_to)
                         continueBrowsingStandardLinearLayout.setOnClickListener {
-                            requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                            requireActivity()?.finish()
+                            startShopping()
                         }
                         standardEnroutetextView.text = it.getText(R.string.dash_status_en_route)
                         collectedOrDeliveredTextView.text =
@@ -374,8 +381,7 @@ class OrderConfirmationFragment :
                                 ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                         )
                         continueBrowsingLinearLayout.setOnClickListener {
-                            requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-                            requireActivity()?.finish()
+                            startShopping()
                         }
                     }
                     setUpDashOrderDetailsLayout(response)
@@ -423,6 +429,13 @@ class OrderConfirmationFragment :
                     }
                 }
             }
+        }
+    }
+
+    private fun startShopping() {
+        requireActivity().apply {
+            setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+            finish()
         }
     }
 
@@ -816,5 +829,30 @@ class OrderConfirmationFragment :
             listOfItems,
             eventData = addToWishListEventData
         )
+    }
+
+    /**
+     * This function will help us the update the layout if endless aisle feature is enabled
+     * @param response submitted Order API response
+     * type standard and C&C
+     */
+    private fun updateLayoutForEndlessAisleJourney(response: SubmittedOrderResponse?) {
+        binding.deliveryCollectionDetailsConstraintLayout.apply {
+            endlessAisleOrderConfirmationLayout.apply {
+                standardAndCncItemsGroup.visibility = GONE
+                this.root.visibility = VISIBLE
+                orderNumber.text = resources.getString(R.string.order_id,
+                    response?.orderSummary?.orderId)
+                barcodeNumber.text = response?.orderSummary?.endlessAisleBarcode?.chunked(4)?.joinToString(" ")
+                barcodeMessage.text = getBarcodeMessage()
+                try {
+                    barcodeImage.setImageBitmap(Utils.encodeAsBitmap(
+                        response?.orderSummary?.endlessAisleBarcode,
+                        BarcodeFormat.CODE_128, binding.root.width, 60));
+                } catch (e: WriterException) {
+                    FirebaseManager.Companion.logException(e);
+                }
+            }
+        }
     }
 }

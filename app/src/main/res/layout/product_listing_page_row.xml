@@ -253,6 +253,21 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="@dimen/twelve_dp" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/quantitySelectorView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/four_dp"
+        android:layout_marginBottom="@dimen/ten_dp"
+        android:background="@drawable/bg_white_round_corner_15"
+        android:clipToPadding="true"
+        android:paddingVertical="@dimen/three_dp"
+        android:scrollbars="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/includeProductListingPriceLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <include
         android:id="@+id/includeProductListingPriceLayout"
         layout="@layout/product_listing_price_layout"

@@ -3,31 +3,38 @@ package za.co.woolworths.financial.services.android.ui.activities.account
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.MyAccountActivityBinding
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
-import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature.fragment.UserAccountsLandingFragment
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
+@AndroidEntryPoint
 class MyAccountActivity : AppCompatActivity() {
 
+   private val viewModel: UserAccountLandingViewModel by viewModels()
+
     companion object {
-        var mAccountMasterCache: AccountMasterCache? = AccountMasterCache
         private const val REQUEST_CODE_OPEN_STATEMENT = 3334
         const val REQUEST_CODE_MY_ACCOUNT_FRAGMENT = 4444
         const val RESULT_CODE_MY_ACCOUNT_FRAGMENT = 4444
     }
 
     lateinit var binding: MyAccountActivityBinding
+
 
     @SuppressLint("DefaultLocale")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +49,21 @@ class MyAccountActivity : AppCompatActivity() {
                     tag = UserAccountsLandingFragment::class.java.simpleName,
                     containerViewId = R.id.accountContainerFrameLayout)
         }
+        onFragmentChangeListener()
+
+    }
+
+    private fun onFragmentChangeListener() {
+        supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentStarted(fragmentManager: FragmentManager, fragment: Fragment) {
+                super.onFragmentStarted(fragmentManager, fragment)
+                when(fragment){
+                    is UserAccountsLandingFragment -> hideActionBar()
+                    else -> showActionBar()
+                }
+            }
+
+        }, true)
     }
 
     fun replaceFragment(fragment: Fragment) {
@@ -107,6 +129,9 @@ class MyAccountActivity : AppCompatActivity() {
         binding.accountToolbarTitle?.text = title
     }
 
+    fun setToolbarContentDescription(id: String?) {
+        binding.accountToolbarTitle.contentDescription = id
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -126,5 +151,12 @@ class MyAccountActivity : AppCompatActivity() {
 
     fun onSignedOut() {
         ScreenManager.presentSSOLogout(this@MyAccountActivity)
+    }
+
+    private fun hideActionBar(){
+        supportActionBar?.hide()
+    }
+   private fun showActionBar(){
+        supportActionBar?.show()
     }
 }

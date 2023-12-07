@@ -69,14 +69,11 @@ import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
-import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbRequest
-import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.dto.SubCategories
-import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse
@@ -135,7 +132,10 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
+import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -650,9 +650,6 @@ open class OneAppService(
         }
     }
 
-    fun getShoppingCart(): Call<ShoppingCartResponse> {
-        return mApiInterface.getShoppingCart(getSessionToken(), getDeviceIdentityToken())
-    }
 
     suspend fun getShoppingCartV2() : retrofit2.Response<ShoppingCartResponse>{
         return withContext(Dispatchers.IO){
@@ -865,7 +862,7 @@ open class OneAppService(
         body: OrderToShoppingListRequestBody
     ): retrofit2.Response<OrderToListReponse> = mApiInterface.addToListByOrderId(
         getSessionToken(), getDeviceIdentityToken(), orderId, body
-    ).execute()
+    )
 
     fun getOrderTaxInvoice(taxNoteNumber: String): Call<OrderTaxInvoiceResponse> {
         return mApiInterface.getTaxInvoice(
@@ -1293,13 +1290,6 @@ open class OneAppService(
         )
     }
 
-    fun getFicaResponse(): Call<FicaModel> {
-        return mApiInterface.getFica(
-            getSessionToken(),
-            getDeviceIdentityToken()
-        )
-    }
-
     fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse> {
         return mApiInterface.confirmLocation(
             "",
@@ -1334,13 +1324,22 @@ open class OneAppService(
         }
     }
 
-    suspend fun recommendation(recommendationRequest: RecommendationRequest): retrofit2.Response<RecommendationResponse> {
+    suspend fun recommendation(recommendationRequest: RecommendationRequest, requestData: Boolean, fulfillmentStoreId: String?): retrofit2.Response<RecommendationResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.recommendation(
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                recommendationRequest
-            )
+            if (requestData && !fulfillmentStoreId.isNullOrEmpty()) {
+                mApiInterface.recommendation(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    fulfillmentStoreId,
+                    recommendationRequest
+                )
+            } else {
+                mApiInterface.recommendationAnalytics(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    recommendationRequest
+                )
+            }
         }
     }
 
@@ -1381,4 +1380,25 @@ open class OneAppService(
             dyPrepareChangeAttributeRequestEvent
         )
     }
+
+    fun verifyUserIsInStore(latitude: Double, longitude: Double): Call<UserLocationResponse> {
+        return mApiInterface.verifyUserIsInStore(
+                "",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                latitude,
+                longitude
+        )
+    }
+
+    suspend fun writeAReviewForm(productId: String?, prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent): retrofit2.Response<WriteAReviewFormResponse> {
+        return mApiInterface.writeAReviewForm(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            productId,
+            prepareWriteAReviewFormRequestEvent
+        )
+    }
+
 }

@@ -13,10 +13,10 @@ apply plugin: 'kotlin-parcelize'
 android {
 
     def major = "9"
-    def minor = "12"
-    def fix = "1"
-    def jobNumberProduction = 229
-    def jobNumberQa = 734
+    def minor = "14"
+    def fix = "0"
+    def jobNumberProduction = 239
+    def jobNumberQa = 748
 
     buildFeatures {
         dataBinding true
@@ -56,6 +56,8 @@ android {
         targetSdkVersion 33
         buildToolsVersion "30.0.3"
         multiDexEnabled true
+        renderscriptTargetApi 33
+        renderscriptSupportModeEnabled true
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -244,7 +246,7 @@ repositories {
 
 dependencies {
 
-    def composeBom = platform('androidx.compose:compose-bom:2023.03.00')
+    def composeBom = platform('androidx.compose:compose-bom:2023.06.01')
     implementation composeBom
 
     // Align versions of all Kotlin components
@@ -318,6 +320,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation "androidx.biometric:biometric:1.2.0-alpha05"
 
     implementation 'com.android.volley:volley:1.2.0'
     implementation "com.google.android.gms:play-services-auth-api-phone:17.5.0"

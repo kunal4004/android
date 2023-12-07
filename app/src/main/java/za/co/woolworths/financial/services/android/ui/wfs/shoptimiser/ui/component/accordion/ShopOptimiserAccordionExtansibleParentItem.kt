@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -52,8 +56,8 @@ fun RotatedArrowIcon(
 @Composable
 fun ShopOptimiserAccordionParentItem(viewModel: ShopOptimiserViewModel) {
     // Retrieve component title and description from the view model
-    val componentTitle = viewModel.getComponentTitle() ?: ""
-    val componentDescription = viewModel.getComponentDescription() ?: ""
+    val componentTitle = remember { viewModel.getComponentTitle() ?: ""}
+    val componentDescription = remember { viewModel.getComponentDescription() ?: "" }
 
     // Determine the arrow rotation degree based on the expansion state
     val rotationDegreeArrow = rotateComponent(isExpanded = viewModel.isExpanded)

@@ -15,6 +15,7 @@
     <color name="black_overlay">#66000000</color>
     <color name="recent_search_bg">#efefef</color>
     <color name="semi_transparent_black">#50000000</color>
+    <color name="semi_transparent_black_e6000000">#E6000000</color>
     <color name="semi_per_black">#30000000</color>
     <color name="description_color">#80000000</color>
     <color name="black_desc_opacity">#75000000</color>
@@ -172,6 +173,7 @@
     <color name="color_49BB77">#49BB77</color>
     <color name="color_E0E0E0">#E0E0E0</color>
     <color name="color_FFFFFF">#FFFFFF</color>
+    <color name="color_FAFAFA">#FAFAFA</color>
 
     <color name="low_stock_indicator">#FCA933</color>
     <color name="color_9D9D9D">#9D9D9D</color>
@@ -190,4 +192,5 @@
     <color name="color_F1B1A6">#F1B1A6</color>
     <color name="default_background_F3F3F3">#F3F3F3</color>
     <color name="color_CC030303">#CC030303</color>
+    <color name="color_03030380">#5f030303</color>
 </resources>

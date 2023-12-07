@@ -119,6 +119,7 @@ import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBotto
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
 import za.co.woolworths.financial.services.android.ui.vto.presentation.DataPrefViewModel
@@ -175,7 +176,6 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.get
 import kotlin.collections.set
 
 
@@ -210,6 +210,7 @@ class ProductDetailsFragment :
     private var productColorSelectorAdapter: ProductColorSelectorAdapter? = null
     private var selectedQuantity: Int? = 1
     private val SSO_REQUEST_ADD_TO_CART = 1010
+    private val SSO_REQUEST_WRITE_A_REVIEW = 1020
     private val REQUEST_SUBURB_CHANGE = 153
     private val REQUEST_SUBURB_CHANGE_FOR_STOCK = 155
     private val REQUEST_SUBURB_CHANGE_FOR_LIQUOR = 156
@@ -541,6 +542,7 @@ class ProductDetailsFragment :
             allergensInformation?.setOnClickListener(this@ProductDetailsFragment)
             btViewMoreReview.setOnClickListener(this@ProductDetailsFragment)
             tvRatingDetails.setOnClickListener(this@ProductDetailsFragment)
+            writeAReviewLink.root.setOnClickListener(this@ProductDetailsFragment)
         }
         deliveryLocationLayout.apply {
             editDeliveryLocation?.setOnClickListener(this@ProductDetailsFragment)
@@ -690,8 +692,21 @@ class ProductDetailsFragment :
             R.id.tvReport -> navigateToReportReviewScreen()
             R.id.iv_like -> likeButtonClicked()
             R.id.txt_substitution_edit -> substitutionEditButtonClick()
+            R.id.writeAReviewLink -> openWriteAReviewFragment(productDetails?.productName,productDetails?.externalImageRefV2, productDetails?.productId)
         }
     }
+
+    private fun openWriteAReviewFragment(productName: String?, imagePath: String?, productId: String?) {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSigninActivity(activity,
+                SSO_REQUEST_WRITE_A_REVIEW,
+                isUserBrowsing)
+
+        } else {
+            (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productName, imagePath, productId)
+        }
+    }
+
 
     private fun savePhoto(bitmap: Bitmap) {
         ImageResultContract.saveImageToStorage(requireContext(), bitmap)
@@ -1134,14 +1149,6 @@ class ProductDetailsFragment :
             return
         }
 
-        // Now first check for if delivery location and browsing location is same.
-        // if same no issues. If not then show changing delivery location popup.
-        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type) && isUserBrowsing) {
-            KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager(),
-                KotlinUtils.browsingDeliveryType)
-            return
-        }
-
         if (getSelectedSku() == null) {
             if (getSelectedGroupKey().isNullOrEmpty())
                 binding.requestSelectColor()
@@ -1162,6 +1169,7 @@ class ProductDetailsFragment :
             hideProgressBar()
             var message = ""
             var title = ""
+            var isOutOfStockDialog = false
             when (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
                 true -> {
                     title = getString(R.string.product_unavailable)
@@ -1171,6 +1179,7 @@ class ProductDetailsFragment :
                     )
                 }
                 else -> {
+                    isOutOfStockDialog = true
                     title = getString(R.string.out_of_stock)
                     message =
                         getString(
@@ -1184,7 +1193,8 @@ class ProductDetailsFragment :
                     this,
                     CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
                     title,
-                    message
+                    message,
+                    isOutOfStockDialog
                 )
             }
             updateAddToCartButtonForSelectedSKU()
@@ -1721,7 +1731,7 @@ class ProductDetailsFragment :
                     onlinePromotionalTextView2?.visibility = View.GONE
                     onlinePromotionalTextView3?.visibility = View.GONE
                 }
-                if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
+                if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel() ) {
                     ratingLayout.apply {
                         ratingBarTop?.rating = it.averageRating
                         tvTotalReviews?.text = resources.getQuantityString(
@@ -1734,8 +1744,13 @@ class ProductDetailsFragment :
                         prodId = it.productId
                         tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
+                    if (RatingAndReviewUtil.isFoodItemAvailable() ||
+                        RatingAndReviewUtil.isFashionItemAvailable() ||
+                        RatingAndReviewUtil.isHomeItemAvailable() ||
+                        RatingAndReviewUtil.isBeautyItemAvailable()) ShowWriteAReview() else  hideWriteAReview()
                 } else {
                     hideRatingAndReview()
+                    hideWriteAReview()
                 }
             }
 
@@ -1782,7 +1797,9 @@ class ProductDetailsFragment :
         isInventoryCalled: Boolean,
         substitutionProductItem: ProductList? = null
     ) {
-        if (KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false) {
+        if ((KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false)
+            || (productDetails?.fulfillmentType != getString(R.string.fullfilment_type_01) && productDetails?.productType !=getString(R.string.food_product_type))
+        ) {
             binding.productDetailOptionsAndInformation.substitutionLayout.root?.visibility = View.GONE
             return
         }
@@ -1863,6 +1880,20 @@ class ProductDetailsFragment :
 
     private fun hideSubstitutionLayout() {
         binding?.productDetailOptionsAndInformation?.substitutionLayout?.root?.visibility = View.GONE
+    }
+
+    private fun ProductDetailsFragmentBinding.hideWriteAReview() {
+        productDetailOptionsAndInformation.apply {
+            leaveUsReview?.visibility = View.GONE
+            writeAReviewLink.root.visibility = View.GONE
+        }
+    }
+
+    private fun ProductDetailsFragmentBinding.ShowWriteAReview() {
+        productDetailOptionsAndInformation.apply {
+            leaveUsReview?.visibility = View.VISIBLE
+            writeAReviewLink.root.visibility = View.VISIBLE
+        }
     }
 
     private fun ProductDetailsFragmentBinding.hideRatingAndReview() {
@@ -2671,6 +2702,7 @@ class ProductDetailsFragment :
                         it.toAddToListRequest().apply {
                             quantity = "1"
                             isGWP = !productDetails?.freeGift.isNullOrEmpty()
+                            size = getSelectedSku()?.size
                         }
                     )
                 }
@@ -2833,6 +2865,9 @@ class ProductDetailsFragment :
                     }
                     SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION -> {
                         updateStockAvailability(true)
+                    }
+                    SSO_REQUEST_WRITE_A_REVIEW -> {
+                        (activity as? BottomNavigationActivity)?.openWriteAReviewFragment(productDetails?.productName,productDetails?.externalImageRefV2, productDetails?.productId)
                     }
                 }
             }
@@ -3096,7 +3131,7 @@ class ProductDetailsFragment :
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(
                     it,
-                    WMaterialShowcaseView.Feature.VTO_TRY_IT,
+                    TooltipDialog.Feature.VTO_TRY_IT,
                     true
                 )
                     .setTarget(binding.imgVTOOpen)
@@ -3119,11 +3154,11 @@ class ProductDetailsFragment :
 
     }
 
-    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
+    override fun onWalkthroughActionButtonClick(feature: TooltipDialog.Feature) {
         //Do Nothing
     }
 
-    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
+    override fun onPromptDismiss(feature: TooltipDialog.Feature) {
         binding.imgVTOOpen?.setImageResource(R.drawable.ic_camera_vto)
     }
 
