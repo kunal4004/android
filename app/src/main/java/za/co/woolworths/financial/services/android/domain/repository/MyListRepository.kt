@@ -7,6 +7,8 @@ import za.co.woolworths.financial.services.android.models.dto.OrderToListReponse
 import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
 
 interface MyListRepository {
 
@@ -16,6 +18,10 @@ interface MyListRepository {
         listId: String,
         products: List<AddToListRequest>
     ): Response<ShoppingListItemsResponse>
+
+    suspend fun copyToList(
+        request: CopyItemToListRequest
+    ): Response<CopyListResponse>
 
     suspend fun addProductsToListByOrderId(
         orderId: String,

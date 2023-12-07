@@ -9,6 +9,8 @@ import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingLis
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
 import javax.inject.Inject
 
 class MyListRepositoryImpl @Inject constructor() : MyListRepository {
@@ -20,6 +22,11 @@ class MyListRepositoryImpl @Inject constructor() : MyListRepository {
         listId: String,
         products: List<AddToListRequest>,
     ): Response<ShoppingListItemsResponse> = OneAppService().addProductsToList(products, listId)
+
+
+    override suspend fun copyToList(
+        request: CopyItemToListRequest
+    ): Response<CopyListResponse> = OneAppService().copyToList(request)
 
     override suspend fun addProductsToListByOrderId(
         orderId: String,
