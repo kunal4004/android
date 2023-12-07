@@ -517,7 +517,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                                 skuInventoryList?.getOrNull(0)?.quantity ?: 0
                                             )
                                         }
-
+                                    val scrollingPosition = recommendationViewModel.getCarouselPosition()
+                                    if (scrollingPosition != -1) {
+                                        binding.rvDashDelivery.layoutManager?.scrollToPosition(scrollingPosition)
+                                    }
                                     showQuantitySelector(cartItem)
 
                                 } catch (ex: IllegalStateException) {
