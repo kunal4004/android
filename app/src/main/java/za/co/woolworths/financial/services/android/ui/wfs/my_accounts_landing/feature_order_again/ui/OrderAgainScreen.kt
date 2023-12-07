@@ -121,7 +121,6 @@ fun OrderAgainScreen(
                 is OrderAgainScreenEvents.ShowSnackBar -> {
                     snackbarHostState.showSnackbar(
                         message = context.getString(R.string.add_to_cart).uppercase(),
-                        actionLabel = context.getString(R.string.view).uppercase(),
                         duration = SnackbarDuration.Short,
                         withDismissAction = true
                     )
@@ -156,7 +155,9 @@ fun OrderAgainScreen(
             SnackbarHost(
                 hostState = snackbarHostState
             ) { data ->
-                SnackbarView(data, state.itemsToBeAddedCount, state.maxItemLimit)
+                SnackbarView(data, state.itemsToBeAddedCount, state.maxItemLimit) {
+                    onEvent(OrderAgainScreenEvents.SnackbarViewClicked)
+                }
             }
         }
     ) {
@@ -173,9 +174,10 @@ fun OrderAgainScreen(
 
 @Composable
 fun SnackbarView(
-    data: SnackbarData,
+    data: SnackbarData? = null,
     count: Int,
-    maxItem: Int
+    maxItem: Int,
+    onClick: () -> Unit
 ) {
     Snackbar(
         modifier = Modifier
@@ -184,7 +186,10 @@ fun SnackbarView(
         containerColor = SnackbarBackground,
         contentColor = White
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             FuturaTextH10(
                 modifier = Modifier
                     .size(24.dp)
@@ -194,7 +199,7 @@ fun SnackbarView(
                 textAlign = TextAlign.Center
             )
             SpacerWidthDp(width = 12.dp, Color.Transparent)
-            Column {
+            Column(Modifier.weight(1f)) {
                 FuturaTextH12(
                     text = pluralStringResource(id = R.plurals.plural_add_to_cart, count, count),
                     color = White
@@ -210,6 +215,14 @@ fun SnackbarView(
                     )
                 }
             }
+            FuturaTextH12(
+                Modifier.clickable {
+                    onClick()
+                },
+                fontWeight = FontWeight.W600,
+                color = White,
+                text = stringResource(id = R.string.view)
+            )
         }
     }
 }
@@ -240,9 +253,10 @@ private fun OrderAgainStatelessScreen(
                 }
             }
 
-            OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White)){
+            OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White)) {
                 onEvent(OrderAgainScreenEvents.StartShoppingClicked)
             }
+
             OrderAgainScreenState.ShowOrderList -> {
                 OrderAgainList(
                     Modifier.weight(1f),
@@ -501,7 +515,7 @@ fun ProductItemDetails(
                 QuantitySelectionView(
                     modifier = Modifier.weight(1f, false),
                     productItem = productItem,
-                    leftIcon = if(productItem.quantity == 1) R.drawable.delete_24
+                    leftIcon = if (productItem.quantity == 1) R.drawable.delete_24
                     else R.drawable.ic_minus_black,
                     leftIconEnabled = productItem.quantity > 1,
                     rightIconEnabled = productItem.quantity < productItem.quantityInStock,
@@ -543,7 +557,7 @@ fun QuantitySelectionView(
             text = productItem.quantity.toString()
         )
         SpacerWidth8dp()
-        CircleIcon(rightIcon,rightIconEnabled, ShimmerColor) {
+        CircleIcon(rightIcon, rightIconEnabled, ShimmerColor) {
             onRightIconClick()
         }
     }
@@ -626,14 +640,23 @@ private fun PreviewDeliveryLocation() {
 
 @Preview
 @Composable
+private fun PreviewSnackbarView() {
+    OneAppTheme {
+        SnackbarView(data = null, count = 2, maxItem = 0) {
+
+        }
+    }
+}
+
+@Preview
+@Composable
 private fun PreviewProductItemView() {
     OneAppTheme {
         ProductItemView(
             ProductItem(
                 productName = "Crumbed Trout Fish Cakes 600",
                 promotionalText = "offer: BUY ANY 2 SAVE 20% fresh fruit",
-                priceString = "R 99.86",
-//                isSelected = true
+                priceString = "R 99.86"
             ).apply {
                 quantityInStock = 1
                 isSelected = true

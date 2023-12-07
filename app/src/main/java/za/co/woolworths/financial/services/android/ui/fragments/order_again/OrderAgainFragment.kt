@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.OrderAgainScreen
@@ -37,10 +38,17 @@ class OrderAgainFragment : Fragment() {
                 when (it) {
                     OrderAgainScreenEvents.DeliveryLocationClick -> deliverySelectionIntent()
                     OrderAgainScreenEvents.StartShoppingClicked -> onStartShoppingClicked()
+                    OrderAgainScreenEvents.SnackbarViewClicked -> onAddToCartToastViewClick()
                     is OrderAgainScreenEvents.HideBottomBar -> hideBottomNavigation(it.hidden)
                     else -> {}
                 }
             }
+        }
+    }
+
+    private fun onAddToCartToastViewClick() {
+        (requireActivity() as? BottomNavigationActivity)?.apply {
+            navigateToTabIndex(INDEX_CART, null)
         }
     }
 

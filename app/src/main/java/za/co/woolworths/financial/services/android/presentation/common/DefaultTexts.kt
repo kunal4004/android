@@ -97,14 +97,15 @@ fun FuturaTextH12(
     modifier: Modifier = Modifier,
     text: String = "",
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = Black
+    color: Color = Black,
+    fontWeight: FontWeight = FontWeight.W500
 ) {
     Text(
         modifier = modifier,
         text = text,
         style = TextStyle(
             fontFamily = FuturaFontFamily,
-            fontWeight = FontWeight.W500,
+            fontWeight = fontWeight,
             fontSize = 12.sp,
             color = color,
             textAlign = textAlign,
