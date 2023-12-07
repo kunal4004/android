@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
@@ -195,6 +196,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private var selectedItemCount = 0
     private var selectedShoppingList:ArrayList<ShoppingList>? = null
+    private var listOfItems =  ArrayList<AddToListRequest>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -296,6 +298,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 Status.LOADING -> {
                     val message  = resources.getQuantityString(R.plurals.remove_item,selectedItemsForRemoval) + "\n" + listName
                     showLoadingProgress(this, message)
+                    bindingListDetails.errorListView.visibility = GONE
                 }
                 Status.SUCCESS -> {
                     hideLoadingProgress()
@@ -319,14 +322,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         message.toString()
                     )
                     //refresh main myList fragment to show updated count.
-                    /*todo need to remove this listener*/
                     setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
                     bindingListDetails.errorListView.visibility = VISIBLE
                     bindingListDetails.errorListView.setContent {
-                        ShoppingListErrorView()
+                        ShoppingListErrorView(getString(R.string.remove_error_msg))
                     }
                 }
             }
@@ -342,10 +344,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         getFormatedString(selectedItemCount, R.plurals.copy_item) + "\n" + getString(R.string.multiple_lists)
                     }
                     showLoadingProgress(this, message)
+                    bindingListDetails.errorListView.visibility = GONE
                 }
 
                 Status.SUCCESS -> {
                     hideLoadingProgress()
+                    bindingListDetails.errorListView.visibility = GONE
                     val message = if (selectedShoppingList?.size == 1 ) {
                         HtmlCompat.fromHtml(
                             selectedItemCount.toString() + "\t\t" + getFormatedString(selectedItemCount, R.plurals.copy_item_msg) +"\t\t" + selectedShoppingList?.getOrNull(0)?.listName,
@@ -355,6 +359,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     }
 
                     shoppingListItemsAdapter?.resetSelection()
+                    setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
                     ToastFactory.showToast(
                         requireActivity(),
                         bindingListDetails.rlCheckOut,
@@ -368,7 +373,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     hideLoadingProgress()
                     bindingListDetails.errorListView.visibility = VISIBLE
                     bindingListDetails.errorListView.setContent {
-                        ShoppingListErrorView()
+                        ShoppingListErrorView(getString(R.string.remove_copy_msg))
                     }
                 }
             }
@@ -587,11 +592,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         } else {
             shoppingListItemsAdapter?.addedItemsCount ?: 0
         }
+
+        viewModel.mShoppingListItems.forEach {
+           if (it.isSelected) {
+               listOfItems.add(AddToListRequest(skuID = it.catalogRefId, catalogRefId = it.catalogRefId, quantity = "1"))
+           }
+        }
+
         val fragment = MoreOptionDialogFragment.newInstance(
             this@ShoppingListDetailFragment,
             count,
             viewModel.listId,
-            viewModel.isCheckedDontAskAgain()
+            viewModel.isCheckedDontAskAgain(),
+            listOfItems
         )
         fragment.show(parentFragmentManager, MoreOptionDialogFragment::class.simpleName)
     }
@@ -944,9 +957,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 )
             bindingListDetails.selectDeselectAllTextView.visibility = VISIBLE
             setScrollViewBottomMargin(Utils.dp2px(60f))
+            (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
         } else {
             bindingListDetails.rlCheckOut.visibility = GONE
             setScrollViewBottomMargin(0)
+            (activity as? BottomNavigationActivity)?.hideBottomNavigationMenu()
         }
     }
 

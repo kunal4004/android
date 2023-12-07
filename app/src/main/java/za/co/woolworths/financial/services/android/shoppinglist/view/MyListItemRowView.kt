@@ -91,6 +91,7 @@ fun MyListItemRowView(
                         contentDescription = "Share List",
                         modifier = Modifier
                             .padding(5.dp, 0.dp, 7.dp, 0.dp)
+                            .size(16.dp)
                             .clickable {
                                 onShareIconClick(listItem)
                             }

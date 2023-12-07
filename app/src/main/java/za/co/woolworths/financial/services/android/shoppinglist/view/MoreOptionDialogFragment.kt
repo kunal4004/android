@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.shoppinglist.view
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,9 @@ import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListViewModel
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.ConfirmationBottomsheetDialogFragment
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
@@ -29,17 +32,24 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
     private var listId: String? = ""
     private var selectedItemCount = 0
     private var isConfirmClicked = false
+    private var listOfItems:ArrayList<AddToListRequest>? = ArrayList<AddToListRequest>()
     companion object {
         var listener : MyShoppingListItemClickListener? = null
         const val ITEM_COUNT = "ITEM_COUNT"
         const val COPY_LIST_ID = "COPY_LIST_ID"
+        const val COPY_ITEM_LIST = "COPY_ITEM_LIST"
         const val CONFIRM_CLICKED = "CONFIRM_CLICKED"
 
-        fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener, itemCount:Int, listId:String, isConfirmClick:Boolean) = MoreOptionDialogFragment().withArgs {
+        fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener,
+                        itemCount:Int,
+                        listId:String,
+                        isConfirmClick:Boolean,
+                        listOfItems:ArrayList<AddToListRequest>) = MoreOptionDialogFragment().withArgs {
             listener = shoppingListItemClickListener
             putInt(ITEM_COUNT, itemCount)
             putString(COPY_LIST_ID, listId)
             putBoolean(CONFIRM_CLICKED, isConfirmClick)
+            putParcelableArrayList(AddToListViewModel.ARG_ITEMS_TO_BE_ADDED, listOfItems)
         }
     }
 
@@ -53,12 +63,19 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
             MoreOptionDialog(
                 selectedItemCount,
                 {
+                    /*copy item*/
                     dialog?.dismiss()
-                    val fragment = AddToListFragment.newInstance(listener, listId)
-                    fragment.show(parentFragmentManager, AddToListFragment::class.simpleName)
+                    val fragment =
+                        listOfItems?.let {
+                            AddToListFragment.newInstance(listener, listId, true,
+                                it
+                            )
+                        }
+                    fragment?.show(parentFragmentManager, AddToListFragment::class.simpleName)
                 }, {
-                    //todo item move
+                   /*move item*/
                 }) {
+                 /*remove item*/
                 dialog?.dismiss()
                 if (isConfirmClicked) {
                      listener?.itemEditOptionsClick(EditOptionType.RemoveItemFromList)
@@ -86,6 +103,11 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
                 selectedItemCount = getInt(ITEM_COUNT, 0)
                 listId = getString(COPY_LIST_ID, "")
                 isConfirmClicked = getBoolean(CONFIRM_CLICKED, false)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    listOfItems = getParcelableArrayList(AddToListViewModel.ARG_ITEMS_TO_BE_ADDED, AddToListRequest::class.java)
+                } else {
+                    listOfItems = getParcelableArrayList(AddToListViewModel.ARG_ITEMS_TO_BE_ADDED)
+                }
             }
 
             setOnShowListener { dialog ->
