@@ -73,6 +73,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.resetUnsellableLiveData
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -129,6 +131,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Dynam
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAndLocation
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.Utils.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 
 @AndroidEntryPoint
 class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBinding::inflate),
@@ -704,6 +707,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         super.onHiddenChanged(hidden)
         setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
             // User Substitute product from search screen and came back to cart
+            loadShoppingCart()
+        }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with reload cart as unsellable items are removed.
             loadShoppingCart()
         }
     }
@@ -1518,7 +1525,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         )
         loadShoppingCartAndSetDeliveryLocation()
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_CART, activity)
-        refreshScreen()
     }
 
     override fun onPause() {
@@ -1610,8 +1616,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     requestCode == BundleKeysConstants.UPDATE_LOCATION_REQUEST || requestCode == BundleKeysConstants.UPDATE_STORE_REQUEST)) {
 
             val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
-            refreshScreen()
             if(toggleFulfilmentResultWithUnsellable!=null){
+                refreshScreen()
                 UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
                     toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
                     binding.cartProgressBar,this,parentFragmentManager)
@@ -2443,9 +2449,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun refreshScreen(){
         if(isVisible) {
             UpdateScreenLiveData.observe(viewLifecycleOwner) {
-                if (it == 1) {
+                if (it == updateUnsellableLiveData) {
                     loadShoppingCart()
-                    UpdateScreenLiveData.value = 0
+                    switchDeliverModeEvent(KotlinUtils.getDeliveryType()?.deliveryType)
+                    UpdateScreenLiveData.value = resetUnsellableLiveData
                 }
             }
         }
@@ -2603,7 +2610,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             setDeliveryLocationEnabled(true)
             setMinimumCartErrorMessage()
             resetItemDelete(true)
-            UpdateScreenLiveData.value=1
+            UpdateScreenLiveData.value=updateUnsellableLiveData
 
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, bundle ->

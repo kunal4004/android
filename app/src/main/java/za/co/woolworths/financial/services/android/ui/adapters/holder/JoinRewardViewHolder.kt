@@ -10,6 +10,7 @@ import android.text.style.StyleSpan
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.JoinRewardWalkthroughRowBinding
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper
 
 class JoinRewardViewHolder(val itemBinding: JoinRewardWalkthroughRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
@@ -20,14 +21,8 @@ class JoinRewardViewHolder(val itemBinding: JoinRewardWalkthroughRowBinding) : R
                 val spanBuilder = updateWRewardCharacter(root.context, description)
                 tvReasonToJoinDesc?.text = spanBuilder
                 imHeader?.setImageResource(imageDrawable)
+                WRewardUniqueLocatorsHelper.setLogOutFragLocators(bindingAdapterPosition,imHeader,tvReasonToJoinTitle,tvReasonToJoinDesc)
             }
-            uniqueIdsForRewards()
-        }
-    }
-
-    private fun JoinRewardWalkthroughRowBinding.uniqueIdsForRewards() {
-        root.context?.resources?.apply {
-            infoLinearLayoutCompat?.contentDescription = getString(R.string.infoLayout)
         }
     }
 

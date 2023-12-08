@@ -1528,17 +1528,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             return
         }
 
-        // Now first check for if delivery location and browsing location is same.
-        // if same no issues. If not then show changing delivery location popup.
-        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type) && isUserBrowsing) {
-            KotlinUtils.showChangeDeliveryTypeDialog(
-                requireContext(), requireFragmentManager(),
-                KotlinUtils.browsingDeliveryType
-            )
-            return
-        }
-
-
         if (mStoreId.isEmpty()) {
             addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
             return
