@@ -319,9 +319,9 @@ class SubCategoryFragment :
         mSubCategories = ArrayList(subCategories)
 
         // Order Again Header
-        if (AppConstant.FOOD_CATEGORY_ID.equals(mRootCategory?.categoryId)) {
+        if (AppConstant.FOOD_CATEGORY_ID == mRootCategory?.catId) {
             val subHeaderOrderAgainCategory = SubCategory().apply {
-                setCategoryId(mRootCategory?.categoryId)
+                setCategoryId(mRootCategory?.catId)
                 setCategoryName(mRootCategory?.categoryName)
                 setHasChildren(false)
             }
