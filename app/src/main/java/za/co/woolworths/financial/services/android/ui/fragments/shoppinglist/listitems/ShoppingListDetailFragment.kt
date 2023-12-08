@@ -108,7 +108,6 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -762,11 +761,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             viewModel.getShoppingListDetails()
         }
 
+        listenerForUnsellable()
+
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
             onItemDeleteApiCall()
-        }
-        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
-            UpdateScreenLiveData.value=updateUnsellableLiveData
         }
     }
 
@@ -947,6 +945,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         super.onHiddenChanged(hidden)
         if (!hidden) {
             (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
+           listenerForUnsellable()
         }
     }
 
@@ -1196,5 +1195,17 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         private const val ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED =
             "remove_with_delete_icon_pressed"
     }
+    private fun listenerForUnsellable(){
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                UpdateScreenLiveData.value=updateUnsellableLiveData
+            }
+        }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            UpdateScreenLiveData.value=updateUnsellableLiveData
 
+        }
+    }
 }
