@@ -22,6 +22,7 @@ public class UserManager {
 	private static final String W_REWARDS = "w_rewards";
 	private static final String ACCOUNT_CACHE_TIME = "account_cache_time";
 	private static final String W_REWARDS_CACHE_TIME = "w_rewards_cache_time";
+	private static final String HUAWEI_PUSH_TOKEN = "huawei_push_token";
 	private final Context mContext;
 
 	UserManager(Context context) {
@@ -103,5 +104,15 @@ public class UserManager {
 	public void setLandingScreen(String string) {
 		getSharedPreferences().edit().putString(String.format("LANDING-%s", getSession()), string).commit();
 	}
+
+	//Shared preferences for using Huawei Push notifications token for Sales team testing.
+	public String getHuaweiPushToken() {
+		return getSharedPreferences().getString(HUAWEI_PUSH_TOKEN, "");
+	}
+
+	public void setHuaweiPushToken(String token) {
+		getSharedPreferences().edit().putString(HUAWEI_PUSH_TOKEN, token).commit();
+	}
+
 
 }

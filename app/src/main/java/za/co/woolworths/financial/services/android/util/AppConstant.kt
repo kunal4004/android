@@ -72,6 +72,7 @@ class AppConstant {
 
         const val REQUEST_CODE_CREATE_LIST = 9001
         const val REQUEST_CODE_ORDER_AGAIN_LOGIN = 9002
+        const val REQUEST_CODE_DELIVERY_LOCATION_CHANGE = 9003
 
         const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
@@ -148,10 +149,25 @@ class AppConstant {
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
         const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
 
-        // Shop Landing Standard / CnC
-        const val FOOD_CATEGORY_ID = "cat606520"
+
+
+        //Huawei Ratings
+        const val APP_GALLERY_APP_NOT_RELEASED: Int = 101
+        const val APP_GALLERY_RATING_SUBMITTED = 102
+        const val APP_GALLERY_COMMENT_SUBMITTED = 103
+        const val APP_GALLERY_SIGN_IN_INVALID = 104
+        const val APP_GALLERY_USER_DOES_NOT_ALLOWED = 105
+        const val APP_GALLERY_COMMENT_FUNCTION_DISABLED = 106
+        const val APP_GALLERY_USER_CANCELLED = 108
+        const val RESULT_OK_HUAWEI_REQUEST_CODE = 1001
+        const val HUAWEI_FLAVOR = "huaweiProduction"
+        const val HUAWEI_APP_COMMENTS_APP_ACTION_NAME = "com.huawei.appmarket.intent.action.guidecomment"
+        const val HUAWEI_APP_COMMENTS_APP_PACKAGE_NAME = "com.huawei.appmarket"
 
         const val actionItemTnC = "ACTION_ITEMS_TnC"
+
+        // Shop Landing Standard / CnC
+        const val FOOD_CATEGORY_ID = "cat606520"
     }
 
     class Keys {

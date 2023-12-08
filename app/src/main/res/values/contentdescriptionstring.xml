@@ -318,5 +318,22 @@
     <string name="cd_checkout_gift_switch">checkoutGiftSwitch</string>
     <string name="cd_checkout_gift_instruction_value">checkoutGiftInstructionsText</string>
     <string name="cd_checkout_delivery_instruction_value">checkoutSpecialDeliveryInstructionsText</string>
+    <string name="cd_empty_state_icon">orderAgainEmptyScreenIcon</string>
 
+    <!-- Unique Ids for need help-->
+    <string name="next_title">next</string>
+    <string name="previous_title">previous</string>
+    <string name="page_number">pageNumber</string>
+    <string name="tipsAndTricks">tipsAndTricks</string>
+    <string name="tipsAndTricksImage">tipsAndTricksImage</string>
+    <string name="faqTitle">faqTitle</string>
+    <string name="faqDescription">faqDescription</string>
+    <string name="tips_and_tricks_text">app_tips_&amp;_tricks_text</string>
+    <string name="tips_and_tricks_next_arrow">app_tips_&amp;_tricks_next_arrow</string>
+    <string name="faq_text">faq_text</string>
+    <string name="faq_next_arrow">faq_next_arrow</string>
+    <string name="new_feature_tutorials_text">new_feature_tutorials_text</string>
+    <string name="tips_and_tricks_image">tips_and_tricks_image</string>
+    <string name="faq_title">faq_title</string>
+    <string name="faq_description">faq_description</string>
 </resources>

@@ -1,20 +1,13 @@
 package za.co.woolworths.financial.services.android.viewmodels.shop
 
 import android.location.Location
-import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
@@ -28,17 +21,15 @@ import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.repository.shop.ShopRepository
-import za.co.woolworths.financial.services.android.ui.fragments.shop.component.ShopTooltipUiState
+import za.co.woolworths.financial.services.android.shoptoggle.data.pref.ShopTogglePrefStore
 import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
-import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
 @HiltViewModel
 class ShopViewModel @Inject constructor(
-    private val shopRepository: ShopRepository
+    private val shopRepository: ShopRepository,
+    private val shopTogglePrefStore: ShopTogglePrefStore,
 ) : ViewModel() {
 
     private val _isOnDemandCategoriesAvailable = MutableLiveData(false)
@@ -86,17 +77,11 @@ class ShopViewModel @Inject constructor(
     private val _lastDashOrder = MutableLiveData<Event<Resource<LastOrderDetailsResponse>>>()
     val lastDashOrder: LiveData<Event<Resource<LastOrderDetailsResponse>>> = _lastDashOrder
 
-    private var _tooltipUiState: MutableStateFlow<ShopTooltipUiState> =
-        MutableStateFlow(ShopTooltipUiState.Hidden)
-    val tooltipUiState: StateFlow<ShopTooltipUiState> = _tooltipUiState.stateIn(
-        scope = viewModelScope,
-        initialValue = ShopTooltipUiState.Hidden,
-        started = SharingStarted.WhileSubscribed(5000L)
-    )
-
     private val _lastDashOrderInProgress = MutableLiveData(false)
     val lastDashOrderInProgress: LiveData<Boolean>
         get() = _lastDashOrderInProgress
+
+    val isShopToggleScreenFirstTime = shopTogglePrefStore.isShopToggleScreenFirstTime().asLiveData()
 
     fun getDashLandingDetails() {
         _dashLandingDetails.value = Event(Resource.loading(null))
@@ -178,73 +163,5 @@ class ShopViewModel @Inject constructor(
             _lastDashOrder.value = Event(response)
             _lastDashOrderInProgress.value = false
         }
-    }
-
-    fun onTabClick(validateLocationResponse: ValidateLocationResponse? = null, position: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-
-            _tooltipUiState.update { currentState ->
-                when (position) {
-                    // TODO: Include Standard and CNC
-                    0 -> { ShopTooltipUiState.StandardTooltip }
-                    1 -> { ShopTooltipUiState.CNCTooltip }
-                    2 -> {  // Index of dash tab
-
-                        KotlinUtils.browsingDeliveryType = Delivery.DASH
-                        setEventsForSwitchingBrowsingType(Delivery.DASH.name)
-                        validateLocationResponse?.validatePlace?.onDemand?.let {
-                            var visibility =
-                                (it.deliverable && !it.firstAvailableFoodDeliveryTime.isNullOrEmpty())
-                            // Close button isn't clicked
-                            visibility = !(KotlinUtils.isDashTabCrossClicked ?: false) && visibility
-
-                            val changeButtonVisibility =
-                                KotlinUtils.getDeliveryType() == null || Delivery.getType(
-                                    KotlinUtils.getDeliveryType()?.deliveryType
-                                )?.type == Delivery.DASH.type
-
-                            val timeSlot =
-                                if (!(it.deliveryTimeSlots.isNullOrEmpty() && it.deliverable)) {
-                                    it.firstAvailableFoodDeliveryTime ?: ""
-                                } else ""
-
-                            ShopTooltipUiState.DashTooltip(
-                                visibility = visibility,
-                                changeButtonVisibility = changeButtonVisibility,
-                                timeslotText = timeSlot,
-                                itemLimit = it.quantityLimit?.foodMaximumQuantity ?: 0,
-                                deliveryFee = it.firstAvailableFoodDeliveryCost ?: 0
-                            )
-                        } ?: ShopTooltipUiState.Hidden
-                    }
-                    else -> ShopTooltipUiState.Hidden
-                }
-            }
-        }
-    }
-
-    private fun setEventsForSwitchingBrowsingType(browsingType: String?) {
-        if (KotlinUtils.getPreferredDeliveryType() == null) {
-            return
-        }
-        val dashParams = bundleOf(
-            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE to KotlinUtils.getPreferredDeliveryType()?.name,
-            FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE to browsingType
-        )
-        AnalyticsManager.setUserProperty(
-            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
-            KotlinUtils.getPreferredDeliveryType()?.type
-        )
-        browsingType?.let {
-            AnalyticsManager.setUserProperty(
-                FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
-                browsingType
-            )
-        }
-        AnalyticsManager.logEvent(
-            FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE,
-            dashParams
-        )
-
     }
 }
