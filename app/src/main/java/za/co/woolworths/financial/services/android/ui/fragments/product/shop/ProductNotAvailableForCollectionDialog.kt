@@ -15,6 +15,7 @@ class ProductNotAvailableForCollectionDialog : WBottomSheetDialogFragment() {
 
     interface IProductNotAvailableForCollectionDialogListener {
         fun onChangeDeliveryOption()
+        fun onChangeDeliveryOptionFromNewToggleFulfilment()
         fun onFindInStore()
         fun openChangeFulfillmentScreen()
     }
@@ -49,7 +50,7 @@ class ProductNotAvailableForCollectionDialog : WBottomSheetDialogFragment() {
             }
 
             changeDeliveryOption?.setOnClickListener {
-                listener?.onChangeDeliveryOption()
+                listener?.onChangeDeliveryOptionFromNewToggleFulfilment()
                 dismissAllowingStateLoss()
             }
         }
