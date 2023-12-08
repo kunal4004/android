@@ -249,8 +249,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
 
         binding.apply {
-            toolbarPLPAddress.setOnClickListener(this@ProductListingFragment)
-            toolbarPLPTitle.setOnClickListener(this@ProductListingFragment)
             plpSearchIcon.setOnClickListener(this@ProductListingFragment)
             plpBackIcon.setOnClickListener(this@ProductListingFragment)
         }
@@ -1094,9 +1092,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                         activity
                     )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
-                }
-                R.id.toolbarPLPAddress, R.id.toolbarPLPTitle -> {
-                    presentEditDeliveryActivity()
                 }
 
                 R.id.plpSearchIcon -> {
