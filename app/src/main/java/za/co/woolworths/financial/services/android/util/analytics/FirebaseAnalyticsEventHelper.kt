@@ -312,7 +312,7 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
-    fun viewSearchResult(searchTerm: String?) {
+    fun viewSearchResult(searchTerm: String?, searchCount: Int) {
         if (searchTerm.isNullOrEmpty()) {
             return
         }
@@ -322,6 +322,10 @@ object FirebaseAnalyticsEventHelper {
             putString(
                 FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM,
                 searchTerm
+            )
+            putInt(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_COUNT,
+                searchCount
             )
         }
         AnalyticsManager.logEvent(

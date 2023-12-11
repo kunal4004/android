@@ -161,11 +161,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var PLP_SCREEN_LOCATION: String? = "PLP Screen"
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
     private var recyclerViewViewHolderItems: RecyclerViewViewHolderItems? = null
-
+    private var isSearchByKeywordNavigation = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var isSearchByKeywordNavigation = false
         activity?.apply {
             arguments?.apply {
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
@@ -197,19 +196,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             localProductBody.add(localBody)
             setProductBody()
             isBackPressed = false
-            callViewSearchResultEvent(isSearchByKeywordNavigation, mSearchTerm)
         }
         config = NetworkConfig(AppContextProviderImpl())
         if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
             dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
         if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
             dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
-    }
-
-    private fun callViewSearchResultEvent(isSearchByKeywordNavigation: Boolean?, searchTerm: String?) {
-        if (isSearchByKeywordNavigation == true) {
-            FirebaseAnalyticsEventHelper.viewSearchResult(searchTerm)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -1055,6 +1047,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
 
 
+    }
+
+    override fun isSearchByKeywordNavigation(): Boolean {
+        return isSearchByKeywordNavigation
     }
 
 
