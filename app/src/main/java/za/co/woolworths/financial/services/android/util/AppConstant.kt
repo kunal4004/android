@@ -146,6 +146,10 @@ class AppConstant {
         //connect online
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
         const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
+
+        //out of stock availability details
+        const val STOCK_AVAILABILITY_MINUS1 = -1
+        const val STOCK_AVAILABILITY_0 = 0
     }
 
     class Keys {

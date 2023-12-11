@@ -13,6 +13,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.STOCK_AVAILABILITY_0
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.STOCK_AVAILABILITY_MINUS1
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -186,10 +188,10 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                     when (productType) {
                         getString(R.string.food_product_type) -> {
                             when (stockAvailable) {
-                                -1 -> {
+                                STOCK_AVAILABILITY_MINUS1 -> {
                                     includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
                                 }
-                                0 -> {
+                                STOCK_AVAILABILITY_0 -> {
                                     includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
                                 }
                                 else -> {
@@ -216,10 +218,10 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                     when(productType) {
                        getString(R.string.food_product_type) -> {
                            when (stockAvailable) {
-                               -1 -> {
+                               STOCK_AVAILABILITY_MINUS1 -> {
                                    imAddToList?.visibility = VISIBLE
                                }
-                               0 -> {
+                               STOCK_AVAILABILITY_0 -> {
                                    imAddToList?.visibility = GONE
                                }
                                else -> {
@@ -245,12 +247,12 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                     when(productType) {
                         getString(R.string.food_product_type) -> {
                             when (stockAvailable) {
-                                -1 -> {
+                                STOCK_AVAILABILITY_MINUS1 -> {
                                     outOfStockTag.visibility = GONE
-                                    imProductImage.alpha = 0.5f
                                 }
-                                0 -> {
+                                STOCK_AVAILABILITY_0 -> {
                                     outOfStockTag.visibility = VISIBLE
+                                    imProductImage.alpha = 0.5f
                                 }
                                 else -> {
                                     outOfStockTag.visibility = GONE
