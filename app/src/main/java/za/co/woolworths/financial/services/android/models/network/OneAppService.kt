@@ -133,6 +133,8 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
@@ -398,6 +400,12 @@ open class OneAppService(
             getSessionToken(), getDeviceIdentityToken(), listId,
             addToListRequest
         )
+
+    suspend fun copyToList(
+        request: CopyItemToListRequest
+    ): retrofit2.Response<CopyListResponse> = mApiInterface.copyItemsFromList(
+        getSessionToken(), getDeviceIdentityToken(), request
+    )
 
     fun getPromotions(): Call<PromotionsResponse> {
         return mApiInterface.getPromotions(
