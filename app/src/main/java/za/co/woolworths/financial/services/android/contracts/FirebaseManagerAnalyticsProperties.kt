@@ -586,6 +586,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val DELIVERY_TYPE = "delivery_type"
 
             const val SEARCH_RESULT_COUNT: String = "search_result_count"
+            const val SEARCH_COUNT: String = "search_count"
             const val LOCATION_ID: String = "location_id"
             const val PRODUCT_NAME: String = "product_name"
         }
