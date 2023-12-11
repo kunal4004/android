@@ -316,7 +316,7 @@ fun PromotionalText(
         )
         withStyle(spanStyle) {
             append(stringResource(id = R.string.offer).uppercase())
-            append(stringResource(id = R.string.semicolon))
+            append(stringResource(id = R.string.colon))
             append(" ")
         }
         withStyle(promotionalSpanStyle) {

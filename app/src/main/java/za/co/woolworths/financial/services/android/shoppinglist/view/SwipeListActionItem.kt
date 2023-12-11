@@ -2,10 +2,12 @@ package za.co.woolworths.financial.services.android.shoppinglist.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 
 @Composable
@@ -28,34 +31,44 @@ fun SwipeListActionItem(
     tintColor: Color? = null,
     actionText: Int = R.string.remove,
     textStyle: TextStyle? = null,
+    showLoading: Boolean = false,
     onClick: () -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxHeight()
-            .clickable {
-                onClick()
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    Box(
+        modifier = modifier.fillMaxHeight(),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = painterResource(id = icon),
-            tint = tintColor ?: Color.Unspecified,
-            contentDescription = "Delete"
-        )
+        Column(
+            modifier = modifier
 
-        Spacer(modifier = Modifier.height(16.dp))
+                .clickable {
+                    onClick()
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = icon),
+                tint = tintColor ?: Color.Unspecified,
+                contentDescription = "Delete"
+            )
 
-        Text(
-            text = stringResource(id = actionText).uppercase(),
-            style = textStyle ?: TextStyle(
-                fontFamily = FuturaFontFamily,
-                fontWeight = FontWeight.W600,
-                fontSize = 12.sp,
-                color = Color.Black
-            ),
-            letterSpacing = 1.5.sp
-        )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(id = actionText).uppercase(),
+                style = textStyle ?: TextStyle(
+                    fontFamily = FuturaFontFamily,
+                    fontWeight = FontWeight.W600,
+                    fontSize = 12.sp,
+                    color = Color.Black
+                ),
+                letterSpacing = 1.5.sp
+            )
+        }
+
+        if(showLoading) {
+            CircularProgressIndicator(color = Black)
+        }
     }
 }

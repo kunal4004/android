@@ -9,6 +9,8 @@ import com.awfs.coordination.R
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemDetail
 
 @Parcelize
 data class ProductItem(
@@ -23,12 +25,30 @@ data class ProductItem(
     val priceTextColor: @RawValue Color = Color.Black
 ) : Parcelable {
 
-    var isSelected  by mutableStateOf(false)
+    var isSelected by mutableStateOf(false)
+    var inProgress by mutableStateOf(false)
     var quantityInStock by mutableStateOf(-1)
-    var quantity by  mutableStateOf(1)
+    var quantity by mutableStateOf(1)
     var productAvailabilityResource by mutableStateOf(R.string.empty)
+
 }
 
 fun ProductItem.toAddItemToCart(): AddItemToCart {
     return AddItemToCart(id, id, quantity)
 }
+
+fun ProductItem.toAddToListRequest(): AddToListRequest = AddToListRequest(
+    id,
+    id,
+    id,
+    quantity.toString(),
+    null,
+    false,
+    null
+)
+
+fun ProductItem.toCopyItemDetail() : CopyItemDetail = CopyItemDetail(
+    skuID = id,
+    catalogRefId = id,
+    quantity = "1"
+)

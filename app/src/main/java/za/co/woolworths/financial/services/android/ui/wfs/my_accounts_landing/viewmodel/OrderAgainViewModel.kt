@@ -13,21 +13,28 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.domain.usecase.AddToCartUC
+import za.co.woolworths.financial.services.android.domain.usecase.CopyToListUC
 import za.co.woolworths.financial.services.android.domain.usecase.MultiSkuInventoryUC
 import za.co.woolworths.financial.services.android.domain.usecase.OrderAgainUC
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory
 import za.co.woolworths.financial.services.android.models.dto.order_again.Item
 import za.co.woolworths.financial.services.android.models.dto.order_again.OrderAgainResponse
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
 import za.co.woolworths.financial.services.android.models.dto.order_again.toAddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.order_again.toAddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.order_again.toCopyItemDetail
 import za.co.woolworths.financial.services.android.models.dto.order_again.toProductItem
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationViewState
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema.OrderAgainScreenEvents
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema.OrderAgainScreenState
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema.OrderAgainUiState
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
 import za.co.woolworths.financial.services.android.util.Utils
@@ -40,7 +47,8 @@ import javax.inject.Inject
 class OrderAgainViewModel @Inject constructor(
     val orderAgainUC: OrderAgainUC,
     val orderAgainInventoryUC: MultiSkuInventoryUC,
-    val addToCartUC: AddToCartUC
+    val addToCartUC: AddToCartUC,
+    val copyToListsUC: CopyToListUC
 ) : ViewModel() {
 
     private var _orderAgainUiState = MutableStateFlow(OrderAgainUiState())
@@ -68,12 +76,20 @@ class OrderAgainViewModel @Inject constructor(
             }
 
             OrderAgainScreenEvents.AddToCartClicked -> {
-                val items = orderList.filter { it.isSelected }.map { it.toAddItemToCart() }
+                orderList.filter { it.isSelected }.map {
+                    it.inProgress = true
+                }
+                val items = orderList.filter { it.isSelected }.map {
+                    it.toAddItemToCart()
+                }
                 onAddToCartClicked(items)
             }
 
             is OrderAgainScreenEvents.OnSwipeAddAction -> {
-                onAddToCartClicked(listOf(events.item.toAddItemToCart()))
+                orderList.find { it.id == events.item.id }?.let { item ->
+                    item.inProgress = true
+                }
+                onAddToCartClicked(listOf(events.item.toAddItemToCart()), true)
             }
 
             is OrderAgainScreenEvents.ListItemRevealed -> addToRevealItems(events.item)
@@ -87,7 +103,7 @@ class OrderAgainViewModel @Inject constructor(
         }
     }
 
-    private fun onAddToCartClicked(items: List<AddItemToCart>) {
+    private fun onAddToCartClicked(items: List<AddItemToCart>, isSwipeToAdd: Boolean = false) {
         viewModelScope.launch {
             if (items.isEmpty()) {
                 return@launch
@@ -98,14 +114,25 @@ class OrderAgainViewModel @Inject constructor(
                     Status.SUCCESS -> {
                         val productCountMap = it.data?.data?.getOrNull(0)?.productCountMap
                         _orderAgainUiState.update { state ->
-                            orderList.filter { item -> item.isSelected }.map { item ->
+                            orderList.filter { item ->
+                                //Update filter conditions
+                                if (isSwipeToAdd) item.id == items.getOrNull(0)?.productId
+                                else item.isSelected
+                            }.map { item ->
                                 item.isSelected = false
+                                item.inProgress = false
                                 item.quantity = 1
                             }
                             state.copy(
+                                isLoading = false,
                                 showAddToCart = false,
-                                maxItemLimit = productCountMap?.quantityLimit?.foodMaximumQuantity
-                                    ?: 0
+                                snackbarData = state.snackbarData.copy(
+                                    count = items.sumOf { it.quantity },
+                                    showDesc = KotlinUtils.isDeliveryOptionDash(),
+                                    maxItem = productCountMap?.quantityLimit?.foodMaximumQuantity
+                                        ?: 0,
+                                    productCountMap = productCountMap
+                                )
                             )
                         }
                         _onScreenEvent.update {
@@ -114,16 +141,33 @@ class OrderAgainViewModel @Inject constructor(
                         delay(500L)
                         _onScreenEvent.update {
                             OrderAgainScreenEvents.ShowSnackBar(
-                                count = _orderAgainUiState.value.itemsToBeAddedCount,
-                                maxItemLimit = productCountMap?.quantityLimit?.foodMaximumQuantity
-                                    ?: 0
+                                orderAgainUiState.value.snackbarData
                             )
                         }
                     }
 
-                    Status.ERROR -> {}
-                    Status.LOADING -> {
+                    Status.ERROR -> {
+                        _orderAgainUiState.update { state ->
+                            state.copy(
+                                isLoading = false
+                            )
+                        }
+                        if (it.data?.response?.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
+                            _onScreenEvent.update { _ ->
+                                OrderAgainScreenEvents.ShowAddToCartError(
+                                    code = it.data.response.code.toInt(),
+                                    errorMessage = it.data.response.desc
+                                )
+                            }
+                        }
+                    }
 
+                    Status.LOADING -> {
+                        _orderAgainUiState.update { state ->
+                            state.copy(
+                                isLoading = true
+                            )
+                        }
                     }
                 }
             }
@@ -302,7 +346,7 @@ class OrderAgainViewModel @Inject constructor(
                         }
 
                         Status.ERROR -> state.copy(
-                            screenState = OrderAgainScreenState.ShowErrorScreen, isLoading = false
+                            screenState = OrderAgainScreenState.ShowErrorScreen
                         )
 
                         Status.LOADING -> state.copy(
@@ -442,5 +486,61 @@ class OrderAgainViewModel @Inject constructor(
             return
         }
         callInventoryApi(productIds)
+    }
+
+    fun getCopyToListItems(): ArrayList<AddToListRequest> {
+        val items = orderList.filter { it.isSelected }.map {
+            it.toAddToListRequest()
+        }
+        return ArrayList(items)
+    }
+
+    fun copyItemsToList(copyToLists: ArrayList<ShoppingList>) {
+        viewModelScope.launch {
+
+            val copyListIds = copyToLists.map { it.listId }
+            val copyItems = orderList.filter { it.isSelected }.map { it.toCopyItemDetail() }
+
+            copyToListsUC(
+                CopyItemToListRequest(copyItems, copyListIds)
+            ).collectLatest {
+                when (it.status) {
+                    Status.SUCCESS -> {
+
+                        _orderAgainUiState.update {
+                            val item = copyToLists.singleOrNull()
+                            it.copy(
+                                snackbarData = it.snackbarData.copy(
+                                    count = copyItems.size,
+                                    listName = item?.listName ?: "",
+                                    listId = item?.listId ?: ""
+                                )
+                            )
+                        }
+                        delay(100L)
+                        _onScreenEvent.update {
+                            OrderAgainScreenEvents.CopyToListSuccess(
+                                orderAgainUiState.value.snackbarData
+                            )
+                        }
+                    }
+
+                    Status.ERROR -> {
+                        _onScreenEvent.update {
+                            OrderAgainScreenEvents.CopyToListError
+                        }
+                    }
+
+                    Status.LOADING -> {
+                        _onScreenEvent.update {
+                            OrderAgainScreenEvents.ShowProgressView(
+                                titleRes = R.plurals.copy_item,
+                                descRes = R.string.processing_your_request_desc
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
