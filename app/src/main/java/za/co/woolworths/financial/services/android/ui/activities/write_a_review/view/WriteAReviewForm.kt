@@ -106,6 +106,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         recyclerView?.layoutManager = gridLayout
 
         binding.backArrow.setOnClickListener(this@WriteAReviewForm)
+        binding.termsAndCondition.setOnClickListener(this@WriteAReviewForm)
         CustomRatingBar.clicked = false
         getUserNickName()
         configureDefaultUI()
@@ -351,6 +352,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
             CustomRatingBar.clicked = true
             binding.ratingBar.drawBoundingBox()
             binding.errorMsgOfRatingbar.visibility = View.GONE
+            submitButtonBackgroundChange()
         }
         binding.reviewTitleEdit?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -369,6 +371,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                     )
                     val number = s?.length.toString()
                     binding.reviewTitleEditCounter.text = number
+                    submitButtonBackgroundChange()
                 } else {
                     binding.reviewTitleEditCounter.text = "0"
                 }
@@ -392,6 +395,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                 if (binding.descrEdt.text.toString().length < 1501) {
                     val number = (1500 - binding.descrEdt.text.toString().trim().length).toString()
                     binding.descrEdtCounter.text = number
+                    submitButtonBackgroundChange()
                 } else {
                     binding.descrEdtCounter.text = "1500"
                 }
@@ -413,7 +417,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                 binding.nameInput?.background =
                     ResourcesCompat.getDrawable(resources, R.drawable.edit_box_write_a_review, null)
                 binding.errorMsgOfDisplayName.visibility = View.GONE
-
+                submitButtonBackgroundChange()
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -445,6 +449,7 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                     ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
                 binding.noButton.background =
                     ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
+                submitButtonBackgroundChange()
             }
 
             R.id.noButton -> {
@@ -456,6 +461,11 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
                     ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
                 binding.noButton.background =
                     ResourcesCompat.getDrawable(resources, R.drawable.customrating, null)
+                submitButtonBackgroundChange()
+            }
+
+            R.id.terms_and_condition -> {
+                (activity as? BottomNavigationActivity)?.openWriteAReviewTnCScreenFragment(AppConstant.actionItemTnC)
             }
 
         }
@@ -465,6 +475,14 @@ class WriteAReviewForm : Fragment(), View.OnClickListener {
         OBJECT_ANIMATOR.setIntValues(mid)
         OBJECT_ANIMATOR.duration = 500
         OBJECT_ANIMATOR.start()
+    }
+
+    private fun submitButtonBackgroundChange() {
+        if (binding.ratingBar.rating.toDouble() != null && binding.descrEdt.text.toString() != null && binding.nameEdt.text.toString() != null && (isrecommended == true || isrecommended == false)) {
+            binding.submit.background = ResourcesCompat.getDrawable(resources, R.color.black,null)
+        } else {
+            binding.submit.background = ResourcesCompat.getDrawable(resources, R.color.gray, null)
+        }
     }
 
 }

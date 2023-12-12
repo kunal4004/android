@@ -13,6 +13,7 @@ data class ConfigNativeCheckout(
     val addressTypes: List<String>,
     var regions: List<Province>,
     val checkoutPaymentURL: String?,
+    val checkoutPaymentUrlPayInStore: String?,
     val checkoutPostPaymentURL: String?,
     val currentShoppingBag: ConfigCurrentShoppingBag,
     val newShoppingBag: ConfigNewShoppingBag,

@@ -8,10 +8,12 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RewardBenefitFragmentBinding
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class RewardBenefitFragment : BaseFragmentBinding<RewardBenefitFragmentBinding>(RewardBenefitFragmentBinding::inflate) {
+class RewardBenefitFragment :
+    BaseFragmentBinding<RewardBenefitFragmentBinding>(RewardBenefitFragmentBinding::inflate) {
 
     companion object {
         fun newInstance() = RewardBenefitFragment()
@@ -22,12 +24,25 @@ class RewardBenefitFragment : BaseFragmentBinding<RewardBenefitFragmentBinding>(
         binding.tvTermsCondition?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         binding.tvTermsCondition?.apply {
             activity?.apply {
-                text = WRewardBenefitActivity.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
+                text =
+                    WRewardBenefitActivity.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
                 movementMethod = LinkMovementMethod.getInstance()
                 setOnClickListener {
                     Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsTCLink, true)
                 }
             }
+        }
+        binding.apply {
+            WRewardUniqueLocatorsHelper.setBenefitsFragLocators(
+                tvTitle,
+                tvBenefitSubTitle1,
+                tvBenefitSubDesc1,
+                tvBenefitSubTitle2,
+                tvBenefitSubDesc2,
+                tvBenefitSubTitle3,
+                tvBenefitSubDesc3,
+                tvTermsCondition
+            )
         }
     }
 }

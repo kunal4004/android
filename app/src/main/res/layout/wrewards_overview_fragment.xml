@@ -177,6 +177,7 @@
                     style="@style/reward_benefit_container_style">
 
                     <TextView
+                        android:id="@+id/tvBenefits"
                         style="@style/reward_benefit_title"
                         android:text="@string/reward_benefits_title" />
 
@@ -215,6 +216,7 @@
                     style="@style/reward_benefit_container_style">
 
                     <TextView
+                        android:id="@+id/tvSavings"
                         style="@style/reward_benefit_title"
                         android:text="@string/savings" />
 
@@ -240,6 +242,7 @@
                     android:visibility="gone">
 
                     <TextView
+                        android:id="@+id/tv_reward_to_get_to_vip"
                         style="@style/reward_benefit_title"
                         android:text="@string/reward_to_get_to_vip" />
 

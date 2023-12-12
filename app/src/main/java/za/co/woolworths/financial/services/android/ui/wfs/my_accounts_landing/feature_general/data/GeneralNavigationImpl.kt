@@ -25,7 +25,7 @@ class GeneralNavigationImpl @Inject constructor(private val general: GeneralInte
     ) = when(general){
         General.ContactUs -> createContactUsIntent()
         General.NeedHelp -> createNeedHelpIntent(userAccountResponse = viewModel.getUserAccountResponse())
-        General.Preferences -> viewModel.createMyPreferenceIntent(viewModel.isNowWfsUser(), activityLauncher)
+        General.Preferences -> viewModel.createMyPreferenceIntent(activityLauncher)
         General.SignOut ->  createSignOutIntent()
         General.StoreLocator -> createStoreLocatorIntent()
         General.UpdatePassword -> createUpdatePasswordIntent()

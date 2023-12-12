@@ -514,17 +514,20 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         ArrayList<Account> accountList = new ArrayList<>();
         accountList.add(account.getSecond());
 
-        VocTriggerEvent vocTriggerEvent;
-        if (account.getSecond().productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
-            vocTriggerEvent = VocTriggerEvent.CHAT_SC_STATEMENT;
-        } else if (account.getSecond().productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
-            vocTriggerEvent = VocTriggerEvent.CHAT_PL_STATEMENT;
-        } else {
-            vocTriggerEvent = VocTriggerEvent.CHAT_CC_STATEMENT;
-        }
+        if (account.getSecond() != null && account.getSecond().productGroupCode != null) {
+            VocTriggerEvent vocTriggerEvent;
+            
+            if (account.getSecond().productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
+                vocTriggerEvent = VocTriggerEvent.CHAT_SC_STATEMENT;
+            } else if (account.getSecond().productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
+                vocTriggerEvent = VocTriggerEvent.CHAT_PL_STATEMENT;
+            } else {
+                vocTriggerEvent = VocTriggerEvent.CHAT_CC_STATEMENT;
+            }
 
-        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.getFirst(), rclEStatement, notificationBadge, onlineIndicatorImageView, vocTriggerEvent);
-        inAppChatTipAcknowledgement.build();
+            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.getFirst(), rclEStatement, notificationBadge, onlineIndicatorImageView, vocTriggerEvent);
+            inAppChatTipAcknowledgement.build();
+        }
     }
 }
 

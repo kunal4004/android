@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Spannable
@@ -22,6 +23,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,6 +41,8 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
@@ -56,6 +60,10 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoader
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.resetUnsellableLiveData
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -87,9 +95,10 @@ import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.EmptyCartView
 import za.co.woolworths.financial.services.android.util.EmptyCartView.EmptyCartInterface
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAndLocation
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showQuantityLimitErrror
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -97,7 +106,10 @@ import za.co.woolworths.financial.services.android.util.PostItemToCart
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
@@ -106,6 +118,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     IOnConfirmDeliveryLocationActionListener, RecommendationLoadingNotifier, RecommendationLoader by RecommendationLoaderImpl() {
 
     private val viewModel: ShoppingListDetailViewModel by viewModels()
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     private val productSearchResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -187,6 +200,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         initViewAndEvent()
         addSubscribeEvents()
         addFragmentListener()
+
     }
 
     private fun addSubscribeEvents() {
@@ -268,9 +282,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         setUpAddToCartButton()
         with(bindingListDetails) {
             initList(rcvShoppingListItems)
-
+            fulfilmentAndLocationLayout.root.setBackgroundColor(Color.WHITE)
+            fulfilmentAndLocationLayout.layoutFulfilment.tvSubTitle.visibility = GONE
+            fulfilmentAndLocationLayout.layoutLocation.ivLocation.visibility = GONE
             selectDeselectAllTextView.setOnClickListener(this@ShoppingListDetailFragment)
-            deliveryLocationConstLayout.setOnClickListener(this@ShoppingListDetailFragment)
+            fulfilmentAndLocationLayout.layoutFulfilment.root.setOnClickListener(this@ShoppingListDetailFragment)
+            fulfilmentAndLocationLayout.layoutLocation.root.setOnClickListener(this@ShoppingListDetailFragment)
             textProductSearch.setOnClickListener(this@ShoppingListDetailFragment)
             blackToolTipLayout.closeWhiteBtn.setOnClickListener(this@ShoppingListDetailFragment)
             blackToolTipLayout.changeLocationButton.setOnClickListener(this@ShoppingListDetailFragment)
@@ -332,6 +349,20 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         timer?.cancel()
     }
 
+    private fun screenRefresh(){
+        if(isVisible) {
+            UpdateScreenLiveData.observe(viewLifecycleOwner) {
+                if (it == updateUnsellableLiveData)
+                {   viewModel.getShoppingListDetails()
+                    setDeliveryLocation()
+                    switchDeliverModeEvent(KotlinUtils.getDeliveryType()?.deliveryType)
+                    UpdateScreenLiveData.value = resetUnsellableLiveData
+                }
+            }
+        }
+    }
+
+
     private fun setUpView() {
         bindingListDetails.rlEmptyListView.visibility =
             if (viewModel.mShoppingListItems.isEmpty()) VISIBLE else GONE
@@ -352,7 +383,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.deliveryLocationConstLayout -> deliverySelectionIntent(DELIVERY_LOCATION_REQUEST)
+            bindingListDetails.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
+            bindingListDetails.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
             R.id.selectDeselectAllTextView -> onOptionsItemSelected()
             R.id.textProductSearch -> openProductSearchActivity()
             R.id.btnRetry -> if (NetworkManager.getInstance().isConnectedToNetwork(
@@ -367,6 +399,43 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             R.id.closeWhiteBtn -> hideBlackToolTip()
             else -> {}
         }
+    }
+
+    private fun launchShopToggleScreen() {
+        Intent(requireActivity(), ShopToggleActivity::class.java).apply {
+            startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
+        }
+    }
+    private fun launchStoreOrLocationSelection() {
+        val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+        if (delivery == Delivery.CNC) {
+            launchStoreSelection()
+        } else {
+            launchGeoLocationFlow()
+        }
+    }
+    private fun launchStoreSelection() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            BundleKeysConstants.UPDATE_STORE_REQUEST,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isFromNewToggleFulfilmentScreen = true,
+            newDelivery = Delivery.CNC,
+            needStoreSelection = true,
+        )
+    }
+
+    private fun launchGeoLocationFlow() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            activity,
+            BundleKeysConstants.UPDATE_LOCATION_REQUEST,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
+            KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
+            isLocationUpdateRequest = true,
+            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType
+        )
     }
 
     private fun openProductSearchActivity() {
@@ -696,6 +765,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         setFragmentResultListener(ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED) { _, _ ->
             onItemDeleteApiCall()
         }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            UpdateScreenLiveData.value=updateUnsellableLiveData
+        }
     }
 
     override fun onDetach() {
@@ -868,6 +940,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onPause() {
         super.onPause()
         requireActivity().unregisterReceiver(mConnectionBroadcast)
+        UpdateScreenLiveData.removeObservers(viewLifecycleOwner)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -954,6 +1027,25 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     viewModel.getShoppingListDetails()
                 }
             }
+            ShopToggleActivity.REQUEST_DELIVERY_TYPE, BundleKeysConstants.UPDATE_LOCATION_REQUEST, BundleKeysConstants.UPDATE_STORE_REQUEST ->{
+                if (resultCode == RESULT_OK) {
+
+                    val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
+                    if(toggleFulfilmentResultWithUnsellable!=null){
+                        screenRefresh()
+                        UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                            toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
+                            bindingListDetails.loadingBar,this,parentFragmentManager)
+                    }
+
+                    setDeliveryLocation()
+                    if (viewModel.isShoppingListContainsUnavailableItems())
+                        showBlackToolTip()
+                    else
+                        hideBlackToolTip()
+                    viewModel.getShoppingListDetails()
+                }
+            }
         }
     }
 
@@ -961,12 +1053,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         val shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation()
         if (shoppingDeliveryLocation?.fulfillmentDetails == null || !isAdded || !isVisible) return
         view?.apply {
-            setDeliveryAddressView(
+            setDeliveryAndLocation(
                 activity,
                 shoppingDeliveryLocation.fulfillmentDetails,
-                bindingListDetails.tvDeliveryTitle,
-                bindingListDetails.tvDeliverySubtitle,
-                bindingListDetails.imgDelivery
+                bindingListDetails.fulfilmentAndLocationLayout.layoutFulfilment.tvTitle,
+                bindingListDetails.fulfilmentAndLocationLayout.layoutLocation.tvTitle,
             )
         }
     }
@@ -1105,4 +1196,5 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         private const val ON_CONFIRM_REMOVE_WITH_DELETE_ICON_PRESSED =
             "remove_with_delete_icon_pressed"
     }
+
 }
