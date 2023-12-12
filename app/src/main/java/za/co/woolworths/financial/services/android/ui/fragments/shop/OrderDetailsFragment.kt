@@ -181,12 +181,38 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
         val dataList = arrayListOf<OrderDetailsItem>()
 
         dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_STATUS))
+        // Endless Aisle Barcode
+        ordersResponse.orderSummary?.takeIf {
+            it.endlessAisleOrder
+        }?.also { summary ->
 
+            if (summary.state?.contains(requireContext().getString(R.string.cancelled)) == false) {
+                dataList.add(
+                    OrderDetailsItem(
+                        ordersResponse.orderSummary,
+                        OrderDetailsItem.ViewType.ENDLESS_AISLE_BARCODE
+                    )
+                )
+            }
+
+            val visibility = summary.state?.let { state ->
+                if (state.contains(requireContext().getString(R.string.status_awaiting_payment), ignoreCase = true))
+                    View.GONE
+                else View.VISIBLE
+            } ?: View.VISIBLE
+            binding.orderItemsBtn.visibility = visibility
+        }
         ordersResponse.orderSummary?.apply {
             if (!taxNoteNumbers.isNullOrEmpty())
                 dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
-            if (orderCancellable && !requestCancellation)
-                dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.CANCEL_ORDER))
+            if (orderCancellable && !requestCancellation) {
+                    dataList.add(
+                        OrderDetailsItem(
+                            null,
+                            OrderDetailsItem.ViewType.CANCEL_ORDER
+                        )
+                    )
+            }
             if (isChatEnabled)
                 dataList.add(
                     OrderDetailsItem(
@@ -333,6 +359,7 @@ class OrderDetailsFragment : BaseFragmentBinding<OrderDetailsFragmentBinding>(Or
         val strProductList = Gson().toJson(productDetails)
         // Move to shop tab first.
         (requireActivity() as? BottomNavigationActivity)?.apply {
+            BottomNavigationActivity.preventShopTooltip = true
             onShopTabSelected(bottomNavigationById.menu[INDEX_PRODUCT])
         }
         ScreenManager.openProductDetailFragment(requireActivity(), productName, strProductList)

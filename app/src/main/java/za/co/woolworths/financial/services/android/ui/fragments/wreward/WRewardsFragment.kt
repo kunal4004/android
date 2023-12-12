@@ -11,7 +11,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities
@@ -46,8 +48,8 @@ class WRewardsFragment : Fragment(R.layout.wrewards_fragment) {
     }
 
     private fun removeAllChildFragments() {
-        activity?.supportFragmentManager?.apply {
-            if (backStackEntryCount > 0) {
+        childFragmentManager.apply {
+            if (fragments.size > 0) {
                 for (fragment in fragments) {
                     beginTransaction()
                             .remove(fragment)
@@ -97,14 +99,15 @@ class WRewardsFragment : Fragment(R.layout.wrewards_fragment) {
                 val stsParams: String = data.getStringExtra("stsParams") ?: ""
                 onSessionExpired(activity, stsParams)
             }
+            init()
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             //One time biometricsWalkthrough
             val bottomNavigationActivity = (requireActivity() as? BottomNavigationActivity)
             if(bottomNavigationActivity?.bottomNavigationById?.currentItem == INDEX_REWARD) {
                 ScreenManager.presentBiometricWalkthrough(activity)
             }
+            init()
         }
-        init()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {

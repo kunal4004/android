@@ -381,6 +381,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val ADD_TO_CART_PDP: String = "add_to_cart"
         const val VIEW_CART: String = "view_cart"
         const val ADD_TO_WISHLIST: String = "add_to_wishlist"
+        const val IN_APP_POP_UP = "in_app_pop_up"
         const val VIEW_PROMOTION: String = "view_promotion"
         const val SELECT_PROMOTION: String = "select_promotion"
         const val IN_STORE_AVAILABILITY: String ="in_store_availability"
@@ -412,6 +413,12 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_STANDARD_CLICK_COLLECT_CONFIRM = "shop_stnd_cnfrm"
         const val SHOP_CONFIRM_STORE = "shop_cnfrm_store"
         const val SHOP_EDIT_LOCATION = "shop_edit_locatn"
+        const val SET_Location = "set_location"
+        const val DELIVERY_MODE ="delivery_mode"
+        const val BROWSE_MODE ="browse_mode"
+        const val SET_DELIVERY_BROWSE_MODE ="set_delivery_browse_mode"
+        const val SWITCH_DELIVERY_MODE ="switch_delivery_mode"
+        const val SWITCH_BROWSE_MODE ="switch_browse_mode"
 
 
         //GeoLocation_CHECKOUT
@@ -551,6 +558,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val CATEGORY_NAME = "category"
             const val SUB_CATEGORY_NAME = "sub_category"
             const val SUB_SUB_CATEGORY_NAME = "sub_sub_category"
+            const val MESSAGE_TYPE = "message_type"
 
             const val DELIVERY_MODE = "delivery_mode"
             const val BROWSE_MODE = "browse_mode"
@@ -585,6 +593,7 @@ open class FirebaseManagerAnalyticsProperties {
 
     class PropertyValues {
         companion object {
+            const val OUT_OF_STOCK_MESSAGE = "out of stock"
             const val NOT_APPLICABLE: String = "N/A"
 
             // Chanel

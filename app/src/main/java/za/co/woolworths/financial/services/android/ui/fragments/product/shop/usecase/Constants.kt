@@ -27,5 +27,5 @@ object Constants {
     const val DELIVERY_TYPE = "DeliveryType"
     const val DELIVERY_TYPE_CNC = "CnC"
     const val DELIVERY_TYPE_STANDARD = "Standard"
-    const val DELIVERY_TYPE_DASH = "onDemand"
+    const val DELIVERY_TYPE_DASH = "OnDemand"
 }

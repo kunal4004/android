@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.NewFbhBottomSheetDialogBinding
-import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.tooltip.TooltipDialog
 import za.co.woolworths.financial.services.android.util.Utils
 
 class FBHInfoBottomSheetDialog : WBottomSheetDialogFragment() ,
@@ -34,7 +34,7 @@ class FBHInfoBottomSheetDialog : WBottomSheetDialogFragment() ,
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.gotItButton -> {
-                Utils.saveFeatureWalkthoughShowcase(WMaterialShowcaseView.Feature.NEW_FBH_CNC)
+                Utils.saveFeatureWalkthoughShowcase(TooltipDialog.Feature.NEW_FBH_CNC)
                 dismiss()
             }
         }

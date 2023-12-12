@@ -48,6 +48,7 @@ import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -61,6 +62,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
@@ -105,13 +107,19 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FBH_ONLY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_MIXED_BASKET
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.LOCATION_UPDATE_REQUEST
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEED_STORE_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEW_DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logEvent
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
@@ -135,15 +143,10 @@ import kotlin.math.roundToInt
 class KotlinUtils {
     companion object {
 
-        var isStoreSelectedForBrowsing: Boolean = false
         var placeId: String? = null
         var isLocationPlaceIdSame: Boolean? = false
         var isNickNameChanged: Boolean? = false
-        var isDeliveryLocationTabCrossClicked: Boolean? = false
-        var isCncTabCrossClicked: Boolean? = false
-        var isDashTabCrossClicked: Boolean? = false
         var isComingFromCncTab: Boolean? = false
-        var fullfillmentTypeClicked: String? = ""
         var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
 
         @JvmStatic
@@ -458,11 +461,17 @@ class KotlinUtils {
             isMixedBasket: Boolean = false,
             isFBHOnly: Boolean = false,
             isComingFromSlotSelection: Boolean = false,
+            isLocationUpdateRequest: Boolean = false,
             savedAddressResponse: SavedAddressResponse? = null,
             defaultAddress: Address? = null,
             whoISCollecting: String? = null,
             liquorCompliance: LiquorCompliance? = null,
-            cartItemList: ArrayList<CommerceItem>? = null
+            cartItemList: ArrayList<CommerceItem>? = null,
+            isFromNewToggleFulfilmentScreen: Boolean = false,
+            isFromNewToggleFulfilmentScreenSwitchCnc: Boolean = false,
+            needStoreSelection: Boolean = false,
+            newDelivery: Delivery? = null,
+            validateLocationResponse: ValidateLocationResponse? = null
         ) {
 
             activity?.apply {
@@ -473,7 +482,9 @@ class KotlinUtils {
                     mBundle.putBoolean(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder)
                     mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
                 }
+                mBundle.putSerializable(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
                 mBundle.putString(DELIVERY_TYPE, delivery.toString())
+                mBundle.putString(NEW_DELIVERY_TYPE, newDelivery?.type)
                 mBundle.putString(PLACE_ID, placeId)
                 mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
                 mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
@@ -481,6 +492,66 @@ class KotlinUtils {
                 mBundle.putBoolean(IS_MIXED_BASKET, isMixedBasket)
                 mBundle.putBoolean(IS_FBH_ONLY, isFBHOnly)
                 mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                mBundle.putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, isFromNewToggleFulfilmentScreen)
+                mBundle.putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC, isFromNewToggleFulfilmentScreenSwitchCnc)
+                mBundle.putBoolean(LOCATION_UPDATE_REQUEST, isLocationUpdateRequest)
+                mBundle.putBoolean(NEED_STORE_SELECTION, needStoreSelection)
+                mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
+                mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
+                mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
+                mBundle.putSerializable(
+                    CheckoutAddressManagementBaseFragment.CART_ITEM_LIST,
+                    cartItemList
+                )
+                mIntent.putExtra(BUNDLE, mBundle)
+                startActivityForResult(mIntent, requestCode)
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+        }
+
+        fun presentEditDeliveryGeoLocationActivity2(
+            activity: Activity?,
+            requestCode: Int,
+            delivery: Delivery? = Delivery.STANDARD,
+            placeId: String? = null,
+            isFromDashTab: Boolean = false,
+            isComingFromCheckout: Boolean = false,
+            isMixedBasket: Boolean = false,
+            isFBHOnly: Boolean = false,
+            isComingFromSlotSelection: Boolean = false,
+            isLocationUpdateRequest: Boolean = false,
+            savedAddressResponse: SavedAddressResponse? = null,
+            defaultAddress: Address? = null,
+            whoISCollecting: String? = null,
+            isLiquorOrder: Boolean? = null,
+            liquorImageUrl: String? = null,
+            cartItemList: ArrayList<CommerceItem>? = null,
+            isFromNewToggleFulfilmentScreen: Boolean = false,
+            needStoreSelection: Boolean = false,
+            newDelivery: Delivery? = null,
+            validateLocationResponse: ValidateLocationResponse? = null
+        ) {
+            activity?.apply {
+                val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
+                val mBundle = Bundle()
+                // todo Change this logic to add everything in bundle as this is exceeding 1mb limit of bundle.
+                if (isLiquorOrder == true && liquor != null && liquor!!.noLiquorImgUrl != null && !liquor!!.noLiquorImgUrl.isEmpty()) {
+                    mBundle.putBoolean(Constant.LIQUOR_ORDER, isLiquorOrder)
+                    mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
+                }
+                mBundle.putSerializable(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
+                mBundle.putString(DELIVERY_TYPE, delivery.toString())
+                mBundle.putString(NEW_DELIVERY_TYPE, newDelivery?.type)
+                mBundle.putString(PLACE_ID, placeId)
+                mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
+                mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(IS_COMING_FROM_CNC_SELETION, isComingFromCheckout)
+                mBundle.putBoolean(IS_MIXED_BASKET, isMixedBasket)
+                mBundle.putBoolean(IS_FBH_ONLY, isFBHOnly)
+                mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                mBundle.putBoolean(IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, isFromNewToggleFulfilmentScreen)
+                mBundle.putBoolean(LOCATION_UPDATE_REQUEST, isLocationUpdateRequest)
+                mBundle.putBoolean(NEED_STORE_SELECTION, needStoreSelection)
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
                 mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
@@ -584,6 +655,62 @@ class KotlinUtils {
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
+                    }
+                }
+            }
+        }
+
+        fun setDeliveryAndLocation(
+            context: Activity?,
+            fulfillmentDetails: FulfillmentDetails,
+            tvDeliveringTo: TextView,
+            tvDeliveryLocation: TextView,
+        ) {
+            with(fulfillmentDetails) {
+                when (Delivery?.getType(deliveryType)) {
+                    Delivery.CNC -> {
+                        tvDeliveringTo?.text =
+                            context?.resources?.getString(R.string.click_and_collect)
+                        tvDeliveryLocation?.text =
+                            capitaliseFirstLetter(storeName)
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                    }
+
+                    Delivery.STANDARD -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        val fullAddress = capitaliseFirstLetter(address?.address1 ?: "")
+                        val formmmatedNickName = getFormattedNickName(
+                            address?.nickname,
+                            fullAddress, context
+                        )
+                        formmmatedNickName.append(fullAddress)
+                        tvDeliveryLocation?.text = formmmatedNickName
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                    }
+
+                    Delivery.DASH -> {
+                        tvDeliveringTo.text = context?.resources?.getString(R.string.dash_delivery)
+                        val fullAddress = capitaliseFirstLetter(
+                            WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                ?: address?.address1 ?: ""
+                        )
+                        val formmmatedNickName = getFormattedNickName(
+                            address?.nickname,
+                            fullAddress, context
+                        )
+                        formmmatedNickName.append(fullAddress)
+                        tvDeliveryLocation?.text = formmmatedNickName
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                    }
+
+                    else -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation?.text =
+                            context?.resources?.getString(R.string.default_location)
+                        tvDeliveryLocation?.visibility = View.VISIBLE
                     }
                 }
             }
@@ -1065,7 +1192,8 @@ class KotlinUtils {
             title: String = "",
             actionText: String = "",
             infoIcon: Int = 0,
-            isFromCheckoutScreen: Boolean = false
+            isFromCheckoutScreen: Boolean = false,
+            isOutOfStockDialog: Boolean = false
         ) {
             val dialog =
                 GeneralInfoDialogFragment.newInstance(
@@ -1076,6 +1204,10 @@ class KotlinUtils {
                     isFromCheckoutScreen
                 )
             dialog.isCancelable = !isFromCheckoutScreen
+            if (isOutOfStockDialog) {
+                // Firebase event to be triggered when displaying the out of stock dialog
+                FirebaseAnalyticsEventHelper.outOfStock()
+            }
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
                     fragmentTransaction,
@@ -1139,6 +1271,10 @@ class KotlinUtils {
 
         fun isDeliveryOptionDash(): Boolean {
             return getPreferredDeliveryType() == Delivery.DASH
+        }
+
+        fun isDeliveryOptionStandard(): Boolean {
+            return getPreferredDeliveryType() == Delivery.STANDARD
         }
 
         @SuppressLint("MissingPermission")
@@ -1476,6 +1612,35 @@ class KotlinUtils {
                 )
             }
             return fulfillmentDetails
+        }
+
+        fun getStoreDeliveryType(fulfillmentDetails: FulfillmentDetails?): String? {
+            val storesJsonElement = fulfillmentDetails?.fulfillmentStores
+            if (storesJsonElement != null) {
+                try {
+                    val storeMap = Gson().fromJson<Map<String, String>>(
+                        storesJsonElement,
+                        object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
+                    )
+                    val fulfilmentTypes = storeMap.keys
+                    if (fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.FOOD_ITEMS.type) && fulfilmentTypes.size == 1) {
+                        //Type FOOD
+                        return StoreUtils.Companion.StoreDeliveryType.FOOD.type
+                    } else if (!fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.FOOD_ITEMS.type) &&
+                        (fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS.type) || fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.CRG_ITEMS.type))) {
+                        //Type FBH
+                        return StoreUtils.Companion.StoreDeliveryType.OTHER.type
+                    } else if (fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.FOOD_ITEMS.type)
+                        && (fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS.type) || fulfilmentTypes.contains(StoreUtils.Companion.FulfillmentType.CRG_ITEMS.type))) {
+                        //Type All items
+                        return StoreUtils.Companion.StoreDeliveryType.FOOD_AND_OTHER.type
+                    }
+                } catch (exception: JsonSyntaxException) {
+                    FirebaseManager.logException(exception)
+                    return null
+                }
+            }
+            return null
         }
 
         fun getUniqueDeviceID(result: (String?) -> Unit) {

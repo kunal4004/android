@@ -42,4 +42,7 @@ class CheckoutAddAddressNewUserInteractor @Inject constructor(
     fun getConfirmLocationDetails(body: ConfirmLocationRequest) =
         checkoutAddAddressNewUserApiHelper.getConfirmLocationDetails(body = body)
 
+    fun verifyUserIsInStore(latitude: Double, longitude: Double) =
+        checkoutAddAddressNewUserApiHelper.verifyUserIsInStore(latitude, longitude)
+
 }

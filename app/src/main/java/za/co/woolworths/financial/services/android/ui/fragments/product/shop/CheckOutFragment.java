@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
+import static za.co.woolworths.financial.services.android.util.AppConstant.RESULT_OK_HUAWEI_REQUEST_CODE;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -49,6 +51,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
+import za.co.woolworths.financial.services.android.util.RequestInAppReviewKt;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
@@ -299,5 +302,13 @@ public class CheckOutFragment extends Fragment {
     public void initPostCheckout() {
         QueryBadgeCounter.getInstance().setCartCount(0);
         new ConfirmLocation().postRequest(Utils.getPreferredDeliveryLocation(), false, requireActivity(), null);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_OK_HUAWEI_REQUEST_CODE) {
+            RequestInAppReviewKt.huaweiRatingsWindowResult(resultCode);
+        }
     }
 }

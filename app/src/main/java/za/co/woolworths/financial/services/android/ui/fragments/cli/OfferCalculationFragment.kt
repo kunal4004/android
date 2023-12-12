@@ -752,7 +752,7 @@ class OfferCalculationFragment : CLIFragment(R.layout.offer_calculation_fragment
         Utils.displayValidationMessage(
             activity, CustomPopUpWindow.MODAL_LAYOUT.CLI_DECLINE, getString(
                 R.string.cli_declined_popup_title
-            ), getString(R.string.cli_declined_popup_description)
+            ), getString(R.string.cli_declined_popup_description), false
         )
     }
 

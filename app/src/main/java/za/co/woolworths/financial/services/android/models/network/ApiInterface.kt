@@ -8,6 +8,7 @@ import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
+import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionRequest
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.AddSubstitutionResponse
 import za.co.woolworths.financial.services.android.enhancedSubstitution.service.model.KiboProductRequest
@@ -890,16 +891,6 @@ interface ApiInterface {
         @Body suburbRequest: SetDeliveryLocationSuburbRequest,
     ): Call<SetDeliveryLocationSuburbResponse>
 
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "Media-Type: application/json",
-    )
-    @GET("wfs/app/v4/cartV2")
-    fun getShoppingCart(
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-    ): Call<ShoppingCartResponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -1372,7 +1363,7 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("id") id: String,
         @Body requestBody: OrderToShoppingListRequestBody,
-    ): Call<OrderToListReponse>
+    ): retrofit2.Response<OrderToListReponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -2047,16 +2038,6 @@ interface ApiInterface {
         @Body body: Any,
     ): Response
 
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "Media-Type: application/json",
-    )
-    @GET("wfs/app/v4/user/fica/refreshStatus")
-    fun getFica(
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-    ): Call<FicaModel>
 
     @Headers(
         "Content-Type: application/json",
@@ -2072,20 +2053,6 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body confirmLocationRequest: ConfirmLocationRequest,
     ): Call<ConfirmDeliveryAddressResponse>
-
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "Media-Type: application/json",
-    )
-    @POST("wfs/app/v4/cartV2/confirmLocation")
-    suspend fun confirmPlaceLocation(
-        @Header("userAgent") userAgent: String,
-        @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Body confirmLocationRequest: ConfirmLocationRequest,
-    ): retrofit2.Response<ConfirmDeliveryAddressResponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -2199,6 +2166,14 @@ interface ApiInterface {
     )
     @POST("wfs/app/recommendations")
     suspend fun recommendation(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("fulfillmentStoreId") storeId: String?,
+        @Body recommendationRequest: RecommendationRequest,
+    ): retrofit2.Response<RecommendationResponse>
+
+    @POST("wfs/app/recommendations")
+    suspend fun recommendationAnalytics(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body recommendationRequest: RecommendationRequest,
@@ -2347,5 +2322,15 @@ interface ApiInterface {
         @Query("productId") productId: String?,
         @Body prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent
     ) : retrofit2.Response<WriteAReviewFormResponse>
+
+    @GET("wfs/app/v4/user/locations/payinstore")
+    fun verifyUserIsInStore(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double
+    ): Call<UserLocationResponse>
 
 }

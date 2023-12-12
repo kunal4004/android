@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.click_and_collect
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
@@ -24,8 +25,10 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutWhoIsCollectingFragment
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEED_STORE_SELECTION
 
 @AndroidEntryPoint
 class EditDeliveryLocationActivity : AppCompatActivity() {
@@ -38,6 +41,11 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     private var isComingFromSlotSelection: Boolean = false
     private var savedAddressResponse: SavedAddressResponse? = null
     private var navHostFragment = NavHostFragment()
+    private var needStoreSelection: Boolean = false
+    private var isFromNewToggleFulfilmentScreen: Boolean = false
+    private var isFromNewToggleFulfilmentScreenSwitchCnc: Boolean = false
+    private var isLocationUpdateRequest: Boolean = false
+    private var validateLocationResponse: ValidateLocationResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +58,17 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
             placeId =  this.getString(PLACE_ID, "")
             isComingFromCheckout =  this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
             isComingFromSlotSelection =  this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
+            isFromNewToggleFulfilmentScreen = this.getBoolean(BundleKeysConstants.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SCREEN, false)
+            isFromNewToggleFulfilmentScreenSwitchCnc = this.getBoolean(BundleKeysConstants.IS_COMING_FROM_NEW_TOGGLE_FULFILMENT_SWITCH_SCREEN_CNC, false)
+            isLocationUpdateRequest = this.getBoolean(BundleKeysConstants.LOCATION_UPDATE_REQUEST, false)
+            needStoreSelection = this.getBoolean(NEED_STORE_SELECTION, false)
+            if (bundle?.containsKey(BundleKeysConstants.VALIDATE_RESPONSE) == true) {
+                validateLocationResponse = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    this.getSerializable(BundleKeysConstants.VALIDATE_RESPONSE, ValidateLocationResponse::class.java)
+                } else {
+                    this.getSerializable(BundleKeysConstants.VALIDATE_RESPONSE) as? ValidateLocationResponse
+                }
+            }
             if (bundle?.containsKey(SAVED_ADDRESS_RESPONSE) == true
                 && this.getSerializable(SAVED_ADDRESS_RESPONSE) != null) {
                 savedAddressResponse =  this.getSerializable(SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
@@ -89,7 +108,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.confirm_location_nav_host)
 
-        if (placeId.isNullOrEmpty()) {
+        if (placeId.isNullOrEmpty() || isLocationUpdateRequest) {
             // naviagte to confirm address screen
             navGraph.startDestination = R.id.confirmAddressLocationFragment
             navController.graph = navGraph
@@ -98,6 +117,13 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
                     navGraph,
                     bundleOf("bundle" to bundle)
             )
+        } else if (isFromNewToggleFulfilmentScreen && needStoreSelection) {
+            navGraph.startDestination = R.id.clickAndCollectStoresFragment
+            navController
+                .setGraph(
+                    navGraph,
+                    bundleOf(BUNDLE to bundle)
+                )
         } else {
             if (isComingFromCheckout) {
                 if (isComingFromSlotSelection) {

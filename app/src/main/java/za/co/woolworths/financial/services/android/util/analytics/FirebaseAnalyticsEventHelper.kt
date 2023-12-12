@@ -6,6 +6,12 @@ import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DELIVERY_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SET_DELIVERY_BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SET_Location
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SWITCH_BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SWITCH_DELIVERY_MODE
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.analytics.dto.*
@@ -418,6 +424,18 @@ object FirebaseAnalyticsEventHelper {
         AnalyticsManager.logEvent(eventName, formTypeParams)
     }
 
+    fun outOfStock() {
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.MESSAGE_TYPE,
+                FirebaseManagerAnalyticsProperties.PropertyValues.OUT_OF_STOCK_MESSAGE
+            )
+        }
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.IN_APP_POP_UP, analyticsParams
+        )
+    }
     object Utils {
         private fun stringToFirebaseEventName(string: String?): String? {
             return string?.filter { it.isLetterOrDigit() }?.lowercase()
@@ -458,4 +476,35 @@ object FirebaseAnalyticsEventHelper {
             )
         }
     }
+
+    fun setLocationEvent(browseMode:String?,deliveryMode: String?) {
+        val analyticsParams = Bundle().apply {
+            putString(BROWSE_MODE,browseMode)
+            putString(DELIVERY_MODE, deliveryMode)
+        }
+        AnalyticsManager.logEvent(SET_Location, analyticsParams)
+    }
+
+    fun fromShopWithSetDeliveryBrowseMode(browseMode:String?, deliveryMode: String?) {
+        val analyticsParams = Bundle().apply {
+            putString(BROWSE_MODE,browseMode)
+            putString(DELIVERY_MODE, deliveryMode)
+        }
+        AnalyticsManager.logEvent(SET_DELIVERY_BROWSE_MODE, analyticsParams)
+    }
+
+    fun switchDeliverModeEvent(deliveryMode: String?) {
+        val analyticsParams = Bundle().apply {
+            putString(DELIVERY_MODE, deliveryMode)
+        }
+         AnalyticsManager.logEvent(SWITCH_DELIVERY_MODE, analyticsParams)
+    }
+
+    fun switchBrowseModeEvent(deliveryMode: String) {
+        val analyticsParams = Bundle().apply {
+            putString(BROWSE_MODE, deliveryMode)
+        }
+         AnalyticsManager.logEvent(SWITCH_BROWSE_MODE, analyticsParams)
+    }
+
 }
