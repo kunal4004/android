@@ -24,8 +24,6 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivitySplashScreenBinding
 import com.awfs.coordination.databinding.ActivityStartupBinding
 import com.awfs.coordination.databinding.ActivityStartupResourcenotfoundBinding
-import com.clarisite.mobile.Glassbox
-import com.clarisite.mobile.StartupSettings.StartupSettingsBuilder.aSettingsBuilder
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -42,7 +40,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton.glassBox
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
@@ -498,7 +495,6 @@ class StartupActivity :
                         else -> onConfigSuccess()
                     }
 
-                    initializeGlassBoxSDK()
                 }
             }
         }
@@ -736,21 +732,7 @@ class StartupActivity :
         }
     }
 
-    // GlassBox SDK for record screen session
-    private fun initializeGlassBoxSDK() {
-        try {
-            Glassbox.start(
-                aSettingsBuilder()
-                    .withApplicationCtx(this)
-                    .withAppId(glassBox?.appId)
-                    .withReportUrl(glassBox?.reportUrl)
-                    .hybridMode()
-                    .build(),
-            )
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
-        }
-    }
+
 
     @VisibleForTesting
     fun testsetupLoadingScreen() {
