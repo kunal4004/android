@@ -12,6 +12,9 @@ import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
+import za.co.woolworths.financial.services.android.models.dto.order_again.toAddToListRequest
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
@@ -51,6 +54,7 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
                     OrderAgainScreenEvents.StartShoppingClicked -> onStartShoppingClicked()
                     OrderAgainScreenEvents.SnackbarViewClicked -> onAddToCartToastViewClick()
                     OrderAgainScreenEvents.CopyToListClicked -> onCopyToListClicked()
+                    is OrderAgainScreenEvents.CopyItemToListClicked -> onCopyToListClicked(it.item)
                     is OrderAgainScreenEvents.ShowSnackBar -> showAddToCartSnackbar(it.snackbarDetails)
                     is OrderAgainScreenEvents.CopyToListSuccess -> onCopyListSuccess(it.snackbarDetails)
                     is OrderAgainScreenEvents.ShowProgressView -> showLoadingProgress(
@@ -129,8 +133,15 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
         customProgressDialog?.dismiss()
     }
 
-    private fun onCopyToListClicked() {
-        val items = viewModel.getCopyToListItems()
+    private fun onCopyToListClicked(item: ProductItem? = null) {
+        val items = if(item != null) {
+            ArrayList<AddToListRequest>(0).apply {
+                add(item.toAddToListRequest())
+            }
+        } else {
+            viewModel.getCopyToListItems()
+        }
+
         val fragment = MoreOptionDialogFragment.newInstance(
             this@OrderAgainFragment,
             items.size,

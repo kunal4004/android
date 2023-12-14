@@ -76,10 +76,8 @@ class OrderAgainViewModel @Inject constructor(
             }
 
             OrderAgainScreenEvents.AddToCartClicked -> {
-                orderList.filter { it.isSelected }.map {
-                    it.inProgress = true
-                }
                 val items = orderList.filter { it.isSelected }.map {
+                    it.inProgress = true
                     it.toAddItemToCart()
                 }
                 onAddToCartClicked(items)
@@ -152,6 +150,7 @@ class OrderAgainViewModel @Inject constructor(
                                 isLoading = false
                             )
                         }
+                        delay(100L)
                         if (it.data?.response?.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
                             _onScreenEvent.update { _ ->
                                 OrderAgainScreenEvents.ShowAddToCartError(

@@ -21,14 +21,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 
 @Composable
 fun SwipeListActionItem(
     modifier: Modifier = Modifier,
     icon: Int = R.drawable.delete_24,
-    tintColor: Color? = null,
+    tintColor: Color = Color.Unspecified,
+    progressBarColor: Color = Color.Unspecified,
     actionText: Int = R.string.remove,
     textStyle: TextStyle? = null,
     showLoading: Boolean = false,
@@ -40,7 +40,6 @@ fun SwipeListActionItem(
     ) {
         Column(
             modifier = modifier
-
                 .clickable {
                     onClick()
                 },
@@ -49,7 +48,7 @@ fun SwipeListActionItem(
         ) {
             Icon(
                 painter = painterResource(id = icon),
-                tint = tintColor ?: Color.Unspecified,
+                tint = tintColor,
                 contentDescription = "Delete"
             )
 
@@ -57,18 +56,18 @@ fun SwipeListActionItem(
 
             Text(
                 text = stringResource(id = actionText).uppercase(),
-                style = textStyle ?: TextStyle(
+                style = TextStyle(
                     fontFamily = FuturaFontFamily,
                     fontWeight = FontWeight.W600,
                     fontSize = 12.sp,
                     color = Color.Black
-                ),
+                ).merge(textStyle),
                 letterSpacing = 1.5.sp
             )
         }
 
         if(showLoading) {
-            CircularProgressIndicator(color = Black)
+            CircularProgressIndicator(color = progressBarColor)
         }
     }
 }

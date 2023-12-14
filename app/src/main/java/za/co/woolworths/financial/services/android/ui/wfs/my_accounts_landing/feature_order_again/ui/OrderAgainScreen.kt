@@ -392,16 +392,15 @@ fun OrderAgainList(
                         modifier = Modifier
                             .width(116.dp)
                             .fillMaxHeight()
-                            .background(White),
+                            .background(Black),
                         icon = R.drawable.cart_icon,
                         textStyle = TextStyle(
-                            fontFamily = FuturaFontFamily,
-                            fontWeight = FontWeight.W600,
-                            fontSize = 12.sp,
-                            color = Black
+                            color = White
                         ),
                         actionText = R.string.add_to_cart,
-                        showLoading = it.inProgress
+                        showLoading = it.inProgress,
+                        tintColor = White,
+                        progressBarColor = White
                     ) {
                         if (!it.inProgress)
                             onEvent(OrderAgainScreenEvents.OnSwipeAddAction(it))
@@ -501,6 +500,9 @@ fun ProductItemDetails(
             )
             SpacerWidth8dp()
             Icon(
+                modifier = Modifier.clickable {
+                    OrderAgainScreenEvents.CopyItemToListClicked(productItem)
+                },
                 painter = painterResource(id = R.drawable.ic_option_menu),
                 contentDescription = ""
             )

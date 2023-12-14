@@ -144,12 +144,6 @@ class AddToListFragment : WBottomSheetDialogFragment() {
             }
 
             val listState = viewModel.getListState()
-            val listName =
-                if (listState.selectedListItem.size == 1) {
-                    listState.selectedListItem.getOrNull(0)?.listName ?: ""
-                } else {
-                    stringResource(id = R.string.multiple_lists)
-                }
 
             when {
                 listState.showCreateList -> {
@@ -182,6 +176,12 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                 }
 
                 listState.isAddToListInProgress -> {
+                    val listName =
+                        if (listState.selectedListItem.size == 1) {
+                            listState.selectedListItem.getOrNull(0)?.listName ?: ""
+                        } else {
+                            stringResource(id = R.string.multiple_lists)
+                        }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Spacer(
                             modifier = Modifier
