@@ -97,6 +97,7 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
 import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -1566,7 +1567,10 @@ class ProductDetailsFragment :
 
             sizeSelectorLayout?.visibility = View.VISIBLE
         }
-
+        checkAllItemsZeroQuantity()
+        checkNotifyMeLayout()
+    }
+    private fun checkNotifyMeLayout() {
         val isZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.any {
             (it.quantity == 0)
         }
@@ -1579,6 +1583,14 @@ class ProductDetailsFragment :
         }
     }
 
+    private fun checkAllItemsZeroQuantity() {
+        val isAllZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.none {
+            it.quantity == 0
+        }
+        if (isAllZeroQuantity == false) {
+            binding.showOutOfStockForSelectedSize()
+        } else  binding.hideLowStockForSize()
+    }
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): LinkedHashMap<String, ArrayList<OtherSkus>> {
 
         val variant = ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")
@@ -2294,6 +2306,14 @@ class ProductDetailsFragment :
     private fun updateSizesOnColorSelection() {
         productSizeSelectorAdapter?.updatedSizes(otherSKUsByGroupKey[getSelectedGroupKey()]!!)
 
+        val isAllZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.none {
+            it.quantity == 0
+        }
+        if (isAllZeroQuantity == false) {
+            binding.showOutOfStockForSelectedSize()
+        }
+        checkAllItemsZeroQuantity()
+        checkNotifyMeLayout()
         //===== positive flow
         // if selected size available for the selected color
         // get the sku for the selected size from the new color group
@@ -2354,7 +2374,7 @@ class ProductDetailsFragment :
             else -> {
                 getSelectedSku()?.quantity?.let {
                     when (it) {
-                        0, -1 -> binding.showFindInStore()
+                        0, -1 -> binding.showFindInStore(getSelectedSku()?.quantity)
                         else -> {
                             getSelectedQuantity()?.apply {
                                 if (it < this)
@@ -2390,7 +2410,7 @@ class ProductDetailsFragment :
         dyReportEventViewModel.createDyChangeAttributeRequest(prepareDyAddToCartRequestEvent)
     }
 
-    private fun ProductDetailsFragmentBinding.showFindInStore() {
+    private fun ProductDetailsFragmentBinding.showFindInStore(quantity: Int?) {
         productDetails?.isnAvailable?.toBoolean()?.apply {
             if (!this) {
                 toCartAndFindInStoreLayout.root.visibility = View.GONE
@@ -2405,7 +2425,7 @@ class ProductDetailsFragment :
             findInStoreAction?.visibility = View.VISIBLE
         }
         if (hasColor) hideLowStockFromSelectedColor()
-        if (hasSize) hideLowStockForSize()
+        if (hasSize && quantity != 0) hideLowStockForSize()
     }
 
     private fun ProductDetailsFragmentBinding.showAddToCart() {
@@ -2415,7 +2435,7 @@ class ProductDetailsFragment :
             findInStoreAction?.visibility = View.GONE
         }
         if (isAllProductsOutOfStock() && SessionUtilities.getInstance().isUserAuthenticated && Utils.getPreferredDeliveryLocation() != null) {
-            showFindInStore()
+            showFindInStore(getSelectedSku()?.quantity)
         }
     }
 
@@ -3226,6 +3246,9 @@ class ProductDetailsFragment :
             && selectedSku?.quantity!! > 0 && AppConfigSingleton.lowStock?.isEnabled == true
         ) {
             showLowStockForSelectedSize()
+            sizeColorSelectorLayout.selectedSizePlaceholder?.text = ""
+        }  else if (selectedSku?.quantity == 0) {
+            showOutOfStockForSelectedSize()
             sizeColorSelectorLayout.selectedSizePlaceholder?.text = ""
         } else {
             hideLowStockForSize()
@@ -4309,27 +4332,62 @@ class ProductDetailsFragment :
         }
         sizeColorSelectorLayout.apply {
             (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
-                it.startToEnd = R.id.layoutLowStockIndicator
-                it.topToTop = R.id.layoutLowStockIndicator
-                it.bottomToBottom = R.id.layoutLowStockIndicator
-                layoutLowStockIndicator.root.visibility = View.VISIBLE
+                it.startToEnd = R.id.layoutStockIndicator
+                it.topToTop = R.id.layoutStockIndicator
+                it.bottomToBottom = R.id.layoutStockIndicator
+                layoutStockIndicator.root.visibility = View.VISIBLE
                 selectedSizePlaceholder?.visibility = View.GONE
                 selectedSize?.layoutParams = it
-                layoutLowStockIndicator?.txtLowStockIndicator?.text =
+                layoutStockIndicator?.txtStockIndicator?.background =
+                        bindDrawable(R.drawable.bg_low_stock_indicator)
+                layoutStockIndicator?.txtStockIndicator?.text =
                     AppConfigSingleton.lowStock?.lowStockCopy
             }
             (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
-                it.topToBottom = R.id.layoutLowStockIndicator
+                it.topToBottom = R.id.layoutStockIndicator
                 sizeSelectorRecycleView?.layoutParams = it
             }
             (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
-                it.topToTop = R.id.layoutLowStockIndicator
-                it.bottomToBottom = R.id.layoutLowStockIndicator
+                it.topToTop = R.id.layoutStockIndicator
+                it.bottomToBottom = R.id.layoutStockIndicator
                 sizeGuide?.layoutParams = it
             }
         }
     }
 
+    /**
+     * Show out of stock for selected size
+     * This method used for show out of stock indicator when user select size or product have single size
+     * quantity == 0
+     */
+    private fun ProductDetailsFragmentBinding.showOutOfStockForSelectedSize() {
+        if (hasColor) {
+            hideLowStockFromSelectedColor()
+        }
+        sizeColorSelectorLayout.apply {
+            (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.startToEnd = R.id.layoutStockIndicator
+                it.topToTop = R.id.layoutStockIndicator
+                it.bottomToBottom = R.id.layoutStockIndicator
+                layoutStockIndicator.root.visibility = View.VISIBLE
+                selectedSizePlaceholder?.visibility = View.GONE
+                selectedSize?.layoutParams = it
+                layoutStockIndicator?.txtStockIndicator?.background =
+                        bindDrawable(R.drawable.bg_out_of_stock_indicator)
+                layoutStockIndicator?.txtStockIndicator?.text =
+                        getString(R.string.out_of_stock)
+            }
+            (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToBottom = R.id.layoutStockIndicator
+                sizeSelectorRecycleView?.layoutParams = it
+            }
+            (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToTop = R.id.layoutStockIndicator
+                it.bottomToBottom = R.id.layoutStockIndicator
+                sizeGuide?.layoutParams = it
+            }
+        }
+    }
     /**
      *  This method used to Hide low stock indicator when
      *  use selected size have not low stock
@@ -4344,7 +4402,7 @@ class ProductDetailsFragment :
                 it.topToTop = R.id.selectedSizePlaceholder
                 it.bottomToBottom = R.id.selectedSizePlaceholder
                 selectedSize?.layoutParams = it
-                layoutLowStockIndicator.root.visibility = View.GONE
+                layoutStockIndicator.root.visibility = View.GONE
                 selectedSizePlaceholder?.visibility = View.VISIBLE
             }
             (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
@@ -4373,7 +4431,7 @@ class ProductDetailsFragment :
                 it.bottomToBottom = R.id.layoutLowStockColor
                 selectedColor?.layoutParams = it
                 layoutLowStockColor.root.visibility = View.VISIBLE
-                layoutLowStockColor.txtLowStockIndicator.text =
+                layoutLowStockColor.txtStockIndicator.text =
                     AppConfigSingleton.lowStock?.lowStockCopy
                 colorPlaceholder?.visibility = View.GONE
             }
