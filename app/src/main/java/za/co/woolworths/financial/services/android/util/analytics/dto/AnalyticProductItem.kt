@@ -8,11 +8,22 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
 
+
+private const val BREAD_CRUMBS_CATEGORY_ZERO = 0
+private const val BREAD_CRUMBS_CATEGORY_FIRST = 1
+private const val BREAD_CRUMBS_CATEGORY_SECOND = 2
+private const val BREAD_CRUMBS_CATEGORY_THIRD = 3
+const val FIREBASE_VALUE_MAX_CHARACTER = 100
+
 @Parcelize
 data class AnalyticProductItem(
     val itemId: String? = null,
     val itemName: String? = null,
     val category: String? = null,
+    var category2: String? = null,
+    var category3: String? = null,
+    var category4: String? = null,
+    var category5: String? = null,
     val itemBrand: String? = null,
     val itemListName: String? = null,
     val itemVariant: String? = null,
@@ -38,7 +49,7 @@ fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
     )
 }
 
-fun ProductList.toAnalyticItem(category: String?): AnalyticProductItem {
+fun ProductList.toAnalyticItem(category: String?, index: Int = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt()): AnalyticProductItem {
     return AnalyticProductItem(
         itemId = productId,
         itemName = productName,
@@ -50,8 +61,30 @@ fun ProductList.toAnalyticItem(category: String?): AnalyticProductItem {
         price = price?.toDouble(),
         productType = productType,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
-        index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
+        index = index,
     )
+}
+
+fun AnalyticProductItem.fillOtherCategories(breadCrumbs: List<String>) {
+    breadCrumbs.forEachIndexed { index, breadCrumb ->
+        when (index) {
+            BREAD_CRUMBS_CATEGORY_ZERO -> {
+                category2 = breadCrumb
+            }
+            BREAD_CRUMBS_CATEGORY_FIRST -> {
+                category3 = breadCrumb
+            }
+            BREAD_CRUMBS_CATEGORY_SECOND -> {
+                category4 = breadCrumb
+            }
+            BREAD_CRUMBS_CATEGORY_THIRD -> {
+                category5 = breadCrumb
+            }
+            else -> {
+                return
+            }
+        }
+    }
 }
 
 
@@ -105,42 +138,31 @@ fun List<OrderDetailsItem>.toAnalyticItemList(): List<AnalyticProductItem> {
         .map { (it.item as CommerceItem).toAnalyticItem() }
 }
 
+fun String?.valueOrNone(): String {
+    return if (!this.isNullOrEmpty()) {
+        this
+    } else {
+        FirebaseManagerAnalyticsProperties.PropertyValues.NONE
+    }
+}
+
 fun AnalyticProductItem.toBundle(): Bundle {
     val bundle = Bundle()
-    itemId?.let {
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, it)
-    }
-
-    itemName?.let {
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, it)
-    }
-
-    category?.let {
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, it)
-    }
-
-    productType?.let {
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, it)
-    }
-
-    itemBrand?.let {
-        bundle.putString(FirebaseAnalytics.Param.ITEM_BRAND, it)
-    }
-
-    category?.let {
-        bundle.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, it)
-    }
-
-    itemVariant?.let {
-        bundle.putString(FirebaseAnalytics.Param.ITEM_VARIANT, itemVariant)
-    }
-
+    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, itemId.valueOrNone())
+    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, itemName.valueOrNone())
+    bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productType.valueOrNone())
+    bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY2, category2.valueOrNone())
+    bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY3, category3.valueOrNone())
+    bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY4, category4.valueOrNone())
+    bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY5, category5.valueOrNone())
+    bundle.putString(FirebaseAnalytics.Param.ITEM_BRAND, itemBrand.valueOrNone())
+    bundle.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category.valueOrNone())
+    bundle.putString(FirebaseAnalytics.Param.ITEM_VARIANT, itemVariant.valueOrNone())
     price?.let {
         bundle.putDouble(FirebaseAnalytics.Param.PRICE, it)
     }
-
     bundle.putInt(FirebaseAnalytics.Param.QUANTITY, quantity)
-    bundle.putString(FirebaseAnalytics.Param.AFFILIATION, affiliation)
+    bundle.putString(FirebaseAnalytics.Param.AFFILIATION, affiliation.valueOrNone())
     bundle.putString(FirebaseAnalytics.Param.INDEX, index.toString())
     return bundle
 }

@@ -390,10 +390,10 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
 
                 productlistingNavigator = navigator
                 itemBinding.rowLayout?.let {
-                    it.brandName.setOnClickListener { navigator.openProductDetailView(this) }
-                    it.tvRangeName.setOnClickListener { navigator.openProductDetailView(this) }
-                    it.tvProductName.setOnClickListener { navigator.openProductDetailView(this) }
-                    it.mainImgLayout.setOnClickListener { navigator.openProductDetailView(this) }
+                    it.brandName.setOnClickListener { navigator.openProductDetailView(this, position) }
+                    it.tvRangeName.setOnClickListener { navigator.openProductDetailView(this, position) }
+                    it.tvProductName.setOnClickListener { navigator.openProductDetailView(this, position) }
+                    it.mainImgLayout.setOnClickListener { navigator.openProductDetailView(this, position) }
                 }
                 itemBinding.rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.let { quickShopButton ->
                     quickShopButton.setOnClickListener {

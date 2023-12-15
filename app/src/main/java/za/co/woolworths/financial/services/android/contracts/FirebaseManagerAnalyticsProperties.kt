@@ -668,7 +668,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val CURRENCY_VALUE: String = "ZAR"
             const val INDEX_VALUE: String = "1"
             const val AFFILIATION_VALUE: String = "WWOneApp"
-            const val CREATIVE_NAME_VALUE: String = "Product List"
+            const val NONE: String = "NONE"
             const val PAYMENT_TYPE_VALUE: String = "Gift Card"
             const val SHIPPING_TIER_VALUE_DASH: String = "Dash"
             const val SHIPPING_TIER_VALUE_CNC: String = "CNC"

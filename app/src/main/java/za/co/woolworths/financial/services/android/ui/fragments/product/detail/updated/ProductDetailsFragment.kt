@@ -1695,27 +1695,6 @@ class ProductDetailsFragment :
                                     Html.fromHtml(editedPromotionalText)
                             }
                         }
-                        val arguments = HashMap<String, String>()
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =
-                            productDetails?.productId
-                                ?: ""
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] =
-                            productDetails?.productName
-                                ?: ""
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] =
-                            productDetails?.price
-                                ?: ""
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CREATIVE_NAME] =
-                            FirebaseManagerAnalyticsProperties.PropertyValues.CREATIVE_NAME_VALUE
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME] =
-                            Html.fromHtml(editedPromotionalText).toString()
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] =
-                            FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
-                        Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SELECT_PROMOTION,
-                            arguments,
-                            activity
-                        )
                     }
                 } else {
                     onlinePromotionalTextView1?.text = ""
