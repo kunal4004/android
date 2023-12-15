@@ -77,12 +77,19 @@ class ManageStoreCardLandingList(
                         ) return@launch
                     }
                     is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
-                        showActivateVirtualCardItem(false)
                         if (actionForStoreCardUsage1Item(
                                 featureType.storeCard,
                                 callback
                             )
-                        ) return@launch
+                        ){
+                            includeListOptions.parentLinearLayout.apply {
+                                removeAllViewsInLayout()
+                                visibility = GONE
+                            }
+                            showActivateVirtualTempCardRow(true)
+                            return@launch
+                        }
+
                     }
 
                     is StoreCardFeatureType.ActivateVirtualTempCard -> {
