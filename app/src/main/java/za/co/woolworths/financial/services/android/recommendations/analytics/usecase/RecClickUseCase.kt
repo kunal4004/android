@@ -17,7 +17,7 @@ class RecClickUseCase @Inject constructor(
 
     suspend operator fun invoke(products: List<ProductList>): Resource<RecommendationResponse> {
         val event = prepareEvent(products)
-        return recommendationsRepository.getRecommendationResponse(event)
+        return recommendationsRepository.getRecommendationResponse(event, false, null)
     }
 
     private fun prepareEvent(products: List<ProductList>): RecommendationRequest? {

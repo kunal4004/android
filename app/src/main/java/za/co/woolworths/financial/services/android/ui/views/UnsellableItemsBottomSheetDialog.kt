@@ -196,7 +196,6 @@ class UnsellableItemsBottomSheetDialog(
                     deliveryType,
                     isCheckBoxSelected
                 )
-
                 confirmRemoveItems()
             }
         }

@@ -37,14 +37,14 @@ fun rotateComponent(isExpanded: Boolean): Float {
  * @return An animation specification for exit transitions.
  */
 @Composable
-fun exitShrinkVerticallyFadeOutAnimation(duration: Int = EXPAND_TRANSITION_DURATION) = remember {
+fun exitShrinkVerticallyFadeOutAnimation(duration: Int = EXPAND_TRANSITION_DURATION) =
     shrinkVertically(
         shrinkTowards = Alignment.Top,
         animationSpec = tween(duration)
     ) + fadeOut(
         animationSpec = tween(duration)
     )
-}
+
 
 /**
  * Composable function for creating an enter animation that expands vertically and fades in.
@@ -54,7 +54,7 @@ fun exitShrinkVerticallyFadeOutAnimation(duration: Int = EXPAND_TRANSITION_DURAT
  * @return An animation specification for enter transitions.
  */
 @Composable
-fun enterExpandVerticallyFadeInAnimation(duration: Int = EXPAND_TRANSITION_DURATION)  = remember {
+fun enterExpandVerticallyFadeInAnimation(duration: Int = EXPAND_TRANSITION_DURATION)  =
     expandVertically(
         expandFrom = Alignment.Top,
         animationSpec = tween(duration)
@@ -62,5 +62,5 @@ fun enterExpandVerticallyFadeInAnimation(duration: Int = EXPAND_TRANSITION_DURAT
         initialAlpha = 0.3f,
         animationSpec = tween(duration)
     )
-}
+
 
