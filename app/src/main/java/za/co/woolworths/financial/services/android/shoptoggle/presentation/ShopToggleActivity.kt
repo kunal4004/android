@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
@@ -221,6 +222,7 @@ class ShopToggleActivity : ComponentActivity() {
                                             sendResultBack(this@ShopToggleActivity, delivery = deliveryType, needRefresh = true)
                                         }
                                     }
+                                    deliveryType?.let { switchDeliverModeEvent(it) }
                                 }
                             }
                         }
@@ -238,6 +240,7 @@ class ShopToggleActivity : ComponentActivity() {
                 ?: KotlinUtils.browsingDeliveryType,
             KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
             isFromNewToggleFulfilmentScreen = true,
+            isFromNewToggleFulfilmentScreenSwitchCnc =true,
             newDelivery = Delivery.CNC,
             needStoreSelection = true,
             validateLocationResponse = viewModel.validateLocationResponse()
@@ -365,17 +368,6 @@ class ShopToggleActivity : ComponentActivity() {
                 } else if (requestCode == BundleKeysConstants.REQUEST_CODE) {
                     sendResultBack()
                 }
-            }
-        }
-    }
-
-    private fun unsellable(storeID:String){
-        var unSellableCommerceItems: List<UnSellableCommerceItem>? = emptyList()
-        WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores?.forEach {
-            if (it.storeId==storeID) {
-                unSellableCommerceItems = it.unSellableCommerceItems
-                sendResultBackWithUnsellableItems(ArrayList(unSellableCommerceItems),delivery)
-
             }
         }
     }

@@ -66,6 +66,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.LOCATION_UPDATE_REQUEST
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.setLocationEvent
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.location.Event
@@ -891,11 +892,12 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
             // navigate to shop/list/cart tab
             sendResult()
         }
+       setLocationEvent()
     }
 
     private fun getLiquorOrder(): Boolean {
         var liquorOrder = false
-        arguments?.apply {
+        bundle?.apply {
             liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
         }
         return liquorOrder
@@ -903,7 +905,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
     private fun getLiquorImageUrl(): String {
         var liquorImageUrl = ""
-        arguments?.apply {
+        bundle?.apply {
             liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
         }
         return liquorImageUrl
@@ -1122,5 +1124,8 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+    private fun setLocationEvent(){
+        setLocationEvent(deliveryType,newDeliveryType)
     }
 }

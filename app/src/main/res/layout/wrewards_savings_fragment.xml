@@ -127,6 +127,7 @@
                 android:paddingRight="16dp">
 
                 <TextView
+                    android:id="@+id/savingSinceTitle"
                     style="@style/WRewardsInstantSavingsStyle"
                     android:text="@string/savings_since" />
 
@@ -170,6 +171,7 @@
             android:paddingRight="16dp">
 
             <TextView
+                android:id="@+id/quarterlyVouchersEarnedTitle"
                 style="@style/WRewardsInstantSavingsStyle"
                 android:text="@string/quarterly_voucher_earned" />
 

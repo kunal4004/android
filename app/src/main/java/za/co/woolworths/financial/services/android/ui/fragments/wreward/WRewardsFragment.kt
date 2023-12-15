@@ -48,8 +48,8 @@ class WRewardsFragment : Fragment(R.layout.wrewards_fragment) {
     }
 
     private fun removeAllChildFragments() {
-        activity?.supportFragmentManager?.apply {
-            if (backStackEntryCount > 0) {
+        childFragmentManager.apply {
+            if (fragments.size > 0) {
                 for (fragment in fragments) {
                     beginTransaction()
                             .remove(fragment)

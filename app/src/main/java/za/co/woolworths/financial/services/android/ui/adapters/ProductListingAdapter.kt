@@ -209,9 +209,10 @@ class ProductListingAdapter(
                     LinearLayoutManager(
                         activity,
                         LinearLayoutManager.VERTICAL,
-                        false
+                        true
                     )
                 }
+
                 val imageViewHeight = recyclerViewViewHolderItems.itemBinding.imProductImage.height
                 if (quantityInStock >= 5) {
                     layoutParams?.height = imageViewHeight
