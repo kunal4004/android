@@ -89,6 +89,8 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.resetUnsellableLiveData
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -491,8 +493,8 @@ class CheckoutAddAddressNewUserFragment :
         }
 
         UpdateScreenLiveData.observe(viewLifecycleOwner) {
-            if (it == 1) {
-                UpdateScreenLiveData.value = 0
+            if (it == updateUnsellableLiveData) {
+                UpdateScreenLiveData.value = resetUnsellableLiveData
                 relaunchCheckoutActivity()
             }
         }
@@ -1473,7 +1475,7 @@ class CheckoutAddAddressNewUserFragment :
 
     private fun getLiquorOrder(): Boolean {
         var liquorOrder = false
-        arguments?.apply {
+        bundle?.apply {
             liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
         }
         return liquorOrder
@@ -1481,7 +1483,7 @@ class CheckoutAddAddressNewUserFragment :
 
     private fun getLiquorImageUrl(): String {
         var liquorImageUrl = ""
-        arguments?.apply {
+        bundle?.apply {
             liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
         }
         return liquorImageUrl

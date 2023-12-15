@@ -249,8 +249,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
 
         binding.apply {
-            toolbarPLPAddress.setOnClickListener(this@ProductListingFragment)
-            toolbarPLPTitle.setOnClickListener(this@ProductListingFragment)
             plpSearchIcon.setOnClickListener(this@ProductListingFragment)
             plpBackIcon.setOnClickListener(this@ProductListingFragment)
         }
@@ -1095,9 +1093,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                     )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
                 }
-                R.id.toolbarPLPAddress, R.id.toolbarPLPTitle -> {
-                    presentEditDeliveryActivity()
-                }
 
                 R.id.plpSearchIcon -> {
                     requireActivity().apply {
@@ -1527,17 +1522,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             presentEditDeliveryActivity()
             return
         }
-
-        // Now first check for if delivery location and browsing location is same.
-        // if same no issues. If not then show changing delivery location popup.
-        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type) && isUserBrowsing) {
-            KotlinUtils.showChangeDeliveryTypeDialog(
-                requireContext(), requireFragmentManager(),
-                KotlinUtils.browsingDeliveryType
-            )
-            return
-        }
-
 
         if (mStoreId.isEmpty()) {
             addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
