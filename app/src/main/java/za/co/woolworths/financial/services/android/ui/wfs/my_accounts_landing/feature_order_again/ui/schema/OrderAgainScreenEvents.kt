@@ -1,12 +1,23 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.schema
 
+import androidx.annotation.PluralsRes
+import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
 
 sealed class OrderAgainScreenEvents {
     // On Screen events
     object Idle : OrderAgainScreenEvents()
-    data class ShowSnackBar(val count: Int = 0, val maxItemLimit: Int = 0) : OrderAgainScreenEvents()
+
+    object CopyToListError : OrderAgainScreenEvents()
+    data class ShowSnackBar(val snackbarDetails: SnackbarDetails) : OrderAgainScreenEvents()
     data class HideBottomBar(val hidden: Boolean = false) : OrderAgainScreenEvents()
+    data class ShowAddToCartError(val code: Int = 500, val errorMessage: String = "") : OrderAgainScreenEvents()
+    data class CopyToListSuccess(val snackbarDetails: SnackbarDetails) : OrderAgainScreenEvents()
+    data class ShowProgressView(
+        @PluralsRes val titleRes: Int = R.plurals.copy_item,
+        val descRes: Int = R.string.empty,
+        val count: Int = 0
+    ) : OrderAgainScreenEvents()
 
 
     // User interaction events

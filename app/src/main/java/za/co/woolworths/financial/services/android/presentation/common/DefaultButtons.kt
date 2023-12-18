@@ -46,16 +46,18 @@ fun UnderlineButton(
     modifier: Modifier = Modifier,
     text: String = "",
     texColor: Color = Color666666,
+    enabled: Boolean = true,
     onButtonClick: () -> Unit
 ) {
     Button(
         modifier = modifier,
         onClick = { onButtonClick() },
         colors = ButtonDefaults.buttonColors(Color.Transparent),
-        shape = RectangleShape
+        shape = RectangleShape,
+        enabled = enabled
     ) {
         Text(
-            text = text,
+            text = text.uppercase(),
             style = TextStyle(
                 fontFamily = FuturaFontFamily,
                 fontWeight = FontWeight.Normal,
