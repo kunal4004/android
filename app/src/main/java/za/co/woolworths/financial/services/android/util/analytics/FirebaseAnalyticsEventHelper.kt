@@ -534,4 +534,14 @@ object FirebaseAnalyticsEventHelper {
         }
         AnalyticsManager.logEvent(FirebaseAnalytics.Event.SELECT_PROMOTION, analyticsParams)
     }
+    fun viewItem(productDetails: ProductDetails) {
+        val analyticItem = productDetails.toAnalyticItem().apply { fillOtherCategories(productDetails.categories) }
+        val addToCartParams = Bundle()
+        addToCartParams.apply {
+            putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(analyticItem.toBundle()))
+            putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+            putString(FirebaseAnalytics.Param.ITEM_LIST_ID, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)
+        }
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, addToCartParams)
+    }
 }

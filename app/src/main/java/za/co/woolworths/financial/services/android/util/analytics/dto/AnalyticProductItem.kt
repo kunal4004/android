@@ -38,7 +38,8 @@ fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
     return AnalyticProductItem(
         itemId = productId,
         itemName = productName,
-        category = categoryName,
+        category = productType,
+        productType = productType,
         itemBrand = brandText,
         itemListName = categoryName,
         itemVariant = colourSizeVariants,
@@ -65,8 +66,8 @@ fun ProductList.toAnalyticItem(category: String?, index: Int = FirebaseManagerAn
     )
 }
 
-fun AnalyticProductItem.fillOtherCategories(breadCrumbs: List<String>) {
-    breadCrumbs.forEachIndexed { index, breadCrumb ->
+fun AnalyticProductItem.fillOtherCategories(breadCrumbs: List<String>?) {
+    breadCrumbs?.forEachIndexed { index, breadCrumb ->
         when (index) {
             BREAD_CRUMBS_CATEGORY_ZERO -> {
                 category2 = breadCrumb
