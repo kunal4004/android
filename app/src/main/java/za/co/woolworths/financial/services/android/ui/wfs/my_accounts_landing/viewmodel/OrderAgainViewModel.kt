@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.dto.order_again.toAddI
 import za.co.woolworths.financial.services.android.models.dto.order_again.toAddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.order_again.toCopyItemDetail
 import za.co.woolworths.financial.services.android.models.dto.order_again.toProductItem
+import za.co.woolworths.financial.services.android.models.dto.toCopyItemDetail
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationViewState
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
@@ -494,11 +495,15 @@ class OrderAgainViewModel @Inject constructor(
         return ArrayList(items)
     }
 
-    fun copyItemsToList(copyToLists: ArrayList<ShoppingList>) {
+    fun copyItemsToList(
+        copyToLists: ArrayList<ShoppingList>,
+        itemsToBeAdded: ArrayList<AddToListRequest>
+    ) {
         viewModelScope.launch {
 
             val copyListIds = copyToLists.map { it.listId }
             val copyItems = orderList.filter { it.isSelected }.map { it.toCopyItemDetail() }
+                .ifEmpty { itemsToBeAdded.map { it.toCopyItemDetail() }  }
 
             copyToListsUC(
                 CopyItemToListRequest(copyItems, copyListIds)

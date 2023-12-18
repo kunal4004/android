@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.awfs.coordination.R
+import kotlinx.coroutines.flow.collectLatest
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
 import za.co.woolworths.financial.services.android.presentation.common.BlackButton
 import za.co.woolworths.financial.services.android.presentation.common.BlackRoundedCornerIcon
@@ -110,7 +111,7 @@ fun OrderAgainScreen(
     val context = LocalContext.current
 
     LaunchedEffect(context) {
-        viewModel.onScreenEvent.collect { onScreenEvent ->
+        viewModel.onScreenEvent.collectLatest { onScreenEvent ->
             onEvent(onScreenEvent)
         }
     }
@@ -150,8 +151,8 @@ fun OrderAgainScreen(
             when (event) {
                 OrderAgainScreenEvents.DeliveryLocationClick,
                 OrderAgainScreenEvents.StartShoppingClicked,
-                OrderAgainScreenEvents.CopyToListClicked -> onEvent(event)
-
+                OrderAgainScreenEvents.CopyToListClicked,
+                is OrderAgainScreenEvents.CopyItemToListClicked -> onEvent(event)
                 else -> viewModel.onEvent(event)
             }
         }
@@ -501,7 +502,7 @@ fun ProductItemDetails(
             SpacerWidth8dp()
             Icon(
                 modifier = Modifier.clickable {
-                    OrderAgainScreenEvents.CopyItemToListClicked(productItem)
+                    onEvent(OrderAgainScreenEvents.CopyItemToListClicked(productItem))
                 },
                 painter = painterResource(id = R.drawable.ic_option_menu),
                 contentDescription = ""

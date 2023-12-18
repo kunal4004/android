@@ -213,14 +213,16 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
         }
     }
 
-    override fun itemEditOptionsClick(editOptionType: EditOptionType) {
+    override fun itemEditOptionsClick(
+        editOptionType: EditOptionType
+    ) {
         when (editOptionType) {
             is EditOptionType.RemoveItemFromList -> {
                 //TODO
             }
 
             is EditOptionType.CopyItemFromList -> {
-                viewModel.copyItemsToList(editOptionType.list)
+                viewModel.copyItemsToList(editOptionType.list, editOptionType.itemsToBeAdded)
             }
 
             is EditOptionType.MoveItemFromList -> {

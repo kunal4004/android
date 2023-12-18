@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models.network
 import androidx.annotation.StringRes
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -44,14 +45,19 @@ suspend inline fun <reified T : Any> convertToResource(
             emit(Resource.success(response.body()))
         } else {
             val errorBodyString = response.errorBody()?.string() ?: "{}"
+//            val errorBodyString = "<html> </html>"
             val parsedErrorBody = Gson().fromJson(errorBodyString, T::class.java)
             emit(Resource.error(msgInt = R.string.error_occured, data = parsedErrorBody))
         }
+    } catch (e: JsonSyntaxException) {
+        emit(Resource.error(R.string.error_occured, null))
     } catch (e: HttpException) {
         emit(Resource.error(R.string.error_occured, null))
     } catch (e: IOException) {
         emit(Resource.error(R.string.error_internet_connection, null))
     } catch (e: ConnectException) {
         emit(Resource.error(R.string.error_internet_connection, null))
+    } catch (e : Exception) {
+        emit(Resource.error(R.string.error_occured, null))
     }
 }.flowOn(Dispatchers.IO)

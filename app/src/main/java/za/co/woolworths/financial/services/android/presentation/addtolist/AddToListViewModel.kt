@@ -408,4 +408,5 @@ class AddToListViewModel @Inject constructor(
     fun getAddedListItems(): List<AddToListRequest> = items.toList()
 
     fun getCopyListID(): String? = copyListId
+    fun getItemsToBeAdded() = items
 }

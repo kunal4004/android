@@ -217,7 +217,10 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                         when (event) {
                             AddToListScreenEvents.CopyConfirmClick -> {
                                 dialog?.dismiss()
-                                listener?.itemEditOptionsClick(EditOptionType.CopyItemFromList(viewModel.getSelectedListForCopyItem()))
+                                listener?.itemEditOptionsClick(EditOptionType.CopyItemFromList(
+                                    viewModel.getSelectedListForCopyItem(),
+                                    viewModel.getItemsToBeAdded()
+                                ))
                             }
                             AddToListScreenEvents.CancelClick -> dismiss()
                             else -> viewModel.onEvent(event)
