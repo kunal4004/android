@@ -1570,10 +1570,10 @@ class ProductDetailsFragment :
     }
 
     private fun checkAllItemsZeroQuantity() {
-        val isAllZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.none {
+        val isAllZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.all {
             it.quantity == 0
         }
-        if (isAllZeroQuantity == false) {
+        if (isAllZeroQuantity == true) {
             binding.showOutOfStockForSelectedSize()
         } else  binding.hideLowStockForSize()
     }
@@ -2292,12 +2292,6 @@ class ProductDetailsFragment :
     private fun updateSizesOnColorSelection() {
         productSizeSelectorAdapter?.updatedSizes(otherSKUsByGroupKey[getSelectedGroupKey()]!!)
 
-        val isAllZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.none {
-            it.quantity == 0
-        }
-        if (isAllZeroQuantity == false) {
-            binding.showOutOfStockForSelectedSize()
-        }
         checkAllItemsZeroQuantity()
         checkNotifyMeLayout()
         //===== positive flow
