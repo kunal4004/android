@@ -78,7 +78,7 @@ object AppConfigSingleton {
     var endlessAisle: EndlessAisle? = null
     @JvmStatic
     var searchApiSettings: SearchApiSettings? = null
-    var glassBox: GlassBox? = null
+
     var bnplConfig: BnplConfig? = null
     var connectOnline: ConnectOnline? = null
 
@@ -250,12 +250,6 @@ object AppConfigSingleton {
                 ratingsAndReviews = this
             }
 
-            appConfig.glassBox?.apply {
-                minimumSupportedAppBuildNumber.let {
-                    isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
-                    glassBox = this
-                }
-            }
             appConfig.bnplConfig?.apply {
                 minimumSupportedAppBuildNumber.let {
                     isBnplRequiredInThisVersion =
