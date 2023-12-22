@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemDetail
 
 @Parcelize
 data class AddToListRequest(
@@ -13,3 +14,9 @@ data class AddToListRequest(
     var isGWP: Boolean = false,
     var size: String? = null
 ): Parcelable
+
+fun AddToListRequest.toCopyItemDetail() : CopyItemDetail = CopyItemDetail(
+    skuID = skuID ?: "",
+    catalogRefId = catalogRefId ?: "",
+    quantity = "1"
+)
