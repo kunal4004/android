@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Intent
@@ -56,8 +55,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.ConfirmationBottomsheetDialogFragment
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Product
@@ -124,7 +121,6 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -180,10 +176,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private var mPostAddToCart: Call<AddItemToCartResponse>? = null
 
     private var timer: CountDownTimer? = null
-    private var mId: String  = ""
-    private var mProductId: String = ""
-    private var mCatalogRefId: String = ""
-    private var mShouldUpdateShoppingList: Boolean = false
 
     private var _bindingListDetails: ShoppingListDetailFragmentBinding? = null
     // This property is only valid between onCreateView and
@@ -229,7 +221,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         initViewAndEvent()
         addSubscribeEvents()
         addFragmentListener()
-
     }
 
     private fun addSubscribeEvents() {
@@ -314,7 +305,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     response?.let { onShoppingListItemDelete(it) }
                     onDeleteUIUpdate()
                     shoppingListItemsAdapter?.notifyDataSetChanged()
-                    val message = HtmlCompat.fromHtml( getFormatedString(
+                    val message = HtmlCompat.fromHtml( "\t\t" + getFormatedString(
                         count = selectedItemsForRemoval, R.plurals.remove_list) +"\t\t" + listName , HtmlCompat.FROM_HTML_MODE_LEGACY)
                     ToastFactory.showToast(
                         requireActivity(),
@@ -350,24 +341,20 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 Status.SUCCESS -> {
                     hideLoadingProgress()
                     bindingListDetails.errorListView.visibility = GONE
-                    val message = if (selectedShoppingList?.size == 1 ) {
-                        HtmlCompat.fromHtml(
-                            selectedItemCount.toString() + "\t\t" + getFormatedString(selectedItemCount, R.plurals.copy_item_msg) +"\t\t" + selectedShoppingList?.getOrNull(0)?.listName,
-                            HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    val listName =  if (selectedShoppingList?.size == 1 ) {
+                        selectedShoppingList?.getOrNull(0)?.listName?: ""
                     } else {
-                        selectedItemCount.toString() + "\t\t" + getFormatedString(selectedItemCount, R.plurals.copy_item_msg) + "\t\t" + getString(R.string.multiple_lists)
+                        getString(R.string.multiple_lists)
                     }
+
+                    val title = context?.resources?.getQuantityString(
+                        R.plurals.copy_item_msg,
+                        selectedItemCount, selectedItemCount, listName
+                    ) ?: ""
 
                     shoppingListItemsAdapter?.resetSelection()
                     setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
-                    ToastFactory.showToast(
-                        requireActivity(),
-                        bindingListDetails.rlCheckOut,
-                        message.toString(),
-                        if (selectedShoppingList?.size ==1) true else false,
-                        selectedShoppingList?.getOrNull(0)?.listId,
-                        selectedShoppingList?.getOrNull(0)?.listName
-                    )
+                    showSuccessMessage(listName, title)
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
@@ -378,6 +365,31 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 }
             }
         }
+    }
+
+    private fun showSuccessMessage(listName: String, title: String) {
+        ToastFactory.buildItemsAddedToList(
+            activity = requireActivity(),
+            viewLocation = bindingListDetails.rlCheckOut,
+            listName = listName,
+            hasGiftProduct = false,
+            count = selectedItemCount,
+            title = title,
+            onButtonClick = {
+                if (selectedShoppingList?.size == 1) {
+                    selectedShoppingList?.getOrNull(0)?.let {
+                        ScreenManager.presentShoppingListDetailActivity(
+                            activity,
+                            it.listId,
+                            it.listName,
+                            false
+                        )
+                    }
+                } else {
+                    ScreenManager.presentMyListScreen(activity)
+                }
+            }
+        )
     }
 
     private fun getFormatedString(count:Int ,msg:Int): String {
@@ -957,11 +969,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 )
             bindingListDetails.selectDeselectAllTextView.visibility = VISIBLE
             setScrollViewBottomMargin(Utils.dp2px(60f))
-            (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
+            (activity as? BottomNavigationActivity)?.hideBottomNavigationMenu()
         } else {
             bindingListDetails.rlCheckOut.visibility = GONE
             setScrollViewBottomMargin(0)
-            (activity as? BottomNavigationActivity)?.hideBottomNavigationMenu()
+            (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
         }
     }
 
