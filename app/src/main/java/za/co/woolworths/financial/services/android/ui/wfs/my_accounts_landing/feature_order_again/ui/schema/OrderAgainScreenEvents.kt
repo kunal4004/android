@@ -26,6 +26,7 @@ sealed class OrderAgainScreenEvents {
     object SelectAllClick : OrderAgainScreenEvents()
     object AddToCartClicked : OrderAgainScreenEvents()
     object CopyToListClicked : OrderAgainScreenEvents()
+    data class CopyItemToListClicked(val item: ProductItem) : OrderAgainScreenEvents()
     object SnackbarViewClicked : OrderAgainScreenEvents()
     data class ProductItemCheckedChange(
         val isChecked: Boolean = false,
