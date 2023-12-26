@@ -13,7 +13,6 @@
         android:layout_width="@dimen/two_hundred_dp"
         android:layout_height="match_parent"
         android:background="@color/delete_red_bg"
-        android:gravity="center"
         android:tag="Bottom3">
 
         <ProgressBar
@@ -27,14 +26,14 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvDelete"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:drawableEnd="@drawable/close_white"
-            android:drawablePadding="@dimen/four_dp"
+            android:drawableTop="@drawable/ic_delete_white"
+             android:drawablePadding="@dimen/sixteen_dp"
             android:gravity="center_horizontal|center_vertical"
             android:paddingStart="0dp"
             android:paddingEnd="@dimen/sixteen_dp"
-            android:text="@string/delete"
+            android:text="@string/remove"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="@dimen/twenty_sp"
@@ -123,9 +122,9 @@
             style="@style/style_cart_item_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/opensans_semi_bold"
             android:textSize="@dimen/ten_sp"
             app:layout_constrainedWidth="true"
-            android:fontFamily="@font/opensans_semi_bold"
             app:layout_constraintStart_toStartOf="@id/tvTitle"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
             tools:text="NAVY BLUE, SMALL" />
@@ -167,10 +166,10 @@
             <ImageView
                 android:id="@+id/minusDeleteCountImage"
                 android:layout_width="@dimen/thirty_two_dp"
-                android:padding="@dimen/ten_dp"
                 android:layout_height="@dimen/thirty_two_dp"
                 android:background="@drawable/circle_grey"
                 android:contentDescription="@string/reduce_count_button"
+                android:padding="@dimen/ten_dp"
                 android:src="@drawable/ic_minus_black" />
 
             <RelativeLayout

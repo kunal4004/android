@@ -3250,8 +3250,7 @@
     <string name="edit_option">Edit</string>
     <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
     <string name="share_btn">SHARE</string>
-    <string name="more_options_btn"><u>More Options</u></string>
-    <string name="edit_items">Edit %d Items </string>
+    <string name="more_options_btn"><u>MORE OPTIONS</u></string>
     <string name="copy_to_list">Copy to a List </string>
     <string name="move_to_list">"Move Item to List" </string>
     <string name="move_from_list">Move to Another List </string>
@@ -3274,9 +3273,12 @@
     <string name="remove_move_msg">An error occurred while moving your items. \n Please try again later.</string>
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
 
-    <plurals name="remove_list">
-        <item quantity="one">%d ITEM REMOVED FROM</item>
-        <item quantity="other">%d ITEMS REMOVED FROM </item>
+
+
+
+    <plurals name="edit_items">
+        <item quantity="one">Edit Item </item>
+        <item quantity="other">%d Edit Items</item>
     </plurals>
 
 
@@ -3296,8 +3298,13 @@
     </plurals>
 
     <plurals name="copy_item_msg">
-        <item quantity="one">ITEM COPIED TO</item>
-        <item quantity="other">ITEMS COPIED TO</item>
+        <item quantity="one">%1$d ITEM COPIED TO %2$s</item>
+        <item quantity="other">%1$d ITEM COPIED TO %2$s</item>
+    </plurals>
+
+    <plurals name="remove_list">
+        <item quantity="one">%1$d ITEM REMOVED FROM </item>
+        <item quantity="other">%1$d ITEMS REMOVED FROM </item>
     </plurals>
 
     <plurals name="move_item_msg">

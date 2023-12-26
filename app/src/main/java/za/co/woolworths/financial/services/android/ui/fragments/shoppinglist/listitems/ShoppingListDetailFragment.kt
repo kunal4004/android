@@ -232,7 +232,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         initViewAndEvent()
         addSubscribeEvents()
         addFragmentListener()
-
     }
 
     private fun addSubscribeEvents() {
@@ -317,7 +316,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     response?.let { onShoppingListItemDelete(it) }
                     onDeleteUIUpdate()
                     shoppingListItemsAdapter?.notifyDataSetChanged()
-                    val message = HtmlCompat.fromHtml( getFormatedString(
+                    val message = HtmlCompat.fromHtml( "\t\t" + getFormatedString(
                         count = selectedItemsForRemoval, R.plurals.remove_list) +"\t\t" + listName , HtmlCompat.FROM_HTML_MODE_LEGACY)
                     ToastFactory.showToast(
                         requireActivity(),
@@ -349,16 +348,21 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
                 Status.SUCCESS -> {
                     hideLoadingProgress()
-                    val message = if (selectedShoppingList?.size == 1 ) {
-                        HtmlCompat.fromHtml(
-                            selectedItemCount.toString() + "\t\t" + getFormatedString(selectedItemCount, R.plurals.copy_item_msg) +"\t\t" + selectedShoppingList?.getOrNull(0)?.listName,
-                            HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    bindingListDetails.errorListView.visibility = GONE
+                    val listName =  if (selectedShoppingList?.size == 1 ) {
+                        selectedShoppingList?.getOrNull(0)?.listName?: ""
                     } else {
-                        selectedItemCount.toString() + "\t\t" + getFormatedString(selectedItemCount, R.plurals.copy_item_msg) + "\t\t" + getString(R.string.multiple_lists)
+                        getString(R.string.multiple_lists)
                     }
-                    showSuccessMessage(message = message.toString())
-                    //refresh main myList fragment to show updated count.
+
+                    val title = context?.resources?.getQuantityString(
+                        R.plurals.copy_item_msg,
+                        selectedItemCount, selectedItemCount, listName
+                    ) ?: ""
+
+                    shoppingListItemsAdapter?.resetSelection()
                     setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
+                    showSuccessMessage(listName, title)
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
@@ -409,6 +413,31 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         shoppingListItemsAdapter?.setList(list)
         shoppingListItemsAdapter?.notifyDataSetChanged()
         setUpView()
+    }
+
+    private fun showSuccessMessage(listName: String, title: String) {
+        ToastFactory.buildItemsAddedToList(
+            activity = requireActivity(),
+            viewLocation = bindingListDetails.rlCheckOut,
+            listName = listName,
+            hasGiftProduct = false,
+            count = selectedItemCount,
+            title = title,
+            onButtonClick = {
+                if (selectedShoppingList?.size == 1) {
+                    selectedShoppingList?.getOrNull(0)?.let {
+                        ScreenManager.presentShoppingListDetailActivity(
+                            activity,
+                            it.listId,
+                            it.listName,
+                            false
+                        )
+                    }
+                } else {
+                    ScreenManager.presentMyListScreen(activity)
+                }
+            }
+        )
     }
 
     private fun getFormatedString(count:Int ,msg:Int): String {
@@ -1009,11 +1038,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 )
             bindingListDetails.selectDeselectAllTextView.visibility = VISIBLE
             setScrollViewBottomMargin(Utils.dp2px(60f))
-            (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
+            (activity as? BottomNavigationActivity)?.hideBottomNavigationMenu()
         } else {
             bindingListDetails.rlCheckOut.visibility = GONE
             setScrollViewBottomMargin(0)
-            (activity as? BottomNavigationActivity)?.hideBottomNavigationMenu()
+            (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
         }
     }
 

@@ -62,7 +62,7 @@ fun MoreOptionDialog(selectedItemCount:Int, itemCopy:()->Unit, itemMove:()->Unit
         )
 
         Text(
-            text = context.getString(R.string.edit_items,selectedItemCount),
+            text = context.resources.getQuantityString(R.plurals.edit_items,selectedItemCount, selectedItemCount),
             style = TextStyle(
                 fontSize = 20.sp,
                 fontFamily = FuturaFontFamily,
