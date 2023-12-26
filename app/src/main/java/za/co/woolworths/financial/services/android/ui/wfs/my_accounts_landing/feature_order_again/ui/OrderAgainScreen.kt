@@ -39,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -502,7 +503,9 @@ fun ProductItemDetails(
             )
             SpacerWidth8dp()
             Icon(
-                modifier = Modifier.clickable {
+                modifier = Modifier
+                    .alpha( if(productItem.isSelected) 0.5f else 1f )
+                    .clickable(enabled = !productItem.isSelected) {
                     onEvent(OrderAgainScreenEvents.CopyItemToListClicked(productItem))
                 },
                 painter = painterResource(id = R.drawable.ic_option_menu),
