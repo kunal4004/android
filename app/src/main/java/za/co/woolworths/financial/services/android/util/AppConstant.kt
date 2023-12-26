@@ -75,6 +75,12 @@ class AppConstant {
         const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
 
+        const val REQUEST_KEY_CONFIRMATION_DIALOG = "REQUEST_KEY_CONFIRMATION_DIALOG"
+        const val RESULT_DELETE_LIST_CONFIRMED =
+            "RESULT_DELETE_LIST_CONFIRMED"
+        const val RESULT_DELETE_ITEM_CONFIRMED =
+            "RESULT_DELETE_ITEM_CONFIRMED"
+
         /*****************************************************************************************
          * Miscellaneous
          *****************************************************************************************/
@@ -145,7 +151,11 @@ class AppConstant {
 
         //connect online
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
-        const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
+        const val SA_MOBILE_NUMBER_PATTERN = "^0\\d{9}$"
+
+        const val SCREEN_NAME_DELETE_LIST_CONFIRMATION = "Delete List Confirmation Screen"
+        const val SCREEN_NAME_DELETE_LIST_PROGRESS_BAR = "Delete List Progress Bar Screen"
+        const val SCREEN_NAME_DELETE_ITEM_CONFIRMATION = "Delete Item Confirmation Screen"
 
 
 
@@ -188,6 +198,12 @@ class AppConstant {
 
             const val BUNDLE_WISHLIST_EVENT_DATA = "BUNDLE_WISHLIST_EVENT_DATA"
 
+            const val BUNDLE_KEY = "BUNDLE_KEY"
+            const val BUNDLE_KEY_ITEM = "item"
+            const val BUNDLE_KEY_POSITION = "position"
+            const val BUNDLE_KEY_SCREEN_NAME = "screenName"
+            const val BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED = "dontAskAgainChecked"
+
             /*****************************************************************************************
              * Args Keys
              * const val ARGS_EXAMPLE_NAME = "ARGS_NAME"
@@ -204,5 +220,9 @@ class AppConstant {
         }
     }
 
-    enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
+    enum class DashDetailsViewType(val value: Int) {
+        HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(
+            2
+        )
+    }
 }

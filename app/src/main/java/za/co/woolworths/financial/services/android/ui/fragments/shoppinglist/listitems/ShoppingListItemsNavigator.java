@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems;
 
+import org.jetbrains.annotations.NotNull;
+
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
@@ -14,13 +16,11 @@ public interface ShoppingListItemsNavigator {
 
     void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse);
 
-    void onItemDeleteClick(String id, String productId, String catalogRefId, boolean shouldUpdateShoppingList);
+    void onItemDeleteClick(ShoppingListItem shoppingListItem);
 
     void onShoppingSearchClick();
 
     void openProductDetailFragment(String productName, ProductList productList);
-
-    void onDeleteItemFailed();
 
     void openSetSuburbProcess(ShoppingListItem shoppingListItem);
 
@@ -29,4 +29,6 @@ public interface ShoppingListItemsNavigator {
     void onSubstractListItemCount(ShoppingListItem listItem);
 
     void showListBlackToolTip();
+
+    void naviagteToMoreOptionDialog(@NotNull ShoppingListItem shoppingListItem);
 }

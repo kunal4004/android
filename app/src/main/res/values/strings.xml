@@ -3241,4 +3241,57 @@
     <![CDATA[• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect]]>
     </string>
     <string name="huawei_push_token">Huawei Push Token</string>
+
+
+
+    <!--shopping List enhancement-->
+    <string name="view_only_option">View Only</string>
+    <string name="view_only_desc">Anyone with a link can view your list without making changes.</string>
+    <string name="edit_option">Edit</string>
+    <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
+    <string name="share_btn">SHARE</string>
+    <string name="more_options_btn"><u>More Options</u></string>
+    <string name="edit_items">Edit %d Items </string>
+    <string name="copy_to_list">Copy to a List </string>
+    <string name="move_from_list">Move to Another List </string>
+    <string name="remove_from_list">Remove from List </string>
+    <string name="confirmation_title">Are You Sure?</string>
+    <string name="remove_title">REMOVE</string>
+
+    <string name="my_list_delete_this_list">Delete This List?</string>
+    <string name="my_list_delete_this_list_desc">If you choose to remove this list, you can still shop for the items in the app.</string>
+    <string name="my_list_delete_this_list_checkbox_title">Don’t show me this message again.</string>
+    <string name="my_list_deleting_title">Removing Your %s List</string>
+    <string name="my_list_snackbar_message">Your list has been removed</string>
+    <string name="view_only_url_option">viewOnly</string>
+    <string name="edit_url_option">viewAndEdit</string>
+    <string name="remove_from">Removed from</string>
+    <string name="delete_item_title">Delete these Items?</string>
+    <string name="delete_item_desc">If you remove these products from your list, you can \n still shop for them in the app.</string>
+    <string name="remove_error_msg">An error occurred while removing your item. \n Please try again later.</string>
+    <string name="remove_copy_msg">An error occurred while copying your items. \n Please try again later.</string>
+    <string name="move_to_list">move to a list</string>
+    <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
+
+    <plurals name="remove_list">
+        <item quantity="one">%d ITEM REMOVED FROM</item>
+        <item quantity="other">%d ITEMS REMOVED FROM </item>
+    </plurals>
+
+
+    <plurals name="remove_item">
+        <item quantity="one">Removing Your Item from</item>
+        <item quantity="other">Removing Your Items from </item>
+    </plurals>
+
+    <plurals name="copy_item">
+        <item quantity="one">Copying Your Item</item>
+        <item quantity="other">Copying Your Items </item>
+    </plurals>
+
+    <plurals name="copy_item_msg">
+        <item quantity="one">ITEM COPIED TO</item>
+        <item quantity="other">ITEMS COPIED TO</item>
+    </plurals>
+
 </resources>

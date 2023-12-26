@@ -101,6 +101,7 @@ import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity;
+import za.co.woolworths.financial.services.android.shoppinglist.view.MyShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -117,7 +118,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -1552,7 +1552,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
             } else {
                 getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-                MyListsFragment fragment = new MyListsFragment();
+                MyShoppingListFragment fragment = new MyShoppingListFragment();
                 pushFragment(fragment);
             }
         }

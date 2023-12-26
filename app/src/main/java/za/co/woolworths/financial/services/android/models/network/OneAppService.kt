@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Dele
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
+import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -131,8 +132,9 @@ import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuth
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
-import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
@@ -746,8 +748,9 @@ open class OneAppService(
         }
     }
 
-    fun deleteShoppingList(listId: String): Call<ShoppingListsResponse> {
-        return mApiInterface.deleteShoppingList(getSessionToken(), getDeviceIdentityToken(), listId)
+    suspend fun deleteShoppingList(listId: String) = withContext(Dispatchers.IO){
+        mApiInterface
+            .deleteShoppingList(getSessionToken(), getDeviceIdentityToken(), listId)
     }
 
     fun deleteShoppingListItem(
@@ -1391,6 +1394,13 @@ open class OneAppService(
                 longitude
         )
     }
+
+    suspend fun removeItemFromShoppingItemList (listId: String, removeItemApiRequest: RemoveItemApiRequest) =
+        mApiInterface.removeItemsFromShoppingItem(super.getSessionToken(), super.getDeviceIdentityToken(), listId, removeItemApiRequest)
+
+    suspend fun copyItemFromList (copyItemApiRequest: CopyItemToListRequest) =
+        mApiInterface.copyItemsFromList(super.getSessionToken(), super.getDeviceIdentityToken(), copyItemApiRequest)
+
 
     suspend fun writeAReviewForm(productId: String?, prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent): retrofit2.Response<WriteAReviewFormResponse> {
         return mApiInterface.writeAReviewForm(

@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.presentation.common
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -10,6 +12,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color666666
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
@@ -22,7 +25,9 @@ fun BlackButton(
     onButtonClick: () -> Unit
 ) {
     Button(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(50.dp),
         onClick = { onButtonClick() },
         colors = ButtonDefaults.buttonColors(Color.Black),
         shape = RectangleShape,
@@ -45,10 +50,13 @@ fun BlackButton(
 fun UnderlineButton(
     modifier: Modifier = Modifier,
     text: String = "",
+    textColor: Color = Color666666,
     onButtonClick: () -> Unit
 ) {
     Button(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(50.dp),
         onClick = { onButtonClick() },
         colors = ButtonDefaults.buttonColors(Color.Transparent),
         shape = RectangleShape
