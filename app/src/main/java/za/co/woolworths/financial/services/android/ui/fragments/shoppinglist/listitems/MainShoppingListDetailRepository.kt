@@ -1,19 +1,24 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems
 
 import com.awfs.coordination.R
+import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.network.ApiInterface
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.MoveItemApiRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
 import javax.inject.Inject
 
-class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetailRepository {
+class MainShoppingListDetailRepository @Inject constructor(private val apiInterface: ApiInterface) :
+    ShoppingListDetailRepository, CoreDataSource(), ApiInterface by apiInterface  {
 
     override suspend fun getShoppingListItems(listId: String): Resource<ShoppingListItemsResponse> {
         return try {
@@ -111,4 +116,11 @@ class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetai
             Resource.error(R.string.error_internet_connection, null)
         }
     }
+    override suspend fun moveMultipleItemsFromList(moveItemApiRequest: MoveItemApiRequest): Flow<CoreDataSource.IOTaskResult<CopyListResponse>> =
+        executeSafeNetworkApiCall {
+            moveItemFromList(
+                getDeviceIdentityToken(),
+                moveItemApiRequest
+            )
+     }
 }

@@ -61,6 +61,7 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.MoveItemApiRequest
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
@@ -2329,7 +2330,11 @@ interface ApiInterface {
         @Path("multipleSku") multipleSku: String,
         @Query("substitution") substitution: Boolean): retrofit2.Response<SkusInventoryForStoreResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json",
+    )
     @POST("wfs/app/v4/list/{id}/delete-items")
     suspend fun removeItemsFromShoppingItem(
         @Header("sessionToken") sessionToken: String,
@@ -2338,11 +2343,19 @@ interface ApiInterface {
         @Body removeItemApiRequest: RemoveItemApiRequest
     ): retrofit2.Response<ShoppingListItemsResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/list/multi-list-add")
     suspend fun copyItemsFromList(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body copyItemToListRequest: CopyItemToListRequest,
+    ): retrofit2.Response<CopyListResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/list/multi-list-add")
+    suspend fun moveItemFromList(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body moveItemToListRequest: MoveItemApiRequest,
     ): retrofit2.Response<CopyListResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")

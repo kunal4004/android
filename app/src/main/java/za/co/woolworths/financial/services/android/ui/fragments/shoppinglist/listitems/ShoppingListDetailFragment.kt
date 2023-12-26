@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Intent
@@ -28,6 +27,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -35,6 +35,8 @@ import com.awfs.coordination.databinding.ShoppingListDetailFragmentBinding
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -56,8 +58,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.ConfirmationBottomsheetDialogFragment
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Product
@@ -68,8 +68,9 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
-import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemDetail
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ItemDetail
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.MoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.shoppinglist.view.ShoppingListErrorView
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
@@ -83,6 +84,9 @@ import za.co.woolworths.financial.services.android.ui.activities.product.Product
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.EXTRA_SEARCH_TEXT_HINT
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
@@ -96,7 +100,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_SEARCH_TERM
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.REFRESH_SHOPPING_LIST_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
@@ -124,7 +127,6 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -137,6 +139,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private val viewModel: ShoppingListDetailViewModel by viewModels()
     private var customProgressDialog: CustomProgressBar? = null
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
+
+    val selectedItems  = ArrayList<ItemDetail>()
+    val selectedItemsWithProdId  = ArrayList<String>()
+    val shoppingListId  = ArrayList<String>()
+    val removalGiftItemIds  = ArrayList<String>()
 
     private val productSearchResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -180,10 +187,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private var mPostAddToCart: Call<AddItemToCartResponse>? = null
 
     private var timer: CountDownTimer? = null
-    private var mId: String  = ""
-    private var mProductId: String = ""
-    private var mCatalogRefId: String = ""
-    private var mShouldUpdateShoppingList: Boolean = false
 
     private var _bindingListDetails: ShoppingListDetailFragmentBinding? = null
     // This property is only valid between onCreateView and
@@ -326,10 +329,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
-                    bindingListDetails.errorListView.visibility = VISIBLE
-                    bindingListDetails.errorListView.setContent {
-                        ShoppingListErrorView(getString(R.string.remove_error_msg))
-                    }
+                    showErrorMessage(getString(R.string.remove_error_msg))
                 }
             }
         }
@@ -349,7 +349,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
                 Status.SUCCESS -> {
                     hideLoadingProgress()
-                    bindingListDetails.errorListView.visibility = GONE
                     val message = if (selectedShoppingList?.size == 1 ) {
                         HtmlCompat.fromHtml(
                             selectedItemCount.toString() + "\t\t" + getFormatedString(selectedItemCount, R.plurals.copy_item_msg) +"\t\t" + selectedShoppingList?.getOrNull(0)?.listName,
@@ -357,27 +356,59 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     } else {
                         selectedItemCount.toString() + "\t\t" + getFormatedString(selectedItemCount, R.plurals.copy_item_msg) + "\t\t" + getString(R.string.multiple_lists)
                     }
-
-                    shoppingListItemsAdapter?.resetSelection()
+                    showSuccessMessage(message = message.toString())
+                    //refresh main myList fragment to show updated count.
                     setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
-                    ToastFactory.showToast(
-                        requireActivity(),
-                        bindingListDetails.rlCheckOut,
-                        message.toString(),
-                        if (selectedShoppingList?.size ==1) true else false,
-                        selectedShoppingList?.getOrNull(0)?.listId,
-                        selectedShoppingList?.getOrNull(0)?.listName
-                    )
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
-                    bindingListDetails.errorListView.visibility = VISIBLE
-                    bindingListDetails.errorListView.setContent {
-                        ShoppingListErrorView(getString(R.string.remove_copy_msg))
+                    showErrorMessage(getString(R.string.remove_copy_msg))
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.moveItemFromList.collectLatest { moveItemFromListResponse ->
+                with(moveItemFromListResponse) {
+                    renderLoading {
+                        val message = if (selectedShoppingList?.size == 1) {
+                            getFormatedString(selectedItemCount, R.plurals.move_item) + "\n" + selectedShoppingList?.getOrNull(0)?.listName
+                        } else {
+                            getFormatedString(selectedItemCount, R.plurals.move_item) + "\n" + getString(R.string.multiple_lists)
+                        }
+                        if (isLoading) {
+                            showLoadingProgress(this@ShoppingListDetailFragment, message)
+                        } else {
+                            hideLoadingProgress()
+                            bindingListDetails.errorListView.visibility = GONE
+                        }
+                    }
+                    renderSuccess {
+                        val message = if (selectedShoppingList?.size == 1 ) {
+                            HtmlCompat.fromHtml(
+                                selectedItemCount.toString() + "\t\t" + getFormatedString(selectedItemCount, R.plurals.move_item_msg) +"\t\t" + selectedShoppingList?.getOrNull(0)?.listName,
+                                HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        } else {
+                            selectedItemCount.toString() + "\t\t" + getFormatedString(selectedItemCount, R.plurals.move_item_msg) + "\t\t" + getString(R.string.multiple_lists)
+                        }
+                        updateUiForMovedItem()
+                        showSuccessMessage(message = message.toString())
+                        //refresh main myList fragment to show updated count.
+                        setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
+                    }
+                    renderFailure {
+                        showErrorMessage(getString(R.string.remove_move_msg))
                     }
                 }
             }
         }
+    }
+
+    private fun updateUiForMovedItem() {
+        val list : ArrayList<ShoppingListItem>? = viewModel.updateListForMoveItem(shoppingListItemsAdapter?.shoppingListItems, selectedItemsWithProdId) as? ArrayList<ShoppingListItem>?
+        shoppingListItemsAdapter?.setList(list)
+        shoppingListItemsAdapter?.notifyDataSetChanged()
+        setUpView()
     }
 
     private fun getFormatedString(count:Int ,msg:Int): String {
@@ -403,6 +434,27 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private fun hideLoadingProgress() {
         customProgressDialog?.dismiss()
+    }
+
+    private fun showSuccessMessage(message: String) {
+        bindingListDetails.errorListView.visibility = GONE
+        shoppingListItemsAdapter?.resetSelection()
+        setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
+        ToastFactory.showToast(
+            requireActivity(),
+            bindingListDetails.rlCheckOut,
+            message,
+            if (selectedShoppingList?.size ==1) true else false,
+            selectedShoppingList?.getOrNull(0)?.listId,
+            selectedShoppingList?.getOrNull(0)?.listName
+        )
+    }
+
+    private fun showErrorMessage(message: String) {
+        bindingListDetails.errorListView.visibility = VISIBLE
+        bindingListDetails.errorListView.setContent {
+            ShoppingListErrorView(message)
+        }
     }
 
     private fun setUpToolbar(listName: String?) {
@@ -1332,7 +1384,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 copytemFromList(editOptionType.list)
             }
             is EditOptionType.MoveItemFromList -> {
-
+                moveItemFromList(editOptionType.list)
             }
             else -> {}
         }
@@ -1365,30 +1417,46 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun copytemFromList(shoppingList: ArrayList<ShoppingList>) {
-        val selectedItems  = ArrayList<CopyItemDetail>()
-        val shoppingListId  = ArrayList<String>()
+        prepareRequestForCopyOrMoveItem(shoppingList)
+        val copyItemToListRequest =
+            CopyItemToListRequest(items = selectedItems, giftListIds = shoppingListId)
+        viewModel.copyMultipleItemsFromList(copyItemToListRequest)
+    }
+
+    private fun moveItemFromList(shoppingList: ArrayList<ShoppingList>) {
+        selectedItemsWithProdId.clear()
+        prepareRequestForCopyOrMoveItem(shoppingList)
+        val moveItemApiRequest = MoveItemApiRequest(
+            items = selectedItems,
+            giftListIds = shoppingListId,
+            removalGiftItemIds = removalGiftItemIds,
+            sourceGiftListId = viewModel.listId
+        )
+        lifecycleScope.launch {
+            viewModel.moveItemsFromList(moveItemApiRequest)
+        }
+    }
+
+    private fun prepareRequestForCopyOrMoveItem(shoppingList: ArrayList<ShoppingList>) {
         shoppingList.forEach {
-          shoppingListId.add(it.listId)
+            shoppingListId.add(it.listId)
         }
         if (isSingleItemSelected) {
             singleShoppingListItem?.let {
-                selectedItems.add(CopyItemDetail(skuID = it.catalogRefId, catalogRefId = it.catalogRefId, quantity = "1"))
+                selectedItems.add(ItemDetail(skuID = it.catalogRefId, catalogRefId = it.catalogRefId, quantity = "1", ))
+                selectedItemsWithProdId.add(it.productId)
+                removalGiftItemIds.add(it.Id)
             }
             selectedItemCount = 1
         } else {
             for (item in viewModel.mShoppingListItems) {
                 if (item.isSelected == true) {
-                    selectedItems.add(CopyItemDetail(skuID = item.catalogRefId, catalogRefId = item.catalogRefId, quantity = "1"))
+                    selectedItems.add(ItemDetail(skuID = item.catalogRefId, catalogRefId = item.catalogRefId, quantity = "1"))
+                    selectedItemsWithProdId.add(item.productId)
+                    removalGiftItemIds.add(item.Id)
                 }
             }
             selectedItemCount = selectedItems.size
         }
-        selectedShoppingList = shoppingList
-        val copyItemToListRequest = CopyItemToListRequest(items = selectedItems ,giftListIds = shoppingListId)
-        viewModel.copyMultipleItemsFromList(copyItemToListRequest)
-    }
-
-    private fun moveItemFromList() {
-       /*todo  move item */
     }
 }

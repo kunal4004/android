@@ -38,6 +38,7 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
         const val ITEM_COUNT = "ITEM_COUNT"
         const val COPY_LIST_ID = "COPY_LIST_ID"
         const val COPY_ITEM_LIST = "COPY_ITEM_LIST"
+        const val MOVE_ITEM_LIST = "MOVE_ITEM_LIST"
         const val CONFIRM_CLICKED = "CONFIRM_CLICKED"
 
         fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener,
@@ -67,13 +68,24 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
                     dialog?.dismiss()
                     val fragment =
                         listOfItems?.let {
-                            AddToListFragment.newInstance(listener, listId, true,
+                            AddToListFragment.newInstance(
+                                listener, listId, true,
+                                moveItemToList = false,
                                 it
                             )
                         }
                     fragment?.show(parentFragmentManager, AddToListFragment::class.simpleName)
                 }, {
                    /*move item*/
+                    dialog?.dismiss()
+                    val fragment =
+                        listOfItems?.let {
+                            AddToListFragment.newInstance(
+                                listener, listId, false, moveItemToList = true,
+                                it
+                            )
+                        }
+                    fragment?.show(parentFragmentManager, AddToListFragment::class.simpleName)
                 }) {
                  /*remove item*/
                 dialog?.dismiss()
