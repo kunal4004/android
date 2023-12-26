@@ -78,6 +78,11 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.sendOrderAgainEvent()
+    }
+
     private fun onCopyListSuccess(snackbarDetails: SnackbarDetails) {
         hideLoadingProgress()
         view?.let {

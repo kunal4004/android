@@ -6,6 +6,7 @@ import android.location.Location
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_AGAIN_LOGIN
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPictureCenterInside
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -266,8 +268,16 @@ class SubCategoryFragment :
 
     override fun onOrderAgainClicked() {
         if(SessionUtilities.getInstance().isUserAuthenticated) {
-            // TODO: Implement and navigate user to Order Again List screen.
-            pushFragment(OrderAgainFragment())
+            val bundle = bundleOf(
+                AppConstant.FROM_SCREEN to if(KotlinUtils.isDeliveryOptionClickAndCollect())
+                    FirebaseManagerAnalyticsProperties.PropertyValues.CNC_LANDING_PAGE
+                else
+                    FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD_LANDING_PAGE
+            )
+            val fragment = OrderAgainFragment().also {
+                arguments = bundle
+            }
+            pushFragment(fragment)
         } else {
             ScreenManager.presentSSOSignin(requireActivity(), REQUEST_CODE_ORDER_AGAIN_LOGIN)
         }

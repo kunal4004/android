@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awfs.coordination.R
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.domain.usecase.AddToCartUC
 import za.co.woolworths.financial.services.android.domain.usecase.CopyToListUC
 import za.co.woolworths.financial.services.android.domain.usecase.MultiSkuInventoryUC
@@ -39,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
@@ -46,6 +49,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OrderAgainViewModel @Inject constructor(
+    val savedStateHandle: SavedStateHandle,
     val orderAgainUC: OrderAgainUC,
     val orderAgainInventoryUC: MultiSkuInventoryUC,
     val addToCartUC: AddToCartUC,
@@ -111,6 +115,10 @@ class OrderAgainViewModel @Inject constructor(
             addToCartUC(items).collectLatest {
                 when (it.status) {
                     Status.SUCCESS -> {
+
+                        // Firebase event
+                        FirebaseAnalyticsEventHelper.sendAddToListOrderAgainEvent(items, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
+
                         val productCountMap = it.data?.data?.getOrNull(0)?.productCountMap
                         _orderAgainUiState.update { state ->
                             orderList.filter { item ->
@@ -333,6 +341,9 @@ class OrderAgainViewModel @Inject constructor(
                             orderList.clear()
                             orderList.addAll(updatedList)
 
+                            // Firebase event
+                            FirebaseAnalyticsEventHelper.sendViewItemListOrderAgainEvent(updatedList, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
+
                             // If no food product available in response show empty screen.
                             if (productIds.isEmpty()) {
                                 state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen)
@@ -511,6 +522,9 @@ class OrderAgainViewModel @Inject constructor(
                 when (it.status) {
                     Status.SUCCESS -> {
 
+                        //Firebase event
+                        FirebaseAnalyticsEventHelper.sendAddToWishListOrderAgainEvent(itemsToBeAdded)
+
                         _orderAgainUiState.update {
                             val item = copyToLists.singleOrNull()
                             it.copy(
@@ -545,6 +559,14 @@ class OrderAgainViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    fun sendOrderAgainEvent() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val screenName = savedStateHandle.get<String>(AppConstant.FROM_SCREEN)
+                ?: FirebaseManagerAnalyticsProperties.PropertyValues.MY_ACCOUNTS
+            FirebaseAnalyticsEventHelper.sendOrderAgainEvent(screenName)
         }
     }
 }

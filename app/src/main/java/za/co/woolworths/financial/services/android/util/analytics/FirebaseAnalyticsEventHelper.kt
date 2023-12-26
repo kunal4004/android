@@ -7,6 +7,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
+import za.co.woolworths.financial.services.android.models.dto.order_again.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.analytics.dto.*
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -430,6 +432,49 @@ object FirebaseAnalyticsEventHelper {
             FirebaseManagerAnalyticsProperties.IN_APP_POP_UP, analyticsParams
         )
     }
+
+    fun sendOrderAgainEvent(screenName: String) {
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.IN_APP_POP_UP,
+            bundleOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.LOCATION_ID to screenName
+            )
+        )
+    }
+
+    fun sendViewItemListOrderAgainEvent(productItems: List<ProductItem>, category: String) {
+        val analyticItems = productItems.map { it.toAnalyticItem(FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN) }
+        triggerViewItemListEvent(analyticItems, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
+    }
+
+    fun sendAddToListOrderAgainEvent(updatedList: List<AddItemToCart>, category: String) {
+
+        val analyticItems: List<AnalyticProductItem> = updatedList.map { it.toAnalyticItem(category) }
+        val bundle = Bundle()
+        bundle.putString(
+            FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        )
+        bundle.putParcelableArray(
+            FirebaseAnalytics.Param.ITEMS, analyticItems.toTypedArray()
+        )
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP, bundle
+        )
+    }
+
+    fun sendAddToWishListOrderAgainEvent(items : List<AddToListRequest>) {
+        val bundle = bundleOf(
+            FirebaseAnalytics.Param.CURRENCY to FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE,
+            FirebaseManagerAnalyticsProperties.PropertyNames.SHOPPING_LIST_NAME to FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN,
+            FirebaseAnalytics.Param.ITEMS to items.toTypedArray()
+        )
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, bundle
+        )
+    }
+
     object Utils {
         private fun stringToFirebaseEventName(string: String?): String? {
             return string?.filter { it.isLetterOrDigit() }?.lowercase()

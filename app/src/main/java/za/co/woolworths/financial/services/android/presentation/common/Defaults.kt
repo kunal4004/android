@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.ShimmerColor
 fun CircleIcon(
     @DrawableRes icon: Int,
     isEnabled: Boolean = true,
+    contentDesc: String = "",
     background: Color = Color.Transparent,
     onIconClick: () -> Unit
 ) {
@@ -35,7 +36,7 @@ fun CircleIcon(
             },
         painter = painterResource(id = icon),
         tint = LocalContentColor.current.copy(alpha = if(isEnabled) 1f else 0.5f),
-        contentDescription = ""
+        contentDescription = contentDesc
     )
 }
 
@@ -44,6 +45,6 @@ fun CircleIcon(
 @Composable
 private fun PreviewCircleIcon() {
     OneAppTheme {
-        CircleIcon(R.drawable.add_black, false, ShimmerColor){}
+        CircleIcon(R.drawable.add_black, false, "", ShimmerColor){}
     }
 }
