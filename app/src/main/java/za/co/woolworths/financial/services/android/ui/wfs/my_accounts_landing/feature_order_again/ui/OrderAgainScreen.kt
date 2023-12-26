@@ -99,7 +99,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.ShimmerColor
 import za.co.woolworths.financial.services.android.ui.wfs.theme.SnackbarBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderAgainScreen(
     viewModel: OrderAgainViewModel,
@@ -172,7 +171,8 @@ fun SnackbarView(
         contentColor = White
     ) {
         Row(
-            Modifier.fillMaxSize()
+            Modifier
+                .fillMaxSize()
                 .height(40.dp)
                 .background(Color.Red)
                 .wrapContentHeight(Alignment.CenterVertically),
@@ -257,7 +257,7 @@ private fun OrderAgainStatelessScreen(
                 }
             }
 
-            OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White)) {
+            OrderAgainScreenState.ShowErrorScreen, OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White)) {
                 onEvent(OrderAgainScreenEvents.StartShoppingClicked)
             }
 
@@ -445,7 +445,7 @@ fun ProductItemView(
                         else
                             R.drawable.uncheck_item
                     ),
-                    contentDescription = null
+                    contentDescription = stringResource(id = R.string.cd_product_checkbox)
                 )
             }
 
@@ -471,7 +471,8 @@ fun ProductItemView(
             SpacerHeight24dp()
             PromotionalText(
                 text = productItem.promotionalText,
-                textDecoration = TextDecoration.Underline
+                textDecoration = TextDecoration.Underline,
+                contentDesc = productItem.promotionalText
             )
         }
     }
@@ -505,7 +506,7 @@ fun ProductItemDetails(
                     onEvent(OrderAgainScreenEvents.CopyItemToListClicked(productItem))
                 },
                 painter = painterResource(id = R.drawable.ic_option_menu),
-                contentDescription = ""
+                contentDescription = stringResource(id = R.string.cd_options_menu)
             )
         }
 
@@ -536,7 +537,9 @@ fun ProductItemDetails(
                     leftIcon = if (productItem.quantity == 1) R.drawable.delete_24
                     else R.drawable.ic_minus_black,
                     leftIconEnabled = productItem.quantity > 1,
+                    cdLeftIcon = stringResource(id = R.string.cd_product_decrease_quantity),
                     rightIconEnabled = productItem.quantity < productItem.quantityInStock,
+                    cdRightIcon = stringResource(id = R.string.cd_product_increase_quantity),
                     onLeftIconClick = {
                         onEvent(OrderAgainScreenEvents.ChangeProductQuantityBy(-1, productItem))
                     },
@@ -554,8 +557,10 @@ fun QuantitySelectionView(
     modifier: Modifier = Modifier,
     leftIcon: Int = R.drawable.ic_minus_black,
     leftIconEnabled: Boolean = false,
+    cdLeftIcon: String = "",
     rightIcon: Int = R.drawable.add_black,
     rightIconEnabled: Boolean = false,
+    cdRightIcon: String = "",
     productItem: ProductItem,
     onLeftIconClick: () -> Unit,
     onRightIconClick: () -> Unit
@@ -566,7 +571,7 @@ fun QuantitySelectionView(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircleIcon(leftIcon, leftIconEnabled, ShimmerColor) {
+        CircleIcon(leftIcon, leftIconEnabled, cdLeftIcon, background = ShimmerColor) {
             onLeftIconClick()
         }
         SpacerWidth8dp()
@@ -575,7 +580,7 @@ fun QuantitySelectionView(
             text = productItem.quantity.toString()
         )
         SpacerWidth8dp()
-        CircleIcon(rightIcon, rightIconEnabled, ShimmerColor) {
+        CircleIcon(rightIcon, rightIconEnabled, cdRightIcon, ShimmerColor) {
             onRightIconClick()
         }
     }
