@@ -52,7 +52,7 @@ data class AppConfig(
     var enhanceSubstitution: EnhanceSubstitution?,
     var endlessAisle: EndlessAisle?,
     var ratingsAndReviews: RatingsAndReviews?,
-    var glassBox: GlassBox?,
+
     var bnplConfig: BnplConfig?,
     var searchApiSettings: SearchApiSettings?,
     var dynamicYieldConfig: DynamicYieldConfig?,

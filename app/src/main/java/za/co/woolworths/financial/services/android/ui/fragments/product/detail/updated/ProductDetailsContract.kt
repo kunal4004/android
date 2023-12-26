@@ -35,7 +35,7 @@ interface ProductDetailsContract {
         fun showProductDetailsLoading()
         fun hideProductDetailsLoading()
         fun updateStockAvailabilityLocation()
-        fun updateDeliveryLocation()
+        fun updateDeliveryLocation(launchNewToggleScreen: Boolean = false)
         fun showDetailsInformation(productInformationType: ProductInformationActivity.ProductInformationType)
         fun loadPromotionalImages()
         fun setUniqueIds()

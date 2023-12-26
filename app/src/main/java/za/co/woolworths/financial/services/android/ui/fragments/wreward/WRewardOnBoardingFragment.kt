@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import za.co.woolworths.financial.services.android.ui.adapters.JoinRewardAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper
 
 abstract class WRewardOnBoardingFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 
@@ -33,7 +34,10 @@ abstract class WRewardOnBoardingFragment(@LayoutRes contentLayoutId: Int) : Frag
             offscreenPageLimit = joinRewardBenefitList.size
         }
 
-        TabLayoutMediator(tabIndicator, vpJoinRewardInfo) {  tab, _ -> tab.text = "" }.attach()
+        TabLayoutMediator(tabIndicator, vpJoinRewardInfo) {  tab, index ->
+            tab.text = ""
+            WRewardUniqueLocatorsHelper.setIndicatorsLocators(tab,index)
+        }.attach()
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

@@ -50,15 +50,6 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/ten_dp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/toolbarPLPAddress"
-                android:layout_alignBottom="@id/toolbarPLPAddress"
-                android:layout_toEndOf="@id/toolbarPLPAddress"
-                android:layout_marginStart="@dimen/eight_dp"
-                android:src="@drawable/ic_dwon" />
-
             <TextView
                 android:id="@+id/toolbarPLPTitle"
                 android:layout_width="wrap_content"
