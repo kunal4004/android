@@ -663,20 +663,6 @@ private fun PreviewDeliveryLocation() {
 
 @Preview
 @Composable
-private fun PreviewSnackbarView() {
-    OneAppTheme {
-        /*SnackbarView(
-            SnackbarDetails(
-                count = 2
-            )
-        ) {
-
-        }*/
-    }
-}
-
-@Preview
-@Composable
 private fun PreviewProductItemView() {
     OneAppTheme {
         ProductItemView(
@@ -690,20 +676,5 @@ private fun PreviewProductItemView() {
                 productAvailabilityResource = R.string.empty
             }
         ) {}
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewCommonToastView() {
-    OneAppTheme {
-        val count = 2
-        /* CommonToastView(
-             count = count,
-             title = pluralStringResource(id = R.plurals.plural_add_to_cart, count, count),
-             showDesc = false,
-             desc = stringResource(id = R.string.processing_your_request_desc),
-             actionButton = ""
-         ) {}*/
     }
 }
