@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -71,6 +70,7 @@ import za.co.woolworths.financial.services.android.presentation.common.OpenSansT
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText13
 import za.co.woolworths.financial.services.android.presentation.common.PromotionalText
 import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
+import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationEvent
 import za.co.woolworths.financial.services.android.presentation.common.delivery_location.DeliveryLocationViewState
 import za.co.woolworths.financial.services.android.shoppinglist.view.SwipeListActionItem
 import za.co.woolworths.financial.services.android.shoppinglist.view.SwipeToRevealView
@@ -148,10 +148,12 @@ fun OrderAgainScreen(
 
         OrderAgainStatelessScreen(Modifier.padding(it), state, viewModel.orderList) { event ->
             when (event) {
-                OrderAgainScreenEvents.DeliveryLocationClick,
+                OrderAgainScreenEvents.ChangeDeliveryClick,
                 OrderAgainScreenEvents.StartShoppingClicked,
                 OrderAgainScreenEvents.CopyToListClicked,
+                OrderAgainScreenEvents.ChangeAddressClick,
                 is OrderAgainScreenEvents.CopyItemToListClicked -> onEvent(event)
+
                 else -> viewModel.onEvent(event)
             }
         }
@@ -240,7 +242,10 @@ private fun OrderAgainStatelessScreen(
 ) {
     Column(modifier.background(OneAppBackground)) {
         DeliveryLocationView(state.deliveryState) {
-            onEvent(OrderAgainScreenEvents.DeliveryLocationClick)
+            when (it) {
+                DeliveryLocationEvent.ChangeAddressClick -> onEvent(OrderAgainScreenEvents.ChangeAddressClick)
+                else -> onEvent(OrderAgainScreenEvents.ChangeDeliveryClick)
+            }
         }
         SpacerHeight8dp(bgColor = OneAppBackground)
         when (state.screenState) {
@@ -257,7 +262,9 @@ private fun OrderAgainStatelessScreen(
                 }
             }
 
-            OrderAgainScreenState.ShowErrorScreen, OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(Modifier.background(White)) {
+            OrderAgainScreenState.ShowErrorScreen, OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(
+                Modifier.background(White)
+            ) {
                 onEvent(OrderAgainScreenEvents.StartShoppingClicked)
             }
 
@@ -314,7 +321,7 @@ private fun OrderAgainStatelessScreen(
 @Composable
 fun DeliveryLocationView(
     deliveryState: DeliveryLocationViewState,
-    onClick: () -> Unit
+    onEvent: (DeliveryLocationEvent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -331,7 +338,7 @@ fun DeliveryLocationView(
                 icon = R.drawable.refresh_account_icon_normal,
                 tintColor = White
             ) {
-                onClick()
+                onEvent(DeliveryLocationEvent.ChangeDeliveryClick)
             }
         }
 
@@ -354,7 +361,7 @@ fun DeliveryLocationView(
             BlackRoundedCornerIcon(
                 icon = R.drawable.ic_edit_black, tintColor = White
             ) {
-                onClick()
+                onEvent(DeliveryLocationEvent.ChangeAddressClick)
             }
         }
     }

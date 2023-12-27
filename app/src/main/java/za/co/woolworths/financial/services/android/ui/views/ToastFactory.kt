@@ -375,12 +375,12 @@ class ToastFactory {
 //                (toastView?.background as GradientDrawable).setColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
                 // Removing Toast colors for CNC / Dash toast
                 (toastView?.background as GradientDrawable).setColor(ContextCompat.getColor(context, R.color.black90))
-                tvFoodLayoutMessage?.text =
-                if(KotlinUtils.isDeliveryOptionDash())
-                    context.getString(R.string.dash_item_limit_message, it.quantityLimit?.foodMaximumQuantity ?: 0)
+                val maxQuantity = it.quantityLimit?.foodMaximumQuantity ?: 0
+                if(maxQuantity > 0 && KotlinUtils.isDeliveryOptionDash())
+                    tvFoodLayoutMessage?.text =
+                        context.getString(R.string.dash_item_limit_message, maxQuantity)
                 else
-                    it.quantityLimit?.foodLayoutMessage ?: ""
-
+                    tvFoodLayoutMessage?.visibility = GONE
                 tvNoOfItemsAddedToCart?.text = context.resources.getQuantityString(R.plurals.toast_item_added_to_cart_message, count, count)
             }
 
