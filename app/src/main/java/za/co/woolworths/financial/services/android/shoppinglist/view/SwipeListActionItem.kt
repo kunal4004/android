@@ -2,10 +2,12 @@ package za.co.woolworths.financial.services.android.shoppinglist.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,37 +27,47 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 fun SwipeListActionItem(
     modifier: Modifier = Modifier,
     icon: Int = R.drawable.delete_24,
-    tintColor: Color? = null,
+    tintColor: Color = Color.Unspecified,
+    progressBarColor: Color = Color.Unspecified,
     actionText: Int = R.string.remove,
     textStyle: TextStyle? = null,
+    showLoading: Boolean = false,
     onClick: () -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxHeight()
-            .clickable {
-                onClick()
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    Box(
+        modifier = modifier.fillMaxHeight(),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = painterResource(id = icon),
-            tint = tintColor ?: Color.Unspecified,
-            contentDescription = "Delete"
-        )
+        Column(
+            modifier = modifier
+                .clickable {
+                    onClick()
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = icon),
+                tint = tintColor,
+                contentDescription = "Delete"
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = stringResource(id = actionText).uppercase(),
-            style = textStyle ?: TextStyle(
-                fontFamily = FuturaFontFamily,
-                fontWeight = FontWeight.W600,
-                fontSize = 12.sp,
-                color = Color.Black
-            ),
-            letterSpacing = 1.5.sp
-        )
+            Text(
+                text = stringResource(id = actionText).uppercase(),
+                style = TextStyle(
+                    fontFamily = FuturaFontFamily,
+                    fontWeight = FontWeight.W600,
+                    fontSize = 12.sp,
+                    color = Color.Black
+                ).merge(textStyle),
+                letterSpacing = 1.5.sp
+            )
+        }
+
+        if(showLoading) {
+            CircularProgressIndicator(color = progressBarColor)
+        }
     }
 }

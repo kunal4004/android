@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -303,7 +305,8 @@ fun BlackRoundedCornerIcon(
 fun PromotionalText(
     modifier: Modifier = Modifier,
     text: String = "",
-    textDecoration: TextDecoration? = null
+    textDecoration: TextDecoration? = null,
+    contentDesc: String = ""
 ) {
     val annotationString = buildAnnotatedString {
         val spanStyle = SpanStyle(
@@ -328,7 +331,10 @@ fun PromotionalText(
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
             .background(ColorFCF0F1)
-            .padding(vertical = 8.dp, horizontal = 16.dp),
+            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .semantics {
+                       contentDescription = contentDesc
+            },
         text = annotationString,
         style = TextStyle(
             fontFamily = FuturaFontFamily,
