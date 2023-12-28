@@ -4,18 +4,17 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
@@ -28,6 +27,7 @@ import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_order_again.ui.OrderAgainScreen
@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.CustomProgressBar
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
@@ -48,6 +49,20 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
     private val viewModel: OrderAgainViewModel by viewModels()
     private var customProgressDialog: CustomProgressBar? = null
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
+    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        addFragmentResultListeners()
+    }
+
+    private fun addFragmentResultListeners() {
+        //After unsellable add to list is called. On Got it clicked result back.
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            viewModel.setDeliveryLocation()
+            viewModel.refreshInventory()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -150,7 +165,7 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
     }
 
     private fun onCopyToListClicked(item: ProductItem? = null) {
-        val items = if(item != null) {
+        val items = if (item != null) {
             ArrayList<AddToListRequest>(0).apply {
                 add(item.toAddToListRequest())
             }
@@ -203,9 +218,29 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
     }
 
     private fun launchShopToggleScreen() {
-        Intent(requireActivity(), ShopToggleActivity::class.java).apply {
-            startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
-        }
+        activityLauncher.launch(
+            input = Intent(requireActivity(), ShopToggleActivity::class.java),
+            onActivityResult = { result ->
+                when (result.resultCode) {
+                    Activity.RESULT_OK -> {
+                        val toggleFulfilmentResultWithUnsellable =
+                            UnsellableAccess.getToggleFulfilmentResultWithUnSellable(result.data)
+                        if (toggleFulfilmentResultWithUnsellable != null) {
+                            UnsellableAccess.navigateToUnsellableItemsFragment(
+                                ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                                toggleFulfilmentResultWithUnsellable.deliveryType,
+                                confirmAddressViewModel,
+                                ProgressBar(requireContext()),
+                                this,
+                                parentFragmentManager
+                            )
+                        } else {
+                            viewModel.setDeliveryLocation()
+                            viewModel.refreshInventory()
+                        }
+                    }
+                }
+            })
     }
 
     private fun launchStoreOrLocationSelection() {
@@ -221,10 +256,11 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             activity,
             BundleKeysConstants.UPDATE_LOCATION_REQUEST,
-            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType),
             KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
             isLocationUpdateRequest = true,
-            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType
+            newDelivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
+                ?: KotlinUtils.browsingDeliveryType
         )
     }
 
@@ -232,8 +268,7 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             activity,
             BundleKeysConstants.UPDATE_STORE_REQUEST,
-            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
-                ?: KotlinUtils.browsingDeliveryType,
+            Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType),
             KotlinUtils.getDeliveryType()?.address?.placeId ?: "",
             isFromNewToggleFulfilmentScreen = true,
             newDelivery = Delivery.CNC,
@@ -241,54 +276,6 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
         )
     }
 
-    private fun deliverySelectionIntent() {
-        activity ?: return
-        KotlinUtils.presentEditDeliveryGeoLocationActivity(
-            requireActivity(),
-            AppConstant.REQUEST_CODE_DELIVERY_LOCATION_CHANGE,
-            KotlinUtils.getPreferredDeliveryType(),
-            GeoUtils.getPlaceId(),
-            isFromDashTab = false,
-            isComingFromCheckout = false,
-            isComingFromSlotSelection = false,
-            isMixedBasket = false,
-            isFBHOnly = false,
-            savedAddressResponse = null,
-            defaultAddress = null,
-            whoISCollecting = null,
-            liquorCompliance = null
-        )
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        when(requestCode){
-
-            AppConstant.REQUEST_CODE_DELIVERY_LOCATION_CHANGE -> {
-                viewModel.setDeliveryLocation()
-                viewModel.refreshInventory()
-            }
-            ShopToggleActivity.REQUEST_DELIVERY_TYPE, BundleKeysConstants.UPDATE_LOCATION_REQUEST, BundleKeysConstants.UPDATE_STORE_REQUEST ->{
-                if (resultCode == Activity.RESULT_OK) {
-
-                    val toggleFulfilmentResultWithUnsellable= UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
-                    if(toggleFulfilmentResultWithUnsellable!=null){
-                        UnsellableAccess.navigateToUnsellableItemsFragment(
-                            ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
-                            toggleFulfilmentResultWithUnsellable.deliveryType,
-                            confirmAddressViewModel,
-                            ProgressBar(requireContext()),
-                            this,
-                            parentFragmentManager)
-                    }
-                    viewModel.setDeliveryLocation()
-                    viewModel.refreshInventory()
-                }
-            }
-        }
-
-    }
 
     override fun itemEditOptionsClick(
         editOptionType: EditOptionType
