@@ -709,6 +709,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             loadShoppingCart()
         }
         if (!hidden) {
+            Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST)
            listenerForUnsellable()
         }
     }
