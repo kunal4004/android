@@ -237,10 +237,6 @@ class ToastFactory {
             val binding = LayoutSnackbarAddToListBinding.inflate(LayoutInflater.from(context))
 
             binding.apply {
-                val title = context.resources.getQuantityString(
-                    R.plurals.added_to_list,
-                    count, count, listName
-                )
                 if(hasGiftProduct) {
                     snackbarDesc.visibility = VISIBLE
                     snackbarDesc.text =

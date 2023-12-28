@@ -3294,7 +3294,7 @@
 
     <plurals name="move_item">
         <item quantity="one">Moving Your Item to</item>
-        <item quantity="other">Moving Your Items </item>
+        <item quantity="other">Moving Your Items to </item>
     </plurals>
 
     <plurals name="copy_item_msg">
@@ -3308,8 +3308,8 @@
     </plurals>
 
     <plurals name="move_item_msg">
-        <item quantity="one">%1$d ITEM COPIED TO %2$s</item>
-        <item quantity="other">%1$d ITEMS COPIED TO %2$s</item>
+        <item quantity="one">%1$d ITEM MOVED TO %2$s</item>
+        <item quantity="other">%1$d ITEMS MOVED TO %2$s</item>
     </plurals>
 
 </resources>

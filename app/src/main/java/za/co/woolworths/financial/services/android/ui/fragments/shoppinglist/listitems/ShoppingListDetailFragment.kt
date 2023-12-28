@@ -346,7 +346,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
                 Status.SUCCESS -> {
                     hideLoadingProgress()
-                    bindingListDetails.errorListView.visibility = GONE
                     val listName =  if (selectedShoppingList?.size == 1 ) {
                         selectedShoppingList?.getOrNull(0)?.listName?: ""
                     } else {
@@ -386,7 +385,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         }
                     }
                     renderSuccess {
-                        bindingListDetails.errorListView.visibility = GONE
                         val listName =  if (selectedShoppingList?.size == 1 ) {
                             selectedShoppingList?.getOrNull(0)?.listName?: ""
                         } else {
@@ -401,7 +399,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         updateUiForMovedItem()
                         //refresh main myList fragment to show updated count.
                         setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
-                        showSuccessMessage(message = title)
+                        showSuccessMessage(listName, title)
                     }
                     renderFailure {
                         showErrorMessage(getString(R.string.remove_move_msg))
@@ -963,6 +961,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
             UpdateScreenLiveData.value=updateUnsellableLiveData
         }
+
+        KotlinUtils.setAddToListFragmentResultListener(
+            activity = requireActivity(),
+            lifecycleOwner = viewLifecycleOwner,
+            toastContainerView = bindingListDetails.root,
+            onToastClick = {}
+        )
     }
 
     override fun onDetach() {

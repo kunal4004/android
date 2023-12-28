@@ -259,7 +259,7 @@ class ShoppingListDetailViewModel @Inject constructor(
 
     fun isCheckedDontAskAgain() = isCheckedDontAskAgain
 
-    fun updateListForMoveItem(): List<ShoppingListItem>? {
+    fun updateListForMoveItem(): List<ShoppingListItem> {
         mShoppingListItems = mShoppingListItems.filter {
             !it.isSelected
         } as ArrayList<ShoppingListItem>
