@@ -540,7 +540,10 @@ object FirebaseAnalyticsEventHelper {
         addToCartParams.apply {
             putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(analyticItem.toBundle()))
             putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-            putString(FirebaseAnalytics.Param.ITEM_LIST_ID, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)
+            analyticItem.price?.let {
+                putDouble(FirebaseAnalytics.Param.VALUE, it)
+            }
+            putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING, (productDetails.averageRating).toString())
         }
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, addToCartParams)
     }
