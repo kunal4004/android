@@ -897,7 +897,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
     private fun getLiquorOrder(): Boolean {
         var liquorOrder = false
-        arguments?.apply {
+        bundle?.apply {
             liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
         }
         return liquorOrder
@@ -905,7 +905,7 @@ class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_di
 
     private fun getLiquorImageUrl(): String {
         var liquorImageUrl = ""
-        arguments?.apply {
+        bundle?.apply {
             liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
         }
         return liquorImageUrl
