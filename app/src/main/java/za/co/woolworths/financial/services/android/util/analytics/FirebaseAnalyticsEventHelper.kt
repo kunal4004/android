@@ -227,8 +227,8 @@ object FirebaseAnalyticsEventHelper {
             category?.let {
                 putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, itemListName ?: category)
             }
+            putString(FirebaseAnalytics.Param.ITEM_LIST_ID, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)
         }
-
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
         )
