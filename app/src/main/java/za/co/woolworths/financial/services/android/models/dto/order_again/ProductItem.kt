@@ -8,9 +8,12 @@ import androidx.compose.ui.graphics.Color
 import com.awfs.coordination.R
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemDetail
+import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 
 @Parcelize
 data class ProductItem(
@@ -52,3 +55,20 @@ fun ProductItem.toCopyItemDetail() : CopyItemDetail = CopyItemDetail(
     catalogRefId = id,
     quantity = "1"
 )
+
+
+fun ProductItem.toAnalyticItem(category: String?): AnalyticProductItem {
+    return AnalyticProductItem(
+        itemId = id,
+        itemName = productName,
+        category = category,
+        itemBrand = "",
+        itemListName = category,
+        itemVariant = "",
+        quantity = 1, // Required quantity set to 1
+        price = price,
+        productType = "",
+        affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
+        index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
+    )
+}
