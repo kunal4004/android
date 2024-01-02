@@ -168,6 +168,9 @@ class AppConstant {
 
         // Shop Landing Standard / CnC
         const val FOOD_CATEGORY_ID = "cat606520"
+
+        // Order Again
+        const val FROM_SCREEN: String = "fromScreen"
     }
 
     class Keys {
