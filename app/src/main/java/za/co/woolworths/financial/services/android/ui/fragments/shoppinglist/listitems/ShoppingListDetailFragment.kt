@@ -28,6 +28,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -35,6 +36,7 @@ import com.awfs.coordination.databinding.ShoppingListDetailFragmentBinding
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -196,6 +198,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private var selectedItemCount = 0
     private var selectedShoppingList:ArrayList<ShoppingList>? = null
     private var listOfItems =  ArrayList<AddToListRequest>()
+    private var viewType = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -203,6 +206,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         arguments?.apply {
             listName = getString(ARG_LIST_NAME, "")
             openFromMyList = getBoolean(ARG_OPEN_FROM_MY_LIST, false)
+            viewType = getString("viewType", "")
         }
         Utils.updateStatusBarBackground(activity)
     }
@@ -223,12 +227,18 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpToolbar(listName)
-        setDeliveryLocation()
-        initViewAndEvent()
         addSubscribeEvents()
         addFragmentListener()
-
+        if (viewType.isNotEmpty()) {
+            // This is share list flow from Deeplinking.
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.getItemsInSharedShoppingList(arguments?.getString("listId", "") ?: "")
+            }
+        } else {
+            setUpToolbar(listName)
+            setDeliveryLocation()
+            initViewAndEvent()
+        }
     }
 
     private fun addSubscribeEvents() {
@@ -247,9 +257,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     }
                 }
                 Status.SUCCESS -> {
+                    if (viewType.isNotEmpty()) {
+                        // This is share list flow from Deeplinking.
+                        setDeliveryLocation()
+                        initViewAndEvent()
+                    }
                     onShoppingListItemsResponse(response)
                 }
                 Status.ERROR -> {
+                    if (viewType.isNotEmpty()) {
+                        // This is share list flow from Deeplinking.
+                        setDeliveryLocation()
+                        initViewAndEvent()
+                    }
                     onShoppingListItemsResponseError(response)
                 }
             }

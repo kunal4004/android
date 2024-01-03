@@ -89,7 +89,7 @@ class ShoppingListDetailViewModel @Inject constructor(
             //separate fulfillmentType and get inventory for items
             availableList.distinctBy { it.fulfillmentType }.forEach { item ->
                 val multiSkuList = availableList.filter {
-                    item.fulfillmentType.equals(it.fulfillmentType)
+                    item?.fulfillmentType.equals(it?.fulfillmentType)
                 }
                 // Retrieve storeId for fulfillmentType
                 val storeId = Utils.retrieveStoreId(item.fulfillmentType)
@@ -109,6 +109,15 @@ class ShoppingListDetailViewModel @Inject constructor(
                 val multiSku = TextUtils.join("-", skuIds)
                 getInventoryStockForStore(storeId, multiSku)
             }
+        }
+    }
+
+    suspend fun getItemsInSharedShoppingList(listId: String) {
+        _shoppingListDetails.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = shoppingListDetailRepository.getItemsInSharedShoppingList(listId)
+            mShoppingListItems = response.data?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
+            _shoppingListDetails.value = Event(response)
         }
     }
 
