@@ -3390,22 +3390,29 @@ class ProductDetailsFragment :
     }
 
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
-        if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
-            isOutOfStockFragmentAdded = true
-            updateAddToCartButtonForSelectedSKU()
-            try {
-                activity?.supportFragmentManager?.beginTransaction()?.apply {
-                    val productDetailsFindInStoreDialog =
-                        ProductDetailsFindInStoreDialog.newInstance(
-                            this@ProductDetailsFragment
-                        )
-                    productDetailsFindInStoreDialog.show(
-                        this,
-                        ProductDetailsFindInStoreDialog::class.java.simpleName
-                    )
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                binding.productImagesViewPager.alpha = 0.5f
+            } else {
+                if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
+                    isOutOfStockFragmentAdded = true
+                    updateAddToCartButtonForSelectedSKU()
+                    try {
+                        activity?.supportFragmentManager?.beginTransaction()?.apply {
+                            val productDetailsFindInStoreDialog =
+                                ProductDetailsFindInStoreDialog.newInstance(
+                                    this@ProductDetailsFragment
+                                )
+                            productDetailsFindInStoreDialog.show(
+                                this,
+                                ProductDetailsFindInStoreDialog::class.java.simpleName
+                            )
+                        }
+                    } catch (ex: IllegalStateException) {
+                        logException(ex)
+                    }
                 }
-            } catch (ex: IllegalStateException) {
-                logException(ex)
             }
         }
     }

@@ -4,6 +4,7 @@ import DynamicYieldConfig
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.models.ConnectOnline
+import za.co.woolworths.financial.services.android.models.OutOfStock
 import za.co.woolworths.financial.services.android.models.SearchApiSettings
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
@@ -56,5 +57,6 @@ data class AppConfig(
     var bnplConfig: BnplConfig?,
     var searchApiSettings: SearchApiSettings?,
     var dynamicYieldConfig: DynamicYieldConfig?,
-    var connectOnline: ConnectOnline?
+    var connectOnline: ConnectOnline?,
+    var outOfStock: OutOfStock?
 ) : Parcelable

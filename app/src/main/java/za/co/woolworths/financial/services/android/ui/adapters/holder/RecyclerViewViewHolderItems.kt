@@ -254,6 +254,7 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                                 STOCK_AVAILABILITY_0 -> {
                                     outOfStockTag.visibility = VISIBLE
                                     imProductImage.alpha = 0.5f
+                                    productListingPromotionalImage.root.visibility = View.GONE
                                 }
                                 else -> {
                                     outOfStockTag.visibility = GONE
