@@ -84,6 +84,7 @@ object AppConfigSingleton {
 
     @JvmStatic
     var dynamicYieldConfig : DynamicYieldConfig? = null
+    var outOfStock: OutOfStock? = null
 
     init {
         initialiseFromCache()
@@ -276,6 +277,14 @@ object AppConfigSingleton {
 
             appConfig.connectOnline?.apply {
                 connectOnline = this
+            }
+
+            appConfig.outOfStock?.apply {
+                minimumSupportedAppBuildNumber.let {
+                    isOutOfStockEnabled =
+                        Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    outOfStock = this
+                }
             }
         }
     }
