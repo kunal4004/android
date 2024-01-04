@@ -395,7 +395,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             String deepLinkType = mBundle.get("feature").toString();
 
             switch (deepLinkType) {
-                case AppConstant.DP_LINKING_PRODUCT_LISTING:
+                case AppConstant.DP_LINKING_PRODUCT_LISTING: {
                     if (appLinkData == null) {
                         return;
                     }
@@ -413,7 +413,24 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true, false));
                     }
                     break;
+                }
+                case AppConstant.DP_LINKING_VIEW_SHOPPING_LIST: {
+                    if (appLinkData == null) {
+                        return;
+                    }
+                    if (appLinkData.get("url") == null) {
+                        return;
+                    }
 
+                    Uri linkData = Uri.parse(appLinkData.get("url").getAsString());
+                    String viewOrEditType = linkData.getLastPathSegment();
+                    String listId = linkData.getPathSegments().size() >= 3 ? linkData.getPathSegments().get(3) : "";
+                    if (listId.isEmpty())
+                        ScreenManager.presentMyListScreen(this);
+                    else
+                        ScreenManager.presentShoppingListDetailActivity(listId, viewOrEditType, this);
+                    break;
+                }
                 case AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID:
                     if (appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID) == null) {
                         return;
