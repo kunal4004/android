@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Intent
@@ -24,8 +23,8 @@ import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -56,8 +55,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.ConfirmationBottomsheetDialogFragment
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Product
@@ -708,6 +705,15 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         showDeleteConfirmationDialog()
     }
 
+    override fun onItemAddClick(shoppingListItem: ShoppingListItem?) {
+        shoppingListItem?.let {
+            val list = ArrayList<ShoppingListItem>(0)
+            list.add(shoppingListItem)
+            executeAddToCart(list, true)
+        }
+    }
+
+
     private fun onDeleteUIUpdate() {
         val isStockAvailable =
             viewModel.getIsStockAvailable()
@@ -745,7 +751,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         enableAddToCartButton(GONE)
     }
 
-    fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse?, size: Int) {
+    fun onAddToCartSuccess(
+        addItemToCartResponse: AddItemToCartResponse?,
+        size: Int,
+        isSwipeToAdd: Boolean,
+        addedItemToCart: ArrayList<AddItemToCart>
+    ) {
+        enableAdapterClickEvent(true)
         if (!isAdded || !isVisible || addItemToCartResponse == null) return
         val resultIntent = Intent()
         if (addItemToCartResponse.data?.isNotEmpty() == true) {
@@ -760,14 +772,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
 
         // reset selection after items added to cart
-        shoppingListItemsAdapter?.resetSelection()
-
+        if(isSwipeToAdd) {
+            shoppingListItemsAdapter?.setAddToCartProgress(
+                addedItemToCart.getOrNull(0)?.productId ?: "", false
+            )
+        } else {
+            shoppingListItemsAdapter?.resetSelection()
+        }
         bindingListDetails.pbLoadingIndicator.visibility = GONE
         bindingListDetails.btnCheckOut.visibility = VISIBLE
 
         // Present toast on BottomNavigationMenu if shopping list detail was opened from my list
         addItemToCartResponse.data?.get(0)?.let { addedToCartDatum ->
-            if (openFromMyList) {
+            if (openFromMyList && !isSwipeToAdd) {
                 (activity as? BottomNavigationActivity)?.apply {
                     onBackPressed()
                     if (addItemToCartResponse.data?.isNotEmpty() == true) {
@@ -968,7 +985,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         layoutParams?.bottomMargin = margin
     }
 
-    private fun executeAddToCart(items: ArrayList<ShoppingListItem>?) {
+    private fun executeAddToCart(items: ArrayList<ShoppingListItem>?, isSwipeToAdd : Boolean = false) {
         onAddToCartPreExecute()
         val selectedItems: MutableList<AddItemToCart> = ArrayList(0)
         for (item in items!!) {
@@ -995,7 +1012,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             FirebaseManagerAnalyticsProperties.SHOP_MY_LIST_ADD_TO_CART,
             activity
         )
-        mPostAddToCart = postAddItemToCart(ArrayList(selectedItems))
+        mPostAddToCart = postAddItemToCart(ArrayList(selectedItems), isSwipeToAdd)
     }
 
     fun manageSelectAllMenuVisibility() {
@@ -1202,7 +1219,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         )
     }
 
-    private fun postAddItemToCart(addItemToCart: ArrayList<AddItemToCart>): Call<AddItemToCartResponse> {
+    private fun postAddItemToCart(addItemToCart: ArrayList<AddItemToCart>, isSwipeToAdd: Boolean = false): Call<AddItemToCartResponse> {
         onAddToCartPreExecute()
         addedToCartFail(false)
         val postItemToCart = PostItemToCart()
@@ -1210,14 +1227,18 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             addItemToCart.toMutableList(),
             object : IResponseListener<AddItemToCartResponse> {
                 override fun onSuccess(response: AddItemToCartResponse?) {
+                    enableAdapterClickEvent(true)
                     addedToCartFail(false)
                     if (!isAdded || !isVisible) return
                     when (response?.httpCode) {
                         HTTP_OK -> onAddToCartSuccess(
                             response,
-                            getTotalItemQuantity(addItemToCart)
+                            getTotalItemQuantity(addItemToCart),
+                            isSwipeToAdd,
+                            addItemToCart
                         )
-                        AppConstant.HTTP_EXPECTATION_FAILED_417 -> {                         // Preferred Delivery Location has been reset on server
+                        AppConstant.HTTP_EXPECTATION_FAILED_417 -> {
+                            // Preferred Delivery Location has been reset on server
                             // As such, we give the user the ability to set their location again
                             if (response.response != null) confirmDeliveryLocation()
                         }
