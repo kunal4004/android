@@ -72,14 +72,8 @@ class OrderAgainViewModel @Inject constructor(
 
     fun onEvent(events: OrderAgainScreenEvents) {
         when (events) {
-            is OrderAgainScreenEvents.ProductItemCheckedChange -> {
-                onProductCheckedChange(events.isChecked, events.productItem)
-            }
-
-            is OrderAgainScreenEvents.ChangeProductQuantityBy -> {
-                onChangeProductQuantity(events.count, events.item)
-            }
-
+            is OrderAgainScreenEvents.ProductItemCheckedChange -> onProductCheckedChange(events.isChecked, events.productItem)
+            is OrderAgainScreenEvents.ChangeProductQuantityBy -> onChangeProductQuantity(events.count, events.item)
             OrderAgainScreenEvents.AddToCartClicked -> {
                 val items = orderList.filter { it.isSelected }.map {
                     it.inProgress = true
@@ -94,14 +88,10 @@ class OrderAgainViewModel @Inject constructor(
                 }
                 onAddToCartClicked(listOf(events.item.toAddItemToCart()), true)
             }
-
             is OrderAgainScreenEvents.ListItemRevealed -> addToRevealItems(events.item)
             is OrderAgainScreenEvents.ListItemCollapsed -> collapseRevealItems(events.item)
-
-            OrderAgainScreenEvents.SelectAllClick -> {
-                onSelectAllClick()
-            }
-
+            OrderAgainScreenEvents.SelectAllClick -> onSelectAllClick()
+            OrderAgainScreenEvents.RetryOrderAgain -> callOrderAgainApi()
             else -> {}
         }
     }
@@ -355,6 +345,7 @@ class OrderAgainViewModel @Inject constructor(
                             if (productIds.isEmpty()) {
                                 state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen())
                             } else {
+
                                 // get all product ids and make inventory call
                                 callInventoryApi(productIds)
                                 state.copy(

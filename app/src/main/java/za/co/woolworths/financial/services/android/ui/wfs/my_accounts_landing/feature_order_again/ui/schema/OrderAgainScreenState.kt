@@ -12,11 +12,13 @@ sealed class OrderAgainScreenState: Parcelable {
     data class ShowEmptyScreen(
         val icon: Int = R.drawable.empty_list_icon,
         val title: Int = R.string.order_again_empty_title,
-        val subTitle: Int = R.string.order_again_empty_desc
+        val subTitle: Int = R.string.order_again_empty_desc,
+        val actionText: Int = R.string.start_shopping
     ): OrderAgainScreenState()
     data class ShowErrorScreen(
         val icon: Int = R.drawable.ic_skip,
         val title: Int = R.string.unfortunately_something_went_wrong,
-        val subTitle: Int = R.string.order_again_error_desc
+        val subTitle: Int = R.string.order_again_error_desc,
+        val actionText: Int = R.string.retry
     ): OrderAgainScreenState()
 }

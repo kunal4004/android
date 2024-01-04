@@ -191,16 +191,20 @@ private fun OrderAgainStatelessScreen(
 
             is OrderAgainScreenState.ShowErrorScreen -> EmptyScreen(
                 Modifier.background(White),
+                icon = state.screenState.icon,
                 title = stringResource(id = state.screenState.title),
-                subTitle = stringResource(id = state.screenState.subTitle)
+                subTitle = stringResource(id = state.screenState.subTitle),
+                actionText = stringResource(id = state.screenState.actionText)
             ) {
-                onEvent(OrderAgainScreenEvents.StartShoppingClicked)
+                onEvent(OrderAgainScreenEvents.RetryOrderAgain)
             }
 
             is OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(
                 Modifier.background(White),
+                icon = state.screenState.icon,
                 title = stringResource(id = state.screenState.title),
-                subTitle = stringResource(id = state.screenState.subTitle)
+                subTitle = stringResource(id = state.screenState.subTitle),
+                actionText = stringResource(id = state.screenState.actionText)
             ) {
                 onEvent(OrderAgainScreenEvents.StartShoppingClicked)
             }
@@ -565,6 +569,7 @@ fun EmptyScreen(
     icon: Int = R.drawable.image_placeholder,
     title: String = "",
     subTitle: String = "",
+    actionText: String = "",
     onClick: () -> Unit
 ) {
 
@@ -599,7 +604,7 @@ fun EmptyScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
-            text = stringResource(id = R.string.start_shopping).uppercase()
+            text = actionText.uppercase()
         ) {
             onClick()
         }
