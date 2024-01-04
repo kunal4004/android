@@ -1625,6 +1625,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                     }
 
                                 try {
+                                    val scrollPosition = getScrollToPosition(productList)
+                                    if(scrollPosition != -1) {
+                                        binding.productsRecyclerView.layoutManager?.scrollToPosition(scrollPosition)
+                                    }
                                     mProductAdapter?.showQuantitySelector(recyclerViewViewHolderItems, cartItem)
                                 } catch (ex: IllegalStateException) {
                                     logException(ex)
@@ -1678,6 +1682,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         // hide progress bar
         binding.incCenteredProgress.root.visibility = GONE
         mProductAdapter?.resetQuickShopButton()
+    }
+
+    private fun getScrollToPosition(productList: ProductList): Int {
+            return mProductList?.indexOf(productList) ?: -1
     }
 
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
