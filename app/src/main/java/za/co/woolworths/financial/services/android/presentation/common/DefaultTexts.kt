@@ -203,6 +203,29 @@ fun OpenSansTitleText13(
 }
 
 @Composable
+fun OpenSansText12(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = Black,
+    maxLines: Int = Int.MAX_VALUE
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = TextStyle(
+            fontFamily = OpenSansFontFamily,
+            fontWeight = FontWeight.W400,
+            fontSize = 12.sp,
+            color = color,
+            textAlign = textAlign
+        ),
+        maxLines = maxLines,
+        overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis
+    )
+}
+
+@Composable
 fun OpenSansText14(
     modifier: Modifier = Modifier,
     text: String = "",

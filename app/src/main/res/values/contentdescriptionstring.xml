@@ -342,4 +342,5 @@
     <string name="cd_product_increase_quantity">productIncreaseQuantity</string>
     <string name="cd_options_menu">itemOptionsMenu</string>
     <string name="cd_product_decrease_quantity">productDecreaseQuantity</string>
+    <string name="cd_information_icon">Information Icon</string>
 </resources>
