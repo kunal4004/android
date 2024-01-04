@@ -274,7 +274,7 @@ class SubCategoryFragment :
                 else
                     FirebaseManagerAnalyticsProperties.PropertyValues.STANDARD_LANDING_PAGE
             )
-            val fragment = OrderAgainFragment().also {
+            val fragment = OrderAgainFragment().apply {
                 arguments = bundle
             }
             pushFragment(fragment)

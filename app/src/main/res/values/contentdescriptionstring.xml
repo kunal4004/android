@@ -336,4 +336,10 @@
     <string name="tips_and_tricks_image">tips_and_tricks_image</string>
     <string name="faq_title">faq_title</string>
     <string name="faq_description">faq_description</string>
+
+    <!-- Order Again -->
+    <string name="cd_product_checkbox" />
+    <string name="cd_product_increase_quantity">productIncreaseQuantity</string>
+    <string name="cd_options_menu">itemOptionsMenu</string>
+    <string name="cd_product_decrease_quantity">productDecreaseQuantity</string>
 </resources>

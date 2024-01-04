@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -134,15 +135,6 @@ fun OrderAgainScreen(
                 SpacerHeight16dp()
                 Divider(color = ColorD8D8D8)
             }
-        },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState
-            ) { data ->
-                SnackbarView(state.snackbarData) {
-                    onEvent(OrderAgainScreenEvents.SnackbarViewClicked)
-                }
-            }
         }
     ) {
 
@@ -156,79 +148,6 @@ fun OrderAgainScreen(
 
                 else -> viewModel.onEvent(event)
             }
-        }
-    }
-}
-
-@Composable
-fun SnackbarView(
-    snackbarDetails: SnackbarDetails,
-    onClick: () -> Unit
-) {
-    Snackbar(
-        modifier = Modifier
-            .padding(horizontal = 8.dp)
-            .height(40.dp),
-        containerColor = SnackbarBackground,
-        contentColor = White
-    ) {
-        Row(
-            Modifier
-                .fillMaxSize()
-                .height(40.dp)
-                .background(Color.Red)
-                .wrapContentHeight(Alignment.CenterVertically),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(White, RoundedCornerShape(12.dp))
-                    .wrapContentHeight(),
-                text = snackbarDetails.count.toString(),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontFamily = FuturaFontFamily,
-                    fontWeight = FontWeight.W600,
-                    fontSize = 10.sp,
-                    color = Black
-                )
-            )
-            /*SpacerWidthDp(width = 12.dp, Color.Transparent)
-            Column(Modifier.weight(1f)) {
-                FuturaTextH12(
-                    text = pluralStringResource(id = R.plurals.plural_add_to_cart,
-                        snackbarDetails.count, snackbarDetails.count
-                    ),
-                    color = White
-                )
-                if (snackbarDetails.showDesc) {
-                    SpacerHeight6dp(bgColor = Color.Transparent)
-                    FuturaTextH8(
-                        text = stringResource(
-                            id = R.string.dash_item_limit_message,
-                            snackbarDetails.maxItem
-                        ).uppercase(),
-                        color = White
-                    )
-                }
-            }*/
-//            FuturaTextH12(
-            Text(
-                modifier = Modifier.clickable {
-                    onClick()
-                },
-                fontWeight = FontWeight.W600,
-                color = White,
-                text = stringResource(id = R.string.view),
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontFamily = FuturaFontFamily,
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.End,
-                    letterSpacing = 1.sp
-                )
-            )
         }
     }
 }
@@ -509,7 +428,9 @@ fun ProductItemDetails(
             )
             SpacerWidth8dp()
             Icon(
-                modifier = Modifier.clickable {
+                modifier = Modifier
+                    .alpha( if(productItem.isSelected) 0.5f else 1f )
+                    .clickable(enabled = !productItem.isSelected) {
                     onEvent(OrderAgainScreenEvents.CopyItemToListClicked(productItem))
                 },
                 painter = painterResource(id = R.drawable.ic_option_menu),
