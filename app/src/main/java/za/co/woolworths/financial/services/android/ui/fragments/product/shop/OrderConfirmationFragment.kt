@@ -44,7 +44,7 @@ import za.co.woolworths.financial.services.android.presentation.addtolist.AddToL
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Cart
@@ -85,7 +85,7 @@ class OrderConfirmationFragment :
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
     private var isEndlessAisleJourney: Boolean? = false
-    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
+    private val dyChooseVariationViewModel: DyChooseVariationCallViewModel by viewModels()
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
