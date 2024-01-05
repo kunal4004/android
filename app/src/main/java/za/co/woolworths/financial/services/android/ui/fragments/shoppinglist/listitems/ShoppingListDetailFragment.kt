@@ -100,6 +100,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_SEARCH_TERM
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.REFRESH_SHOPPING_LIST_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
@@ -949,6 +950,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), result)
         }
 
+        listenerForUnsellable()
+
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            UpdateScreenLiveData.value=updateUnsellableLiveData
+        }
+
         setFragmentResultListener(REQUEST_KEY_CONFIRMATION_DIALOG) { _, bundle ->
             val result = bundle.getString(AppConstant.Keys.BUNDLE_KEY)
             val isCheckedDontAskAgain =
@@ -1161,6 +1168,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 openFromMyList = getBoolean(ARG_OPEN_FROM_MY_LIST, false)
             }
             setUpToolbar(listName)
+            listenerForUnsellable()
         }
     }
 
@@ -1492,6 +1500,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     removalGiftItemIds.add(item.Id)
                 }
             }
+        }
+    }
+    private fun listenerForUnsellable(){
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                UpdateScreenLiveData.value=updateUnsellableLiveData
+            }
+        }
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            UpdateScreenLiveData.value=updateUnsellableLiveData
+
         }
     }
 }

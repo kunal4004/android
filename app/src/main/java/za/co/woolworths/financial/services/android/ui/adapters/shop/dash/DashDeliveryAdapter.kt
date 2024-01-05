@@ -192,7 +192,8 @@ class DashDeliveryAdapter(
                     categoryList[position] as ProductCatalogue,
                     iProductListing,
                     dashLandingNavigationListener,
-                    recommendationViewModel
+                    recommendationViewModel,
+                    position
                 )
             }
             is LongBannerCarouselLayoutViewHolder -> {
@@ -388,7 +389,8 @@ class ProductCarouselLayoutViewHolder(val itemBinding: ItemLayoutProductCarousel
         productCatalogue: ProductCatalogue?,
         iProductListing: IProductListing,
         dashLandingNavigationListener: OnDashLandingNavigationListener,
-        recommendationViewModel: RecommendationViewModel
+        recommendationViewModel: RecommendationViewModel,
+        carouselPosition: Int
     ) {
         itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
         itemBinding.rvDashCategories?.apply {
@@ -396,7 +398,7 @@ class ProductCarouselLayoutViewHolder(val itemBinding: ItemLayoutProductCarousel
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = productCarouselAdapter
             productCatalogue?.let {
-                productCarouselAdapter.setData(it)
+                productCarouselAdapter.setData(it, carouselPosition)
             }
         }
     }

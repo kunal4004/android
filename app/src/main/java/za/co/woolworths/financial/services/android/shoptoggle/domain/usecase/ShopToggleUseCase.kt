@@ -43,6 +43,7 @@ class ShopToggleUseCase @Inject constructor(
         const val STANDARD_DELIVERY_ID = 1
         const val DASH_DELIVERY_ID = 2
         const val CNC_DELIVERY_ID = 3
+        const val DASH_DELIVERY_COST = "35"
     }
 
     fun validateLocationResponse(): ValidateLocationResponse? {
@@ -105,7 +106,7 @@ class ShopToggleUseCase @Inject constructor(
             dashModel.deliverySlotFood = onDemand?.firstAvailableFoodDeliveryTime ?: ""
         }
         val foodQuantity = onDemand?.quantityLimit?.foodMaximumQuantity
-        val deliveryPrice = onDemand?.firstAvailableFoodDeliveryCost
+        val deliveryPrice = onDemand?.firstAvailableFoodDeliveryCost ?: DASH_DELIVERY_COST
         dashModel.deliveryCost = "R $deliveryPrice.00"
         dashModel.foodQuantity = foodQuantity ?: 0
         //Prepare CNC Data

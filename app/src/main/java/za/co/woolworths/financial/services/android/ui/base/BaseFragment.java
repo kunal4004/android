@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -395,5 +396,8 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 			return (BottomNavigationActivity) activity;
 		}
 		return null;
+	}
+	public void setToolBarTitleUniqueID(String contentDescID){
+		mActivity.getToolbar().findViewById(R.id.tvToolbar).setContentDescription(contentDescID);
 	}
 }

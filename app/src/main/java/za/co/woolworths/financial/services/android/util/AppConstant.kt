@@ -157,6 +157,10 @@ class AppConstant {
         const val SCREEN_NAME_DELETE_LIST_PROGRESS_BAR = "Delete List Progress Bar Screen"
         const val SCREEN_NAME_DELETE_ITEM_CONFIRMATION = "Delete Item Confirmation Screen"
 
+        //out of stock availability details
+        const val STOCK_AVAILABILITY_MINUS1 = -1
+        const val STOCK_AVAILABILITY_0 = 0
+
 
 
         //Huawei Ratings
