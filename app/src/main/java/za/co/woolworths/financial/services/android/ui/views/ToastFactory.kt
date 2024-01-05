@@ -229,6 +229,7 @@ class ToastFactory {
             listName: String,
             hasGiftProduct: Boolean,
             count: Int,
+            title: String,
             onButtonClick: () -> Unit
         ): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
