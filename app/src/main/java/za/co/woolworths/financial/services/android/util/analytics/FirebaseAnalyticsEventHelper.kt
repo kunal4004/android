@@ -460,16 +460,22 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
-    fun sendAddToWishListOrderAgainEvent(items : List<AddToListRequest>) {
-        val newItems = items.map { it.toAnalyticItem(FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN).toBundle() }
-        val bundle = bundleOf(
-            FirebaseAnalytics.Param.CURRENCY to FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE,
-            FirebaseManagerAnalyticsProperties.PropertyNames.SHOPPING_LIST_NAME to FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN,
-            FirebaseAnalytics.Param.ITEMS to newItems.toTypedArray()
-        )
-        AnalyticsManager.logEvent(
-            FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, bundle
-        )
+    fun sendAddToWishListOrderAgainEvent(
+        items: List<AddToListRequest>,
+        copyToLists: ArrayList<ShoppingList>
+    ) {
+        copyToLists.forEach {
+            val newItems = items.map { it.toAnalyticItem(FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN).toBundle() }
+            val bundle = bundleOf(
+                FirebaseAnalytics.Param.CURRENCY to FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE,
+                FirebaseAnalytics.Param.ITEM_LIST_NAME to FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN,
+                FirebaseManagerAnalyticsProperties.PropertyNames.SHOPPING_LIST_NAME to it.listName,
+                FirebaseAnalytics.Param.ITEMS to newItems.toTypedArray()
+            )
+            AnalyticsManager.logEvent(
+                FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, bundle
+            )
+        }
     }
 
     object Utils {

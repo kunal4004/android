@@ -521,7 +521,7 @@ class OrderAgainViewModel @Inject constructor(
                     Status.SUCCESS -> {
 
                         //Firebase event
-                        FirebaseAnalyticsEventHelper.sendAddToWishListOrderAgainEvent(itemsToBeAdded)
+                        FirebaseAnalyticsEventHelper.sendAddToWishListOrderAgainEvent(itemsToBeAdded, copyToLists)
 
                         _orderAgainUiState.update {
                             val item = copyToLists.singleOrNull()
