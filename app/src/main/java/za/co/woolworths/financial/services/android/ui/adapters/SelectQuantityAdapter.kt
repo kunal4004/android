@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.SelectYourQuantityRowBinding
 import za.co.woolworths.financial.services.android.ui.adapters.holder.SelectQuantityViewHolder
 
-class SelectQuantityAdapter(private val clickListener: (Int) -> Unit) : RecyclerView.Adapter<SelectQuantityViewHolder>() {
+class SelectQuantityAdapter(private val clickListener: (Int) -> Unit) :
+    RecyclerView.Adapter<SelectQuantityViewHolder>() {
 
     private val quantityInStockList: MutableList<Int>? = mutableListOf()
 
@@ -15,13 +16,13 @@ class SelectQuantityAdapter(private val clickListener: (Int) -> Unit) : Recycler
         SelectQuantityViewHolder(
             SelectYourQuantityRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
+
     override fun getItemCount(): Int = quantityInStockList?.size ?: 0
 
     override fun onBindViewHolder(holder: SelectQuantityViewHolder, position: Int) {
         quantityInStockList?.get(position)?.let { quantity ->
-        if (position == quantityInStockList.size -1 ){
-            holder.itemBinding.quantitySelectorDevider.visibility = View.GONE
-        }
+            holder.itemBinding.quantitySelectorDevider.visibility =
+                if (quantity == 1) View.GONE else View.VISIBLE
             holder.setItem(quantity, clickListener)
         }
     }

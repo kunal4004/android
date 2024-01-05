@@ -78,12 +78,13 @@ object AppConfigSingleton {
     var endlessAisle: EndlessAisle? = null
     @JvmStatic
     var searchApiSettings: SearchApiSettings? = null
-    var glassBox: GlassBox? = null
+
     var bnplConfig: BnplConfig? = null
     var connectOnline: ConnectOnline? = null
 
     @JvmStatic
     var dynamicYieldConfig : DynamicYieldConfig? = null
+    var outOfStock: OutOfStock? = null
 
     init {
         initialiseFromCache()
@@ -250,12 +251,6 @@ object AppConfigSingleton {
                 ratingsAndReviews = this
             }
 
-            appConfig.glassBox?.apply {
-                minimumSupportedAppBuildNumber.let {
-                    isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
-                    glassBox = this
-                }
-            }
             appConfig.bnplConfig?.apply {
                 minimumSupportedAppBuildNumber.let {
                     isBnplRequiredInThisVersion =
@@ -276,6 +271,14 @@ object AppConfigSingleton {
 
             appConfig.connectOnline?.apply {
                 connectOnline = this
+            }
+
+            appConfig.outOfStock?.apply {
+                minimumSupportedAppBuildNumber.let {
+                    isOutOfStockEnabled =
+                        Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    outOfStock = this
+                }
             }
         }
     }
