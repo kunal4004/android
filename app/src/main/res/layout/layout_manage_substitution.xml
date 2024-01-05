@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nestedScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <CheckBox
+            android:id="@+id/rbShopperChoose"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="@dimen/eighteen_dp"
+            android:padding="@dimen/seven_dp"
+            android:button="@drawable/address_selector_background"
+            android:checked="false"
+            android:gravity="center"
+            android:saveEnabled="false"
+            app:layout_constraintEnd_toStartOf="@+id/txtShopperChoose"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtShopperChoose"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/opensans_regular"
+            android:lineSpacingExtra="@dimen/_2sdp"
+            android:maxLines="1"
+            android:text="@string/substitute_default"
+            android:textColor="@color/black"
+            android:textSize="@dimen/thirteen_sp"
+            app:layout_constraintBottom_toBottomOf="@+id/rbShopperChoose"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/rbShopperChoose"
+            app:layout_constraintTop_toTopOf="@+id/rbShopperChoose" />
+
+
+        <CheckBox
+            android:id="@+id/rbOwnSubstitute"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="@dimen/eighteen_dp"
+            android:button="@drawable/address_selector_background"
+            android:checked="false"
+            android:gravity="center"
+            android:saveEnabled="false"
+            android:padding="@dimen/seven_dp"
+            android:layout_marginTop="@dimen/eighteen_dp"
+            app:layout_constraintEnd_toStartOf="@+id/tvShopperChoose"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rbShopperChoose" />
+
+        <TextView
+            android:id="@+id/tvShopperChoose"
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/opensans_regular"
+            android:text="@string/choose_substitute"
+            android:textColor="@color/black"
+            android:textSize="@dimen/thirteen_sp"
+            app:layout_constraintBottom_toBottomOf="@+id/rbOwnSubstitute"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/rbOwnSubstitute"
+            app:layout_constraintTop_toTopOf="@+id/rbOwnSubstitute" />
+
+        <include
+            android:id="@+id/list_substitute"
+            layout="@layout/layout_substitute_list"
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvShopperChoose" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

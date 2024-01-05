@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.cart.view.CartFragment
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
@@ -42,6 +43,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Con
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.network.validatestoremodel.ValidateStoreResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
@@ -52,6 +54,8 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
@@ -125,6 +129,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
         binding.addFragmentListner()
         binding.moveToTabBeforeApiCalls(deliveryType)
         binding.initView()
+        addObserver()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -456,7 +461,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             }
 
             Delivery.CNC.name -> {
-                validateLocationResponse?.validatePlace?.stores?.forEach {
+                WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores?.forEach {
                     if (it.storeId.equals(mStoreId)) {
                         unSellableCommerceItems = it.unSellableCommerceItems
                     }
@@ -531,13 +536,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             KotlinUtils.let {
                 it.placeId = placeId
                 it.isLocationPlaceIdSame = oldLocationPlaceId?.equals(savedPlaceId)
-
-                if (it.isLocationPlaceIdSame == false) {
-                    KotlinUtils.isDeliveryLocationTabCrossClicked = false
-                    KotlinUtils.isCncTabCrossClicked = false
-                    KotlinUtils.isDashTabCrossClicked = false
-                    KotlinUtils.isStoreSelectedForBrowsing = false
-                }
             }
         } else {
             val anonymousUserPlaceId =
@@ -545,12 +543,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             KotlinUtils.let {
                 it.placeId = placeId
                 it.isLocationPlaceIdSame = oldLocationPlaceId?.equals(anonymousUserPlaceId)
-                if (it.isLocationPlaceIdSame == false) {
-                    KotlinUtils.isDeliveryLocationTabCrossClicked = false
-                    KotlinUtils.isCncTabCrossClicked = false
-                    KotlinUtils.isDashTabCrossClicked = false
-                    KotlinUtils.isStoreSelectedForBrowsing = false
-                }
             }
         }
 
@@ -581,7 +573,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     mStoreId,
                     validateLocationResponse?.validatePlace?.stores
                 )
-            KotlinUtils.isStoreSelectedForBrowsing = false
         }
 
         WoolworthsApplication.setValidatedSuburbProducts(
@@ -629,7 +620,6 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                                 getLiquorImageUrl()
                             )
                         }
-                    checkoutActivityIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     activity?.apply {
                         startActivityForResult(
                             checkoutActivityIntent,
@@ -981,6 +971,10 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
 
                             KotlinUtils.placeId =
                                 validateLocationResponse?.validatePlace?.placeDetails?.placeId
+
+                            KotlinUtils.placeId?.let { placeId -> mStoreId?.let { storeId ->
+                                confirmAddressViewModel.queryValidateStoreInventory(placeId, storeId) } }
+
                             val nickname =
                                 validateLocationResponse?.validatePlace?.placeDetails?.nickname
 
@@ -1255,6 +1249,37 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                         R.string.food_fashion_beauty_and_home_products_available,
                         collectionFeeText.toString()
                     ) else bindString(R.string.empty)
+            }
+        }
+    }
+    private fun addObserver() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            confirmAddressViewModel.validateStoreInventoryData.collectLatest { validatePlaceResponse ->
+                with(validatePlaceResponse) {
+                    renderLoading {
+                        if (isLoading) {
+                            binding.progressBar.visibility = View.VISIBLE
+                        } else
+                            binding.progressBar.visibility = View.GONE
+                    }
+                    renderSuccess {
+                        setBrowsingDataInformation(output)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setBrowsingDataInformation(validateStoreResponse: ValidateStoreResponse) {
+        val browsingStoreList = validateStoreResponse?.validatePlace?.stores
+        if (!browsingStoreList.isNullOrEmpty()) {
+            val storeData = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
+                    ?: WoolworthsApplication.getValidatePlaceDetails()?.stores
+            storeData?.forEach { listStore ->
+                if (listStore.storeId == browsingStoreList[0].storeId) {
+                    KotlinUtils.setCncStoreValidateResponse(browsingStoreList[0], listStore)
+                    return@forEach
+                }
             }
         }
     }

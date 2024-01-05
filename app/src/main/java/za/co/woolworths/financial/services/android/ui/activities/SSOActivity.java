@@ -1,5 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import static za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL;
+import static za.co.woolworths.financial.services.android.util.Utils.IDENTIFY;
+import static za.co.woolworths.financial.services.android.util.Utils.IDENTIFY_V1;
+import static za.co.woolworths.financial.services.android.util.Utils.LOGIN;
+import static za.co.woolworths.financial.services.android.util.Utils.LOGIN_V1;
+import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_PAGE;
+import static za.co.woolworths.financial.services.android.util.Utils.OTHER;
+import static za.co.woolworths.financial.services.android.util.Utils.SIGNUP;
+import static za.co.woolworths.financial.services.android.util.Utils.SIGNUP_V1;
+
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,16 +39,15 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.awfs.coordination.R;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.net.URLDecoder;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,9 +63,25 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl;
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig;
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel;
+import za.co.woolworths.financial.services.android.ui.wfs.common.NetworkUtilsKt;
+import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -128,6 +153,13 @@ public class SSOActivity extends WebViewActivity {
 	private final String nonce;
 	private String stsParams;
 	private String forgotPassword;
+	private String dyServerId = null;
+	private String dySessionId = null;
+	public static String IPAddress = NetworkUtilsKt.getIpAddress(WoolworthsApplication.getInstance(),WoolworthsApplication.getInstance());
+	private String jwt = null;
+	private DyChangeAttributeViewModel dyReportEventViewModel;
+	private NetworkConfig config;
+	private DyHomePageViewModel dyHomePageViewModel;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -147,6 +179,19 @@ public class SSOActivity extends WebViewActivity {
 		}
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 		showProfileProgressBar();
+		config = new NetworkConfig(new AppContextProviderImpl());
+		dyReportEventViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
+		dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
+	}
+
+	private void prepareDynamicYieldRequestEvent() {
+		ArrayList dyData = new ArrayList<>();
+		Device device = new Device(Utils.IPAddress, config.getDeviceModel());
+		Page page = new Page(dyData, MOBILE_PAGE, OTHER, null,null);
+		Context context = new Context(device,page, DY_CHANNEL,null);
+		Options options = new Options(false);
+		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
+		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
 	}
 
 	// Display progress bar as soon as user land on profile
@@ -538,6 +583,9 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
+			if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+				prepareDynamicYieldRequestEvent();
+			}
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -618,14 +666,24 @@ public class SSOActivity extends WebViewActivity {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					extractFormDataAndCloseSSOIfNeeded();
+					extractFormDataAndCloseSSOIfNeeded(String.valueOf(SSOActivity.this.path));
 				}
 			});
 
 		}
 	}
 
-	private void extractFormDataAndCloseSSOIfNeeded(){
+	private void extractFormDataAndCloseSSOIfNeeded(String ssoActivityEvent){
+		if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
+			dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
+		} else {
+			dyServerId = "";
+		}
+		if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null) {
+			dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID);
+		} else {
+			dySessionId = "";
+		}
 		SSOActivity.this.webView.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 			@Override
 			public void onReceiveValue(String value) {
@@ -644,9 +702,10 @@ public class SSOActivity extends WebViewActivity {
 				String webviewState = list.get(0);
 
 				Intent intent = new Intent();
+				JWTDecodedModel jwtDecodedModel = null;
 
 				if (state.equals(webviewState)) {
-					String jwt = list.get(1);
+					jwt = list.get(1);
 					intent.putExtra(SSOActivity.TAG_JWT, jwt);
 					//Save JWT
 					SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_TOKEN);
@@ -658,7 +717,11 @@ public class SSOActivity extends WebViewActivity {
 					}
 
 					//Trigger Firebase Tag.
-					JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
+					 jwtDecodedModel = SessionUtilities.getInstance().getJwt();
+					/*if (jwtDecodedModel != null) {
+						String email = jwtDecodedModel.email.get(0);
+						Log.d(TAG, "onReceiveValue: mailid" +email);
+					}*/
 					Map<String, String> arguments = new HashMap<>();
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments, SSOActivity.this);
@@ -678,9 +741,8 @@ public class SSOActivity extends WebViewActivity {
 						} catch (NullPointerException ex) {
 							closeActivity();
 						}
-					}
-					else {
-						setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
+					} else {
+						setSignInSuccessful(intent);
 						startOCDashChatServices();
 						setStSParameters();
 					}
@@ -689,8 +751,105 @@ public class SSOActivity extends WebViewActivity {
 					setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 					setStSParameters();
 				}
+				if (ssoActivityEvent == "SIGNIN") {
+					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+						String hexvalue = null;
+						if (jwtDecodedModel != null) {
+							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						}
+						prepareDySigninRequestEvent(hexvalue);
+						prepareDyIdentifyUserRequestEvent(hexvalue);
+					}
+
+				}else if (ssoActivityEvent == "REGISTER") {
+					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+						String hexvalue = null;
+						if (jwtDecodedModel != null) {
+							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						}
+						prepareDyRegisterRequestEvent(hexvalue);
+						prepareDyIdentifyUserRequestEvent(hexvalue);
+					}
+				}
 			}
 		});
+	}
+
+	private void setSignInSuccessful(Intent intent) {
+		AuthenticateUtils.Companion.enableBiometricForCurrentSession(true);
+		setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
+	}
+
+	private String sha256Value(String s) {
+		try{
+			final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			final byte[] hash = digest.digest(s.getBytes("UTF-8"));
+			final StringBuilder hexString = new StringBuilder();
+			for (int i = 0; i < hash.length; i++) {
+				final String hex = Integer.toHexString(0xff & hash[i]);
+				if(hex.length() == 1)
+					hexString.append('0');
+				hexString.append(hex);
+			}
+			return hexString.toString();
+		} catch(Exception ex){
+			throw new RuntimeException(ex);
+		}
+	}
+
+	private void prepareDySigninRequestEvent(String hashMail)  {
+		User user = new User(dyServerId,dyServerId);
+		Session session = new Session(dySessionId);
+		Device device = new Device(IPAddress,config.getDeviceModel());
+		Context context = new Context(device,null, DY_CHANNEL,null);
+		Properties properties = new Properties(null,null,LOGIN_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,LOGIN,properties);
+		ArrayList<Event> eventArrayList = new ArrayList<>();
+		eventArrayList.add(event);
+		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
+				context,
+				eventArrayList,
+				session,
+				user
+		);
+		dyReportEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
+
+	}
+
+	private void prepareDyIdentifyUserRequestEvent(String hashMail) {
+		User user = new User(dyServerId,dyServerId);
+		Session session = new Session(dySessionId);
+		Device device = new Device(IPAddress, config.getDeviceModel());
+		Context context = new Context(device,null, DY_CHANNEL,null);
+		Properties properties = new Properties(null,null,IDENTIFY_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,IDENTIFY,properties);
+		ArrayList<Event> eventArrayList = new ArrayList<>();
+		eventArrayList.add(event);
+		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
+				context,
+				eventArrayList,
+				session,
+				user
+		);
+		dyReportEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
+	}
+
+	private void prepareDyRegisterRequestEvent(String hashMail) {
+		User user = new User(dyServerId,dyServerId);
+		Session session = new Session(dySessionId);
+		Device device = new Device(IPAddress, config.getDeviceModel());
+		Context context = new Context(device,null, DY_CHANNEL,null);
+		Properties properties = new Properties(null,null,SIGNUP_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
+		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,SIGNUP,properties);
+		ArrayList<Event> eventArrayList = new ArrayList<>();
+		eventArrayList.add(event);
+		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
+				context,
+				eventArrayList,
+				session,
+				user
+		);
+		dyReportEventViewModel.createDyChangeAttributeRequest(prepareLoginDYRequestEvent);
 	}
 
 	private void setStSParameters() {
@@ -805,7 +964,7 @@ public class SSOActivity extends WebViewActivity {
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
-			setResult(SSOActivityResult.SUCCESS.rawValue(), data);
+			setSignInSuccessful(data);
 			setStSParameters();
 		}
 	}

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.databinding.OutOfStockMessageDialogBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 
 class OutOfStockMessageDialogFragment : WBottomSheetDialogFragment() {
 
@@ -44,6 +45,8 @@ class OutOfStockMessageDialogFragment : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Firebase event to be triggered when displaying the out of stock dialog
+        FirebaseAnalyticsEventHelper.outOfStock()
         with(binding) {
             description.text = outOfStockMessage
             btnOk.setOnClickListener {
@@ -56,5 +59,4 @@ class OutOfStockMessageDialogFragment : WBottomSheetDialogFragment() {
         super.onDismiss(dialog)
         listener?.onOutOfStockDialogDismiss()
     }
-
 }

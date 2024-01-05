@@ -32,6 +32,7 @@ sealed interface CommonItem : ParentAccountModel {
         CommonItem
 
     data class OfferItem(
+        val key : String,
         val data: MyOfferData,
         val properties: OfferItemViewColor,
         val automationLocatorKey: String,

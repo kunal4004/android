@@ -1,13 +1,27 @@
 package za.co.woolworths.financial.services.android.ui.wfs.component.pull_to_refresh
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
@@ -17,7 +31,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight12dp
-import za.co.woolworths.financial.services.android.ui.wfs.component.rotationAnimation
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.pull_to_refresh_box_icon
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.pull_to_refresh_box_row
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.conditional
@@ -55,7 +68,7 @@ private fun PullToRefreshIndicator(
     val refreshTriggerPx = with(LocalDensity.current) { refreshTriggerDistance.toPx() }
     val indicatorSize = Dimens.thirty_six_dp
     val indicatorHeightPx = with(LocalDensity.current) { indicatorSize.toPx() }
-    val rotation: Float
+    var rotation by remember { mutableStateOf(0f) }
     val scaleFraction: Float
     val alphaFraction: Float
     if (!state.isRefreshing) {
@@ -65,7 +78,18 @@ private fun PullToRefreshIndicator(
         scaleFraction = LinearOutSlowInEasing.transform(progress)
         alphaFraction = progress
     } else {
-        rotation = rotationAnimation()
+        val transition = rememberInfiniteTransition(label = "")
+        val rotationAnimation by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = 1332, // 1 and 1/3 second
+                    easing = LinearEasing
+                )
+            ), label = ""
+        )
+        rotation = rotationAnimation
         scaleFraction = 1f
         alphaFraction = 1f
     }
@@ -81,6 +105,7 @@ private fun PullToRefreshIndicator(
                 scaleX = scaleFraction
                 scaleY = scaleFraction
                 alpha = alphaFraction
+                clip = false
             },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
@@ -92,7 +117,7 @@ private fun PullToRefreshIndicator(
                 modifier = Modifier
                     .size(indicatorSize)
                     .testAutomationTag(pull_to_refresh_box_icon)
-                    .rotate(rotation)
+                    .graphicsLayer(rotationZ = rotation)
             )
             SpacerHeight12dp()
         }

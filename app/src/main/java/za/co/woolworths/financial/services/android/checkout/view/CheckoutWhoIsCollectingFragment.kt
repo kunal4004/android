@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
+import za.co.woolworths.financial.services.android.util.isAValidSouthAfricanNumber
 import java.util.regex.Pattern
 
 /**
@@ -252,25 +253,31 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
 
     private fun isErrorInputFields(listOfInputFields: List<View>): Boolean {
         var isEmptyError = false
-        if (binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText?.text.toString().trim()
-                .isNotEmpty() && binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText?.text.toString().trim().length < 10
-        ) {
-            isEmptyError = true
-            showErrorPhoneNumber()
-        } else
-            binding.whoIsCollectingDetailsLayout.cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
 
-        listOfInputFields.forEach {
-            if (it is EditText) {
-                if (it.text.toString().trim().isEmpty()) {
-                    isEmptyError = true
-                    if (it.id == R.id.recipientNameEditText) {
-                        binding.whoIsCollectingDetailsLayout.recipientNameErrorMsg.text = bindString(R.string.recipient_name_error_msg)
+        binding.whoIsCollectingDetailsLayout.apply {
+
+            if (!isAValidSouthAfricanNumber(
+                    cellphoneNumberEditText.text.toString().trim()
+                )
+            ) {
+                isEmptyError = true
+                showErrorPhoneNumber(R.string.enter_valid_sa_number)
+            }
+
+            listOfInputFields.forEach {
+                if (it is EditText) {
+                    if (it.text.toString().trim().isEmpty()) {
+                        isEmptyError = true
+                        if (it.id == R.id.recipientNameEditText) {
+                          recipientNameErrorMsg.text = bindString(R.string.recipient_name_error_msg)
+                        }
+                        showErrorInputField(it, View.VISIBLE)
                     }
-                    showErrorInputField(it, View.VISIBLE)
                 }
             }
+
         }
+
         return isEmptyError
     }
 
@@ -409,10 +416,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.
         }
     }
 
-    private fun showErrorPhoneNumber() {
+    private fun showErrorPhoneNumber(errorMsg:Int) {
         binding.whoIsCollectingDetailsLayout.cellphoneNumberEditText.setBackgroundResource(R.drawable.input_error_background)
         binding.whoIsCollectingDetailsLayout.cellphoneNumberErrorMsg?.visibility = View.VISIBLE
-        binding.whoIsCollectingDetailsLayout.cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
+        binding.whoIsCollectingDetailsLayout.cellphoneNumberErrorMsg.text = bindString(errorMsg)
         showAnimationErrorMessage(
             binding.whoIsCollectingDetailsLayout.cellphoneNumberErrorMsg,
             View.VISIBLE,

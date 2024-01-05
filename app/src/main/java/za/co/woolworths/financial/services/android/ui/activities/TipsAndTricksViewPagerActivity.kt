@@ -1,4 +1,4 @@
- package za.co.woolworths.financial.services.android.ui.activities
+package za.co.woolworths.financial.services.android.ui.activities
 
 import android.app.Activity
 import android.content.Intent
@@ -12,19 +12,26 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivityTipsAndTricsViewPagerBinding
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.APPLY_NOW_STATE
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.DEEP_LINKING_PARAMS
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.MY_ACCOUNT_RESPONSE
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.setContentDescription
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.getAccessibilityIdWithAppendedString
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import kotlin.properties.Delegates
 
- class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener, ViewPager.OnPageChangeListener {
+class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener, ViewPager.OnPageChangeListener {
 
     private lateinit var binding: ActivityTipsAndTricsViewPagerBinding
     private var tricksViewPagerAdapter: TipsAndTricksViewPagerAdapter? = null
@@ -35,6 +42,7 @@ import kotlin.properties.Delegates
     private var mCurrentItem: Int = 0
     private var accountsResponse: AccountsResponse? = null
     private var availableAccounts: ArrayList<String> = arrayListOf()
+    private val statementCCRedirect = "{\"productGroupCode\":\"CC\",\"feature\":\"Accounts Product Statement\"}"
 
     companion object {
         const val RESULT_OK_PRODUCTS = 123
@@ -69,6 +77,7 @@ import kotlin.properties.Delegates
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
             setHomeAsUpIndicator(R.drawable.back24)
+            setHomeActionContentDescription(getString(R.string.back_button))
         }
     }
 
@@ -87,7 +96,7 @@ import kotlin.properties.Delegates
     private fun ActivityTipsAndTricsViewPagerBinding.bindDataToViews() {
         mCurrentItem = intent.getIntExtra("position", 0)
         if (intent.hasExtra("accounts"))
-            accountsResponse = Gson().fromJson(intent.extras!!.getString("accounts"), AccountsResponse::class.java)
+            accountsResponse = Gson().fromJson(intent.extras?.getString("accounts"), AccountsResponse::class.java)
         tricksViewPagerAdapter = TipsAndTricksViewPagerAdapter(this@TipsAndTricksViewPagerActivity)
         viewPager.adapter = tricksViewPagerAdapter
         viewPager.currentItem = mCurrentItem
@@ -106,7 +115,7 @@ import kotlin.properties.Delegates
             }
             R.id.featureActionButton -> {
                 when (binding.viewPager?.currentItem) {
-                //NAVIGATION
+                    //NAVIGATION
                     0 -> {
                         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
                             setResult(RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS)
@@ -115,22 +124,22 @@ import kotlin.properties.Delegates
                         }
                         onBackPressed()
                     }
-                //BARCODE SCAN
+                    //BARCODE SCAN
                     1 -> {
                         val openBarcodeActivity = Intent(this, BarcodeScanActivity::class.java)
                         startActivityForResult(openBarcodeActivity, REQUEST_CODE_BARCODE_ACTIVITY)
                         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                     }
-                //DELIVERY LOCATION
+                    //DELIVERY LOCATION
                     4 -> {
                         presentEditDeliveryLocation()
                     }
-                //VOUCHERS
+                    //VOUCHERS
                     5 -> {
                         setResult(RESULT_OK_REWARDS)
                         onBackPressed()
                     }
-                //MY ACCOUNTS
+                    //MY ACCOUNTS
                     6 -> {
                         if (SessionUtilities.getInstance().isUserAuthenticated) {
                             presentAccounts()
@@ -138,11 +147,11 @@ import kotlin.properties.Delegates
                             redirectToMyAccountsCardsActivity(ApplyNowState.STORE_CARD)
                         }
                     }
-                //STATEMENTS
+                    //STATEMENTS
                     7 -> {
                         presentAccountStatements()
                     }
-                //SHOPPING LIST
+                    //SHOPPING LIST
                     8 -> {
                         presentShoppingList()
                     }
@@ -171,7 +180,7 @@ import kotlin.properties.Delegates
                 0->{
                     featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_get_shopping) else titles?.get(position)
                     featureActionButton?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_view_cart) else actionButtonTexts?.get(position)
-                    featureDescription?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation_sign_in) else descriptions?.get(position)
+                    featureDescription?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation) else descriptions?.get(position)
                 }
                 2, 3 -> {
                     featureActionButton?.visibility = View.INVISIBLE
@@ -188,9 +197,14 @@ import kotlin.properties.Delegates
                 7 -> {
                     featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_access_your_statements) else titles?.get(position)
                     featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && accountsResponse != null && ((getAvailableAccounts().contains(AccountsProductGroupCode.STORE_CARD.groupCode))
-                                    || getAvailableAccounts().contains(AccountsProductGroupCode.PERSONAL_LOAN.groupCode))) View.VISIBLE else View.INVISIBLE
+                                || getAvailableAccounts().contains(AccountsProductGroupCode.PERSONAL_LOAN.groupCode))) View.VISIBLE else View.INVISIBLE
                 }
+
             }
+            featureTitle.contentDescription= featureTitle.text.toString().getAccessibilityIdWithAppendedString(featureTitle.text.toString(), getString(R.string.text))
+            featureDescription.contentDescription= featureTitle.text.toString().getAccessibilityIdWithAppendedString(featureTitle.text.toString(), getString(R.string.description))
+            featureIcon.contentDescription = featureTitle.text.toString().getAccessibilityIdWithAppendedString(featureTitle.text.toString(), getString(R.string.image_icon))
+            featureActionButton.contentDescription = featureTitle.text.toString().getAccessibilityIdWithAppendedString(featureTitle.text.toString(), getString(R.string.button))
         }
     }
 
@@ -263,14 +277,16 @@ import kotlin.properties.Delegates
         }
     }
 
-     private fun presentAccountStatements() {
-         availableAccounts = getAvailableAccounts()
-         redirectToAccountSignInActivity( when(AccountsProductGroupCode.getEnum(availableAccounts[0])){
-             AccountsProductGroupCode.STORE_CARD -> ApplyNowState.STORE_CARD
-             AccountsProductGroupCode.PERSONAL_LOAN -> ApplyNowState.PERSONAL_LOAN
-             else -> ApplyNowState.STORE_CARD
-         })
-     }
+    private fun presentAccountStatements() {
+        val (sc, pl) = AccountsProductGroupCode.STORE_CARD.groupCode to AccountsProductGroupCode.PERSONAL_LOAN.groupCode
+        val productGroupCode = when {
+            sc in availableAccounts -> sc
+            pl in availableAccounts -> pl
+            else -> null
+        }
+        redirectToStatement(productGroupCode)
+
+    }
 
     private fun redirectToMyAccountLandingPage(position: Int) {
         val intent = Intent(this, MyAccountActivity::class.java)
@@ -285,27 +301,69 @@ import kotlin.properties.Delegates
     private fun getAvailableAccounts(): ArrayList<String> {
         availableAccounts.clear()
         accountsResponse?.accountList?.forEach {
-            it.productGroupCode?.toUpperCase()?.let { it1 -> availableAccounts.add(it1) }
+            it.productGroupCode?.uppercase()?.let { it1 -> availableAccounts.add(it1) }
         }
         return availableAccounts
     }
 
-     private fun redirectToMyAccountsCardsActivity(applyNowState: ApplyNowState) {
-         val intent = Intent(this@TipsAndTricksViewPagerActivity, ApplyNowActivity::class.java)
-         val bundle = Bundle()
-         bundle.putSerializable("APPLY_NOW_STATE", applyNowState)
-         bundle.putString("ACCOUNT_INFO", Gson().toJson(accountsResponse))
-         intent.putExtras(bundle)
-         startActivity(intent)
-         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-     }
+    private fun redirectToMyAccountsCardsActivity(applyNowState: ApplyNowState) {
+        val intent = Intent(this@TipsAndTricksViewPagerActivity, ApplyNowActivity::class.java)
+        val bundle = Bundle()
+        bundle.putSerializable("APPLY_NOW_STATE", applyNowState)
+        bundle.putString("ACCOUNT_INFO", Gson().toJson(accountsResponse))
+        intent.putExtras(bundle)
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+    }
 
-     private fun redirectToAccountSignInActivity(applyNowState: ApplyNowState) {
-         val intent = Intent(this@TipsAndTricksViewPagerActivity, AccountSignedInActivity::class.java)
-         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState)
-         intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(accountsResponse))
-         startActivity(intent)
-         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-     }
+    private fun redirectToStatement(productGroupCode: String?) {
+        navigateToStatementActivity(productGroupCode)
+    }
 
- }
+    private fun findAccountByProductGroupCode(productGroupCode: String): Account? {
+        return accountsResponse?.accountList?.firstOrNull {
+            it.productGroupCode?.equals(productGroupCode, ignoreCase = true) == true
+        }
+    }
+
+    fun navigateToStatementActivity(productGroupCode: String?) {
+        productGroupCode?:return
+        val applyNowState = when(AccountsProductGroupCode.getEnum(productGroupCode)) {
+            AccountsProductGroupCode.STORE_CARD -> ApplyNowState.STORE_CARD
+            AccountsProductGroupCode.PERSONAL_LOAN -> ApplyNowState.PERSONAL_LOAN
+            else -> null
+        }
+        val product = findAccountByProductGroupCode(productGroupCode = productGroupCode)
+        val openStatement = Intent(this, StatementActivity::class.java)
+        openStatement.putExtra(ChatFragment.ACCOUNTS, Gson().toJson(Pair(applyNowState, product)))
+        startActivity(openStatement)
+        statementsEvent(this@TipsAndTricksViewPagerActivity, applyNowState = applyNowState)
+        overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+    }
+
+    private fun statementsEvent(activity: Activity?,applyNowState: ApplyNowState?) {
+        when (applyNowState) {
+            ApplyNowState.STORE_CARD -> {
+                activity?.apply {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS,
+                        this
+                    )
+                }
+
+            }
+
+            ApplyNowState.PERSONAL_LOAN -> {
+                activity?.apply {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS,
+                        this
+                    )
+                }
+            }
+
+            else -> Unit
+        }
+    }
+
+}

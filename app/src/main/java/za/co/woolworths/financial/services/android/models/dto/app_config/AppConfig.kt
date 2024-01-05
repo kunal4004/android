@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.models.dto.app_config // ktlint-disable package-name
 
+import DynamicYieldConfig
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.models.ConnectOnline
+import za.co.woolworths.financial.services.android.models.OutOfStock
 import za.co.woolworths.financial.services.android.models.SearchApiSettings
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
@@ -48,9 +50,13 @@ data class AppConfig(
     var lowStockIndicator: ConfigLowStock?,
     var brandLandingPage: BrandLandingPage?,
     var toolTipSettings: TooltipSettings?,
+    var enhanceSubstitution: EnhanceSubstitution?,
+    var endlessAisle: EndlessAisle?,
     var ratingsAndReviews: RatingsAndReviews?,
-    var glassBox: GlassBox?,
+
     var bnplConfig: BnplConfig?,
     var searchApiSettings: SearchApiSettings?,
-    var connectOnline: ConnectOnline?
+    var dynamicYieldConfig: DynamicYieldConfig?,
+    var connectOnline: ConnectOnline?,
+    var outOfStock: OutOfStock?
 ) : Parcelable

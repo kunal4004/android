@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatCustomerInfo
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
@@ -129,7 +130,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
                         ApplyNowState.STORE_CARD -> isChatVisibleForAccountProductsLanding(applyNowState) &&
                                 when (activity) {
-                                    is AccountSignedInActivity -> false
+                                    is StoreCardActivity,is AccountSignedInActivity -> false
                                     is PayMyAccountActivity -> !storeCard.paymentOptions && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                                     is WTransactionsActivity -> !storeCard.transactions && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                                     is AbsaStatementsActivity, is StatementActivity -> !storeCard.statements && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
@@ -163,7 +164,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
                             is AbsaStatementsActivity, is StatementActivity -> personalLoan.statements = true  && isAccountNotChargeOff(AccountsProductGroupCode.PERSONAL_LOAN)
                         }
                         ApplyNowState.STORE_CARD -> when (activity) {
-                            is AccountSignedInActivity -> isChatVisibleForAccountProductsLanding(applyNowState) && storeCard.landing
+                            is StoreCardActivity,is AccountSignedInActivity -> isChatVisibleForAccountProductsLanding(applyNowState) && storeCard.landing
                             is PayMyAccountActivity -> storeCard.paymentOptions = true  && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                             is WTransactionsActivity -> storeCard.transactions = true  && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                             is AbsaStatementsActivity, is StatementActivity -> storeCard.statements = true && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
@@ -235,7 +236,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
             is MyAccountActivity, is BottomNavigationActivity -> chatConfig?.accountsLanding
 
-            is AccountSignedInActivity -> when (applyNowState) {
+            is StoreCardActivity, is AccountSignedInActivity -> when (applyNowState) {
                 ApplyNowState.STORE_CARD -> chatConfig?.storeCard?.landing
                 ApplyNowState.PERSONAL_LOAN -> chatConfig?.personalLoan?.landing
                 ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> chatConfig?.creditCard?.landing

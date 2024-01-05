@@ -9,6 +9,7 @@ import com.awfs.coordination.databinding.RewardVipExclusiveFragmentBinding
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -34,6 +35,21 @@ class VIPExclusiveFragment : Fragment(R.layout.reward_vip_exclusive_fragment) {
                     }
                 }
             }
+            WRewardUniqueLocatorsHelper.setVipExclusiveFragLocators(tvVipExclusiveTitle
+            ,imVIPFlash
+            ,tvVIPFlashDesc
+            ,imWelcomeVoucher
+            ,tvVIPFlash
+            ,imWelcomeVoucher2
+            ,tvBirthdayVoucher
+            ,imWelcomeVoucher3
+            ,tvBirthdayVoucher2
+            ,tvGetToVIP
+            ,tvCalculateStatusLevel
+            ,tvCalculateStatusLevelPara1
+            ,tvCalculateStatusLevelPara2
+            ,tvCalculateStatusLevelPara3
+            )
         }
     }
 }

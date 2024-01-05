@@ -7,7 +7,6 @@ import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
-import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Product
 
 @Parcelize
 data class AnalyticProductItem(
@@ -21,6 +20,7 @@ data class AnalyticProductItem(
     val price: Double? = 0.0,
     val affiliation: String? = null,
     val index: Int = 1,
+    val productType: String? = null,
 ) : Parcelable
 
 fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
@@ -38,21 +38,6 @@ fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
     )
 }
 
-fun Product.toAnalyticItem(category: String?): AnalyticProductItem {
-    return AnalyticProductItem(
-        itemId = productId,
-        itemName = productName,
-        category = category,
-        itemBrand = brandText,
-        itemListName = category,
-        itemVariant = productVariants,
-        quantity = 1, // Required quantity set to 1
-        price = price?.toDouble(),
-        affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
-        index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
-    )
-}
-
 fun ProductList.toAnalyticItem(category: String?): AnalyticProductItem {
     return AnalyticProductItem(
         itemId = productId,
@@ -63,6 +48,7 @@ fun ProductList.toAnalyticItem(category: String?): AnalyticProductItem {
         itemVariant = productVariants,
         quantity = 1, // Required quantity set to 1
         price = price?.toDouble(),
+        productType = productType,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
     )
@@ -130,6 +116,10 @@ fun AnalyticProductItem.toBundle(): Bundle {
     }
 
     category?.let {
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, it)
+    }
+
+    productType?.let {
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, it)
     }
 

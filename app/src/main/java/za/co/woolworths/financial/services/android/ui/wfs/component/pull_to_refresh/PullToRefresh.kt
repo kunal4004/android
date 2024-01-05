@@ -18,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -205,7 +204,6 @@ private class PullToRefreshNestedScrollConnection(
  * @param refreshingOffset The content's offset when refreshing. By default this will equal to [refreshTriggerDistance].
  * @param indicatorPadding Content padding for the indicator, to inset the indicator in if required.
  * @param indicator the indicator that represents the current state. By default this will use a [PullToRefreshIndicator].
- * @param clipIndicatorToPadding Whether to clip the indicator to [indicatorPadding]. If false is provided the indicator will be clipped to the [content] bounds. Defaults to true.
  * @param content The content containing a scroll composable.
  */
 @Composable
@@ -219,7 +217,6 @@ fun PullToRefresh(
     refreshingOffset: Dp = refreshTriggerDistance,
     indicatorPadding: PaddingValues = PaddingValues(0.dp),
     indicator: @Composable (state: PullToRefreshState, refreshTrigger: Dp, refreshingOffset: Dp) -> Unit = { _, _, _ -> },
-    clipIndicatorToPadding: Boolean = true,
     content: @Composable (PullToRefreshState) -> Unit,
 ) {
     require(dragMultiplier in 0f..1f) { "dragMultiplier must be >= 0 and <= 1" }
@@ -265,14 +262,7 @@ fun PullToRefresh(
         Box(
             Modifier
                 .testAutomationTag(pull_to_refresh_box)
-                // If we're not clipping to the padding, we use clipToBounds() before the padding()
-                // modifier.
-                .let { if (!clipIndicatorToPadding) it.clipToBounds() else it }
                 .padding(indicatorPadding)
-                //.matchParentSize()
-                // Else, if we're are clipping to the padding, we use clipToBounds() after
-                // the padding() modifier.
-                .let { if (clipIndicatorToPadding) it.clipToBounds() else it }
         ) {
             Box(Modifier
                 .testAutomationTag(pull_to_refresh_box)

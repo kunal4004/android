@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductsRequestPar
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper;
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding;
 
 public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLayoutBinding> {
@@ -33,6 +34,7 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
     private boolean loadMoreData = false;
     private int pageOffset = 0;
     private boolean mIsLoading = false;
+    private boolean isViewSearchResultEventTriggered = false;
     private boolean mIsLastPage = false;
     private boolean productIsLoading = false;
     boolean isLoading = false;
@@ -91,6 +93,7 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
             @Override
             public void onSuccess(ProductView productView) {
                 if (productView.httpCode == 200) {
+                   // setProductIsLoading(true);
                     List<ProductList> productLists = productView.products;
                     if (productLists != null || (productView != null && productView.isBanners)) {
                         numItemsInTotal(productView);
@@ -106,6 +109,7 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
                     }
                 }
                 setProductIsLoading(false);
+                callViewSearchResultEvent(requestParams.getSearchTerm());
             }
 
             @Override
@@ -116,8 +120,16 @@ public class ProductListingExtensionFragment extends BaseFragmentBinding<GridLay
                     getNavigator().onLoadComplete(getLoadMoreData());
                     setProductIsLoading(false);
                 });
+                callViewSearchResultEvent(requestParams.getSearchTerm());
             }
         }, ProductView.class));
+    }
+
+    private void callViewSearchResultEvent(String searchTerm) {
+        if (getNavigator().isSearchByKeywordNavigation() && !isViewSearchResultEventTriggered) {
+            isViewSearchResultEventTriggered = true;
+            FirebaseAnalyticsEventHelper.INSTANCE.viewSearchResult(searchTerm, mNumItemsInTotal);
+        }
     }
 
     public Call<ProductView> getLoadProductRequest() {

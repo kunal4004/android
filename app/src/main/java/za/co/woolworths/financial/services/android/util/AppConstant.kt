@@ -145,6 +145,28 @@ class AppConstant {
 
         //connect online
         const val PRODUCT_TYPE_DIGITAL = "DIGITAL"
+        const val SA_MOBILE_NUMBER_PATTERN="^0\\d{9}$"
+
+        //out of stock availability details
+        const val STOCK_AVAILABILITY_MINUS1 = -1
+        const val STOCK_AVAILABILITY_0 = 0
+
+
+
+        //Huawei Ratings
+        const val APP_GALLERY_APP_NOT_RELEASED: Int = 101
+        const val APP_GALLERY_RATING_SUBMITTED = 102
+        const val APP_GALLERY_COMMENT_SUBMITTED = 103
+        const val APP_GALLERY_SIGN_IN_INVALID = 104
+        const val APP_GALLERY_USER_DOES_NOT_ALLOWED = 105
+        const val APP_GALLERY_COMMENT_FUNCTION_DISABLED = 106
+        const val APP_GALLERY_USER_CANCELLED = 108
+        const val RESULT_OK_HUAWEI_REQUEST_CODE = 1001
+        const val HUAWEI_FLAVOR = "huaweiProduction"
+        const val HUAWEI_APP_COMMENTS_APP_ACTION_NAME = "com.huawei.appmarket.intent.action.guidecomment"
+        const val HUAWEI_APP_COMMENTS_APP_PACKAGE_NAME = "com.huawei.appmarket"
+
+        const val actionItemTnC = "ACTION_ITEMS_TnC"
     }
 
     class Keys {
