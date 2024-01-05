@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResult
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.shoppinglist.view.MyShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -87,7 +88,7 @@ class ProfileIntent @Inject constructor(private val activity : Activity?,
     override fun createShoppingListIntent() {
         activity?.apply {
             analytics.onShoppingListItem()
-            val fragment = MyListsFragment()
+            val fragment = MyShoppingListFragment()
             when (this) {
                 is BottomNavigationActivity -> getBottomNavigationActivity()?.pushFragment(
                     fragment

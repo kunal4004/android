@@ -142,7 +142,7 @@ class ToastFactory {
             return popupWindow
         }
 
-        fun showToast(activity: Activity, viewLocation: View, message: String): PopupWindow? {
+        fun showToast(activity: Activity, viewLocation: View, message: String, buttonIsVisible: Boolean = false, listId:String? = "", listName: String? = ""): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
             // inflate your xml layout
             val inflater =
@@ -159,12 +159,16 @@ class ToastFactory {
                 LinearLayout.LayoutParams.WRAP_CONTENT, true
             )
 
-            tvButtonClick?.visibility = GONE
+            tvButtonClick?.visibility = if (buttonIsVisible) VISIBLE else GONE
             tvBoldTitle?.visibility = VISIBLE
             tvAddedTo?.visibility = GONE
             tvAddedTo?.setAllCaps(true)
-
+            tvBoldTitle?.text = message
             popupWindow.isFocusable = false
+
+            tvButtonClick?.setOnClickListener {
+                ScreenManager.presentShoppingListDetailActivity(activity, listId, listName)
+            }
 
             // dismiss the popup window after 3sec
             Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
@@ -225,6 +229,7 @@ class ToastFactory {
             listName: String,
             hasGiftProduct: Boolean,
             count: Int,
+            title: String,
             onButtonClick: () -> Unit
         ): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
@@ -232,10 +237,6 @@ class ToastFactory {
             val binding = LayoutSnackbarAddToListBinding.inflate(LayoutInflater.from(context))
 
             binding.apply {
-                val title = context.resources.getQuantityString(
-                    R.plurals.added_to_list,
-                    count, count, listName
-                )
                 if(hasGiftProduct) {
                     snackbarDesc.visibility = VISIBLE
                     snackbarDesc.text =

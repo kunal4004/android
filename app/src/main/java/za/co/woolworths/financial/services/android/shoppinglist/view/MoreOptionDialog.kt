@@ -22,8 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,11 +37,10 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFami
 
 @SuppressLint("UseCompatLoadingForDrawables")
 @Composable
-fun MoreOptionDialog(selectedItemCount:Int, itemCopy:()->Unit, itemMove:()->Unit,itemRemove:()->Unit) {
+fun MoreOptionDialog(
+    selectedItemCount:Int, list: ArrayList<MoreOptionsElement>, itemCopy:()->Unit, itemMove:()->Unit,
+    itemRemove:()->Unit) {
 
-    val list = ArrayList<MoreOptionsElement>()
-    val context = LocalContext.current
-    list.add(MoreOptionsElement(R.drawable.ic_copy, context.getString(R.string.copy_to_list)))
     val optionsList =  remember { list }
 
     Column(
@@ -59,7 +58,7 @@ fun MoreOptionDialog(selectedItemCount:Int, itemCopy:()->Unit, itemMove:()->Unit
         )
 
         Text(
-            text = context.getString(R.string.edit_items,selectedItemCount),
+            text = pluralStringResource(R.plurals.edit_items,selectedItemCount, selectedItemCount),
             style = TextStyle(
                 fontSize = 20.sp,
                 fontFamily = FuturaFontFamily,
@@ -101,12 +100,12 @@ fun MoreOptionDialogCell(
     itemRemove: () -> Unit
 ) {
     Divider(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 19.dp)
-            .height(1.dp)
-            .background(Color(R.color.color_D8D8D8))
-    )
+           modifier = Modifier
+               .fillMaxWidth()
+               .padding(top = 19.dp)
+               .height(1.dp)
+               .background(Color(R.color.color_D8D8D8))
+       )
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
@@ -147,5 +146,5 @@ fun MoreOptionDialogCell(
 @Preview(showBackground = true)
 @Composable
 fun PreviewMoreOptionDialog() {
-    MoreOptionDialog(3, {},{},{})
+    MoreOptionDialog(3, ArrayList(0),{},{},{})
 }

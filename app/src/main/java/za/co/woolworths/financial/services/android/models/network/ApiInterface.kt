@@ -60,8 +60,10 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.MoveItemApiRequest
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
@@ -995,6 +997,19 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json",
     )
+    @GET("wfs/app/v4/cart/summary")
+    suspend fun getShoppingCartSummary(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+    ): retrofit2.Response<CartSummaryResponse>
+
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json",
+    )
     @DELETE("wfs/app/v4/cartV2/item")
     suspend fun removeAllCartItems(
 
@@ -1167,12 +1182,11 @@ interface ApiInterface {
         "Media-Type: application/json",
     )
     @DELETE("wfs/app/v4/list/{id}")
-    fun deleteShoppingList(
-
+    suspend fun deleteShoppingList(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("id") id: String,
-    ): Call<ShoppingListsResponse>
+    ): retrofit2.Response<ShoppingListsResponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -2330,11 +2344,32 @@ interface ApiInterface {
         @Path("multipleSku") multipleSku: String,
         @Query("substitution") substitution: Boolean): retrofit2.Response<SkusInventoryForStoreResponse>
 
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json",
+    )
+    @POST("wfs/app/v4/list/{id}/delete-items")
+    suspend fun removeItemsFromShoppingItem(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("id") id: String,
+        @Body removeItemApiRequest: RemoveItemApiRequest
+    ): retrofit2.Response<ShoppingListItemsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/list/multi-list-add")
     suspend fun copyItemsFromList(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body copyItemToListRequest: CopyItemToListRequest,
+    ): retrofit2.Response<CopyListResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/list/multi-list-add")
+    suspend fun moveItemFromList(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body moveItemToListRequest: MoveItemApiRequest,
     ): retrofit2.Response<CopyListResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")

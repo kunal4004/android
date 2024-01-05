@@ -1957,13 +1957,19 @@ class KotlinUtils {
                                 activity.getString(R.string.multiple_lists)
                             }
                         val hasGiftProduct = bundle.getBoolean(KEY_HAS_GIFT_PRODUCT)
-
+                        val count =  bundle.getInt(AppConstant.Keys.KEY_COUNT, 0)
+                        val title = activity.resources.getQuantityString(
+                            R.plurals.added_to_list,
+                            count,
+                            count, listName
+                        )
                         ToastFactory.buildItemsAddedToList(
                             activity = activity,
                             viewLocation = toastContainerView,
                             listName = listName ?: return@setFragmentResultListener,
                             hasGiftProduct = hasGiftProduct,
-                            count = bundle.getInt(AppConstant.Keys.KEY_COUNT, 0),
+                            count = count,
+                            title = title,
                             onButtonClick = {
                                 (activity as? BottomNavigationActivity)?.apply {
                                     navigateToTabIndex(BottomNavigationActivity.INDEX_ACCOUNT, null)
@@ -2074,6 +2080,7 @@ fun isAValidSouthAfricanNumber(number: String?): Boolean {
     val regex = Regex(AppConstant.SA_MOBILE_NUMBER_PATTERN)
     return regex.matches(number.toString())
 }
+
 
 
 

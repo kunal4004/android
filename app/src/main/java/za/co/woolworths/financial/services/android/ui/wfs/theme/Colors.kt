@@ -46,4 +46,5 @@ val ColorFEE600 = Color(0xFFFEE600)
 val HyperTextlinkBlue = Color(0xff4284C3)
 val DividerColorPDP = Color(0x1A000000)
 val DisabledTextFunctionalGreyColor =  Color(0xFF9D9D9D)
+val ColorE2624D =  Color(0xFFE2624D)
 

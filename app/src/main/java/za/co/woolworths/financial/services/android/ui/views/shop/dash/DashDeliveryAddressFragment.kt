@@ -1132,7 +1132,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         //TODO: get error screens from UI/UX team
     }
 
-    override fun openProductDetailView(productList: ProductList) {
+    override fun openProductDetailView(productList: ProductList, position: Int) {
         if (!productList.recToken.isNullOrEmpty() && productList.sku.isNullOrEmpty()) {
             // This is recommendation product which does not have sku so will add it here
             productList.sku = productList.productId

@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.FulfillmentStoreMap
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
@@ -15,6 +18,12 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.MoveItemApiRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -30,9 +39,23 @@ class ShoppingListDetailViewModel @Inject constructor(
 
     var listId: String = ""
 
+    private var isCheckedDontAskAgain: Boolean = false
+
     private val _shoppingListDetails = MutableLiveData<Event<Resource<ShoppingListItemsResponse>>>()
     val shoppListDetails: LiveData<Event<Resource<ShoppingListItemsResponse>>> =
         _shoppingListDetails
+
+    private val _shoppingListDetailsAfterDelete = MutableLiveData<Event<Resource<ShoppingListItemsResponse>>>()
+    val shoppingListDetailsAfterDelete: LiveData<Event<Resource<ShoppingListItemsResponse>>> =
+        _shoppingListDetailsAfterDelete
+
+    private val _copyItemsToList = MutableLiveData<Event<Resource<CopyListResponse>>>()
+    val copyItemsToList: LiveData<Event<Resource<CopyListResponse>>> =
+        _copyItemsToList
+
+    private val _moveItemFromList = MutableSharedFlow<ViewState<CopyListResponse>>(0)
+    val moveItemFromList: SharedFlow<ViewState<CopyListResponse>> = _moveItemFromList
+
 
     init {
         listId = savedStateHandle[ARG_LIST_ID] ?: ""
@@ -199,4 +222,47 @@ class ShoppingListDetailViewModel @Inject constructor(
     }
 
     fun getIsStockAvailable(): Boolean = mShoppingListItems.any { it.quantityInStock > 0 }
+
+    fun removeMultipleItemsFromList(listId: String, removeItemApiRequest: RemoveItemApiRequest) {
+        _shoppingListDetailsAfterDelete.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response =
+                shoppingListDetailRepository.removeMultipleItemsFromList(listId, removeItemApiRequest)
+            mShoppingListItems = response.data?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
+            _shoppingListDetailsAfterDelete.value = Event(response)
+        }
+    }
+
+
+    fun copyMultipleItemsFromList(copyItemToListRequest: CopyItemToListRequest) {
+        _copyItemsToList.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response =
+                shoppingListDetailRepository.copyMultipleItemsFromList(copyItemToListRequest)
+            _copyItemsToList.value = Event(response)
+        }
+    }
+
+
+      suspend fun moveItemsFromList(moveItemApiRequest: MoveItemApiRequest) =
+        viewModelScope.launch {
+            mapNetworkCallToViewStateFlow {
+                shoppingListDetailRepository.moveMultipleItemsFromList(moveItemApiRequest)
+            }.collectLatest {
+                _moveItemFromList.emit(it)
+            }
+    }
+
+    fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {
+        isCheckedDontAskAgain = checkedDontAskAgain
+    }
+
+    fun isCheckedDontAskAgain() = isCheckedDontAskAgain
+
+    fun updateListForMoveItem(): List<ShoppingListItem> {
+        mShoppingListItems = mShoppingListItems.filter {
+            !it.isSelected
+        } as ArrayList<ShoppingListItem>
+        return mShoppingListItems
+    }
 }

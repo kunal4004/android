@@ -3241,15 +3241,28 @@
 
     <string name="my_account_order_again">Order Again</string>
 
+    <!--  Order Again Screen  -->
+    <string name="order_again_empty_title">You Don’t Have Any Items In Your Order Again List Yet.</string>
+    <string name="order_again_empty_desc">When you place an order, your most frequently purchased food items will display here.</string>
+    <string name="order_again_error_desc">We\'re currently unable to load your Order Again list items. Please try again.</string>
+    <string name="cd_product_image">productImage</string>
+    <string name="offer">Offer</string>
+    <string name="colon">:</string>
+    <string name="add_to_cart_error_msg">An error occurred while adding your items to cart. \nPlease try again later.</string>
+    <string name="copy_to_list_error_msg">An error occurred while copying your items. \nPlease try again later.</string>
+
+    <!--  Out of stock Details -->
+    <string name="out_of_stock_tag">OUT OF STOCK</string>
+
     <!--shopping List enhancement-->
     <string name="view_only_option">View Only</string>
     <string name="view_only_desc">Anyone with a link can view your list without making changes.</string>
     <string name="edit_option">Edit</string>
     <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
     <string name="share_btn">SHARE</string>
-    <string name="more_options_btn"><u>More Options</u></string>
-    <string name="edit_items">Edit %d Items </string>
+    <string name="more_options_btn"><u>MORE OPTIONS</u></string>
     <string name="copy_to_list">Copy to a List </string>
+    <string name="move_to_list">"Move Item to List" </string>
     <string name="move_from_list">Move to Another List </string>
     <string name="remove_from_list">Remove from List </string>
     <string name="confirmation_title">Are You Sure?</string>
@@ -3267,12 +3280,12 @@
     <string name="delete_item_desc">If you remove these products from your list, you can \n still shop for them in the app.</string>
     <string name="remove_error_msg">An error occurred while removing your item. \n Please try again later.</string>
     <string name="remove_copy_msg">An error occurred while copying your items. \n Please try again later.</string>
-    <string name="move_to_list">move to a list</string>
+    <string name="remove_move_msg">An error occurred while moving your items. \n Please try again later.</string>
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
 
-    <plurals name="remove_list">
-        <item quantity="one">%d ITEM REMOVED FROM</item>
-        <item quantity="other">%d ITEMS REMOVED FROM </item>
+    <plurals name="edit_items">
+        <item quantity="one">Edit Item </item>
+        <item quantity="other">%d Edit Items</item>
     </plurals>
 
 
@@ -3282,26 +3295,28 @@
     </plurals>
 
     <plurals name="copy_item">
-        <item quantity="one">Copying Your Item</item>
-        <item quantity="other">Copying Your Items </item>
+        <item quantity="one">Copying Your Item to</item>
+        <item quantity="other">Copying Your Items to</item>
+    </plurals>
+
+    <plurals name="move_item">
+        <item quantity="one">Moving Your Item to</item>
+        <item quantity="other">Moving Your Items to </item>
     </plurals>
 
     <plurals name="copy_item_msg">
-        <item quantity="one">ITEM COPIED TO</item>
-        <item quantity="other">ITEMS COPIED TO</item>
+        <item quantity="one">%1$d ITEM COPIED TO %2$s</item>
+        <item quantity="other">%1$d ITEMS COPIED TO %2$s</item>
     </plurals>
 
-    <!--  Order Again Screen  -->
-    <string name="order_again_empty_title">You Don’t Have Any Items In Your Order Again List Yet.</string>
-    <string name="order_again_empty_desc">When you place an order, your most frequently purchased food items will display here.</string>
-    <string name="order_again_error_desc">We\'re currently unable to load your Order Again list items. Please try again.</string>
-    <string name="cd_product_image">productImage</string>
-    <string name="offer">Offer</string>
-    <string name="colon">:</string>
-    <string name="add_to_cart_error_msg">An error occurred while adding your items to cart. \nPlease try again later.</string>
-    <string name="copy_to_list_error_msg">An error occurred while copying your items. \nPlease try again later.</string>
+    <plurals name="remove_list">
+        <item quantity="one">%1$d ITEM REMOVED FROM </item>
+        <item quantity="other">%1$d ITEMS REMOVED FROM </item>
+    </plurals>
 
-    <!--  Out of stock Details -->
-    <string name="out_of_stock_tag">OUT OF STOCK</string>
+    <plurals name="move_item_msg">
+        <item quantity="one">%1$d ITEM MOVED TO %2$s</item>
+        <item quantity="other">%1$d ITEMS MOVED TO %2$s</item>
+    </plurals>
 
 </resources>

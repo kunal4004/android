@@ -10,5 +10,5 @@ sealed class EditOptionType {
         val itemsToBeAdded: ArrayList<AddToListRequest>
     ) : EditOptionType()
 
-    object MoveItemFromList : EditOptionType()
+    data class MoveItemFromList (var list:ArrayList<ShoppingList>) : EditOptionType()
 }

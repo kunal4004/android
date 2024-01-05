@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
 import za.co.woolworths.financial.services.android.models.dto.order_again.toAddToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.component.MoreOptionsElement
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
@@ -112,12 +113,17 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
     private fun onCopyListSuccess(snackbarDetails: SnackbarDetails) {
         hideLoadingProgress()
         view?.let {
+            val title = requireContext().resources?.getQuantityString(
+                R.plurals.copy_item_msg,
+                snackbarDetails.count, snackbarDetails.count, snackbarDetails.listName.ifEmpty { requireContext().getString(R.string.multiple_lists) }
+            ) ?: ""
             ToastFactory.buildItemsAddedToList(
                 requireActivity(),
                 it,
                 snackbarDetails.listName.ifEmpty { requireContext().getString(R.string.multiple_lists) },
                 false,
-                snackbarDetails.count
+                snackbarDetails.count,
+                title
             ) {
                 if (snackbarDetails.listId.isEmpty()) {
                     ScreenManager.presentMyListScreen(activity)
@@ -173,12 +179,21 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
             viewModel.getCopyToListItems()
         }
 
+        val options = ArrayList<MoreOptionsElement>(0).apply{
+            add(
+                MoreOptionsElement(
+                    R.drawable.ic_copy,
+                    requireContext().getString(R.string.copy_to_list)
+                )
+            )
+        }
         val fragment = MoreOptionDialogFragment.newInstance(
             this@OrderAgainFragment,
             items.size,
             "",
             false,
-            items
+            items,
+            options
         )
         fragment.show(parentFragmentManager, MoreOptionDialogFragment::class.simpleName)
     }

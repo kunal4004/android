@@ -79,7 +79,7 @@ class ShoppingListItemsAdapter(
 
                 when (shoppingListItem.availability) {
                     ProductAvailability.UNAVAILABLE.value -> holder.bindUnavailableProduct()
-                    ProductAvailability.OUT_OF_STOCK.value -> holder.bindOutOfStockProduct()
+                    ProductAvailability.OUT_OF_STOCK.value -> holder.bindOutOfStockProduct(shoppingListItem)
                     else -> holder.bindAvailableProduct(shoppingListItem)
                 }
             }
@@ -110,12 +110,7 @@ class ShoppingListItemsAdapter(
     }
 
     private fun deleteItemFromList(shoppingListItem: ShoppingListItem, adapterPosition: Int) {
-        navigator.onItemDeleteClick(
-            shoppingListItem.Id,
-            shoppingListItem.productId,
-            shoppingListItem.catalogRefId,
-            true
-        )
+        navigator.onItemDeleteClick(shoppingListItem)
     }
 
     private fun enableClickEvent(shoppingListItem: ShoppingListItem): Boolean {
@@ -192,32 +187,18 @@ class ShoppingListItemsAdapter(
                     navigator.openProductDetailFragment(listItem.displayName, productList)
                 }
 
-                // Item Container
-                llItemContainer.setOnClickListener {
-                    val listItem = getItem(position) ?: return@setOnClickListener
-                    val isUnavailable = ProductAvailability.UNAVAILABLE.value.equals(
-                        listItem.availability,
-                        ignoreCase = true
-                    )
-                    if (isUnavailable) navigator.showListBlackToolTip()
-                }
-
                 // Swipe delete click
                 tvDelete.setOnClickListener {
                     if (!mAdapterIsClickable) return@setOnClickListener
                     val item = getItem(position) ?: return@setOnClickListener
-                    navigator.onItemDeleteClick(
-                        item.Id,
-                        item.productId,
-                        item.catalogRefId,
-                        true
-                    )
+                    navigator.onItemDeleteClick(item)
                 }
             }
         }
 
         fun bindUnavailableProduct() {
             itemBinding?.apply {
+                iconKebab.visibility = GONE
                 adapterClickable(true)
                 val msg = getUnavailableMsgByDeliveryType(itemBinding.root.context)
                 tvProductAvailability.text = msg
@@ -225,12 +206,16 @@ class ShoppingListItemsAdapter(
             }
         }
 
-        fun bindOutOfStockProduct() {
+        fun bindOutOfStockProduct(shoppingListItem: ShoppingListItem) {
             itemBinding?.apply {
+                iconKebab.visibility = VISIBLE
                 adapterClickable(true)
                 tvProductAvailability.text =
                     itemBinding.root.context.getString(R.string.out_of_stock)
                 tvProductAvailability.visibility = VISIBLE
+                iconKebab.setOnClickListener {
+                    navigator.naviagteToMoreOptionDialog(shoppingListItem)
+                }
             }
         }
 
@@ -343,6 +328,18 @@ class ShoppingListItemsAdapter(
                         notifyItemChanged(position, listItem)
                     }
                 }
+                iconKebab.visibility = VISIBLE
+                if (cbShoppingList.isChecked) {
+                    iconKebab.setImageResource(R.drawable.icon_kebab_inactive)
+                    iconKebab.isEnabled = false
+                } else {
+                    iconKebab.setImageResource(R.drawable.icon_kebab_active)
+                    iconKebab.isEnabled = true
+                }
+
+                iconKebab.setOnClickListener {
+                    navigator.naviagteToMoreOptionDialog(shoppingListItem)
+                }
             }
         }
     }
@@ -357,16 +354,14 @@ class ShoppingListItemsAdapter(
 
     @Synchronized
     fun setList(listItems: ArrayList<ShoppingListItem>?) {
-        synchronized(this) {
-            if (listItems.isNullOrEmpty()) {
+        if (listItems.isNullOrEmpty()) {
                 return
             }
-            type = getPreferredDeliveryType()
-            userShouldSetSuburb = userShouldSetSuburb()
-            shoppingListItems = listItems
-            notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
-            closeAllItems()
-        }
+        type = getPreferredDeliveryType()
+        userShouldSetSuburb = userShouldSetSuburb()
+        shoppingListItems = listItems
+        notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
+        closeAllItems()
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -395,17 +390,5 @@ class ShoppingListItemsAdapter(
         }
         notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
         navigator.onItemSelectionChange(false)
-    }
-
-    fun deleteListItem(mCatalogRefId: String) {
-        synchronized(this) {
-            val item = shoppingListItems?.find { it.catalogRefId.equals(mCatalogRefId, ignoreCase = true) }
-            val index = shoppingListItems?.indexOf(item) ?: -1
-            if(index < 0 || index >= (shoppingListItems?.size ?: -1)) {
-                return
-            }
-            shoppingListItems?.remove(item)
-            notifyItemRemoved(index + 1)
-        }
     }
 }

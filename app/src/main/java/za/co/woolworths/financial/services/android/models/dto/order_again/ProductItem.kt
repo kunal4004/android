@@ -11,8 +11,7 @@ import kotlinx.parcelize.RawValue
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
-import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemDetail
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ItemDetail
 import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 
 @Parcelize
@@ -50,7 +49,7 @@ fun ProductItem.toAddToListRequest(): AddToListRequest = AddToListRequest(
     null
 )
 
-fun ProductItem.toCopyItemDetail() : CopyItemDetail = CopyItemDetail(
+fun ProductItem.toItemDetail() : ItemDetail = ItemDetail(
     skuID = id,
     catalogRefId = id,
     quantity = "1"

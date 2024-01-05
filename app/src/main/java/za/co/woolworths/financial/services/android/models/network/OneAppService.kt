@@ -133,6 +133,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
+import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
@@ -758,8 +759,9 @@ open class OneAppService(
         }
     }
 
-    fun deleteShoppingList(listId: String): Call<ShoppingListsResponse> {
-        return mApiInterface.deleteShoppingList(getSessionToken(), getDeviceIdentityToken(), listId)
+    suspend fun deleteShoppingList(listId: String) = withContext(Dispatchers.IO){
+        mApiInterface
+            .deleteShoppingList(getSessionToken(), getDeviceIdentityToken(), listId)
     }
 
     fun deleteShoppingListItem(
@@ -1403,6 +1405,13 @@ open class OneAppService(
                 longitude
         )
     }
+
+    suspend fun removeItemFromShoppingItemList (listId: String, removeItemApiRequest: RemoveItemApiRequest) =
+        mApiInterface.removeItemsFromShoppingItem(super.getSessionToken(), super.getDeviceIdentityToken(), listId, removeItemApiRequest)
+
+    suspend fun copyItemFromList (copyItemApiRequest: CopyItemToListRequest) =
+        mApiInterface.copyItemsFromList(super.getSessionToken(), super.getDeviceIdentityToken(), copyItemApiRequest)
+
 
     suspend fun writeAReviewForm(productId: String?, prepareWriteAReviewFormRequestEvent: PrepareWriteAReviewFormRequestEvent): retrofit2.Response<WriteAReviewFormResponse> {
         return mApiInterface.writeAReviewForm(

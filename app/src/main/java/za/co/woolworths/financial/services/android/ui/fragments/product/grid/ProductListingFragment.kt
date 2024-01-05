@@ -1417,9 +1417,29 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     }
 
-    override fun openProductDetailView(productList: ProductList) {
+    override fun openProductDetailView(productList: ProductList, position: Int) {
         //firebase event select_item
         state = binding.productsRecyclerView.layoutManager?.onSaveInstanceState()
+        triggerFirebaseEvent(productList, position)
+        val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(
+            title,
+            productList,
+            mBannerLabel,
+            mBannerImage,
+            isUserBrowsing
+        )
+    }
+
+    private fun triggerFirebaseEvent(productList: ProductList, index: Int) {
+        callSelectItemFirebaseEvent(productList)
+        if (!productList.saveText.isNullOrEmpty()) {
+            // call select_promotion event if a product has promotion
+            FirebaseAnalyticsEventHelper.selectPromotion(productList, breadCrumbList, index, KotlinUtils.getDeliveryType()?.address?.placeId)
+        }
+    }
+
+    private fun callSelectItemFirebaseEvent(productList: ProductList) {
         val selectItemParams = Bundle()
         selectItemParams.putString(
             FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME,
@@ -1444,15 +1464,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT,
             selectItemParams
-        )
-
-        val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.openProductDetailFragment(
-            title,
-            productList,
-            mBannerLabel,
-            mBannerImage,
-            isUserBrowsing
         )
     }
 
