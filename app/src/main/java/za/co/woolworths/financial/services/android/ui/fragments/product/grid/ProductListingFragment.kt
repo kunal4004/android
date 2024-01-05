@@ -68,6 +68,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WStockFinderAct
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
@@ -152,7 +153,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var localDeliveryTypeForHiddenChange: String? = null
     private var mPromotionalCopy: String? = null
     private var isChanelPage = false
-    private val dyChoosevariationViewModel: DyHomePageViewModel by viewModels()
+    private val dyChoosevariationViewModel: DyChooseVariationCallViewModel by viewModels()
     private var breadCrumbList: ArrayList<String> = ArrayList()
     private var breadCrumb: ArrayList<BreadCrumb> = ArrayList()
     private var dyServerId: String? = null

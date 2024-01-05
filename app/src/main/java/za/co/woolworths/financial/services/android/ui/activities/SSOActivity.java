@@ -584,7 +584,7 @@ public class SSOActivity extends WebViewActivity {
 			}
 			hideProgressBar();
 			if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
-				prepareDynamicYieldRequestEvent();
+			//	prepareDynamicYieldRequestEvent();
 			}
 		}
 
