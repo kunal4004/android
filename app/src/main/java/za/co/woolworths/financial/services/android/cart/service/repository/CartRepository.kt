@@ -236,6 +236,7 @@ class CartRepository @Inject constructor() {
                 //GENERAL - "default",HOME - "homeCommerceItem",FOOD
                 // - "foodCommerceItem",CLOTHING
                 // - "clothingCommerceItem",PREMIUM BRANDS
+                // - connectCommerceItem,
                 // - "premiumBrandCommerceItem",
                 // Anything else: OTHER
                 when {
@@ -251,6 +252,8 @@ class CartRepository @Inject constructor() {
                         cartItemGroup.setType(ProductType.CLOTHING_COMMERCE_ITEM.shortHeader)
                     key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.value) ->
                         cartItemGroup.setType(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.shortHeader)
+                    key.contains(ProductType.CONNECT_COMMERCEITEM.value) ->
+                        cartItemGroup.setType(ProductType.CONNECT_COMMERCEITEM.shortHeader)
                     else -> cartItemGroup.setType(ProductType.OTHER_ITEMS.shortHeader)
                 }
                 val productsArray = itemsObject.getJSONArray(key)
