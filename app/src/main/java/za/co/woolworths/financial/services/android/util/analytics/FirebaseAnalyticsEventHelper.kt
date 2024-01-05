@@ -511,4 +511,27 @@ object FirebaseAnalyticsEventHelper {
          AnalyticsManager.logEvent(SWITCH_BROWSE_MODE, analyticsParams)
     }
 
+    fun selectPromotion(product: ProductList, breadCrumbs: List<String>, index: Int, placeId: String?) {
+        if(product.saveText.isNullOrEmpty()) {
+            return
+        }
+        val analyticItem = product.toAnalyticItem(category = product.productType, index).apply { fillOtherCategories(breadCrumbs) }
+        val locationId = if(!placeId.isNullOrEmpty() && placeId.length <= FIREBASE_VALUE_MAX_CHARACTER) {
+            // placeId if user has selected the location && <= 100 characters, else supply NONE
+            placeId
+        } else {
+            FirebaseManagerAnalyticsProperties.PropertyValues.NONE
+        }
+        val analyticsParams = Bundle().apply {
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, arrayOf(analyticItem.toBundle())
+            )
+            putString(FirebaseAnalytics.Param.CREATIVE_NAME, product.saveText)
+            putString(FirebaseAnalytics.Param.PROMOTION_NAME, product.saveText)
+            putString(FirebaseAnalytics.Param.LOCATION_ID, locationId)
+            putString(FirebaseAnalytics.Param.CREATIVE_SLOT, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)// not getting from API so, supplying NONE
+            putString(FirebaseAnalytics.Param.PROMOTION_ID, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)// not getting from API so, supplying NONE
+        }
+        AnalyticsManager.logEvent(FirebaseAnalytics.Event.SELECT_PROMOTION, analyticsParams)
+    }
 }
