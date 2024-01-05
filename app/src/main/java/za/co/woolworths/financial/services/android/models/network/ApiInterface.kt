@@ -1320,12 +1320,12 @@ interface ApiInterface {
         "Media-Type: application/json",
     )
     @POST("wfs/app/v4/cart/checkoutComplete")
-    fun postCheckoutSuccess(
+    suspend fun postCheckoutSuccess(
 
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body checkoutSuccess: CheckoutSuccess,
-    ): Call<Void>
+    ): retrofit2.Response<Unit>
 
     @Headers(
         "Content-Type: application/json",

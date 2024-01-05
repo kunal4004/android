@@ -26,6 +26,7 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.checkout.service.network.PaymentAnalyticsData
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
+import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutPaymentWebViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.PAYMENT_STATUS
@@ -39,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
@@ -81,6 +83,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
     private var config: NetworkConfig? = null
     private var isEndlessAisleJourney: Boolean? = false
     private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
+    private val webViewModel: CheckoutPaymentWebViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -266,6 +269,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
                         this
                     )
                 }
+                callCheckoutComplete()
                 navigateToOrderConfirmation()
             }
             PaymentStatus.PAY_IN_STORE.type ->{
@@ -291,6 +295,10 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         }
         if (!paymentArguments.isNullOrEmpty())
             Utils.triggerFireBaseEvents(PAYMENT_STATUS, paymentArguments, activity)
+    }
+
+    private fun callCheckoutComplete() {
+        webViewModel.postCheckoutComplete()
     }
 
     private fun preparePaymentPageViewRequest(jsonToAnalyticsList: PaymentAnalyticsData?) {
