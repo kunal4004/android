@@ -18,20 +18,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,12 +41,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.awfs.coordination.R
@@ -66,6 +59,7 @@ import za.co.woolworths.financial.services.android.presentation.common.FuturaTex
 import za.co.woolworths.financial.services.android.presentation.common.FuturaTextH15
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewEvent
+import za.co.woolworths.financial.services.android.presentation.common.OpenSansText12
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansText14
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText10
 import za.co.woolworths.financial.services.android.presentation.common.OpenSansTitleText13
@@ -92,12 +86,11 @@ import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.vi
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color444444
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ErrorBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ErrorLabel
-import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.ShimmerColor
-import za.co.woolworths.financial.services.android.ui.wfs.theme.SnackbarBackground
 import za.co.woolworths.financial.services.android.ui.wfs.theme.White
 
 @Composable
@@ -107,12 +100,18 @@ fun OrderAgainScreen(
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
     val state by viewModel.orderAgainUiState.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val errorSnackBarState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
     LaunchedEffect(context) {
         viewModel.onScreenEvent.collectLatest { onScreenEvent ->
-            onEvent(onScreenEvent)
+            when (onScreenEvent) {
+                is OrderAgainScreenEvents.ShowErrorSnackBar -> {
+                    errorSnackBarState.showSnackbar("")
+                }
+
+                else -> onEvent(onScreenEvent)
+            }
         }
     }
 
@@ -138,7 +137,12 @@ fun OrderAgainScreen(
         }
     ) {
 
-        OrderAgainStatelessScreen(Modifier.padding(it), state, viewModel.orderList) { event ->
+        OrderAgainStatelessScreen(
+            modifier = Modifier.padding(it),
+            state = state,
+            orderList = viewModel.orderList,
+            errorSnackBarState = errorSnackBarState
+        ) { event ->
             when (event) {
                 OrderAgainScreenEvents.ChangeDeliveryClick,
                 OrderAgainScreenEvents.StartShoppingClicked,
@@ -157,9 +161,13 @@ private fun OrderAgainStatelessScreen(
     modifier: Modifier = Modifier,
     state: OrderAgainUiState,
     orderList: List<ProductItem>,
+    errorSnackBarState: SnackbarHostState,
     onEvent: (OrderAgainScreenEvents) -> Unit
 ) {
     Column(modifier.background(OneAppBackground)) {
+
+        ErrorSnackbarView(errorSnackBarState, state.snackbarData)
+
         DeliveryLocationView(state.deliveryState) {
             when (it) {
                 DeliveryLocationEvent.ChangeAddressClick -> onEvent(OrderAgainScreenEvents.ChangeAddressClick)
@@ -181,8 +189,22 @@ private fun OrderAgainStatelessScreen(
                 }
             }
 
-            OrderAgainScreenState.ShowErrorScreen, OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(
-                Modifier.background(White)
+            is OrderAgainScreenState.ShowErrorScreen -> EmptyScreen(
+                Modifier.background(White),
+                icon = state.screenState.icon,
+                title = stringResource(id = state.screenState.title),
+                subTitle = stringResource(id = state.screenState.subTitle),
+                actionText = stringResource(id = state.screenState.actionText)
+            ) {
+                onEvent(OrderAgainScreenEvents.RetryOrderAgain)
+            }
+
+            is OrderAgainScreenState.ShowEmptyScreen -> EmptyScreen(
+                Modifier.background(White),
+                icon = state.screenState.icon,
+                title = stringResource(id = state.screenState.title),
+                subTitle = stringResource(id = state.screenState.subTitle),
+                actionText = stringResource(id = state.screenState.actionText)
             ) {
                 onEvent(OrderAgainScreenEvents.StartShoppingClicked)
             }
@@ -233,6 +255,33 @@ private fun OrderAgainStatelessScreen(
                     onEvent(OrderAgainScreenEvents.CopyToListClicked)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ErrorSnackbarView(errorSnackBarState: SnackbarHostState, snackbarData: SnackbarDetails) {
+    SnackbarHost(
+        hostState = errorSnackBarState,
+    ) { snackBarData ->
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ErrorBackground)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(id = R.drawable.info_white),
+                tint = White,
+                contentDescription = stringResource(R.string.cd_information_icon)
+            )
+            SpacerWidth8dp()
+            OpenSansText12(
+                text = stringResource(id = snackbarData.errorTitle),
+                color = White
+            )
         }
     }
 }
@@ -429,10 +478,10 @@ fun ProductItemDetails(
             SpacerWidth8dp()
             Icon(
                 modifier = Modifier
-                    .alpha( if(productItem.isSelected) 0.5f else 1f )
+                    .alpha(if (productItem.isSelected) 0.5f else 1f)
                     .clickable(enabled = !productItem.isSelected) {
-                    onEvent(OrderAgainScreenEvents.CopyItemToListClicked(productItem))
-                },
+                        onEvent(OrderAgainScreenEvents.CopyItemToListClicked(productItem))
+                    },
                 painter = painterResource(id = R.drawable.ic_option_menu),
                 contentDescription = stringResource(id = R.string.cd_options_menu)
             )
@@ -517,6 +566,10 @@ fun QuantitySelectionView(
 @Composable
 fun EmptyScreen(
     modifier: Modifier = Modifier,
+    icon: Int = R.drawable.image_placeholder,
+    title: String = "",
+    subTitle: String = "",
+    actionText: String = "",
     onClick: () -> Unit
 ) {
 
@@ -529,20 +582,20 @@ fun EmptyScreen(
     ) {
         Image(
             modifier = Modifier.size(120.dp),
-            painter = painterResource(id = R.drawable.empty_list_icon),
+            painter = painterResource(id = icon),
             contentDescription = stringResource(id = R.string.cd_empty_state_icon)
         )
 
         SpacerHeight24dp()
         FuturaTextH1(
             modifier = Modifier.padding(horizontal = 54.dp),
-            text = stringResource(id = R.string.order_again_empty_title),
+            text = title,
             textAlign = TextAlign.Center
         )
         SpacerHeight8dp()
         OpenSansText14(
             modifier = Modifier.padding(horizontal = 54.dp),
-            text = stringResource(id = R.string.order_again_empty_desc),
+            text = subTitle,
             color = Color444444,
             textAlign = TextAlign.Center
         )
@@ -551,7 +604,7 @@ fun EmptyScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
-            text = stringResource(id = R.string.start_shopping).uppercase()
+            text = actionText.uppercase()
         ) {
             onClick()
         }
@@ -564,7 +617,11 @@ fun EmptyScreen(
 @Composable
 private fun PreviewOrderAgainScreen() {
     OneAppTheme {
-        OrderAgainStatelessScreen(state = OrderAgainUiState(), orderList = emptyList()) {}
+        OrderAgainStatelessScreen(
+            state = OrderAgainUiState(),
+            orderList = emptyList(),
+            errorSnackBarState = SnackbarHostState()
+        ) {}
     }
 }
 

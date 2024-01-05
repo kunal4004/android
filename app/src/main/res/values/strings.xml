@@ -3294,8 +3294,11 @@
     <!--  Order Again Screen  -->
     <string name="order_again_empty_title">You Don’t Have Any Items In Your Order Again List Yet.</string>
     <string name="order_again_empty_desc">When you place an order, your most frequently purchased food items will display here.</string>
+    <string name="order_again_error_desc">We\'re currently unable to load your Order Again list items. Please try again.</string>
     <string name="cd_product_image">productImage</string>
     <string name="offer">Offer</string>
     <string name="colon">:</string>
+    <string name="add_to_cart_error_msg">An error occurred while adding your items to cart. \nPlease try again later.</string>
+    <string name="copy_to_list_error_msg">An error occurred while copying your items. \nPlease try again later.</string>
 
 </resources>

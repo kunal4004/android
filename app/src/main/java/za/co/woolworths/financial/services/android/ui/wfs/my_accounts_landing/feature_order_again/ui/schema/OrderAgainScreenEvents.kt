@@ -10,6 +10,7 @@ sealed class OrderAgainScreenEvents {
 
     object CopyToListError : OrderAgainScreenEvents()
     data class ShowSnackBar(val snackbarDetails: SnackbarDetails) : OrderAgainScreenEvents()
+    data class ShowErrorSnackBar(val snackbarDetails: SnackbarDetails) : OrderAgainScreenEvents()
     data class HideBottomBar(val hidden: Boolean = false) : OrderAgainScreenEvents()
     data class ShowAddToCartError(val code: Int = 500, val errorMessage: String = "") : OrderAgainScreenEvents()
     data class CopyToListSuccess(val snackbarDetails: SnackbarDetails) : OrderAgainScreenEvents()
@@ -21,6 +22,7 @@ sealed class OrderAgainScreenEvents {
 
 
     // User interaction events
+    object RetryOrderAgain : OrderAgainScreenEvents()
     object ChangeDeliveryClick : OrderAgainScreenEvents()
     object ChangeAddressClick : OrderAgainScreenEvents()
     object StartShoppingClicked : OrderAgainScreenEvents()

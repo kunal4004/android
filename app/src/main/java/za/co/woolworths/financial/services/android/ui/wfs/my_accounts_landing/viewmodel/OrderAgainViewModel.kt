@@ -72,14 +72,8 @@ class OrderAgainViewModel @Inject constructor(
 
     fun onEvent(events: OrderAgainScreenEvents) {
         when (events) {
-            is OrderAgainScreenEvents.ProductItemCheckedChange -> {
-                onProductCheckedChange(events.isChecked, events.productItem)
-            }
-
-            is OrderAgainScreenEvents.ChangeProductQuantityBy -> {
-                onChangeProductQuantity(events.count, events.item)
-            }
-
+            is OrderAgainScreenEvents.ProductItemCheckedChange -> onProductCheckedChange(events.isChecked, events.productItem)
+            is OrderAgainScreenEvents.ChangeProductQuantityBy -> onChangeProductQuantity(events.count, events.item)
             OrderAgainScreenEvents.AddToCartClicked -> {
                 val items = orderList.filter { it.isSelected }.map {
                     it.inProgress = true
@@ -94,14 +88,10 @@ class OrderAgainViewModel @Inject constructor(
                 }
                 onAddToCartClicked(listOf(events.item.toAddItemToCart()), true)
             }
-
             is OrderAgainScreenEvents.ListItemRevealed -> addToRevealItems(events.item)
             is OrderAgainScreenEvents.ListItemCollapsed -> collapseRevealItems(events.item)
-
-            OrderAgainScreenEvents.SelectAllClick -> {
-                onSelectAllClick()
-            }
-
+            OrderAgainScreenEvents.SelectAllClick -> onSelectAllClick()
+            OrderAgainScreenEvents.RetryOrderAgain -> callOrderAgainApi()
             else -> {}
         }
     }
@@ -156,15 +146,22 @@ class OrderAgainViewModel @Inject constructor(
                     Status.ERROR -> {
                         _orderAgainUiState.update { state ->
                             state.copy(
-                                isLoading = false
+                                isLoading = false,
+                                snackbarData = state.snackbarData.copy(
+                                    errorTitle = R.string.add_to_cart_error_msg
+                                )
                             )
                         }
                         delay(100L)
-                        if (it.data?.response?.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
-                            _onScreenEvent.update { _ ->
+                        _onScreenEvent.update { _ ->
+                            if (it.data?.response?.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
                                 OrderAgainScreenEvents.ShowAddToCartError(
                                     code = it.data.response.code.toInt(),
                                     errorMessage = it.data.response.desc
+                                )
+                            } else {
+                                OrderAgainScreenEvents.ShowErrorSnackBar(
+                                    orderAgainUiState.value.snackbarData
                                 )
                             }
                         }
@@ -320,7 +317,7 @@ class OrderAgainViewModel @Inject constructor(
                 FirebaseManager.logException(Exception("Invalid plistId on Order Again Api."))
                 _orderAgainUiState.update { state ->
                     state.copy(
-                        screenState = OrderAgainScreenState.ShowEmptyScreen,
+                        screenState = OrderAgainScreenState.ShowEmptyScreen(),
                         headerState = state.headerState.copy(
                             rightButtonRes = R.string.empty
                         )
@@ -346,8 +343,9 @@ class OrderAgainViewModel @Inject constructor(
 
                             // If no food product available in response show empty screen.
                             if (productIds.isEmpty()) {
-                                state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen)
+                                state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen())
                             } else {
+
                                 // get all product ids and make inventory call
                                 callInventoryApi(productIds)
                                 state.copy(
@@ -357,7 +355,7 @@ class OrderAgainViewModel @Inject constructor(
                         }
 
                         Status.ERROR -> state.copy(
-                            screenState = OrderAgainScreenState.ShowErrorScreen
+                            screenState = OrderAgainScreenState.ShowErrorScreen()
                         )
 
                         Status.LOADING -> state.copy(
@@ -389,7 +387,7 @@ class OrderAgainViewModel @Inject constructor(
             // If store id is not found meaning all product are unavailable.
             if (storeId.isNullOrEmpty()) {
                 _orderAgainUiState.value = _orderAgainUiState.value.copy(
-                    screenState = OrderAgainScreenState.ShowErrorScreen
+                    screenState = OrderAgainScreenState.ShowErrorScreen()
                 )
                 return@launch
             }
@@ -404,7 +402,7 @@ class OrderAgainViewModel @Inject constructor(
                     }
 
                     Status.ERROR -> orderAgainUiState.value.copy(
-                        screenState = OrderAgainScreenState.ShowErrorScreen
+                        screenState = OrderAgainScreenState.ShowErrorScreen()
                     )
 
                     Status.LOADING -> orderAgainUiState.value.copy(
@@ -523,13 +521,14 @@ class OrderAgainViewModel @Inject constructor(
                     Status.SUCCESS -> {
 
                         //Firebase event
-                        FirebaseAnalyticsEventHelper.sendAddToWishListOrderAgainEvent(itemsToBeAdded)
+                        FirebaseAnalyticsEventHelper.sendAddToWishListOrderAgainEvent(itemsToBeAdded, copyToLists)
 
                         _orderAgainUiState.update {
                             val item = copyToLists.singleOrNull()
                             it.copy(
                                 snackbarData = it.snackbarData.copy(
                                     count = copyItems.size,
+                                    errorTitle = R.string.copy_to_list_error_msg,
                                     listName = item?.listName ?: "",
                                     listId = item?.listId ?: ""
                                 )
@@ -544,8 +543,18 @@ class OrderAgainViewModel @Inject constructor(
                     }
 
                     Status.ERROR -> {
+                        _orderAgainUiState.update {
+                            it.copy(
+                                snackbarData = orderAgainUiState.value.snackbarData.copy(
+                                    errorTitle = R.string.copy_to_list_error_msg
+                                )
+                            )
+                        }
+                        delay(50L)
                         _onScreenEvent.update {
-                            OrderAgainScreenEvents.CopyToListError
+                            OrderAgainScreenEvents.ShowErrorSnackBar(
+                                orderAgainUiState.value.snackbarData
+                            )
                         }
                     }
 

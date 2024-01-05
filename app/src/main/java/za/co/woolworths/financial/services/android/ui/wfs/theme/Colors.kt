@@ -39,6 +39,7 @@ val Color4ABB77 = Color(0xFF4ABB77)
 val ColorF3662D = Color(0xFFF3662D)
 val ColorF9E0DB = Color(0xFFF9E0DB)
 val ErrorLabel = Color(0xFFD0021B)
+val ErrorBackground = Color(0xFFE2624D)
 val ColorFEE600 = Color(0xFFFEE600)
 
 
