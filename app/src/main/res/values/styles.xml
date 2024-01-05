@@ -117,6 +117,9 @@
         <item name="android:windowExitAnimation">@anim/alpha_anim_exit</item>
     </style>
 
+    <style name="top_bottom_padding_scrollbar">
+        <item name="android:scrollbarThumbVertical">@drawable/custom_scrollbar</item>
+    </style>
 
     <style name="WRewardsInfo" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>

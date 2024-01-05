@@ -13,6 +13,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.STOCK_AVAILABILITY_0
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.STOCK_AVAILABILITY_MINUS1
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -36,6 +38,7 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             quickAddToListSwitch(this)
             setOnClickListener(navigator, this)
             setNetworkName(this)
+            setOutOfStock(this)
         }
     }
 
@@ -184,11 +187,22 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                 productList?.apply {
                     when (productType) {
                         getString(R.string.food_product_type) -> {
-                            includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
+                            when (stockAvailable) {
+                                STOCK_AVAILABILITY_MINUS1 -> {
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
+                                }
+                                STOCK_AVAILABILITY_0 -> {
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
+                                }
+                                else -> {
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
+                                }
+                            }
                         }
-                        getString(R.string.digital_product_type) -> {
+                        /* commenting it for quick fix in production*/
+                       /* getString(R.string.digital_product_type) -> {
                             includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
-                        }
+                        }*/
                         else -> {
                             includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
                         }
@@ -204,13 +218,54 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                 productList?.apply {
                     when(productType) {
                        getString(R.string.food_product_type) -> {
-                            imAddToList?.visibility = VISIBLE
+                           when (stockAvailable) {
+                               STOCK_AVAILABILITY_MINUS1 -> {
+                                   imAddToList?.visibility = VISIBLE
+                               }
+                               STOCK_AVAILABILITY_0 -> {
+                                   imAddToList?.visibility = GONE
+                               }
+                               else -> {
+                                   imAddToList?.visibility = GONE
+                               }
+                           }
                         }
                         getString(R.string.digital_product_type) -> {
                             imAddToList?.visibility = VISIBLE
                         }
                         else -> {
                             imAddToList?.visibility = GONE
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun setOutOfStock(productList: ProductList) {
+        itemBinding.apply {
+            root.context.apply {
+                productList.apply {
+                    when(productType) {
+                        getString(R.string.food_product_type) -> {
+                            when (stockAvailable) {
+                                STOCK_AVAILABILITY_MINUS1 -> {
+                                    outOfStockTag.visibility = GONE
+                                }
+                                STOCK_AVAILABILITY_0 -> {
+                                    outOfStockTag.visibility = VISIBLE
+                                    imProductImage.alpha = 0.5f
+                                    productListingPromotionalImage.root.visibility = View.GONE
+                                }
+                                else -> {
+                                    outOfStockTag.visibility = GONE
+                                }
+                            }
+                        }
+                        getString(R.string.digital_product_type) -> {
+                            outOfStockTag.visibility = GONE
+                        }
+                        else -> {
+                            outOfStockTag.visibility = GONE
                         }
                     }
                 }

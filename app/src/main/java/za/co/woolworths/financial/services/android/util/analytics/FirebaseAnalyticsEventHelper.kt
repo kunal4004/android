@@ -6,6 +6,12 @@ import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.cart.viewmodel.CartViewModel
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.DELIVERY_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SET_DELIVERY_BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SET_Location
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SWITCH_BROWSE_MODE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SWITCH_DELIVERY_MODE
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
 import za.co.woolworths.financial.services.android.models.dto.order_again.toAnalyticItem
@@ -308,7 +314,7 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
-    fun viewSearchResult(searchTerm: String?) {
+    fun viewSearchResult(searchTerm: String?, searchCount: Int) {
         if (searchTerm.isNullOrEmpty()) {
             return
         }
@@ -318,6 +324,10 @@ object FirebaseAnalyticsEventHelper {
             putString(
                 FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM,
                 searchTerm
+            )
+            putInt(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_COUNT,
+                searchCount
             )
         }
         AnalyticsManager.logEvent(
@@ -518,4 +528,35 @@ object FirebaseAnalyticsEventHelper {
             )
         }
     }
+
+    fun setLocationEvent(browseMode:String?,deliveryMode: String?) {
+        val analyticsParams = Bundle().apply {
+            putString(BROWSE_MODE,browseMode)
+            putString(DELIVERY_MODE, deliveryMode)
+        }
+        AnalyticsManager.logEvent(SET_Location, analyticsParams)
+    }
+
+    fun fromShopWithSetDeliveryBrowseMode(browseMode:String?, deliveryMode: String?) {
+        val analyticsParams = Bundle().apply {
+            putString(BROWSE_MODE,browseMode)
+            putString(DELIVERY_MODE, deliveryMode)
+        }
+        AnalyticsManager.logEvent(SET_DELIVERY_BROWSE_MODE, analyticsParams)
+    }
+
+    fun switchDeliverModeEvent(deliveryMode: String?) {
+        val analyticsParams = Bundle().apply {
+            putString(DELIVERY_MODE, deliveryMode)
+        }
+         AnalyticsManager.logEvent(SWITCH_DELIVERY_MODE, analyticsParams)
+    }
+
+    fun switchBrowseModeEvent(deliveryMode: String) {
+        val analyticsParams = Bundle().apply {
+            putString(BROWSE_MODE, deliveryMode)
+        }
+         AnalyticsManager.logEvent(SWITCH_BROWSE_MODE, analyticsParams)
+    }
+
 }

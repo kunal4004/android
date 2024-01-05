@@ -2184,6 +2184,14 @@ interface ApiInterface {
     suspend fun recommendation(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("fulfillmentStoreId") storeId: String?,
+        @Body recommendationRequest: RecommendationRequest,
+    ): retrofit2.Response<RecommendationResponse>
+
+    @POST("wfs/app/recommendations")
+    suspend fun recommendationAnalytics(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body recommendationRequest: RecommendationRequest,
     ): retrofit2.Response<RecommendationResponse>
 

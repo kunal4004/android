@@ -22,6 +22,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.RewardBenefitFragment
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.VIPExclusiveFragment
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardsUniqueLocators
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -54,7 +55,11 @@ class WRewardBenefitActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this)
         benefitTabPosition = intent.getIntExtra("benefitTabPosition", 0)
         binding.init()
-        binding.closeIcon.setOnClickListener { onBackPressed() }
+        binding.closeIcon.apply {
+            setOnClickListener { onBackPressed() }
+            contentDescription = WRewardsUniqueLocators.CLOSE.value
+        }
+        binding.header.contentDescription = WRewardsUniqueLocators.WREWARDS_BENEFITS_IMAGE.value
     }
 
     private fun RewardBenefitActivityBinding.init() {

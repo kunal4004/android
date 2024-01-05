@@ -37,6 +37,6 @@ allprojects {
         maven { url "https://mint.splunk.com/gradle/" }
         maven { url "https://jitpack.io" }
         maven { url 'https://developer.huawei.com/repo/' }
-        maven { url 'https://glassbox.jfrog.io/artifactory/Glassbox-Android-Sdk' }
+
     }
 }

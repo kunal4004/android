@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.recommendations.data.repository.RecommendationsRepository
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -34,6 +36,7 @@ class RecommendationViewModel @Inject constructor(
     private val _visibleRecommendationItemRequest = MutableLiveData<Boolean?>()
     val visibleRecommendationItemRequest: LiveData<Boolean?> = _visibleRecommendationItemRequest
     private var isQuickShopButtonPressed = false
+    private var carouselPosition: Int = -1
 
     fun clearRecommendations() {
         _recommendationResponseData.value = null
@@ -77,9 +80,10 @@ class RecommendationViewModel @Inject constructor(
     }
 
     fun getRecommendationResponse(recommendationRequest: RecommendationRequest) {
+        val storeId = getStoreId()
         viewModelScope.launch {
             val response =
-                recommendationsRepository.getRecommendationResponse(recommendationRequest)
+                recommendationsRepository.getRecommendationResponse(recommendationRequest, true, storeId)
             if (response.status == Status.SUCCESS) {
                 recommendationTitle = response.data?.title
                 _recommendationResponseData.value = response.data?.actions?.filterNot { it.products.isNullOrEmpty() }
@@ -88,6 +92,19 @@ class RecommendationViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun getStoreId(): String? {
+        val storeId = if (!KotlinUtils.getDeliveryType()?.storeId.isNullOrEmpty()) {
+            KotlinUtils.getDeliveryType()?.storeId
+        } else {
+            AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId?.let {
+                Utils.retrieveStoreId(
+                    it
+                )
+            }
+        }
+        return storeId
     }
 
     fun recommendationTitle() = recommendationTitle
@@ -170,6 +187,14 @@ class RecommendationViewModel @Inject constructor(
 
     fun setQuickShopButtonPressed(value: Boolean) {
         isQuickShopButtonPressed = value
+    }
+
+    fun getCarouselPosition() : Int {
+        return  carouselPosition
+    }
+
+    fun setCarouselPosition(position: Int) {
+        carouselPosition = position
     }
 
 }

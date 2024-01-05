@@ -129,7 +129,7 @@ class ProductListRecommendationAdapter(
                     LinearLayoutManager(
                         activity,
                         LinearLayoutManager.VERTICAL,
-                        false
+                        true
                     )
                 }
                 val imageViewHeight =

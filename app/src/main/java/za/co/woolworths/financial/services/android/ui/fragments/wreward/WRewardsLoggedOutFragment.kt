@@ -8,6 +8,7 @@ import com.awfs.coordination.databinding.WrewardLogoutFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -36,8 +37,7 @@ class WRewardsLoggedOutFragment : WRewardOnBoardingFragment(R.layout.wreward_log
             incSignOutContent.applyForWRewards.setOnClickListener(this@WRewardsLoggedOutFragment)
             incSignOutContent.tvSignIn.setOnClickListener(this@WRewardsLoggedOutFragment)
             incSignOutContent.tvRegister.setOnClickListener(this@WRewardsLoggedOutFragment)
-
-            uniqueIdsForWRewardAutomation()
+            WRewardUniqueLocatorsHelper.setRewardsSignedOutMainIDs(incSignOutContent.applyForWRewards,incSignOutContent.tvSignIn,incSignOutContent.tvOr,incSignOutContent.tvRegister)
         }
     }
 
@@ -67,16 +67,5 @@ class WRewardsLoggedOutFragment : WRewardOnBoardingFragment(R.layout.wreward_log
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         mBottomNavigator?.removeToolbar()
-    }
-
-    private fun WrewardLogoutFragmentBinding.uniqueIdsForWRewardAutomation() {
-        activity?.resources?.apply {
-            vpJoinRewardInfo?.contentDescription = getString(R.string.joinWRewardsViewGroup)
-            scrollLoggedOutLoggedIn?.contentDescription = getString(R.string.join_wreward_nested_scrollview)
-            joinRewardScrollContainerLinearLayout?.contentDescription = getString(R.string.join_wreward_scroll_container_linearlayout)
-            tabIndicator?.contentDescription = getString(R.string.join_wreward_tab_indicator_layout)
-            incSignOutContent?.root?.contentDescription = getString(R.string.include_sign_out_content)
-            incSignOutContent?.applyForWRewards?.contentDescription = getString(R.string.joinWRewardsButton)
-        }
     }
 }

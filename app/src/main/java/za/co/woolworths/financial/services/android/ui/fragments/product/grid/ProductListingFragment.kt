@@ -161,11 +161,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var PLP_SCREEN_LOCATION: String? = "PLP Screen"
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
     private var recyclerViewViewHolderItems: RecyclerViewViewHolderItems? = null
-
+    private var isSearchByKeywordNavigation = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var isSearchByKeywordNavigation = false
         activity?.apply {
             arguments?.apply {
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
@@ -197,19 +196,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             localProductBody.add(localBody)
             setProductBody()
             isBackPressed = false
-            callViewSearchResultEvent(isSearchByKeywordNavigation, mSearchTerm)
         }
         config = NetworkConfig(AppContextProviderImpl())
         if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
             dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
         if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
             dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
-    }
-
-    private fun callViewSearchResultEvent(isSearchByKeywordNavigation: Boolean?, searchTerm: String?) {
-        if (isSearchByKeywordNavigation == true) {
-            FirebaseAnalyticsEventHelper.viewSearchResult(searchTerm)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -249,8 +241,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }
 
         binding.apply {
-            toolbarPLPAddress.setOnClickListener(this@ProductListingFragment)
-            toolbarPLPTitle.setOnClickListener(this@ProductListingFragment)
             plpSearchIcon.setOnClickListener(this@ProductListingFragment)
             plpBackIcon.setOnClickListener(this@ProductListingFragment)
         }
@@ -1059,6 +1049,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     }
 
+    override fun isSearchByKeywordNavigation(): Boolean {
+        return isSearchByKeywordNavigation
+    }
+
 
     override fun onClick(view: View) {
         KotlinUtils.avoidDoubleClicks(view)
@@ -1094,9 +1088,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                         activity
                     )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
-                }
-                R.id.toolbarPLPAddress, R.id.toolbarPLPTitle -> {
-                    presentEditDeliveryActivity()
                 }
 
                 R.id.plpSearchIcon -> {
@@ -1528,17 +1519,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             return
         }
 
-        // Now first check for if delivery location and browsing location is same.
-        // if same no issues. If not then show changing delivery location popup.
-        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type) && isUserBrowsing) {
-            KotlinUtils.showChangeDeliveryTypeDialog(
-                requireContext(), requireFragmentManager(),
-                KotlinUtils.browsingDeliveryType
-            )
-            return
-        }
-
-
         if (mStoreId.isEmpty()) {
             addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
             return
@@ -1641,6 +1621,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                     }
 
                                 try {
+                                    val scrollPosition = getScrollToPosition(productList)
+                                    if(scrollPosition != -1) {
+                                        binding.productsRecyclerView.layoutManager?.scrollToPosition(scrollPosition)
+                                    }
                                     mProductAdapter?.showQuantitySelector(recyclerViewViewHolderItems, cartItem)
                                 } catch (ex: IllegalStateException) {
                                     logException(ex)
@@ -1694,6 +1678,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         // hide progress bar
         binding.incCenteredProgress.root.visibility = GONE
         mProductAdapter?.resetQuickShopButton()
+    }
+
+    private fun getScrollToPosition(productList: ProductList): Int {
+            return mProductList?.indexOf(productList) ?: -1
     }
 
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
