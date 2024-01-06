@@ -112,9 +112,9 @@ class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetai
         }
     }
 
-    override suspend fun getItemsInSharedShoppingList(listId: String): Resource<ShoppingListItemsResponse> {
+    override suspend fun getItemsInSharedShoppingList(listId: String, viewOnlyType: Boolean): Resource<ShoppingListItemsResponse> {
         return try {
-            val response = OneAppService().getItemsInSharedShoppingList(listId)
+            val response = OneAppService().getItemsInSharedShoppingList(listId, viewOnlyType)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

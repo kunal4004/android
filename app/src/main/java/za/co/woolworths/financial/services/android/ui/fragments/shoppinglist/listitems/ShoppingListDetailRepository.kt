@@ -19,5 +19,5 @@ interface ShoppingListDetailRepository {
 
     suspend fun copyMultipleItemsFromList(copyItemToListRequest: CopyItemToListRequest): Resource<CopyListResponse>
 
-    suspend fun getItemsInSharedShoppingList(listId: String) : Resource<ShoppingListItemsResponse>
+    suspend fun getItemsInSharedShoppingList(listId: String, viewOnlyType: Boolean) : Resource<ShoppingListItemsResponse>
 }

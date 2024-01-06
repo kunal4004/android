@@ -112,10 +112,10 @@ class ShoppingListDetailViewModel @Inject constructor(
         }
     }
 
-    suspend fun getItemsInSharedShoppingList(listId: String) {
+    suspend fun getItemsInSharedShoppingList(listId: String, viewOnlyType: Boolean) {
         _shoppingListDetails.value = Event(Resource.loading(null))
         viewModelScope.launch {
-            val response = shoppingListDetailRepository.getItemsInSharedShoppingList(listId)
+            val response = shoppingListDetailRepository.getItemsInSharedShoppingList(listId, viewOnlyType)
             mShoppingListItems = response.data?.listItems?.let { ArrayList(it) } ?: ArrayList(0)
             _shoppingListDetails.value = Event(response)
         }

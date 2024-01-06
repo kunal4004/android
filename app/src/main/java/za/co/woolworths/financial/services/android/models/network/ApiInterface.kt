@@ -1006,6 +1006,7 @@ interface ApiInterface {
     suspend fun getItemsInSharedShoppingList(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Header("viewOnly") viewOnlyType: String,
         @Path("id") id: String,
     ): retrofit2.Response<ShoppingListItemsResponse>
 

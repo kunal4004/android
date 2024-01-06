@@ -29,6 +29,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -232,7 +233,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         if (viewType.isNotEmpty()) {
             // This is share list flow from Deeplinking.
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.getItemsInSharedShoppingList(arguments?.getString("listId", "") ?: "")
+                val viewType = !(arguments?.getString("viewType", "viewOnly")?.contains("edit") ?: false)
+                viewModel.getItemsInSharedShoppingList(arguments?.getString("listId", "") ?: "", viewType)
             }
         } else {
             setUpToolbar(listName)
@@ -1077,7 +1079,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     override fun onPause() {
         super.onPause()
-        requireActivity().unregisterReceiver(mConnectionBroadcast)
+        mConnectionBroadcast?.let {
+            LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(
+                it
+            )
+        }
         UpdateScreenLiveData.removeObservers(viewLifecycleOwner)
     }
 
