@@ -3252,6 +3252,7 @@
     <string name="share_btn">SHARE</string>
     <string name="more_options_btn"><u>MORE OPTIONS</u></string>
     <string name="copy_to_list">Copy to a List </string>
+    <string name="move_to_list">"Move Item to List" </string>
     <string name="move_from_list">Move to Another List </string>
     <string name="remove_from_list">Remove from List </string>
     <string name="confirmation_title">Are You Sure?</string>
@@ -3269,7 +3270,7 @@
     <string name="delete_item_desc">If you remove these products from your list, you can \n still shop for them in the app.</string>
     <string name="remove_error_msg">An error occurred while removing your item. \n Please try again later.</string>
     <string name="remove_copy_msg">An error occurred while copying your items. \n Please try again later.</string>
-    <string name="move_to_list">move to a list</string>
+    <string name="remove_move_msg">An error occurred while moving your items. \n Please try again later.</string>
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
 
 
@@ -3287,8 +3288,13 @@
     </plurals>
 
     <plurals name="copy_item">
-        <item quantity="one">Copying Your Item</item>
-        <item quantity="other">Copying Your Items </item>
+        <item quantity="one">Copying Your Item to</item>
+        <item quantity="other">Copying Your Items to</item>
+    </plurals>
+
+    <plurals name="move_item">
+        <item quantity="one">Moving Your Item to</item>
+        <item quantity="other">Moving Your Items to </item>
     </plurals>
 
     <plurals name="copy_item_msg">
@@ -3299,6 +3305,11 @@
     <plurals name="remove_list">
         <item quantity="one">%1$d ITEM REMOVED FROM </item>
         <item quantity="other">%1$d ITEMS REMOVED FROM </item>
+    </plurals>
+
+    <plurals name="move_item_msg">
+        <item quantity="one">%1$d ITEM MOVED TO %2$s</item>
+        <item quantity="other">%1$d ITEMS MOVED TO %2$s</item>
     </plurals>
 
 </resources>

@@ -47,6 +47,7 @@ fun AddToListScreen(
     modifier: Modifier = Modifier,
     listUiState: AddToListUiState = AddToListUiState(),
     copyItemToList: Boolean = false,
+    moveItemToList: Boolean = false,
     copyListId: String? ="",
     onEvent: (event: AddToListScreenEvents) -> Unit
 ) {
@@ -72,6 +73,8 @@ fun AddToListScreen(
                 headerViewState = HeaderViewState.HeaderStateType2(
                     title = if (copyItemToList)
                         stringResource(id = R.string.copy_to_list)
+                            else if (moveItemToList)
+                        stringResource(id = R.string.move_to_list)
                     else
                         stringResource(id = R.string.add_to_list)
                 )
@@ -96,7 +99,7 @@ fun AddToListScreen(
                     modifier = Modifier
                         .weight(1f)
                         .background(Color.White),
-                    list = if (copyItemToList)
+                    list = if (copyItemToList || moveItemToList)
                         listUiState.list.filter {
                             it.listId != copyListId
                         } else listUiState.list,
@@ -116,6 +119,8 @@ fun AddToListScreen(
                 ) {
                     if (copyItemToList) {
                         onEvent(AddToListScreenEvents.CopyConfirmClick)
+                    } else if (moveItemToList) {
+                        onEvent(AddToListScreenEvents.MoveConfirmClick)
                     } else {
                         onEvent(AddToListScreenEvents.ConfirmClick)
                     }
