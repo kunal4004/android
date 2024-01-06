@@ -35,6 +35,7 @@
             android:paddingEnd="@dimen/sixteen_dp"
             android:text="@string/remove"
             android:textAllCaps="true"
+            android:lineSpacingExtra="@dimen/five_sp"
             android:textColor="@color/white"
             android:textSize="@dimen/twenty_sp"
             app:WTextView_font="medium" />
