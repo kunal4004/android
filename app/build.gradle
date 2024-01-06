@@ -416,8 +416,7 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation 'androidx.paging:paging-common-ktx:3.0.1'
     implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
-    // glassbox SDK for record screen session
-    implementation 'com.clarisite.mobile.android:glassbox:6.660'
+
     // Kotlin reflexion
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_reflect"
     // truth library for testing
