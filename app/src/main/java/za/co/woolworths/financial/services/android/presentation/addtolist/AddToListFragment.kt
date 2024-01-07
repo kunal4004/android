@@ -215,7 +215,11 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                                 dialog?.dismiss()
                                 listener?.itemEditOptionsClick(EditOptionType.MoveItemFromList(viewModel.getSelectedListForCopyItem()))
                             }
-                            AddToListScreenEvents.CancelClick -> dismiss()
+                            AddToListScreenEvents.CancelClick ->
+                            {
+                                setFragmentResult(MoreOptionDialogFragment.MORE_OPTION_CANCEL_CLICK_LISTENER.toString(), bundleOf())
+                                dismiss()
+                            }
                             else -> viewModel.onEvent(event)
                         }
                     }
