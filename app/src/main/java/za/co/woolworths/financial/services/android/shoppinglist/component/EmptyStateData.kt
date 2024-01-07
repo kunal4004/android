@@ -11,5 +11,6 @@ data class EmptyStateData(
     val icon: Int = R.drawable.empty_list_icon,
     val title: Int = R.string.title_no_shopping_lists,
     val description: Int = R.string.description_no_shopping_lists,
-    val buttonText: Int = R.string.button_no_shopping_lists
+    val buttonText: Int = R.string.button_no_shopping_lists,
+    val isButtonVisible: Boolean = false
 )

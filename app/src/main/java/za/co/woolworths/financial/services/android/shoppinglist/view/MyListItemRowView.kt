@@ -110,7 +110,21 @@ fun MyListItemRowView(
             }
         }
 
-        if (listItem.productImageList.isNotEmpty()) {
+        Row () {
+            Text(
+                text = "3 Collaborator",
+                style = TextStyle(
+                    fontSize = 11.sp,
+                    lineHeight = 16.5.sp,
+                    fontFamily = OpenSansFontFamily,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFF666666),
+                    letterSpacing = 0.22.sp,
+                )
+            )
+        }
+
+        if (listItem.productImageURLs.isNotEmpty()) {
 
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -137,13 +151,13 @@ private fun MyListItemRowPreview() {
             mockListDetails.add(productListDetails)
             mockListDetails.add(productListDetails)
             mockListDetails.add(productListDetails)
-            productImageList = mockListDetails
+          //  productImageList = mockListDetails
         }
         val mockListData: List<ShoppingList> = emptyList()
         mockListData.plus(mockList)
         val listData =
             ListDataState(
-                mockListData, emptyList(), R.drawable.ic_share, R.drawable
+                mockListData, emptyList(), emptyList(), R.drawable.ic_share, R.drawable
                     .ic_white_chevron_right,
                 isEditMode = true
             )

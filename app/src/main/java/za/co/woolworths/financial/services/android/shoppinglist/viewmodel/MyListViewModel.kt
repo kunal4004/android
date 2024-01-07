@@ -27,7 +27,6 @@ import za.co.woolworths.financial.services.android.shoppinglist.component.ListDa
 import za.co.woolworths.financial.services.android.shoppinglist.component.LocationDetailsState
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyListScreenEvents
-import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
@@ -56,6 +55,7 @@ class MyListViewModel @Inject constructor(
     val onScreenEvents: StateFlow<MyListScreenEvents> = _onScreenEvents.asStateFlow()
 
     private var isCheckedDontAskAgain: Boolean = false
+    private var isClickedOnSharedList: Boolean = false
     var deliveryDetailsState = mutableStateOf(LocationDetailsState())
     private var _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -129,12 +129,19 @@ class MyListViewModel @Inject constructor(
                     withContext(Dispatchers.Default) {
                         when (shoppingListResponse.status) {
                             Status.SUCCESS -> {
-                                val updatedList = listDataState.value.list.toMutableList()
-                                updatedList.remove(item)
-                                val newList = shoppingListResponse.data?.lists
-                                listDataState.value = listDataState.value.copy(
-                                    list = updatedList
-                                )
+                                if (!isClickedOnShareLists()) {
+                                    val updatedList = listDataState.value.list.toMutableList()
+                                    updatedList.remove(item)
+                                    listDataState.value = listDataState.value.copy(
+                                        list = updatedList
+                                    )
+                                } else {
+                                    val updatedList = listDataState.value.shareList.toMutableList()
+                                    updatedList.remove(item)
+                                    listDataState.value = listDataState.value.copy(
+                                        shareList = updatedList
+                                    )
+                                }
                                 _onScreenEvents.emit(
                                     MyListScreenEvents.DismissDialog(
                                         true, item.listName
@@ -351,47 +358,23 @@ class MyListViewModel @Inject constructor(
     }
 
     private fun setListData(shoppingListResponse: ShoppingListsResponse?) {
-        listDataState.value = listDataState.value.copy(
-            list = shoppingListResponse?.lists?.let { getUpdatedList(it) } ?: emptyList()
-        )
+        if (isClickedOnSharedList) {
+            listDataState.value = listDataState.value.copy(
+                shareList = shoppingListResponse?.sharedLists?.let { getUpdatedList(it) } ?: emptyList()
+            )
+        } else {
+            listDataState.value = listDataState.value.copy(
+                list = shoppingListResponse?.lists?.let { getUpdatedList(it) } ?: emptyList(),
+                shareList = shoppingListResponse?.sharedLists?.let { getUpdatedList(it) }?: emptyList()
+            )
+        }
     }
 
     private fun getUpdatedList(list: List<ShoppingList>): List<ShoppingList> {
         list.mapIndexed { index, shoppingList ->
             shoppingList.modifiedListCount = "(" + shoppingList.listCount + ")"
-            shoppingList.productImageList = getImageListData(index, shoppingList)
         }
         return list
-    }
-
-    private fun getImageListData(
-        index: Int,
-        shoppingList: ShoppingList,
-    ): ArrayList<ProductListDetails> {
-        // todo Once we receive API response we will remove this function.
-        val mockListDetails = ArrayList<ProductListDetails>()
-        val productListDetails = ProductListDetails().apply {
-            imgUrl = when (index) {
-                0 -> "https://assets.woolworthsstatic.co.za/Split-Neck-Cropped-Tencel-Shirt-BLACK-506262324-hero.jpg?V=ab0h&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIyLTEwLTE3LzUwNjI2MjMyNF9CTEFDS19oZXJvLmpwZyJ9&"
-
-                1 -> "https://assets.woolworthsstatic.co.za/Mini-Oat-Crunchies-150-g-6009223195009.jpg?V=buKH&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTAyLzYwMDkyMjMxOTUwMDlfaGVyby5qcGcifQ&"
-
-                2 -> "https://assets.woolworthsstatic.co.za/Mini-Chocolate-Digestives-30-g-6009189506246.jpg?V=fur0&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxODk1MDYyNDZfaGVyby5qcGcifQ&"
-
-                3 -> "https://assets.woolworthsstatic.co.za/Frill-Balloon-Sleeve-Blouse-BLACK-506629130-hero.jpg?V=raxB&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTA1LTA4LzUwNjYyOTEzMF9CTEFDS19oZXJvLmpwZyJ9&"
-
-                4 -> "https://assets.woolworthsstatic.co.za/Easy-Care-Check-Shirt-NATURAL-506536382.jpg?V=7SRx&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTAyLTIxLzUwNjUzNjM4Ml9OQVRVUkFMX2hlcm8uanBnIn0&"
-
-                else -> ""
-            }
-        }
-
-        if (shoppingList.listCount > 0) {
-            for (i in 1..shoppingList.listCount) {
-                mockListDetails.add(productListDetails)
-            }
-        }
-        return mockListDetails
     }
 
     fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {
@@ -399,4 +382,10 @@ class MyListViewModel @Inject constructor(
     }
 
     fun isCheckedDontAskAgain() = isCheckedDontAskAgain
+
+    fun setIsClickedOnShareLists(isClickedOnSharedListOption: Boolean) {
+        isClickedOnSharedList = isClickedOnSharedListOption
+    }
+
+    fun isClickedOnShareLists() = isClickedOnSharedList
 }

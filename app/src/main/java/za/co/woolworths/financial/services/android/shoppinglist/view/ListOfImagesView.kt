@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
-import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 import kotlin.math.roundToInt
@@ -45,7 +44,7 @@ fun ListOfImagesView(
 
     val maxImageCount = fetchMaxImageCount()
 
-    val listImages = listItem.productImageList
+    val listImages = listItem.productImageURLs
     LazyRow(
         modifier = Modifier
             .height(70.dp)
@@ -67,7 +66,7 @@ fun ListOfImagesView(
                         .height(64.dp)
                         .width(55.dp)
                         .fillMaxHeight(),
-                    model = listItem.productImageList.get(index).imgUrl,
+                    model = listItem.productImageURLs.get(index),
                     placeholder = painterResource(id = R.drawable.placeholder_product_list),
                     error = painterResource(id = R.drawable.placeholder_product_list),
                     contentDescription = stringResource(id = R.string.description),
@@ -82,7 +81,7 @@ fun ListOfImagesView(
                     .height(64.dp)
                     .width(55.dp)
                     .fillMaxHeight(),
-                model = listItem.productImageList.get(index).imgUrl,
+                model = listItem.productImageURLs.get(index),
                 placeholder = painterResource(id = R.drawable.placeholder_product_list),
                 error = painterResource(id = R.drawable.placeholder_product_list),
                 contentDescription = stringResource(id = R.string.description),
@@ -129,23 +128,7 @@ fun ListOfImagesViewPreview() {
             listName = "Test"
             listCount = 14
             modifiedListCount = "(14)"
-            val productListDetails = ProductListDetails().apply {
-                imgUrl =
-                    "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
-            }
-
-            val mockListDetails = ArrayList<ProductListDetails>().apply {
-                add(productListDetails)
-                add(productListDetails)
-                add(productListDetails)
-                add(productListDetails)
-                add(productListDetails)
-                add(productListDetails)
-                add(productListDetails)
-                add(productListDetails)
-                add(productListDetails)
-            }
-            productImageList = mockListDetails
+            productImageURLs = listOf("https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&")
         }
 
         ListOfImagesView(mockList, onImageItemClick = {})
