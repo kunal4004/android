@@ -5,5 +5,5 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 sealed class EditOptionType {
     object RemoveItemFromList : EditOptionType()
     data class CopyItemFromList(var list:ArrayList<ShoppingList>): EditOptionType()
-    object MoveItemFromList : EditOptionType()
+    data class MoveItemFromList (var list:ArrayList<ShoppingList>) : EditOptionType()
 }

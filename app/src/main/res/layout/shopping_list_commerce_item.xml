@@ -10,10 +10,9 @@
 
     <RelativeLayout
         android:id="@+id/swipeRight"
-        android:background="@color/delete_red_bg"
         android:layout_width="@dimen/two_hundred_dp"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:background="@color/delete_red_bg"
         android:tag="Bottom3">
 
         <RelativeLayout
