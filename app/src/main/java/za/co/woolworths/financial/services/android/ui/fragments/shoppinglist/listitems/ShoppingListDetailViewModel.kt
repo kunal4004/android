@@ -173,16 +173,16 @@ class ShoppingListDetailViewModel @Inject constructor(
     }
 
     fun setItem(updatedItem: ShoppingListItem) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             if (mShoppingListItems.isEmpty()) return@launch
-            val itemList = mShoppingListItems.filter {
+            val item = mShoppingListItems.find {
                 it.catalogRefId.equals(
                     updatedItem.catalogRefId,
                     ignoreCase = true
                 )
             }
-            if (itemList.isNotEmpty()) {
-                val index = mShoppingListItems.indexOf(itemList[0])
+            item?.let {
+                val index = mShoppingListItems.indexOf(item)
                 if (index < 0 || index >= mShoppingListItems.size) return@launch
                 mShoppingListItems[index] = updatedItem
             }
