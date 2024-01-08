@@ -18,6 +18,8 @@ public interface ShoppingListItemsNavigator {
 
     void onItemDeleteClick(ShoppingListItem shoppingListItem);
 
+    void onItemAddClick(ShoppingListItem shoppingListItem);
+
     void onShoppingSearchClick();
 
     void openProductDetailFragment(String productName, ProductList productList);
