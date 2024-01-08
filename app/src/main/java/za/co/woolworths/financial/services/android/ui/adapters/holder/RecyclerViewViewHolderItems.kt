@@ -22,7 +22,7 @@ import javax.annotation.meta.When
 
 class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding) : RecyclerViewViewHolder(itemBinding.root) {
 
-    fun setProductItem(productList: ProductList, navigator: IProductListing, nextProduct: ProductList? = null, previousProduct: ProductList? = null) {
+    fun setProductItem(productList: ProductList, navigator: IProductListing, nextProduct: ProductList? = null, previousProduct: ProductList? = null, position: Int) {
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages,virtualTryOn)
@@ -36,17 +36,17 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
             quickAddToListSwitch(this)
-            setOnClickListener(navigator, this)
+            setOnClickListener(navigator, this,position)
             setNetworkName(this)
             setOutOfStock(this)
         }
     }
 
-    private fun setOnClickListener(navigator: IProductListing, productList: ProductList) = itemBinding?.apply {
-        tvProductName.setOnClickListener { navigator.openProductDetailView(productList) }
-        mainImgLayout.setOnClickListener { navigator.openProductDetailView(productList) }
-        brandName.setOnClickListener { navigator.openProductDetailView(productList) }
-        tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
+    private fun setOnClickListener(navigator: IProductListing, productList: ProductList, position: Int) = itemBinding?.apply {
+        tvProductName.setOnClickListener { navigator.openProductDetailView(productList,position) }
+        mainImgLayout.setOnClickListener { navigator.openProductDetailView(productList,position) }
+        brandName.setOnClickListener { navigator.openProductDetailView(productList,position) }
+        tvRangeName.setOnClickListener { navigator.openProductDetailView(productList,position) }
     }
 
     private fun setNetworkName(productList: ProductList?)= itemBinding.apply {

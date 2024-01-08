@@ -907,9 +907,8 @@ public class Utils {
     }
 
     public static ShoppingDeliveryLocation getPreferredDeliveryLocation() {
-        ShoppingDeliveryLocation preferredDeliveryLocation = null;
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-        return (currentUserObject.preferredShoppingDeliveryLocation != null && currentUserObject.preferredShoppingDeliveryLocation.fulfillmentDetails != null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
+        return (currentUserObject.preferredShoppingDeliveryLocation != null && currentUserObject.preferredShoppingDeliveryLocation.fulfillmentDetails != null) ? currentUserObject.preferredShoppingDeliveryLocation : null;
     }
 
     public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {

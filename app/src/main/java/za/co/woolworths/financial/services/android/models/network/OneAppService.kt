@@ -133,6 +133,7 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
+import za.co.woolworths.financial.services.android.models.dto.CheckoutSuccess
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
@@ -1401,4 +1402,9 @@ open class OneAppService(
         )
     }
 
+    suspend fun postCheckoutComplete(suburbId: String) = mApiInterface.postCheckoutSuccess(
+        getSessionToken(),
+        getDeviceIdentityToken(),
+        CheckoutSuccess(suburbId)
+    )
 }

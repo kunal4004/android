@@ -68,6 +68,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WStockFinderAct
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
@@ -152,7 +153,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     private var localDeliveryTypeForHiddenChange: String? = null
     private var mPromotionalCopy: String? = null
     private var isChanelPage = false
-    private val dyChoosevariationViewModel: DyHomePageViewModel by viewModels()
+    private val dyChoosevariationViewModel: DyChooseVariationCallViewModel by viewModels()
     private var breadCrumbList: ArrayList<String> = ArrayList()
     private var breadCrumb: ArrayList<BreadCrumb> = ArrayList()
     private var dyServerId: String? = null
@@ -1417,9 +1418,29 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
 
     }
 
-    override fun openProductDetailView(productList: ProductList) {
+    override fun openProductDetailView(productList: ProductList, position: Int) {
         //firebase event select_item
         state = binding.productsRecyclerView.layoutManager?.onSaveInstanceState()
+        triggerFirebaseEvent(productList, position)
+        val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(
+            title,
+            productList,
+            mBannerLabel,
+            mBannerImage,
+            isUserBrowsing
+        )
+    }
+
+    private fun triggerFirebaseEvent(productList: ProductList, index: Int) {
+        callSelectItemFirebaseEvent(productList)
+        if (!productList.saveText.isNullOrEmpty()) {
+            // call select_promotion event if a product has promotion
+            FirebaseAnalyticsEventHelper.selectPromotion(productList, breadCrumbList, index, KotlinUtils.getDeliveryType()?.address?.placeId)
+        }
+    }
+
+    private fun callSelectItemFirebaseEvent(productList: ProductList) {
         val selectItemParams = Bundle()
         selectItemParams.putString(
             FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME,
@@ -1444,15 +1465,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT,
             selectItemParams
-        )
-
-        val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.openProductDetailFragment(
-            title,
-            productList,
-            mBannerLabel,
-            mBannerImage,
-            isUserBrowsing
         )
     }
 
