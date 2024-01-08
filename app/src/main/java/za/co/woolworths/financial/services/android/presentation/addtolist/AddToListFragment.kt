@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.presentation.addtolist
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -40,6 +42,7 @@ import za.co.woolworths.financial.services.android.presentation.createlist.Creat
 import za.co.woolworths.financial.services.android.presentation.createlist.components.CreateListScreenEvent
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
+import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment.Companion.COPY_ITEM_LIST
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment.Companion.COPY_LIST_ID
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment.Companion.MOVE_ITEM_LIST
@@ -212,7 +215,11 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                                 dialog?.dismiss()
                                 listener?.itemEditOptionsClick(EditOptionType.MoveItemFromList(viewModel.getSelectedListForCopyItem()))
                             }
-                            AddToListScreenEvents.CancelClick -> dismiss()
+                            AddToListScreenEvents.CancelClick ->
+                            {
+                                setFragmentResult(MoreOptionDialogFragment.MORE_OPTION_CANCEL_CLICK_LISTENER.toString(), bundleOf())
+                                dismiss()
+                            }
                             else -> viewModel.onEvent(event)
                         }
                     }
@@ -254,5 +261,10 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        setFragmentResult(MoreOptionDialogFragment.MORE_OPTION_CANCEL_CLICK_LISTENER.toString(), bundleOf())
     }
 }

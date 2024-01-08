@@ -1,14 +1,15 @@
 package za.co.woolworths.financial.services.android.shoppinglist.view
 
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -25,7 +26,6 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.AppConstant
 
-@OptIn(ExperimentalComposeUiApi::class)
 @AndroidEntryPoint
 class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
 
@@ -40,6 +40,7 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
         const val COPY_ITEM_LIST = "COPY_ITEM_LIST"
         const val MOVE_ITEM_LIST = "MOVE_ITEM_LIST"
         const val CONFIRM_CLICKED = "CONFIRM_CLICKED"
+        const val MORE_OPTION_CANCEL_CLICK_LISTENER = 1414
 
         fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener,
                         itemCount:Int,
@@ -131,5 +132,10 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        setFragmentResult(MORE_OPTION_CANCEL_CLICK_LISTENER.toString(), bundleOf())
     }
 }
