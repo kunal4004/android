@@ -306,7 +306,7 @@ class CartRepository @Inject constructor() {
                 }
                 cartItemGroups.add(cartItemGroup)
             }
-            var giftCartItemGroup =
+            /*var giftCartItemGroup =
                 CartItemGroup()
             giftCartItemGroup.type = GIFT_ITEM
             val generalCartItemGroup =
@@ -350,7 +350,7 @@ class CartRepository @Inject constructor() {
                     }
                 }
                 cartItemGroups.add(generalIndex + 1, giftCartItemGroup)
-            }
+            }*/
             cartResponse.cartItems = cartItemGroups
         } catch (e: JSONException) {
             FirebaseManager.logException(e)
