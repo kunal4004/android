@@ -12,24 +12,13 @@ import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @HiltViewModel
-class DyHomePageViewModel @Inject constructor(
+class DyChooseVariationCallViewModel @Inject constructor(
     private val dyChooseVariationRepository: DyChooseVariationRepository
 ): ViewModel() {
 
     fun createDyRequest(chooseVariationRequestEvent: HomePageRequestEvent) {
         viewModelScope.launch {
             val response = dyChooseVariationRepository.getDyChooseVariationResponse(chooseVariationRequestEvent)
-            if (response.status == Status.SUCCESS) {
-                for (myData in response.data?.cookies!!) {
-                    if (myData.name.equals("_dyid_server")) {
-                        Utils.saveDyServerId(myData.value)
-                        Utils.sessionDaoSaveDyServerId(SessionDao.KEY.DY_SERVER_ID, myData.value)
-                    }else if (myData.name.equals("_dyjsession")) {
-                        Utils.saveDySessionId(myData.value)
-                        Utils.sessionDaoSaveDySessionId(SessionDao.KEY.DY_SESSION_ID, myData.value)
-                    }
-                }
-            }
         }
     }
 }

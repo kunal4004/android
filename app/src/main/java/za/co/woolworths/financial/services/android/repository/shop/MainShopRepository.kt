@@ -19,7 +19,9 @@ import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDeta
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.UNABLE_TO_PARSE_LAST_ORDER_RESPONSE
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
 
@@ -186,15 +188,28 @@ class MainShopRepository : ShopRepository {
                 } ?: Resource.error(R.string.error_unknown, null)
             } else {
                 var errorResponse : LastOrderDetailsResponse? = null
+                var errorBodyString = ""
+
                 try {
+                    errorBodyString = response.errorBody().toString()
                     errorResponse = Gson().fromJson(
-                        response.errorBody()?.charStream(),
+                        errorBodyString,
                         LastOrderDetailsResponse::class.java)
-                } catch (jsonException: JsonParseException) {
-                    FirebaseManager.logException(jsonException)
-                    Firebase.crashlytics.setCustomKeys {
-                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionResponse, response?.errorBody()?.charStream().toString())
-                        key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionMessage, "Unable to parse LastOrderDetailsResponse class")
+                } catch (e: Exception) {
+                    when(e){
+                        is JsonParseException,is IllegalStateException->{
+                            val token = SessionUtilities.getInstance().jwt
+                            FirebaseManager.logException(e)
+                            Firebase.crashlytics.setCustomKeys {
+                                    key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionResponse,
+                                        errorBodyString
+                                    )
+                                key(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionMessage, UNABLE_TO_PARSE_LAST_ORDER_RESPONSE)
+                                token?.C2Id?.let {
+                                    key(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, it)
+                                }
+                            }
+                        }
                     }
                 }
                 Resource.error(R.string.error_unknown, errorResponse)
