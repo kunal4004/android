@@ -10,7 +10,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/one_dp"
         android:background="@color/outside_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,7 +18,7 @@
 
     <ImageView
         android:id="@+id/giftItemImageView"
-        android:layout_width="84dp"
+        android:layout_width="@dimen/eighty_four_dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startTopGuideLine"
@@ -62,7 +62,7 @@
         style="@style/style_cart_item_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
         android:fontFamily="@font/opensans_regular_ttf"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
         app:layout_constraintStart_toEndOf="@+id/giftItemImageView"
@@ -75,7 +75,7 @@
         style="@style/style_cart_item_details"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
         android:fontFamily="@font/opensans_regular_ttf"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
@@ -100,7 +100,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/eight_dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/freeGiftTextView"
         app:layout_constraintStart_toEndOf="@+id/giftItemImageView"
