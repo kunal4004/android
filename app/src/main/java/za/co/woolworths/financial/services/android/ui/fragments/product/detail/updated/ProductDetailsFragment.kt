@@ -381,7 +381,6 @@ class ProductDetailsFragment :
         addFragmentListener()
         setUniqueIds()
         productDetails?.let {
-            addViewItemEvent(it)
             wfsShoptimiserProduct.addProductDetails(it)
         }
         setUpCartCountPDP()
@@ -476,29 +475,6 @@ class ProductDetailsFragment :
                 }
             }
         }
-    }
-
-    //firebase event view_item
-    private fun addViewItemEvent(productDetails: ProductDetails) {
-        val viewItemListParams = Bundle()
-        viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        viewItemListParams.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
-            productDetails?.productType)
-        val viewItem = Bundle()
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
-        productDetails?.price?.toDouble()
-            ?.let { viewItem.putDouble(FirebaseAnalytics.Param.PRICE, it) }
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
-            productDetails?.colourSizeVariants)
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-            productDetails?.categoryName)
-        viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
-            viewItemListParams)
     }
 
     override fun onAttach(context: Context) {
@@ -1250,7 +1226,7 @@ class ProductDetailsFragment :
         if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
-        callViewPromotionFirebaseEvent()
+        callFirebaseEvents()
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
@@ -1604,9 +1580,12 @@ class ProductDetailsFragment :
         return otherSKUsByGroupKey
     }
 
-    private fun callViewPromotionFirebaseEvent() {
-        productDetails?.promotionsList?.let { promoList ->
-            FirebaseAnalyticsEventHelper.viewPromotion(productDetails!!, promoList)
+    private fun callFirebaseEvents() {
+        productDetails?.let { details ->
+            FirebaseAnalyticsEventHelper.viewItem(details)
+            productDetails?.promotionsList?.let { promoList ->
+                FirebaseAnalyticsEventHelper.viewPromotion(details, promoList)
+            }
         }
     }
 
