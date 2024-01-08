@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-   android:id="@+id/giftRootContainerConstraintLayout"
+    android:id="@+id/giftRootContainerConstraintLayout"
     android:layout_height="wrap_content"
     android:contentDescription="@string/layout_gift_items"
     android:background="@color/white">
@@ -23,7 +23,7 @@
         android:layout_gravity="center"
         android:adjustViewBounds="true"
         android:contentDescription="@string/gwp_img_gift"
-        android:minHeight="@dimen/sixty_dp"
+        android:minHeight="@dimen/eighty_dp"
         app:layout_constraintEnd_toStartOf="@+id/productNameTextView"
         app:layout_constraintStart_toStartOf="@+id/startGuideLine"
         app:layout_constraintTop_toTopOf="@+id/startTopGuideLine" />
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="28dp" />
+        app:layout_constraintGuide_begin="20dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startTopGuideLine"
@@ -62,7 +62,7 @@
         style="@style/style_cart_item_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:fontFamily="@font/opensans_regular_ttf"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
         app:layout_constraintStart_toEndOf="@+id/giftItemImageView"
@@ -75,7 +75,7 @@
         style="@style/style_cart_item_details"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:fontFamily="@font/opensans_regular_ttf"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
@@ -92,6 +92,20 @@
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
         app:layout_constraintTop_toBottomOf="@+id/giftItemImageView"
         android:contentDescription="@string/gwp_free_gift_disclaimer"
-        style="@style/gift_item_textView_style" />
+        style="@style/gift_item_quantity_textView_style" />
+
+    <TextView
+        android:id="@+id/priceGiftTextView"
+        android:text="@string/gift_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/eight_dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/freeGiftTextView"
+        app:layout_constraintStart_toEndOf="@+id/giftItemImageView"
+        app:layout_constraintTop_toBottomOf="@+id/giftItemImageView"
+        android:contentDescription="@string/gwp_free_gift_disclaimer"
+        style="@style/gift_item_quantity_textView_style" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
