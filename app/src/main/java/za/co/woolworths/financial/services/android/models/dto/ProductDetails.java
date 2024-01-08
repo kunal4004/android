@@ -72,6 +72,9 @@ public class ProductDetails {
 	@Expose
 	@SerializedName("allergens")
 	public List<String> allergens;
+	@Expose
+	@SerializedName("categories")
+	public List<String> categories;
 	@SerializedName("saveText")
 	@Expose
 	public String saveText;
