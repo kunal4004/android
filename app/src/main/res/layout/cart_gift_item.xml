@@ -40,21 +40,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="31dp" />
+        app:layout_constraintGuide_begin="@dimen/thirty_one_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startTop27dpGuideLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="27dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_seven_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/endGuideLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="21dp" />
+        app:layout_constraintGuide_end="@dimen/twenty_one_dp" />
 
 
     <TextView
