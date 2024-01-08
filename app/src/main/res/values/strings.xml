@@ -3262,7 +3262,7 @@
     <string name="share_btn">SHARE</string>
     <string name="more_options_btn"><u>MORE OPTIONS</u></string>
     <string name="copy_to_list">Copy to a List </string>
-    <string name="move_to_list">"Move Item to List" </string>
+    <string name="move_to_list">"Move to a List" </string>
     <string name="move_from_list">Move to Another List </string>
     <string name="remove_from_list">Remove from List </string>
     <string name="confirmation_title">Are You Sure?</string>
