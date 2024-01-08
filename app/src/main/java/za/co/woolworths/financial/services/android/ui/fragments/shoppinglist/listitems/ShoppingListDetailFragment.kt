@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Intent
@@ -19,13 +18,14 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -59,8 +59,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.ConfirmationBottomsheetDialogFragment
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Product
@@ -457,6 +455,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             btnRetry.setOnClickListener(this@ShoppingListDetailFragment)
             txtMoreOptions.setOnClickListener(this@ShoppingListDetailFragment)
 
+            if (viewType.isNotEmpty()) {
+                // This is share list flow from Deeplinking.
+                viewEditOnlyLayout.root.visibility = VISIBLE
+                viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
+            }
+
             mErrorHandlerView = ErrorHandlerView(activity, noConnectionLayout)
             mErrorHandlerView?.setMargin(noConnectionLayout, 0, 0, 0, 0)
             val emptyCartView = EmptyCartView(root, this@ShoppingListDetailFragment)
@@ -548,6 +552,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         when (view.id) {
             bindingListDetails.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
             bindingListDetails.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
+            bindingListDetails.viewEditOnlyLayout.addItemsToListText.id -> {}
             R.id.selectDeselectAllTextView -> onOptionsItemSelected()
             R.id.textProductSearch -> openProductSearchActivity()
             R.id.btnRetry -> if (NetworkManager.getInstance().isConnectedToNetwork(
@@ -566,6 +571,18 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
             else -> {}
         }
+    }
+
+    private fun enableAddToListOption() {
+        bindingListDetails.viewEditOnlyLayout.addItemsToListText.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.black))
+        bindingListDetails.viewEditOnlyLayout.addItemsToListText.text = requireContext().resources.getQuantityString(
+            R.plurals.add_items_to_list,
+            shoppingListItemsAdapter?.addedItemsCount ?: 0
+        )
+    }
+
+    private fun disableAddToListOption() {
+        bindingListDetails.viewEditOnlyLayout.addItemsToListText.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.color_9D9D9D))
     }
 
     private fun launchShopToggleScreen() {
@@ -962,12 +979,14 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         // if no item then hide bottom view
         if (viewModel.mShoppingListItems.size == 0) {
             bindingListDetails.rlCheckOut.visibility = GONE
+            disableAddToListOption()
             setScrollViewBottomMargin(0)
             return
         }
 
         if (itemWasSelected) {
             bindingListDetails.rlCheckOut.visibility = VISIBLE
+            enableAddToListOption()
             val count = shoppingListItemsAdapter?.addedItemsCount ?: 0
             bindingListDetails.btnCheckOut.text =
                 requireContext().resources.getQuantityString(
@@ -980,6 +999,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
         } else {
             bindingListDetails.rlCheckOut.visibility = GONE
+            disableAddToListOption()
             setScrollViewBottomMargin(0)
             (activity as? BottomNavigationActivity)?.hideBottomNavigationMenu()
         }

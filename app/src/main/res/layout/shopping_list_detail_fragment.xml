@@ -136,12 +136,24 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_height="wrap_content"/>
 
+        <include
+            android:id="@+id/viewEditOnlyLayout"
+            layout="@layout/view_edit_only_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fulfilmentAndLocationLayout"
+            tools:visibility="visible" />
+
         <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fulfilmentAndLocationLayout"
+            app:layout_constraintTop_toBottomOf="@id/viewEditOnlyLayout"
             app:layout_constraintStart_toStartOf="parent"
             android:fillViewport="true">
             <LinearLayout
@@ -188,9 +200,9 @@
 
         <LinearLayout
             tools:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/fulfilmentAndLocationLayout"
+            app:layout_constraintTop_toBottomOf="@id/viewEditOnlyLayout"
             app:layout_constrainedHeight="true"
-            android:layout_marginTop="@dimen/eight_dp"
+            android:layout_marginTop="@dimen/one_dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/rlEmptyListView"
             android:layout_width="match_parent"
@@ -318,7 +330,7 @@
 
         <RelativeLayout
             android:id="@+id/no_connection_layout"
-            app:layout_constraintTop_toBottomOf="@id/fulfilmentAndLocationLayout"
+            app:layout_constraintTop_toBottomOf="@id/viewEditOnlyLayout"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
