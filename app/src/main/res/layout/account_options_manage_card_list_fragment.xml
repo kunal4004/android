@@ -107,7 +107,7 @@
             android:id="@+id/activateVirtualTempCardImageView"
             style="@style/accountOptionsImageviewStyle"
             android:contentDescription="@string/activate_vtsc_action_button_icon_image_on_overlay"
-            android:src="@drawable/icon_activate_virtual_temp_card" />
+            android:src="@drawable/ic_replacement_card_icon" />
 
         <TextView
             android:id="@+id/activateVirtualTempCardTextView"

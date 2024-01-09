@@ -26,6 +26,7 @@ import javax.inject.Inject
 class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardDataSource: StoreCardDataSource,
  val mDeviceSecurityFlagState: DeviceSecurityFlagState) :
     ViewModel(), IStoreCardDataSource by storeCardDataSource {
+    var isStoreCardUpShellFragmentVisible: Boolean  = false
 
     var mStoreCardUpsellMessageFlagState: StoreCardUpsellMessageFlagState =
         StoreCardUpsellMessageFlagState()
