@@ -153,6 +153,10 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
                 linkMyDeviceIfNecessary(activity = requireActivity(), true , state = ApplyNowState.STORE_CARD, {
                     FREEZE_CARD_DETAIL = true
                 }, {
+                    if (viewModel.isStoreCardUpShellFragmentVisible ){
+                        viewModel.mStoreCardUpsellMessageFlagState.activateFreezeStoreCardFlag()
+                    }
+
                     viewModel.mStoreCardUpsellMessageFlagState.disableFreezeStoreCardFlag()// lock is active for user interaction only
                     freezeUnfreezeCardPopup(isChecked)
                 })

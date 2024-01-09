@@ -2592,13 +2592,13 @@
     <string name="remove_items_standard_dialog_title">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</string>
 
     <plurals name="remove_items_dash_dialog_title">
-        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
-        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="one">This item isn’t available\nusing Dash Delivery.\nSave it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available\nusing Dash Delivery.\nSave to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_standard_dialog_title">
-        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
-        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="one">This item isn’t available\nusing Standard Delivery.\nSave it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available\nusing Standard Delivery.\nSave to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_cnc_dialog_title">
@@ -3097,13 +3097,13 @@
     <string name="tooltip_standard_delivery">\nStandard Delivery.</string>
     <string name="tooltip_fulfilment_message">Tap ‘Switch’ to choose between our 3 delivery options:</string>
     <string name="tooltip_fulfilment_description"><![CDATA[You can switch between Standard Delivery, Click & Collect, or same day food delivery using Dash.]]></string>
-    <string name="tooltip_location_title_set_location">Set your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_title_set_location">Set your location for the most accurate stock and pricing.</string>
     <string name="tooltip_location_description">We’ll gather your full delivery address later on, when you checkout.</string>
-    <string name="tooltip_location_title_usage">We use your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_title_usage">We use your location for the most accurate stock and pricing.</string>
     <string name="tooltip_location_message_to_change_your_location">to CHANGE YOUR LOCATION</string>
     <string name="tooltip_location_title_cnc">Choose Your Collection Point</string>
     <string name="tooltip_location_message_to_change_your_store">to CHANGE YOUR store</string>
-    <string name="tooltip_location_decription_cnc">We use your collection store details to give you the most accurate stock, availability and pricing.</string>
+    <string name="tooltip_location_decription_cnc">We use your collection store details to give you the most accurate stock and pricing.</string>
 
     <!--shop toggle-->
     <string name="use_standard_delivery">use standard delivery</string>
