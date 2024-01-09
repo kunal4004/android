@@ -111,4 +111,25 @@ class MainShoppingListDetailRepository @Inject constructor() : ShoppingListDetai
             Resource.error(R.string.error_internet_connection, null)
         }
     }
+
+    override suspend fun getItemsInSharedShoppingList(listId: String, viewOnlyType: Boolean): Resource<ShoppingListItemsResponse> {
+        return try {
+            val response = OneAppService().getItemsInSharedShoppingList(listId, viewOnlyType)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+                        else ->
+                            Resource.error(R.string.error_unknown, it)
+                    }
+                } ?: Resource.error(R.string.error_unknown, null)
+            } else {
+                Resource.error(R.string.error_unknown, null)
+            }
+        } catch (e: IOException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_internet_connection, null)
+        }
+    }
 }

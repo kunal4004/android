@@ -18,4 +18,6 @@ interface ShoppingListDetailRepository {
     suspend fun removeMultipleItemsFromList(listId: String, removeItemApiRequest: RemoveItemApiRequest): Resource<ShoppingListItemsResponse>
 
     suspend fun copyMultipleItemsFromList(copyItemToListRequest: CopyItemToListRequest): Resource<CopyListResponse>
+
+    suspend fun getItemsInSharedShoppingList(listId: String, viewOnlyType: Boolean) : Resource<ShoppingListItemsResponse>
 }

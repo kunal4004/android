@@ -1002,6 +1002,14 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): retrofit2.Response<CartSummaryResponse>
 
+    @GET("wfs/app/v4/list/view-shared-list/{id}")
+    suspend fun getItemsInSharedShoppingList(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Header("viewOnly") viewOnlyType: String,
+        @Path("id") id: String,
+    ): retrofit2.Response<ShoppingListItemsResponse>
+
     @Headers(
         "Content-Type: application/json",
         "Accept: application/json",
