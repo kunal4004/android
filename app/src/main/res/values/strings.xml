@@ -3243,5 +3243,6 @@
     <string name="huawei_push_token">Huawei Push Token</string>
     <!--  Out of stock Details -->
     <string name="out_of_stock_tag">OUT OF STOCK</string>
+    <string name="gift_price">R 0.00</string>
 
 </resources>
