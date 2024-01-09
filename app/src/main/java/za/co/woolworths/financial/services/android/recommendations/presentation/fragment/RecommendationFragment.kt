@@ -222,7 +222,7 @@ class RecommendationFragment :
         }
     }
 
-    override fun openProductDetailView(productList: ProductList) {
+    override fun openProductDetailView(productList: ProductList, position: Int) {
         if(isConnectedToNetwork() == true) {
             WoolworthsApplication.getInstance().recommendationAnalytics.submitRecClicks(products = listOf(productList))
         }

@@ -92,7 +92,8 @@ class ProductListingAdapter(
                             productList,
                             it,
                             if (position % 2 != 0) mProductListItems.getOrNull(position + 1) else null,
-                            if (position % 2 == 0) mProductListItems.getOrNull(position - 1) else null
+                            if (position % 2 == 0) mProductListItems.getOrNull(position - 1) else null,
+                            position
                         )
                     }
                     view.itemBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
