@@ -58,9 +58,6 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyRepliesB
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
-import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemDetail
-import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemToListRequest
-import za.co.woolworths.financial.services.android.presentation.addtolist.response.CopyListResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest

@@ -29,9 +29,9 @@ import za.co.woolworths.financial.services.android.presentation.addtolist.compon
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddToListUiState
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddedToListState
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.CreateNewListState
-import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemDetail
-import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ItemDetail
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device
@@ -193,16 +193,16 @@ class AddToListViewModel @Inject constructor(
             if (items.isEmpty()) {
                 return@launch
             }
-            val itemList = mutableListOf<CopyItemDetail>()
+            val itemList = mutableListOf<ItemDetail>()
 
             /*todo need to add new firebase events */
 
             /*created new request from existing request for multi-list api*/
             items.map {
                 itemList.add(
-                    CopyItemDetail(
-                        skuID = it.skuID,
-                        catalogRefId = it.catalogRefId,
+                    ItemDetail(
+                        skuID = it.skuID?: "",
+                        catalogRefId = it.catalogRefId?: "",
                         quantity = "1"
                     )
                 )
