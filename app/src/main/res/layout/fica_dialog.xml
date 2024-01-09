@@ -5,52 +5,153 @@
     android:layout_height="wrap_content"
     android:background="@color/white">
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/gp_fica_indicator_bank"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="incSwipeCloseIndicator,iv_bank" />
 
-    <include
-        android:id="@+id/incSwipeCloseIndicator"
-        layout="@layout/popup_close_header_bar"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_title_header"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:lineSpacingExtra="@dimen/_7sdp"
+        android:textSize="@dimen/_17ssp"
+        android:layout_marginTop="@dimen/_19sdp"
+        android:text="@string/fica_dialog_title"
+        android:fontFamily="@font/futura_semi_bold"
+        android:textColor="@color/black"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/iv_bank"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_60sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/incSwipeCloseIndicator" />
-
-
-    <TextView
-        android:id="@+id/title"
-        style="@style/dialog_title_text_style"
-        android:layout_marginTop="@dimen/_32sdp"
-        android:text="@string/fica_dialog_title"
-        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
-        app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/iv_bank" />
-
-    <TextView
-        android:id="@+id/description"
-        style="@style/dialog_description_text_style"
         android:layout_marginTop="@dimen/_16sdp"
         android:text="@string/fica_dialog_desc"
+        android:textSize="@dimen/_13ssp"
+        android:fontFamily="@font/opensans_regular"
+        android:textColor="@color/color_666666"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/title" />
+        app:layout_constraintTop_toBottomOf="@id/tv_title_header" />
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="@dimen/_7sdp"
+        android:textSize="@dimen/_17ssp"
+        android:layout_marginTop="@dimen/_19sdp"
+        android:text="@string/fica_dialog_title"
+        android:fontFamily="@font/futura_semi_bold"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/tv_description"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"/>
+    <LinearLayout
+        android:id="@+id/ll_details_sections"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_16sdp"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:src="@drawable/cli_step_indicator_active"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fica_details_time_section_title"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:fontFamily="@font/opensans_semi_bold"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fica_details_time_section_desc"
+                    android:textColor="@color/color_666666"
+                    android:textSize="@dimen/_13ssp"
+                    android:fontFamily="@font/opensans_regular"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:src="@drawable/cli_step_indicator_active"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fica_details_id_section_title"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:fontFamily="@font/opensans_semi_bold"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fica_details_id_section_desc"
+                    android:textColor="@color/color_666666"
+                    android:textSize="@dimen/_13ssp"
+                    android:fontFamily="@font/opensans_regular"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:src="@drawable/cli_step_indicator_active"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fica_details_residence_section_title3"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:fontFamily="@font/opensans_semi_bold"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fica_details_residence_section_desc"
+                    android:textColor="@color/color_666666"
+                    android:textSize="@dimen/_13ssp"
+                    android:fontFamily="@font/opensans_regular"
+                    />
+            </LinearLayout>
+        </LinearLayout>
 
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_fica_verify"
@@ -65,7 +166,7 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/_12ssp"
-        app:layout_constraintTop_toBottomOf="@+id/description"
+        app:layout_constraintTop_toBottomOf="@+id/ll_details_sections"
         app:layout_constraintBottom_toTopOf="@+id/btn_fica_maybe_later"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline" />
