@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.response.Co
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
@@ -42,6 +43,7 @@ class ShopToggleUseCase @Inject constructor(
         const val STANDARD_DELIVERY_ID = 1
         const val DASH_DELIVERY_ID = 2
         const val CNC_DELIVERY_ID = 3
+        const val DASH_DELIVERY_COST = "35"
     }
 
     fun validateLocationResponse(): ValidateLocationResponse? {
@@ -58,6 +60,8 @@ class ShopToggleUseCase @Inject constructor(
                 when (validateLocationResponse?.httpCode) {
                     AppConstant.HTTP_OK -> {
                         val validatePlace = validateLocationResponse?.validatePlace
+                        WoolworthsApplication.setValidatedSuburbProducts(
+                            validateLocationResponse?.validatePlace)
                         KotlinUtils.placeId = validatePlace?.placeDetails?.placeId
                         val nickname = validatePlace?.placeDetails?.nickname
                         val fulfillmentDeliveryLocation = Utils.getPreferredDeliveryLocation()
@@ -102,7 +106,7 @@ class ShopToggleUseCase @Inject constructor(
             dashModel.deliverySlotFood = onDemand?.firstAvailableFoodDeliveryTime ?: ""
         }
         val foodQuantity = onDemand?.quantityLimit?.foodMaximumQuantity
-        val deliveryPrice = onDemand?.firstAvailableFoodDeliveryCost
+        val deliveryPrice = onDemand?.firstAvailableFoodDeliveryCost ?: DASH_DELIVERY_COST
         dashModel.deliveryCost = "R $deliveryPrice.00"
         dashModel.foodQuantity = foodQuantity ?: 0
         //Prepare CNC Data

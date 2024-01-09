@@ -22,6 +22,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.resetUnsellableLiveData
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
@@ -34,6 +36,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
 import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 
 /**
  * Created by Kunal Uttarwar on 26/05/21.
@@ -300,8 +303,9 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun unsellableUpdate(){
         UpdateScreenLiveData.observe(this) {
-            if(it==1)
-            { UpdateScreenLiveData.value=0
+            if(it==updateUnsellableLiveData)
+            { UpdateScreenLiveData.value=resetUnsellableLiveData
+                FirebaseAnalyticsEventHelper.switchDeliverModeEvent(KotlinUtils.getDeliveryType()?.deliveryType)
                 onBackPressed()
             }
         }

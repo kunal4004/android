@@ -413,6 +413,12 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_STANDARD_CLICK_COLLECT_CONFIRM = "shop_stnd_cnfrm"
         const val SHOP_CONFIRM_STORE = "shop_cnfrm_store"
         const val SHOP_EDIT_LOCATION = "shop_edit_locatn"
+        const val SET_Location = "set_location"
+        const val DELIVERY_MODE ="delivery_mode"
+        const val BROWSE_MODE ="browse_mode"
+        const val SET_DELIVERY_BROWSE_MODE ="set_delivery_browse_mode"
+        const val SWITCH_DELIVERY_MODE ="switch_delivery_mode"
+        const val SWITCH_BROWSE_MODE ="switch_browse_mode"
 
 
         //GeoLocation_CHECKOUT
@@ -580,6 +586,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val DELIVERY_TYPE = "delivery_type"
 
             const val SEARCH_RESULT_COUNT: String = "search_result_count"
+            const val SEARCH_COUNT: String = "search_count"
             const val LOCATION_ID: String = "location_id"
             const val PRODUCT_NAME: String = "product_name"
         }
@@ -661,7 +668,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val CURRENCY_VALUE: String = "ZAR"
             const val INDEX_VALUE: String = "1"
             const val AFFILIATION_VALUE: String = "WWOneApp"
-            const val CREATIVE_NAME_VALUE: String = "Product List"
+            const val NONE: String = "NONE"
             const val PAYMENT_TYPE_VALUE: String = "Gift Card"
             const val SHIPPING_TIER_VALUE_DASH: String = "Dash"
             const val SHIPPING_TIER_VALUE_CNC: String = "CNC"

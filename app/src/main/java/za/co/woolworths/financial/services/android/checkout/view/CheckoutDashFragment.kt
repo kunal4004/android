@@ -73,6 +73,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isE
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
@@ -89,10 +90,11 @@ import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopT
 
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment.Companion.DIALOG_BUTTON_DISMISS_RESULT
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildPushNotificationAlertToast
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
@@ -102,6 +104,8 @@ import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
+import za.co.woolworths.financial.services.android.util.UnsellableUtils
+import za.co.woolworths.financial.services.android.util.UnsellableUtils.Companion.ADD_TO_LIST_SUCCESS_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -153,7 +157,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
-    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
+    private val dyChooseVariationViewModel: DyChooseVariationCallViewModel by viewModels()
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
@@ -225,6 +229,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                     onCheckoutPaymentClick()
                 }
             }
+        }
+        setFragmentResultListener(ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            UpdateScreenLiveData.value= UnsellableAccess.updateUnsellableLiveData
+        }
+        setFragmentResultListener(DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
+            UpdateScreenLiveData.value= UnsellableAccess.updateUnsellableLiveData
         }
     }
 

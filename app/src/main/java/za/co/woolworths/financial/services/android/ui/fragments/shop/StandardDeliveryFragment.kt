@@ -7,9 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentShopDepartmentBinding
@@ -17,6 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -24,10 +23,11 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
@@ -50,7 +50,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var localPlaceId: String? = null
-    private val dyHomePageViewModel: DyHomePageViewModel by viewModels()
+    private val dyHomePageViewModel: DyChooseVariationCallViewModel by viewModels()
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -70,10 +70,11 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
         if (parentFragment?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.STANDARD_TAB.index) {
             initView()
         }
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
-            if(result.equals(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE)){
-
-            }
+        requireActivity().supportFragmentManager.setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE,viewLifecycleOwner) { _, _ ->
+            UpdateScreenLiveData.value=updateUnsellableLiveData
+        }
+        requireActivity().supportFragmentManager.setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT,viewLifecycleOwner) { _, _ ->
+            UpdateScreenLiveData.value=updateUnsellableLiveData
         }
     }
 

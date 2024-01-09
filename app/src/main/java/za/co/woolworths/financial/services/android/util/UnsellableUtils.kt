@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.Price
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
@@ -103,7 +104,7 @@ class UnsellableUtils {
                                     } else {
                                         //This is not a unsellable flow or we don't have unsellable items so this will give callBack to AddToCart function or Checkout Summary Flow.
                                         AddToCartLiveData.value = true
-                                        UpdateScreenLiveData.value=1
+                                        UpdateScreenLiveData.value=updateUnsellableLiveData
 
 
                                     }
@@ -297,8 +298,6 @@ class UnsellableUtils {
                         }
 
                     }
-                    else{
-                        UpdateScreenLiveData.value=1}
                 } catch (e: Exception) {
                     FirebaseManager.logException(e)
                     hideLoadingProgress()
@@ -552,7 +551,7 @@ class UnsellableUtils {
                     item.commerceItemInfo.externalImageRefV2,
                     item.commerceItemInfo.productDisplayName,
                     item.fulfillmentType,
-                    cartItemsGroup?.get(i)?.type,
+                    cartItemsGroup?.getOrNull(i)?.type,
                     item.commerceItemInfo.commerceId,
                     item.isItemRemoved
                 )

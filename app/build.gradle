@@ -13,10 +13,10 @@ apply plugin: 'kotlin-parcelize'
 android {
 
     def major = "9"
-    def minor = "14"
+    def minor = "15"
     def fix = "0"
-    def jobNumberProduction = 231
-    def jobNumberQa = 745
+    def jobNumberProduction = 240
+    def jobNumberQa = 751
 
     buildFeatures {
         dataBinding true
@@ -415,8 +415,7 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation 'androidx.paging:paging-common-ktx:3.0.1'
     implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
-    // glassbox SDK for record screen session
-    implementation 'com.clarisite.mobile.android:glassbox:6.660'
+
     // Kotlin reflexion
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_reflect"
     // truth library for testing

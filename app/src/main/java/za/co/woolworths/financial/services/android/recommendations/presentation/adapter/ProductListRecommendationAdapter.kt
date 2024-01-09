@@ -54,7 +54,8 @@ class ProductListRecommendationAdapter(
                     productList,
                     it,
                     if (position % 2 != 0) mProductsList.getOrNull(position + 1) else null,
-                    if (position % 2 == 0) mProductsList.getOrNull(position - 1) else null
+                    if (position % 2 == 0) mProductsList.getOrNull(position - 1) else null,
+                    position
                 )
             }
 
@@ -129,7 +130,7 @@ class ProductListRecommendationAdapter(
                     LinearLayoutManager(
                         activity,
                         LinearLayoutManager.VERTICAL,
-                        false
+                        true
                     )
                 }
                 val imageViewHeight =

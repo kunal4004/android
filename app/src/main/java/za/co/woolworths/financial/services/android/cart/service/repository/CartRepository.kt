@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.cart.service.repository
 
 import com.awfs.coordination.R
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.crashlytics.ktx.setCustomKeys
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import org.json.JSONException
@@ -8,6 +11,7 @@ import org.json.JSONObject
 import za.co.woolworths.financial.services.android.cart.service.network.CartItemGroup
 import za.co.woolworths.financial.services.android.cart.service.network.CartResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
@@ -16,10 +20,8 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.ProductType
-import za.co.woolworths.financial.services.android.util.StoreUtils
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
 import javax.inject.Inject
@@ -47,13 +49,33 @@ class CartRepository @Inject constructor() {
                 } ?: Resource.error(R.string.error_unknown, null)
             } else {
                 var errorResponse: CartResponse? = null
+                var errorBodyString = ""
                 try {
+                    errorBodyString = response.errorBody()?.string()?: "{}"
                     errorResponse = Gson().fromJson(
-                        response.errorBody()?.charStream(),
+                        errorBodyString,
                         CartResponse::class.java
                     )
-                } catch (jsonException: JsonParseException) {
-                    FirebaseManager.logException(jsonException)
+                } catch (e: Exception) {
+                    when (e) {
+                        is JsonParseException, is IllegalStateException -> {
+                            val token = SessionUtilities.getInstance().jwt
+                            FirebaseManager.logException(e)
+                            Firebase.crashlytics.setCustomKeys {
+                                key(
+                                    FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionResponse,
+                                    errorBodyString
+                                )
+                                key(
+                                    FirebaseManagerAnalyticsProperties.CrashlyticsKeys.ExceptionMessage,
+                                    Constants.UNABLE_TO_PARSE_LAST_ORDER_RESPONSE
+                                )
+                                token?.C2Id?.let {
+                                    key(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, it)
+                                }
+                            }
+                        }
+                    }
                 }
                 Resource.error(R.string.error_unknown, errorResponse)
             }

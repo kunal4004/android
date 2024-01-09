@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -66,6 +67,7 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.adapter.viewholder.MyRecycleViewHolder
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
@@ -154,11 +156,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
         initViews()
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { result, _ ->
-            if(result.equals(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE)){
 
-            }
-        }
     }
 
     override fun onResume() {
@@ -254,6 +252,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
             // Proceed with add to cart as we have moved unsellable items to List.
             addToCart(viewModel.addItemToCart.value) // This will again call addToCart
+            UpdateScreenLiveData.value=updateUnsellableLiveData
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
             val resultCode =
@@ -262,6 +261,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 // Proceed with add to cart as we have moved unsellable items to List.
                 addToCart(viewModel.addItemToCart.value) // This will again call addToCart
             }
+            UpdateScreenLiveData.value=updateUnsellableLiveData
         }
     }
 
@@ -517,7 +517,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                                 skuInventoryList?.getOrNull(0)?.quantity ?: 0
                                             )
                                         }
-
+                                    val scrollingPosition = recommendationViewModel.getCarouselPosition()
+                                    if (scrollingPosition != -1) {
+                                        binding.rvDashDelivery.layoutManager?.scrollToPosition(scrollingPosition)
+                                    }
                                     showQuantitySelector(cartItem)
 
                                 } catch (ex: IllegalStateException) {
@@ -770,7 +773,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     LinearLayoutManager(
                         activity,
                         LinearLayoutManager.VERTICAL,
-                        false
+                        true
                     )
                 }
                 val imageViewHeight =
@@ -1129,7 +1132,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         //TODO: get error screens from UI/UX team
     }
 
-    override fun openProductDetailView(productList: ProductList) {
+    override fun openProductDetailView(productList: ProductList, position: Int) {
         if (!productList.recToken.isNullOrEmpty() && productList.sku.isNullOrEmpty()) {
             // This is recommendation product which does not have sku so will add it here
             productList.sku = productList.productId
@@ -1226,18 +1229,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             showLiquorDialog()
             AppConfigSingleton.productItemForLiquorInventory = productList
             return
-        }
-
-        // Now first check for if delivery location and browsing location is same.
-        // if same no issues. If not then show changing delivery location popup.
-        if (!getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
-            if (isFragmentAttached()) {
-                KotlinUtils.showChangeDeliveryTypeDialog(
-                    requireContext(), requireFragmentManager(),
-                    KotlinUtils.browsingDeliveryType
-                )
-                return
-            }
         }
         addToCart(addItemToCart)
     }

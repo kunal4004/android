@@ -26,4 +26,6 @@ public interface GridNavigator {
 	void onLoadStart(boolean isLoadMore);
 
 	void onLoadComplete(boolean isLoadMore);
+
+	boolean isSearchByKeywordNavigation();
 }

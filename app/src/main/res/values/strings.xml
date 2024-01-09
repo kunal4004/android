@@ -2592,13 +2592,13 @@
     <string name="remove_items_standard_dialog_title">This Item Isn’t Available Using Standard Delivery.\n Save It To A Shopping List Instead.</string>
 
     <plurals name="remove_items_dash_dialog_title">
-        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
-        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="one">This item isn’t available\nusing Dash Delivery.\nSave it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available\nusing Dash Delivery.\nSave to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_standard_dialog_title">
-        <item quantity="one">This item can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
-        <item quantity="other">These items can’t be delivered to your chosen address.\n Save it to a shopping list instead.</item>
+        <item quantity="one">This item isn’t available\nusing Standard Delivery.\nSave it to a shopping list instead.</item>
+        <item quantity="other">These items aren’t available\nusing Standard Delivery.\nSave to a shopping list instead.</item>
     </plurals>
 
     <plurals name="remove_items_cnc_dialog_title">
@@ -3097,13 +3097,13 @@
     <string name="tooltip_standard_delivery">\nStandard Delivery.</string>
     <string name="tooltip_fulfilment_message">Tap ‘Switch’ to choose between our 3 delivery options:</string>
     <string name="tooltip_fulfilment_description"><![CDATA[You can switch between Standard Delivery, Click & Collect, or same day food delivery using Dash.]]></string>
-    <string name="tooltip_location_title_set_location">Set your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_title_set_location">Set your location for the most accurate stock and pricing.</string>
     <string name="tooltip_location_description">We’ll gather your full delivery address later on, when you checkout.</string>
-    <string name="tooltip_location_title_usage">We use your location for the most accurate stock, availability, and pricing.</string>
+    <string name="tooltip_location_title_usage">We use your location for the most accurate stock and pricing.</string>
     <string name="tooltip_location_message_to_change_your_location">to CHANGE YOUR LOCATION</string>
     <string name="tooltip_location_title_cnc">Choose Your Collection Point</string>
     <string name="tooltip_location_message_to_change_your_store">to CHANGE YOUR store</string>
-    <string name="tooltip_location_decription_cnc">We use your collection store details to give you the most accurate stock, availability and pricing.</string>
+    <string name="tooltip_location_decription_cnc">We use your collection store details to give you the most accurate stock and pricing.</string>
 
     <!--shop toggle-->
     <string name="use_standard_delivery">use standard delivery</string>
@@ -3118,7 +3118,7 @@
     <string name="use_dash_delivery">Use Dash delivery</string>
     <string name="set_to_dash_delivery">SET TO DASH DELIVERY</string>
     <string name="use_click_collect">use click &amp; collect</string>
-    <string name="earliest_click_and_collect">Earliest Click &amp; Collect Dates:</string>
+    <string name="earliest_click_and_collect">Latest Click &amp; Collect Dates:</string>
     <string name="collect_fashion_food">Collect FASHION, BEAUTY, HOME AND food</string>
     <string name="set_to_click_and_collect">SET TO CLICK &amp; COLLECT</string>
     <string name="back_arrow"> Back Arrow</string>
@@ -3199,7 +3199,7 @@
     <string name="Would_you_recommend_this_product_to_a_friend">Would you recommend this product to a friend? *</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="write_a_review2">Write a review</string>
+    <string name="write_a_review2">Write Review</string>
     <string name="review_title">Review Title: *</string>
     <string name="review_title_hint">Review Title</string>
     <string name="review_title_edit_counter">/150</string>
@@ -3208,7 +3208,7 @@
     <string name="min_ten_char">Min 10 Characters,</string>
     <string name="fifteen_hundred">1500</string>
     <string name="characters_left">Characters Left</string>
-    <string name="display_name">Display name: *</string>
+    <string name="display_name">Display Name: *</string>
     <string name="add_photos">Add Photos</string>
     <string name="optional">Optional</string>
     <string name="submit_review">Submit Review</string>
@@ -3223,7 +3223,7 @@
     <string name="endless_aisle_order_error_label">Unfortunately, your online order has been cancelled because your barcode has expired.</string>
     <string name="endless_aisle_barcode_title">Scan Your Barcode At The Till Point</string>
     <string name="endless_aisle_barcode_desc">Scan your barcode at the till point for in store payments. Barcode expires when the store closes.</string>
-    <string name="by_submitting_you_agree_to_our">By submitting, you agree to our</string>
+    <string name="by_submitting_you_agree_to_our">By submitting,you agree to our</string>
     <string name="terms_and_Conditions_for_write_a_review">Terms and Conditions.</string>
     <string name="choose_a_timeslot">Choose a timeslot</string>
     <string name="date_picker_today">Today</string>
@@ -3241,4 +3241,7 @@
     <![CDATA[• Standard Delivery next day\n• Dash Food Delivery same day\n• Click & Collect]]>
     </string>
     <string name="huawei_push_token">Huawei Push Token</string>
+    <!--  Out of stock Details -->
+    <string name="out_of_stock_tag">OUT OF STOCK</string>
+
 </resources>

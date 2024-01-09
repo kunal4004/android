@@ -92,7 +92,8 @@ class ProductListingAdapter(
                             productList,
                             it,
                             if (position % 2 != 0) mProductListItems.getOrNull(position + 1) else null,
-                            if (position % 2 == 0) mProductListItems.getOrNull(position - 1) else null
+                            if (position % 2 == 0) mProductListItems.getOrNull(position - 1) else null,
+                            position
                         )
                     }
                     view.itemBinding.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.setOnClickListener {
@@ -209,9 +210,10 @@ class ProductListingAdapter(
                     LinearLayoutManager(
                         activity,
                         LinearLayoutManager.VERTICAL,
-                        false
+                        true
                     )
                 }
+
                 val imageViewHeight = recyclerViewViewHolderItems.itemBinding.imProductImage.height
                 if (quantityInStock >= 5) {
                     layoutParams?.height = imageViewHeight

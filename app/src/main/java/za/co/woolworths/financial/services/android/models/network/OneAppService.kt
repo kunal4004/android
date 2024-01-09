@@ -132,6 +132,7 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.dynamicyield.data.response.getResponse.DynamicYieldChooseVariationResponse
 import za.co.woolworths.financial.services.android.endlessaisle.service.network.UserLocationResponse
+import za.co.woolworths.financial.services.android.models.dto.CheckoutSuccess
 import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemDetail
 import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.presentation.addtolist.response.CopyListResponse
@@ -1332,13 +1333,22 @@ open class OneAppService(
         }
     }
 
-    suspend fun recommendation(recommendationRequest: RecommendationRequest): retrofit2.Response<RecommendationResponse> {
+    suspend fun recommendation(recommendationRequest: RecommendationRequest, requestData: Boolean, fulfillmentStoreId: String?): retrofit2.Response<RecommendationResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.recommendation(
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                recommendationRequest
-            )
+            if (requestData && !fulfillmentStoreId.isNullOrEmpty()) {
+                mApiInterface.recommendation(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    fulfillmentStoreId,
+                    recommendationRequest
+                )
+            } else {
+                mApiInterface.recommendationAnalytics(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    recommendationRequest
+                )
+            }
         }
     }
 
@@ -1400,4 +1410,9 @@ open class OneAppService(
         )
     }
 
+    suspend fun postCheckoutComplete(suburbId: String) = mApiInterface.postCheckoutSuccess(
+        getSessionToken(),
+        getDeviceIdentityToken(),
+        CheckoutSuccess(suburbId)
+    )
 }
