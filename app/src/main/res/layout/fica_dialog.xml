@@ -134,7 +134,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/fica_details_residence_section_title3"
+                    android:text="@string/fica_details_residence_section_title"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_13ssp"
                     android:fontFamily="@font/opensans_semi_bold"

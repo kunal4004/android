@@ -2657,7 +2657,7 @@
     <string name="fica_details_time_section_desc">This is a quick and easy process.</string>
     <string name="fica_details_id_section_title">South African Identity Document (ID)</string>
     <string name="fica_details_id_section_desc">We need photos of either your Smart Card ID or Green Book ID to verify your identity.</string>
-    <string name="fica_details_residence_section_title3">Proof of Residence</string>
+    <string name="fica_details_residence_section_title">Proof of Residence</string>
     <string name="fica_details_residence_section_desc">This will be used to verify the details you’ve provided, and will remain secured.</string>
 
     <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
