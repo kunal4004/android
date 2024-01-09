@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-   android:id="@+id/giftRootContainerConstraintLayout"
+    android:id="@+id/giftRootContainerConstraintLayout"
     android:layout_height="wrap_content"
     android:contentDescription="@string/layout_gift_items"
     android:background="@color/white">
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/one_dp"
         android:background="@color/outside_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,12 +18,12 @@
 
     <ImageView
         android:id="@+id/giftItemImageView"
-        android:layout_width="84dp"
+        android:layout_width="@dimen/eighty_four_dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
         android:contentDescription="@string/gwp_img_gift"
-        android:minHeight="@dimen/sixty_dp"
+        android:minHeight="@dimen/eighty_dp"
         app:layout_constraintEnd_toStartOf="@+id/productNameTextView"
         app:layout_constraintStart_toStartOf="@+id/startGuideLine"
         app:layout_constraintTop_toTopOf="@+id/startTopGuideLine" />
@@ -33,28 +33,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="28dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startTopGuideLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="31dp" />
+        app:layout_constraintGuide_begin="@dimen/thirty_one_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startTop27dpGuideLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="27dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_seven_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/endGuideLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="21dp" />
+        app:layout_constraintGuide_end="@dimen/twenty_one_dp" />
 
 
     <TextView
@@ -62,7 +62,7 @@
         style="@style/style_cart_item_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
         android:fontFamily="@font/opensans_regular_ttf"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
         app:layout_constraintStart_toEndOf="@+id/giftItemImageView"
@@ -75,7 +75,7 @@
         style="@style/style_cart_item_details"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
         android:fontFamily="@font/opensans_regular_ttf"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
@@ -92,6 +92,20 @@
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
         app:layout_constraintTop_toBottomOf="@+id/giftItemImageView"
         android:contentDescription="@string/gwp_free_gift_disclaimer"
-        style="@style/gift_item_textView_style" />
+        style="@style/gift_item_quantity_textView_style" />
+
+    <TextView
+        android:id="@+id/priceGiftTextView"
+        android:text="@string/gift_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/eight_dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/freeGiftTextView"
+        app:layout_constraintStart_toEndOf="@+id/giftItemImageView"
+        app:layout_constraintTop_toBottomOf="@+id/giftItemImageView"
+        android:contentDescription="@string/gwp_free_gift_disclaimer"
+        style="@style/gift_item_quantity_textView_style" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

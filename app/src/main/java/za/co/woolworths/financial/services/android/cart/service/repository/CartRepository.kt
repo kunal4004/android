@@ -248,7 +248,8 @@ class CartRepository @Inject constructor() {
                 Utils.savePreferredDeliveryLocation(shoppingDeliveryLocation)
             }
             val itemsObject = JSONObject(Gson().toJson(data.items))
-            isMixedBasket = itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value) && itemsObject.length() > 1
+            isMixedBasket =
+                itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value) && itemsObject.length() > 1
             val keys = itemsObject.keys()
             val cartItemGroups = ArrayList<CartItemGroup>()
             while ((keys.hasNext())) {
@@ -258,21 +259,31 @@ class CartRepository @Inject constructor() {
                 //GENERAL - "default",HOME - "homeCommerceItem",FOOD
                 // - "foodCommerceItem",CLOTHING
                 // - "clothingCommerceItem",PREMIUM BRANDS
+                // - connectCommerceItem,
                 // - "premiumBrandCommerceItem",
                 // Anything else: OTHER
                 when {
                     key.contains(ProductType.DEFAULT.value) ->
                         cartItemGroup.setType(ProductType.DEFAULT.shortHeader)
+
                     key.contains(ProductType.GIFT_COMMERCE_ITEM.value) ->
                         cartItemGroup.setType(ProductType.GIFT_COMMERCE_ITEM.shortHeader)
+
                     key.contains(ProductType.HOME_COMMERCE_ITEM.value) ->
                         cartItemGroup.setType(ProductType.HOME_COMMERCE_ITEM.shortHeader)
+
                     key.contains(ProductType.FOOD_COMMERCE_ITEM.value) ->
                         cartItemGroup.setType(ProductType.FOOD_COMMERCE_ITEM.shortHeader)
+
                     key.contains(ProductType.CLOTHING_COMMERCE_ITEM.value) ->
                         cartItemGroup.setType(ProductType.CLOTHING_COMMERCE_ITEM.shortHeader)
+
                     key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.value) ->
                         cartItemGroup.setType(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.shortHeader)
+
+                    key.contains(ProductType.CONNECT_COMMERCE_ITEM.value) ->
+                        cartItemGroup.setType(ProductType.CONNECT_COMMERCE_ITEM.shortHeader)
+
                     else -> cartItemGroup.setType(ProductType.OTHER_ITEMS.shortHeader)
                 }
                 val productsArray = itemsObject.getJSONArray(key)
@@ -286,7 +297,7 @@ class CartRepository @Inject constructor() {
                         commerceItem.fulfillmentStoreId =
                             fulfillmentStoreId!!.replace("\"".toRegex(), "")
                         productList.add(commerceItem)
-                        isFBHOnly = if(!itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value)) {
+                        isFBHOnly = if (!itemsObject.has(ProductType.FOOD_COMMERCE_ITEM.value)) {
                             commerceItem.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || commerceItem.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type
                         } else false
                     }
@@ -295,14 +306,36 @@ class CartRepository @Inject constructor() {
                 }
                 cartItemGroups.add(cartItemGroup)
             }
-            var giftCartItemGroup =
+            /*var giftCartItemGroup =
                 CartItemGroup()
             giftCartItemGroup.type = GIFT_ITEM
             val generalCartItemGroup =
                 CartItemGroup()
             generalCartItemGroup.type = GENERAL_ITEM
+            val connectCartItemGroup =
+                CartItemGroup()
+            connectCartItemGroup.type = CONNECT_ITEM
             var generalIndex = -1
-            if (cartItemGroups.contains(giftCartItemGroup) && cartItemGroups.contains(
+            var connectIndex = -1
+            if (cartItemGroups.contains(connectCartItemGroup) && cartItemGroups.contains(
+                    giftCartItemGroup
+                ) && cartItemGroups.contains(
+                    generalCartItemGroup
+                )
+            ) {
+                for (cartGroupIndex in cartItemGroups.indices) {
+                    val cartItemGroup = cartItemGroups[cartGroupIndex]
+                    if (cartItemGroup.type.equals(CONNECT_ITEM, ignoreCase = true)) {
+                        connectIndex = cartGroupIndex
+                    }
+                    if (cartItemGroup.type.equals(GIFT_ITEM, ignoreCase = true)) {
+                        giftCartItemGroup = cartItemGroup
+                        cartItemGroups.removeAt(cartGroupIndex)
+                    }
+                }
+                cartItemGroups.add(connectIndex + 1, giftCartItemGroup)
+            }
+            else if (cartItemGroups.contains(giftCartItemGroup) && cartItemGroups.contains(
                     generalCartItemGroup
                 )
             ) {
@@ -317,7 +350,7 @@ class CartRepository @Inject constructor() {
                     }
                 }
                 cartItemGroups.add(generalIndex + 1, giftCartItemGroup)
-            }
+            }*/
             cartResponse.cartItems = cartItemGroups
         } catch (e: JSONException) {
             FirebaseManager.logException(e)
@@ -329,5 +362,6 @@ class CartRepository @Inject constructor() {
     companion object {
         private const val GENERAL_ITEM = "GENERAL"
         private const val GIFT_ITEM = "GIFT"
+        private const val CONNECT_ITEM = "WCONNECT"
     }
 }
