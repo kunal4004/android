@@ -92,7 +92,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
@@ -311,7 +311,7 @@ class ProductDetailsFragment :
 
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
     private var productId: String? = null
-    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
+    private val dyChooseVariationViewModel: DyChooseVariationCallViewModel by viewModels()
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
@@ -381,7 +381,6 @@ class ProductDetailsFragment :
         addFragmentListener()
         setUniqueIds()
         productDetails?.let {
-            addViewItemEvent(it)
             wfsShoptimiserProduct.addProductDetails(it)
         }
         setUpCartCountPDP()
@@ -476,29 +475,6 @@ class ProductDetailsFragment :
                 }
             }
         }
-    }
-
-    //firebase event view_item
-    private fun addViewItemEvent(productDetails: ProductDetails) {
-        val viewItemListParams = Bundle()
-        viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        viewItemListParams.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
-            productDetails?.productType)
-        val viewItem = Bundle()
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
-        productDetails?.price?.toDouble()
-            ?.let { viewItem.putDouble(FirebaseAnalytics.Param.PRICE, it) }
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
-            productDetails?.colourSizeVariants)
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-        viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-            productDetails?.categoryName)
-        viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
-            viewItemListParams)
     }
 
     override fun onAttach(context: Context) {
@@ -1250,7 +1226,7 @@ class ProductDetailsFragment :
         if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
-        callViewPromotionFirebaseEvent()
+        callFirebaseEvents()
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
@@ -1604,9 +1580,12 @@ class ProductDetailsFragment :
         return otherSKUsByGroupKey
     }
 
-    private fun callViewPromotionFirebaseEvent() {
-        productDetails?.promotionsList?.let { promoList ->
-            FirebaseAnalyticsEventHelper.viewPromotion(productDetails!!, promoList)
+    private fun callFirebaseEvents() {
+        productDetails?.let { details ->
+            FirebaseAnalyticsEventHelper.viewItem(details)
+            productDetails?.promotionsList?.let { promoList ->
+                FirebaseAnalyticsEventHelper.viewPromotion(details, promoList)
+            }
         }
     }
 
@@ -1695,27 +1674,6 @@ class ProductDetailsFragment :
                                     Html.fromHtml(editedPromotionalText)
                             }
                         }
-                        val arguments = HashMap<String, String>()
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =
-                            productDetails?.productId
-                                ?: ""
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] =
-                            productDetails?.productName
-                                ?: ""
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] =
-                            productDetails?.price
-                                ?: ""
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CREATIVE_NAME] =
-                            FirebaseManagerAnalyticsProperties.PropertyValues.CREATIVE_NAME_VALUE
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME] =
-                            Html.fromHtml(editedPromotionalText).toString()
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] =
-                            FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
-                        Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SELECT_PROMOTION,
-                            arguments,
-                            activity
-                        )
                     }
                 } else {
                     onlinePromotionalTextView1?.text = ""
@@ -3390,22 +3348,29 @@ class ProductDetailsFragment :
     }
 
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
-        if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
-            isOutOfStockFragmentAdded = true
-            updateAddToCartButtonForSelectedSKU()
-            try {
-                activity?.supportFragmentManager?.beginTransaction()?.apply {
-                    val productDetailsFindInStoreDialog =
-                        ProductDetailsFindInStoreDialog.newInstance(
-                            this@ProductDetailsFragment
-                        )
-                    productDetailsFindInStoreDialog.show(
-                        this,
-                        ProductDetailsFindInStoreDialog::class.java.simpleName
-                    )
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                binding.productImagesViewPager.alpha = 0.5f
+            } else {
+                if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
+                    isOutOfStockFragmentAdded = true
+                    updateAddToCartButtonForSelectedSKU()
+                    try {
+                        activity?.supportFragmentManager?.beginTransaction()?.apply {
+                            val productDetailsFindInStoreDialog =
+                                ProductDetailsFindInStoreDialog.newInstance(
+                                    this@ProductDetailsFragment
+                                )
+                            productDetailsFindInStoreDialog.show(
+                                this,
+                                ProductDetailsFindInStoreDialog::class.java.simpleName
+                            )
+                        }
+                    } catch (ex: IllegalStateException) {
+                        logException(ex)
+                    }
                 }
-            } catch (ex: IllegalStateException) {
-                logException(ex)
             }
         }
     }

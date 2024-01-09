@@ -312,7 +312,7 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
-    fun viewSearchResult(searchTerm: String?) {
+    fun viewSearchResult(searchTerm: String?, searchCount: Int) {
         if (searchTerm.isNullOrEmpty()) {
             return
         }
@@ -322,6 +322,10 @@ object FirebaseAnalyticsEventHelper {
             putString(
                 FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM,
                 searchTerm
+            )
+            putInt(
+                FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_COUNT,
+                searchCount
             )
         }
         AnalyticsManager.logEvent(
@@ -507,4 +511,40 @@ object FirebaseAnalyticsEventHelper {
          AnalyticsManager.logEvent(SWITCH_BROWSE_MODE, analyticsParams)
     }
 
+    fun selectPromotion(product: ProductList, breadCrumbs: List<String>, index: Int, placeId: String?) {
+        if(product.saveText.isNullOrEmpty()) {
+            return
+        }
+        val analyticItem = product.toAnalyticItem(category = product.productType, index).apply { fillOtherCategories(breadCrumbs) }
+        val locationId = if(!placeId.isNullOrEmpty() && placeId.length <= FIREBASE_VALUE_MAX_CHARACTER) {
+            // placeId if user has selected the location && <= 100 characters, else supply NONE
+            placeId
+        } else {
+            FirebaseManagerAnalyticsProperties.PropertyValues.NONE
+        }
+        val analyticsParams = Bundle().apply {
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, arrayOf(analyticItem.toBundle())
+            )
+            putString(FirebaseAnalytics.Param.CREATIVE_NAME, product.saveText)
+            putString(FirebaseAnalytics.Param.PROMOTION_NAME, product.saveText)
+            putString(FirebaseAnalytics.Param.LOCATION_ID, locationId)
+            putString(FirebaseAnalytics.Param.CREATIVE_SLOT, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)// not getting from API so, supplying NONE
+            putString(FirebaseAnalytics.Param.PROMOTION_ID, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)// not getting from API so, supplying NONE
+        }
+        AnalyticsManager.logEvent(FirebaseAnalytics.Event.SELECT_PROMOTION, analyticsParams)
+    }
+    fun viewItem(productDetails: ProductDetails) {
+        val analyticItem = productDetails.toAnalyticItem().apply { fillOtherCategories(productDetails.categories) }
+        val addToCartParams = Bundle()
+        addToCartParams.apply {
+            putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(analyticItem.toBundle()))
+            putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+            analyticItem.price?.let {
+                putDouble(FirebaseAnalytics.Param.VALUE, it)
+            }
+            putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING, (productDetails.averageRating).toString())
+        }
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, addToCartParams)
+    }
 }

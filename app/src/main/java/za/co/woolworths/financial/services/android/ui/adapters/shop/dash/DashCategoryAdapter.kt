@@ -49,6 +49,7 @@ class DashCategoryAdapter(
 
     private var headerText: String? = null
     private var type: String? = null
+    private var carouselPosition: Int = -1
 
     private val diffCallback = object : DiffUtil.ItemCallback<Any>() {
 
@@ -175,7 +176,8 @@ class DashCategoryAdapter(
                     list as List<ProductList>,
                     iProductListing,
                     dashLandingNavigationListener,
-                    recommendationViewModel
+                    recommendationViewModel,
+                    carouselPosition
                 )
             }
             is TodayWooliesListItemViewHolder -> {
@@ -219,9 +221,10 @@ class DashCategoryAdapter(
 
     override fun getItemCount() = list.size
 
-    fun setData(productCatalogue: ProductCatalogue) {
+    fun setData(productCatalogue: ProductCatalogue, carouselPosition: Int = -1) {
         headerText = productCatalogue.headerText
         type = productCatalogue.name
+        this.carouselPosition = carouselPosition
         productCatalogue.banners?.let { list = it }
         productCatalogue.products?.let { list = it }
     }
@@ -367,7 +370,8 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
         list: List<ProductList>,
         iProductListing: IProductListing?,
         dashLandingNavigationListener: OnDashLandingNavigationListener?,
-        recommendationViewModel: RecommendationViewModel?
+        recommendationViewModel: RecommendationViewModel?,
+        carouselPosition: Int
     ) {
         val nextProduct = if (position % 2 != 0) list.getOrNull(position + 1) else null
         val previousProduct = if (position % 2 == 0) list.getOrNull(position - 1) else null
@@ -386,10 +390,10 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
 
                 productlistingNavigator = navigator
                 itemBinding.rowLayout?.let {
-                    it.brandName.setOnClickListener { navigator.openProductDetailView(this) }
-                    it.tvRangeName.setOnClickListener { navigator.openProductDetailView(this) }
-                    it.tvProductName.setOnClickListener { navigator.openProductDetailView(this) }
-                    it.mainImgLayout.setOnClickListener { navigator.openProductDetailView(this) }
+                    it.brandName.setOnClickListener { navigator.openProductDetailView(this, position) }
+                    it.tvRangeName.setOnClickListener { navigator.openProductDetailView(this, position) }
+                    it.tvProductName.setOnClickListener { navigator.openProductDetailView(this, position) }
+                    it.mainImgLayout.setOnClickListener { navigator.openProductDetailView(this, position) }
                 }
                 itemBinding.rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon?.let { quickShopButton ->
                     quickShopButton.setOnClickListener {
@@ -402,7 +406,9 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
                             navigator,
                             this,
                             this@ProductCarouselItemViewHolder,
-                            dashLandingNavigationListener
+                            dashLandingNavigationListener,
+                            recommendationViewModel,
+                            carouselPosition
                         )
                     }
                 }
@@ -416,6 +422,8 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
         productList: ProductList,
         viewHolder: ProductCarouselItemViewHolder,
         dashLandingNavigationListener: OnDashLandingNavigationListener?,
+        recommendationViewModel: RecommendationViewModel?,
+        carouselPosition: Int,
     ) {
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART,
@@ -441,6 +449,7 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
                 AddItemToCart(productList.productId, productList.sku, 0)
             }
             dashLandingNavigationListener?.setProductCarousalItemViewHolder(viewHolder)
+            recommendationViewModel?.setCarouselPosition(carouselPosition)
             navigator?.queryInventoryForStore(
                 id,
                 addItemToCartData,
