@@ -66,11 +66,7 @@ fun MyListView(
 
            if (selectedIndex == 0) {
                 myListviewModel.setIsClickedOnShareLists(false)
-                EmptyStateData(
-                     title = R.string.title_no_shopping_lists,
-                     description = R.string.description_no_shopping_lists,
-                     isButtonVisible = true
-                )
+                myListviewModel.updateEmptyScreenForList()
                 MyListScreen(
                    onCreateNewList = {
                        onEvent(MyLIstUIEvents.CreateListClick)
@@ -78,16 +74,12 @@ fun MyListView(
                )
             } else {
                 myListviewModel.setIsClickedOnShareLists(true)
-                EmptyStateData(
-                   title = R.string.share_list_empty_title,
-                   description = R.string.share_list_empty_desc,
-                   isButtonVisible = false
-                )
-               MyListScreen(
+                myListviewModel.updateEmptyScreenForSharedList()
+                MyListScreen(
                    onCreateNewList = {
                        onEvent(MyLIstUIEvents.CreateListClick)
                    }, onEvent = onEvent, myListviewModel
-               )
+                )
             }
         }
             if (isProgressBarNeeded.value) {
@@ -128,8 +120,8 @@ fun MyListScreen(
         )
 
         if (listStateData.isError ||
-            (listStateData.list.isEmpty() && listStateData.isSuccessResponse) ||
-            (listStateData.shareList.isEmpty() && listStateData.isSuccessResponse)) {
+            (listStateData.list.isEmpty() && listStateData.isSuccessResponse && !myListviewModel.isClickedOnShareLists())) {
+
             EmptyStateTemplate(myListState, onClickEvent = {
                 if (it) {
                     onEvent(MyLIstUIEvents.SignInClick)
@@ -137,7 +129,12 @@ fun MyListScreen(
                     onEvent(MyLIstUIEvents.CreateListClick)
                 }
             })
-        } else {
+        } else if (listStateData.isError ||
+            (listStateData.shareList.isEmpty() && listStateData.isSuccessResponse && myListviewModel.isClickedOnShareLists())) {
+            EmptyStateTemplate(myListState, onClickEvent = {
+
+            })
+        }else {
             if (!myListviewModel.isClickedOnShareLists()){
                 CreateNewListView(icon = R.drawable.ic_add_circle, title = R.string.shop_create_list) {
                     onCreateNewList()

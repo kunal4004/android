@@ -243,6 +243,23 @@ class MyListViewModel @Inject constructor(
             buttonText = R.string.sign_in
         )
     }
+     fun updateEmptyScreenForList() {
+        myListState.value = myListState.value.copy(
+            icon = R.drawable.empty_list_icon,
+            title = R.string.title_no_shopping_lists,
+            description = R.string.description_no_shopping_lists,
+            isButtonVisible = true
+        )
+    }
+
+    fun updateEmptyScreenForSharedList() {
+        myListState.value = myListState.value.copy(
+            icon = R.drawable.empty_list_icon,
+            title = R.string.share_list_empty_title,
+            description = R.string.share_list_empty_desc,
+            isButtonVisible = false
+        )
+    }
 
     private fun onInit() {
         if (SessionUtilities.getInstance().isUserAuthenticated) {

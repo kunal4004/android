@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -111,23 +112,23 @@ fun MyListItemRowView(
         }
 
         Row () {
-            Text(
-                text = "3 Collaborator",
-                style = TextStyle(
-                    fontSize = 11.sp,
-                    lineHeight = 16.5.sp,
-                    fontFamily = OpenSansFontFamily,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFF666666),
-                    letterSpacing = 0.22.sp,
+            if (listItem.numOfCollaborators != 0) {
+                Text(
+                    text = listItem.numOfCollaborators.toString() + "\t" + stringResource(id = R.string.collaborators),
+                    style = TextStyle(
+                        fontSize = 11.sp,
+                        lineHeight = 16.5.sp,
+                        fontFamily = OpenSansFontFamily,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xFF666666),
+                        letterSpacing = 0.22.sp,
+                    )
                 )
-            )
+            }
         }
 
         if (listItem.productImageURLs.isNotEmpty()) {
-
             Spacer(modifier = Modifier.height(15.dp))
-
             ListOfImagesView(listItem, onImageItemClick = {})
         }
     }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Tab
@@ -51,6 +52,7 @@ fun CustomTabRow(
         TabRow(
             selectedTabIndex = selectedIndex,
             modifier = Modifier
+                .height(40.dp)
                 .clip(RoundedCornerShape(50)),
             containerColor = Color(0xFFEEEEEE),
             divider = {},
@@ -70,18 +72,19 @@ fun CustomTabRow(
                     Tab(
                         modifier =
                         if (selected) Modifier
+                            .height(32.dp)
                             .clip(RoundedCornerShape(50))
                             .background(
                                 Color.White
                             )
                         else Modifier
+                            .height(32.dp)
                             .clip(RoundedCornerShape(50))
                             .background(
                                 Color(0xFFEEEEEE)
                             ),
                         selected = selected,
                         onClick = {
-                            // selectedIndex = tabindex
                             updatedSelectedIndex = tabindex
                         },
                         text = {

@@ -3276,6 +3276,7 @@
     <string name="share_list_option">Shared With Me</string>
     <string name="share_list_empty_title">You Don\'t Have Any Shared Lists Yet.</string>
     <string name="share_list_empty_desc">Once a shopping list has been shared with you, you will be able to access it here.</string>
+    <string name="collaborators">Collaborators</string>
 
     <plurals name="remove_list">
         <item quantity="one">%d ITEM REMOVED FROM</item>
