@@ -58,6 +58,9 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyRepliesB
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
+import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemDetail
+import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.presentation.addtolist.response.CopyListResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.RecommendationResponse
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
@@ -1176,6 +1179,13 @@ interface ApiInterface {
         @Body addToListRequest: List<AddToListRequest>,
     ): retrofit2.Response<ShoppingListItemsResponse>
 
+    @POST("wfs/app/v4/list/multi-list-add")
+    suspend fun addProductsToListV2(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body copyItemToListRequest: CopyItemToListRequest,
+    ): retrofit2.Response<CopyListResponse>
+
     @Headers(
         "Content-Type: application/json",
         "Accept: application/json",
@@ -1350,12 +1360,12 @@ interface ApiInterface {
         "Media-Type: application/json",
     )
     @POST("wfs/app/v4/cart/checkoutComplete")
-    fun postCheckoutSuccess(
+    suspend fun postCheckoutSuccess(
 
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body checkoutSuccess: CheckoutSuccess,
-    ): Call<Void>
+    ): retrofit2.Response<Unit>
 
     @Headers(
         "Content-Type: application/json",

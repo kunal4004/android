@@ -127,12 +127,25 @@ class AddToListFragment : WBottomSheetDialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ) = contentView(
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
 
         OneAppTheme {
+
+            // If `lifecycleOwner` changes, dispose and reset the effect
+            DisposableEffect(viewLifecycleOwner) {
+                val observer = LifecycleEventObserver { _, _ -> }
+
+                // Add the observer to the lifecycle
+                viewLifecycleOwner.lifecycle.addObserver(observer)
+
+                // When the effect leaves the Composition, remove the observer
+                onDispose {
+                    viewLifecycleOwner.lifecycle.removeObserver(observer)
+                }
+            }
 
             val listState = viewModel.getListState()
 
