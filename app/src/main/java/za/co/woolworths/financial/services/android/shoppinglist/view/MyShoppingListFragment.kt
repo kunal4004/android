@@ -190,10 +190,6 @@ class MyShoppingListFragment : Fragment() {
                             navigateToCreateListFragment()
                         }
 
-                        is MyLIstUIEvents.ChangeLocationClick -> {
-                            locationSelectionClicked()
-                        }
-
                         is MyLIstUIEvents.ListItemClick -> {
                             onShoppingListItemSelected(event.item)
                         }
