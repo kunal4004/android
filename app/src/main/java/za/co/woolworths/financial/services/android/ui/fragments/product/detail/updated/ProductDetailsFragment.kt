@@ -367,10 +367,10 @@ class ProductDetailsFragment :
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
         productId = productDetails?.productId
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        if (Utils.getDyServerId() != null)
+            dyServerId = Utils.getDyServerId()
+        if (Utils.getDySessionId() != null)
+            dySessionId = Utils.getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -1630,7 +1630,11 @@ class ProductDetailsFragment :
                         freeGiftWithPurchaseLayout.freeSim.visibility = View.VISIBLE
                         freeGiftWithPurchaseLayout.giftPurchase.visibility = View.GONE
                         freeGiftWithPurchaseLayout.freeSimTitle.text = getString(R.string.free_sim_with_purchase,it.network)
-                        freeGiftWithPurchaseLayout.freeSimDesc.text = it.freeGiftText
+                        freeGiftWithPurchaseLayout.freeSimDesc.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Html.fromHtml(it.freeGiftText, Html.FROM_HTML_MODE_COMPACT)
+                        } else {
+                            Html.fromHtml(it.freeGiftText)
+                        }
                         freeGiftWithPurchaseLayout.root.visibility = View.VISIBLE
                         freeGiftWithPurchaseLayout.downArrow.setOnClickListener {
                             if(freeGiftWithPurchaseLayout.freeSimDesc.visibility == View.VISIBLE) {
@@ -1646,6 +1650,11 @@ class ProductDetailsFragment :
                         freeGiftWithPurchaseLayout.freeSim.visibility = View.GONE
                         freeGiftWithPurchaseLayout.giftPurchase.visibility = View.VISIBLE
                         freeGiftWithPurchaseLayout.freeGiftText.text = it.freeGiftText
+                        freeGiftWithPurchaseLayout.freeGiftText.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Html.fromHtml(it.freeGiftText, Html.FROM_HTML_MODE_COMPACT)
+                        } else {
+                            Html.fromHtml(it.freeGiftText)
+                        }
 
                     }
                 }

@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.endlessaisle.utils.getBarcodeMessage
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
@@ -103,10 +102,10 @@ class OrderConfirmationFragment :
             binding.root
         ) {}
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        if (getDyServerId() != null)
+            dyServerId = getDyServerId()
+        if (getDySessionId() != null)
+            dySessionId = getDySessionId()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

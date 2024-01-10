@@ -21,9 +21,21 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 object FirebaseAnalyticsEventHelper {
 
-    fun addToCart(productDetail: ProductDetails, quantity: Int = 1) {
-        val analyticItem = productDetail.toAnalyticItem(quantity = quantity)
-
+    fun addToCart(productDetail: Any, quantity: Int = 1, breadCrumbs: List<String>? = null) {
+        val analyticItem:AnalyticProductItem = when (productDetail) {
+            is ProductDetails -> {
+                productDetail.toAnalyticItem(quantity = quantity).apply { fillOtherCategories(productDetail.categories) }
+            }
+            is ProductList -> {
+                productDetail.toAnalyticItem(category = productDetail.productType,quantity=quantity).apply { fillOtherCategories(breadCrumbs) }
+            }
+            is CommerceItem -> {
+                productDetail.toAnalyticItem()
+            }
+            else -> {
+                return
+            }
+        }
         val addToCartParams = Bundle()
         addToCartParams.putString(
             FirebaseAnalytics.Param.CURRENCY,
@@ -214,38 +226,23 @@ object FirebaseAnalyticsEventHelper {
     }
 
     fun viewItemList(
-        products: List<ProductList>?, category: String?
+        products: List<ProductList>?, category: String?, itemListName: String? = null
     ) {
         if (products.isNullOrEmpty()) {
             return
         }
 
         val analyticItems = products.map { it.toAnalyticItem(category = category) }
-        triggerViewItemListEvent(products = analyticItems, category = category)
-    }
-
-    fun viewItemListRecommendations(
-        products: List<ProductList>?, category: String?
-    ) {
-        if (products.isNullOrEmpty()) {
-            return
-        }
-
-        val analyticItems = products.map { it.toAnalyticItem(category = category) }
-        triggerViewItemListEvent(products = analyticItems, category = category)
-    }
-
-    private fun triggerViewItemListEvent(products: List<AnalyticProductItem>, category: String?) {
         val analyticsParams = Bundle()
         analyticsParams.apply {
             putParcelableArray(
-                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
+                FirebaseAnalytics.Param.ITEMS, analyticItems.map { it.toBundle() }.toTypedArray()
             )
             category?.let {
-                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
+                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, itemListName ?: category)
             }
+            putString(FirebaseAnalytics.Param.ITEM_LIST_ID, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)
         }
-
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
         )
@@ -335,15 +332,9 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
-    fun viewScreenEventForPLP(activity: Activity?, screenViewEventData: ScreenViewEventData?) {
+    fun viewScreenEventForPLP(screenViewEventData: ScreenViewEventData?) {
         val eventName = screenViewEventData?.department
         if (eventName.isNullOrEmpty()) {
-            activity?.let {
-                za.co.woolworths.financial.services.android.util.Utils.setScreenName(
-                    it,
-                    FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_LISTING_PAGE
-                )
-            }
             return
         }
         val analyticsParams = Bundle()
@@ -455,6 +446,22 @@ object FirebaseAnalyticsEventHelper {
     fun sendViewItemListOrderAgainEvent(productItems: List<ProductItem>, category: String) {
         val analyticItems = productItems.map { it.toAnalyticItem(FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN) }
         triggerViewItemListEvent(analyticItems, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
+    }
+
+    private fun triggerViewItemListEvent(products: List<AnalyticProductItem>, category: String?) {
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
+            )
+            category?.let {
+                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
+            }
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
+        )
     }
 
     fun sendAddToListOrderAgainEvent(items: List<AddItemToCart>, category: String) {

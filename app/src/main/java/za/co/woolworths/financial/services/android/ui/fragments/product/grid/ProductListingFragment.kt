@@ -69,7 +69,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
@@ -199,10 +198,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             isBackPressed = false
         }
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        if (getDyServerId() != null)
+            dyServerId = getDyServerId()
+        if (getDySessionId() != null)
+            dySessionId = getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -444,7 +443,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             confirmAddressViewModel.setQuickShopButtonPressed(false)
             updateMainRecyclerView()
         }
-        FirebaseAnalyticsEventHelper.viewScreenEventForPLP(activity = activity, screenViewEventData = getScreenViewEventData())
+        activity?.let { setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_LISTING_PAGE) }
+        FirebaseAnalyticsEventHelper.viewScreenEventForPLP(screenViewEventData = getScreenViewEventData())
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
         if (activity is BottomNavigationActivity
@@ -1746,6 +1746,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                             this,
                                             it1
                                         )
+                                        mSelectedProductList?.let { it2 ->
+                                            FirebaseAnalyticsEventHelper.addToCart(
+                                                it2,
+                                                it1, breadCrumbs = breadCrumbList
+                                            )
+                                        }
                                     }
                                 }
                             } else {
