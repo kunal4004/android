@@ -2356,6 +2356,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     if (response?.httpCode == HTTP_OK) {
                         updateUIForCartResponse(response)
                         changeQuantity(response, mChangeQuantityList?.getOrNull(0))
+                        mCommerceItem?.let { it ->
+                            FirebaseAnalyticsEventHelper.addToCart(
+                                it,
+                                1
+                            )
+                        }
                     } else {
                         onChangeQuantityComplete()
                     }

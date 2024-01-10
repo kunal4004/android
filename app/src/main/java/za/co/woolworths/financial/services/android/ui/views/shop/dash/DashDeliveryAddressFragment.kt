@@ -132,6 +132,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private var isRetrievedUnreadMessagesOnLaunch: Boolean = false
     private var isLastDashOrderAvailable: Boolean = false
     private var recyclerViewViewHolderItems: ProductCarouselItemViewHolder? = null
+    private lateinit var mProductList: ProductList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -643,6 +644,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                                     requireActivity(),
                                                     count
                                                 )
+                                                mProductList?.let { it2 ->
+                                                    FirebaseAnalyticsEventHelper.addToCart(
+                                                        it2,
+                                                        count
+                                                    )
+                                                }
                                             }
                                         }
                                     }
@@ -1217,6 +1224,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         addItemToCart: AddItemToCart?,
         productList: ProductList,
     ) {
+        mProductList=productList
         viewModel.setAddItemToCart(addItemToCart)
         mStoreId =
             fulfilmentTypeId.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }

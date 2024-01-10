@@ -1747,6 +1747,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                             this,
                                             it1
                                         )
+                                        mSelectedProductList?.let { it2 ->
+                                            FirebaseAnalyticsEventHelper.addToCart(
+                                                it2,
+                                                it1, breadCrumbs = breadCrumbList
+                                            )
+                                        }
                                     }
                                 }
                             } else {
