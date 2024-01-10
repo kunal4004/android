@@ -603,6 +603,7 @@ open class FirebaseManagerAnalyticsProperties {
         companion object {
             const val OUT_OF_STOCK_MESSAGE = "out of stock"
             const val NOT_APPLICABLE: String = "N/A"
+            const val RECOMMENDED: String = "recommended"
 
             // Chanel
             const val ACTION_BRAND_LANDING_PAGE_CATEGORY = "Customer selects a category which takes them to the relevant category page."
@@ -843,6 +844,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
             const val SSO_FORGOT_PASSWORD: String = "SSO Forgot Password"
+            const val DASH_LANDING: String = "Dash Landing"
 
         }
     }

@@ -214,38 +214,23 @@ object FirebaseAnalyticsEventHelper {
     }
 
     fun viewItemList(
-        products: List<ProductList>?, category: String?
+        products: List<ProductList>?, category: String?, itemListName: String? = null
     ) {
         if (products.isNullOrEmpty()) {
             return
         }
 
         val analyticItems = products.map { it.toAnalyticItem(category = category) }
-        triggerViewItemListEvent(products = analyticItems, category = category)
-    }
-
-    fun viewItemListRecommendations(
-        products: List<ProductList>?, category: String?
-    ) {
-        if (products.isNullOrEmpty()) {
-            return
-        }
-
-        val analyticItems = products.map { it.toAnalyticItem(category = category) }
-        triggerViewItemListEvent(products = analyticItems, category = category)
-    }
-
-    private fun triggerViewItemListEvent(products: List<AnalyticProductItem>, category: String?) {
         val analyticsParams = Bundle()
         analyticsParams.apply {
             putParcelableArray(
-                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
+                FirebaseAnalytics.Param.ITEMS, analyticItems.map { it.toBundle() }.toTypedArray()
             )
             category?.let {
-                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
+                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, itemListName ?: category)
             }
+            putString(FirebaseAnalytics.Param.ITEM_LIST_ID, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)
         }
-
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
         )
@@ -335,15 +320,9 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
-    fun viewScreenEventForPLP(activity: Activity?, screenViewEventData: ScreenViewEventData?) {
+    fun viewScreenEventForPLP(screenViewEventData: ScreenViewEventData?) {
         val eventName = screenViewEventData?.department
         if (eventName.isNullOrEmpty()) {
-            activity?.let {
-                za.co.woolworths.financial.services.android.util.Utils.setScreenName(
-                    it,
-                    FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_LISTING_PAGE
-                )
-            }
             return
         }
         val analyticsParams = Bundle()

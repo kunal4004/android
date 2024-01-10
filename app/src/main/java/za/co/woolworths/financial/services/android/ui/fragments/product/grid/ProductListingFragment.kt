@@ -444,7 +444,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             confirmAddressViewModel.setQuickShopButtonPressed(false)
             updateMainRecyclerView()
         }
-        FirebaseAnalyticsEventHelper.viewScreenEventForPLP(activity = activity, screenViewEventData = getScreenViewEventData())
+        activity?.let { setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_LISTING_PAGE) }
+        FirebaseAnalyticsEventHelper.viewScreenEventForPLP(screenViewEventData = getScreenViewEventData())
         requestInAppReview(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, activity)
 
         if (activity is BottomNavigationActivity

@@ -140,7 +140,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             dashDeliveryAdapter =
                 DashDeliveryAdapter(
                     requireContext(), onDemandNavigationListener = this@DashDeliveryAddressFragment,
-                    dashLandingNavigationListener = this@DashDeliveryAddressFragment, onDataUpdateListener = onDataUpdateListener, this@DashDeliveryAddressFragment,
+                    dashLandingNavigationListener = this@DashDeliveryAddressFragment, this@DashDeliveryAddressFragment,
                     activity = activity,
                     recommendationViewModel
                 )
@@ -171,6 +171,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
         //verify if the show dash order is true
         refreshInAppNotificationToast()
+        activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.DASH_LANDING) }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -317,6 +318,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
                     recommendedProducts = recommendationCatalogue()
                 )
+                callViewItemListEvent(productCatalogues = viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues)
             }
             // Either of API data available
             viewModel.isDashCategoriesAvailable.value == true ||
@@ -359,6 +361,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     dashCategories = viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
                     recommendedProducts = recommendationCatalogue()
                 )
+                val firstItem = 0 //As we do not expect multiple actions from recommendations, even if there are multiple action we'll consider first one only
+                callViewItemListEvent(
+                    products = actionItems[firstItem].products,
+                    category = actionItems[firstItem].componentName,
+                    itemListName = FirebaseManagerAnalyticsProperties.PropertyValues.RECOMMENDED)
             }
         }
     }
@@ -411,6 +418,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 recommendedProducts = recommendationCatalogue()
                             )
                         }
+                        callViewItemListEvent(productCatalogues = resource.data?.productCatalogues)
                         binding.progressBar.visibility = View.GONE
                     }
                     Status.ERROR -> {
@@ -1490,22 +1498,29 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
     }
 
-    private val onDataUpdateListener = object: OnDataUpdateListener {
-        override fun onProductCatalogueUpdate(productCatalogues: ArrayList<ProductCatalogue>?) {
-            if (productCatalogues.isNullOrEmpty()){
-                return
-            }
-            if (((activity as? BottomNavigationActivity)?.mNavController?.currentFrag as? ShopFragment)?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.DASH_TAB.index){
-                for (catalogues in productCatalogues){
-                    if(DashDeliveryAdapter.TYPE_NAME_PRODUCT_CAROUSEL.lowercase() == catalogues.name?.lowercase()){
-                        FirebaseAnalyticsEventHelper.viewItemList(
-                            products = catalogues.products,
-                            category = catalogues.headerText
-                        )
-                    }
+    private fun callViewItemListEvent(productCatalogues: ArrayList<ProductCatalogue>?) {
+        if (productCatalogues.isNullOrEmpty()){
+            return
+        }
+        if (((activity as? BottomNavigationActivity)?.mNavController?.currentFrag as? ShopFragment)?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.DASH_TAB.index){
+            for (catalogues in productCatalogues){
+                if(DashDeliveryAdapter.TYPE_NAME_PRODUCT_CAROUSEL.lowercase() == catalogues.name?.lowercase()){
+                    callViewItemListEvent(
+                        products = catalogues.products,
+                        category = catalogues.headerText,
+                        itemListName = null
+                    )
                 }
             }
         }
+    }
+    
+    private fun callViewItemListEvent(products: List<ProductList>?, category: String?, itemListName: String?) {
+        FirebaseAnalyticsEventHelper.viewItemList(
+            products = products,
+            category = category,
+            itemListName = itemListName
+        )
     }
 
     private fun addBannerEngagementEvent(
