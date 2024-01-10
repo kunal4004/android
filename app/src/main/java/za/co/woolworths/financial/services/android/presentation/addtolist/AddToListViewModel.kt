@@ -18,7 +18,6 @@ import za.co.woolworths.financial.services.android.domain.usecase.AddToListUC
 import za.co.woolworths.financial.services.android.domain.usecase.CreateNewListUC
 import za.co.woolworths.financial.services.android.domain.usecase.GetMyListsUC
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
@@ -289,11 +288,11 @@ class AddToListViewModel @Inject constructor(
         var dyServerId: String? = null
         var dySessionId: String? = null
         val config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getDyServerId() != null) {
+            dyServerId = Utils.getDyServerId()
         }
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null) {
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        if (Utils.getDySessionId() != null) {
+            dySessionId = Utils.getDySessionId()
         }
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)

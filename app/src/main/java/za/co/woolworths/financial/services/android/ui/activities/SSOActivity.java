@@ -654,13 +654,13 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void extractFormDataAndCloseSSOIfNeeded(String ssoActivityEvent){
-		if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
-			dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
+		if (Utils.getDyServerId() != null) {
+			dyServerId = Utils.getDyServerId();
 		} else {
 			dyServerId = "";
 		}
-		if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null) {
-			dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID);
+		if (Utils.getDySessionId() != null) {
+			dySessionId = Utils.getDySessionId();
 		} else {
 			dySessionId = "";
 		}
