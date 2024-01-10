@@ -21,9 +21,21 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 object FirebaseAnalyticsEventHelper {
 
-    fun addToCart(productDetail: ProductDetails, quantity: Int = 1) {
-        val analyticItem = productDetail.toAnalyticItem(quantity = quantity)
-
+    fun addToCart(productDetail: Any, quantity: Int = 1, breadCrumbs: List<String>? = null) {
+        val analyticItem:AnalyticProductItem = when (productDetail) {
+            is ProductDetails -> {
+                productDetail.toAnalyticItem(quantity = quantity).apply { fillOtherCategories(productDetail.categories) }
+            }
+            is ProductList -> {
+                productDetail.toAnalyticItem(category = productDetail.productType,quantity=quantity).apply { fillOtherCategories(breadCrumbs) }
+            }
+            is CommerceItem -> {
+                productDetail.toAnalyticItem()
+            }
+            else -> {
+                return
+            }
+        }
         val addToCartParams = Bundle()
         addToCartParams.putString(
             FirebaseAnalytics.Param.CURRENCY,
@@ -434,6 +446,22 @@ object FirebaseAnalyticsEventHelper {
     fun sendViewItemListOrderAgainEvent(productItems: List<ProductItem>, category: String) {
         val analyticItems = productItems.map { it.toAnalyticItem(FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN) }
         triggerViewItemListEvent(analyticItems, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
+    }
+
+    private fun triggerViewItemListEvent(products: List<AnalyticProductItem>, category: String?) {
+        val analyticsParams = Bundle()
+        analyticsParams.apply {
+            putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
+            )
+            category?.let {
+                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
+            }
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
+        )
     }
 
     fun sendAddToListOrderAgainEvent(items: List<AddItemToCart>, category: String) {

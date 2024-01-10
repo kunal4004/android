@@ -50,7 +50,7 @@ fun ProductDetails.toAnalyticItem(quantity: Int = 1): AnalyticProductItem {
     )
 }
 
-fun ProductList.toAnalyticItem(category: String?, index: Int = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt()): AnalyticProductItem {
+fun ProductList.toAnalyticItem(category: String?,quantity: Int = 1,index: Int = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt()): AnalyticProductItem {
     return AnalyticProductItem(
         itemId = productId,
         itemName = productName,
@@ -58,7 +58,7 @@ fun ProductList.toAnalyticItem(category: String?, index: Int = FirebaseManagerAn
         itemBrand = brandText,
         itemListName = category,
         itemVariant = productVariants,
-        quantity = 1, // Required quantity set to 1
+        quantity = quantity, // Required quantity set to 1
         price = price?.toDouble(),
         productType = productType,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
@@ -113,7 +113,7 @@ fun CommerceItem.toAnalyticItem(): AnalyticProductItem {
         itemListName = null,
         itemVariant = commerceItemInfo.color,
         quantity = commerceItemInfo.quantity,
-        price = priceInfo.amount,
+        price = priceInfo.listPrice,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
     )
