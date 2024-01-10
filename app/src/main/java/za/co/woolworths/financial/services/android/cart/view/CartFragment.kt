@@ -1754,7 +1754,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         cartItems?.forEach { cartItemGroup: CartItemGroup ->
             if (cartItemGroup.type.equals(GIFT_ITEM, ignoreCase = true)) {
                 for (commerceItem: CommerceItem in cartItemGroup.commerceItems) {
-                    commerceItem.commerceItemInfo.quantity = 1
+                  //commerceItem.commerceItemInfo.quantity = 1
                     commerceItem.quantityInStock = 2
                     commerceItem.isStockChecked = true
                 }

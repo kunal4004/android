@@ -453,6 +453,9 @@ open class FirebaseManagerAnalyticsProperties {
         /*enhance substitution*/
         const val SUBSTITUTION: String = "substitution"
         const val ADD_SUBSTITUTION: String = "add_substitute"
+
+        // Order Again
+        const val ORDER_AGAIN: String = "order_again"
     }
 
     class PropertyNames {
@@ -589,6 +592,10 @@ open class FirebaseManagerAnalyticsProperties {
             const val SEARCH_COUNT: String = "search_count"
             const val LOCATION_ID: String = "location_id"
             const val PRODUCT_NAME: String = "product_name"
+
+            // Order Again
+            const val LOCATION: String = "location"
+
         }
     }
 
@@ -732,6 +739,13 @@ open class FirebaseManagerAnalyticsProperties {
             const val BASKET = "basket"
 
             const val BACK = "back"
+
+            // Order Again
+            const val ORDER_AGAIN: String = "Order Again"
+            const val STANDARD_LANDING_PAGE: String = "Standard Landing Page"
+            const val CNC_LANDING_PAGE: String = "Click And Collect Landing Page"
+            const val DASH_LANDING_PAGE: String = "Dash Landing Page"
+            const val MY_ACCOUNTS: String = "My Accounts"
 
 
         }

@@ -4,7 +4,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
 import za.co.woolworths.financial.services.android.models.dto.account.InsuranceProducts
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.feature_product.data.model.ProductDetails
 
 typealias ApplyNowStateMapToAccountBinNumber =  Pair<ApplyNowState, String>?
 
@@ -43,6 +42,7 @@ sealed class MyProfile : OnAccountItemClickListener {
     object Order : MyProfile()
     object Message : MyProfile()
     object ShoppingList : MyProfile()
+    object OrderAgain : MyProfile()
 }
 sealed class General : OnAccountItemClickListener {
     object StoreLocator : General()

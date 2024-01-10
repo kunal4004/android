@@ -137,8 +137,8 @@ class CartProductAdapter(
                 val commerceItems = itemRow.commerceItems
                 headerHolder.tvHeaderTitle.setText(mContext?.resources?.getQuantityString(
                     R.plurals.category_item,
-                    commerceItems?.size ?: 0,
-                    commerceItems?.size ?: 0,
+                    commerceItems?.sumOf { it.commerceItemInfo.quantity } ?: 0,
+                    commerceItems?.sumOf { it.commerceItemInfo.quantity } ?: 0,
                     capitaliseFirstLetter(itemRow.category)))
                 // Boolean flag to show GWP label on toast when added to list
                 // Cart contains Gift product + Its not Food Commerce item
@@ -150,7 +150,7 @@ class CartProductAdapter(
                 if (itemRow.category?.uppercase(Locale.getDefault())
                         .equals(GIFT_ITEM, ignoreCase = true)
                 ) {
-                    headerHolder.tvAddToList.visibility = GONE
+                    headerHolder.tvAddToList.visibility = INVISIBLE
                 } else {
                     if (itemRow.category.contentEquals(FOOD_ITEM)
                         && KotlinUtils.getPreferredDeliveryType() == Delivery.DASH
@@ -354,6 +354,11 @@ class CartProductAdapter(
                 Utils.truncateMaxLine(giftProductHolder.productNameTextView)
                 val sizeColor = getSizeColor(giftCommerceItemInfo)
                 giftProductHolder.brandProductDescriptionTextView.text = sizeColor
+                giftProductHolder.freeGiftTextView.text = mContext?.resources?.getQuantityString(
+                    R.plurals.category_item,
+                    giftCommerceItemInfo?.quantity ?: 0,
+                    giftCommerceItemInfo?.quantity?: 0,
+                    "")
                 giftProductHolder.giftRootContainerConstraintLayout.setOnClickListener {
                     mContext?.let { activity -> CartUtils.onGiftItemClicked(activity) }
                 }
@@ -787,6 +792,7 @@ class CartProductAdapter(
         val giftItemImageView: ImageView
         val productNameTextView: TextView
         val brandProductDescriptionTextView: TextView
+        val freeGiftTextView: TextView
         val giftRootContainerConstraintLayout: ConstraintLayout
 
         init {
@@ -794,6 +800,8 @@ class CartProductAdapter(
             productNameTextView = view.findViewById(R.id.productNameTextView)
             brandProductDescriptionTextView =
                 view.findViewById(R.id.brandProductDescriptionTextView)
+            freeGiftTextView =
+                view.findViewById(R.id.freeGiftTextView)
             giftRootContainerConstraintLayout =
                 view.findViewById(R.id.giftRootContainerConstraintLayout)
         }

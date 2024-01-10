@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResult
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.shoppinglist.view.MyShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
+import za.co.woolworths.financial.services.android.ui.fragments.order_again.OrderAgainFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AccountLandingFirebaseManagerImpl
@@ -22,6 +24,7 @@ interface IProfileIntent {
     )
     fun createDetailIntent()
     fun createOrderIntent()
+    fun createOrderAgainIntent()
     fun createShoppingListIntent()
     fun getBottomNavigationActivity(): BottomNavigationActivity?
 }
@@ -70,10 +73,22 @@ class ProfileIntent @Inject constructor(private val activity : Activity?,
         }
     }
 
+    override fun createOrderAgainIntent() {
+        activity?.apply {
+//            analytics.onMyOrderItem()
+            when (this) {
+                is BottomNavigationActivity -> getBottomNavigationActivity()?.pushFragment(
+                    OrderAgainFragment()
+                )
+                is MyAccountActivity -> replaceFragment(OrderAgainFragment())
+            }
+        }
+    }
+
     override fun createShoppingListIntent() {
         activity?.apply {
             analytics.onShoppingListItem()
-            val fragment = MyListsFragment()
+            val fragment = MyShoppingListFragment()
             when (this) {
                 is BottomNavigationActivity -> getBottomNavigationActivity()?.pushFragment(
                     fragment

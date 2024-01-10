@@ -16,7 +16,7 @@ android {
     def minor = "15"
     def fix = "0"
     def jobNumberProduction = 240
-    def jobNumberQa = 751
+    def jobNumberQa = 752
 
     buildFeatures {
         dataBinding true
@@ -411,6 +411,7 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:1.4.3"
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose'
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation 'androidx.paging:paging-common-ktx:3.0.1'
@@ -424,6 +425,9 @@ dependencies {
     //leak canary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
     debugImplementation 'com.squareup.leakcanary:leakcanary-object-watcher-android:2.12'
+
+    // Compose image lib
+    implementation "io.coil-kt:coil-compose:2.4.0"
 }
 
 apply plugin: 'com.google.gms.google-services'
