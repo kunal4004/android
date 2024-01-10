@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableA
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.resetUnsellableLiveData
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
+import za.co.woolworths.financial.services.android.shoppinglist.view.MyShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -747,7 +748,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
             if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
                 (activity as? BottomNavigationActivity)?.let {
                     it.bottomNavigationById?.currentItem = INDEX_ACCOUNT
-                    val fragment = MyListsFragment()
+                    val fragment = MyShoppingListFragment()
                     it.pushFragment(fragment)
                 }
             }
@@ -849,7 +850,7 @@ class ShopFragment : BaseFragmentBinding<FragmentShopBinding>(FragmentShopBindin
     fun navigateToMyListFragment() {
         (activity as? BottomNavigationActivity)?.let {
             it.bottomNavigationById.currentItem = INDEX_ACCOUNT
-            val fragment = MyListsFragment()
+            val fragment = MyShoppingListFragment()
             it.pushFragment(fragment)
         }
     }

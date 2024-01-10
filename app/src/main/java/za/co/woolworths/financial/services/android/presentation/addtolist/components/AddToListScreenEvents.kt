@@ -8,6 +8,8 @@ sealed class AddToListScreenEvents {
     object RetryClick : AddToListScreenEvents()
     object ConfirmClick: AddToListScreenEvents()
     object CancelClick: AddToListScreenEvents()
+    object CopyConfirmClick: AddToListScreenEvents()
+    object MoveConfirmClick: AddToListScreenEvents()
     object CreateListBackPressed: AddToListScreenEvents()
 
     data class OnItemClick(val item: ShoppingList) : AddToListScreenEvents()

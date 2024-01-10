@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.flow
 import za.co.woolworths.financial.services.android.domain.repository.MyListRepository
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.convertToResource
-import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemToListRequest
-import za.co.woolworths.financial.services.android.presentation.addtolist.response.CopyListResponse
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
 import javax.inject.Inject
 
 class AddToListUC @Inject constructor(

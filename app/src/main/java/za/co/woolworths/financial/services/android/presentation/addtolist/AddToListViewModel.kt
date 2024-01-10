@@ -29,9 +29,10 @@ import za.co.woolworths.financial.services.android.presentation.addtolist.compon
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddToListUiState
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddedToListState
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.CreateNewListState
-import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemDetail
-import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ItemDetail
+import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session
@@ -62,6 +63,8 @@ class AddToListViewModel @Inject constructor(
         savedStateHandle[ARG_ITEMS_TO_BE_ADDED] ?: ArrayList()
     private var mAddToWishListEventData: AddToWishListFirebaseEventData? =
         savedStateHandle[BUNDLE_WISHLIST_EVENT_DATA]
+
+    private val copyListId: String? = savedStateHandle[MoreOptionDialogFragment.COPY_LIST_ID]
 
     private val _addedToListState = MutableStateFlow(emptyList<AddedToListState>())
     val addedToList: StateFlow<List<AddedToListState>> = _addedToListState.asStateFlow()
@@ -190,16 +193,16 @@ class AddToListViewModel @Inject constructor(
             if (items.isEmpty()) {
                 return@launch
             }
-            val itemList = mutableListOf<CopyItemDetail>()
+            val itemList = mutableListOf<ItemDetail>()
 
             /*todo need to add new firebase events */
 
             /*created new request from existing request for multi-list api*/
             items.map {
                 itemList.add(
-                    CopyItemDetail(
-                        skuID = it.skuID,
-                        catalogRefId = it.catalogRefId,
+                    ItemDetail(
+                        skuID = it.skuID?: "",
+                        catalogRefId = it.catalogRefId?: "",
                         quantity = "1"
                     )
                 )
@@ -406,6 +409,14 @@ class AddToListViewModel @Inject constructor(
         }
     }
 
+    fun getSelectedListForCopyItem():ArrayList<ShoppingList> {
+        val list = ArrayList<ShoppingList>()
+         getListState().selectedListItem.forEach {
+            list.add(it)
+        }
+        return list
+    }
+
     fun getListState(): AddToListUiState {
         return listState.value
     }
@@ -415,4 +426,7 @@ class AddToListViewModel @Inject constructor(
     }
 
     fun getAddedListItems(): List<AddToListRequest> = items.toList()
+
+    fun getCopyListID(): String? = copyListId
+    fun getItemsToBeAdded() = items
 }

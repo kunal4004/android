@@ -1,13 +1,16 @@
 package za.co.woolworths.financial.services.android.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.CreateList
 import za.co.woolworths.financial.services.android.models.dto.OrderToListReponse
 import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
-import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemDetail
-import za.co.woolworths.financial.services.android.presentation.addtolist.request.CopyItemToListRequest
-import za.co.woolworths.financial.services.android.presentation.addtolist.response.CopyListResponse
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource
 
 interface MyListRepository {
 
@@ -17,10 +20,19 @@ interface MyListRepository {
         copyItemToListRequest: CopyItemToListRequest
     ): Response<CopyListResponse>
 
+    suspend fun copyToList(
+        request: CopyItemToListRequest
+    ): Response<CopyListResponse>
+
     suspend fun addProductsToListByOrderId(
         orderId: String,
         body: OrderToShoppingListRequestBody
     ): Response<OrderToListReponse>
 
     suspend fun createNewList(createList: CreateList): Response<ShoppingListsResponse>
+
+    suspend fun deleteShoppingList(id: String): Response<ShoppingListsResponse>
+
+    suspend fun getCartSummary(): Flow<CoreDataSource.IOTaskResult<CartSummaryResponse>>
+    suspend fun callValidatePlaceDetails(placeId: String): Flow<CoreDataSource.IOTaskResult<ValidateLocationResponse>>
 }
