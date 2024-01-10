@@ -306,51 +306,6 @@ class CartRepository @Inject constructor() {
                 }
                 cartItemGroups.add(cartItemGroup)
             }
-            /*var giftCartItemGroup =
-                CartItemGroup()
-            giftCartItemGroup.type = GIFT_ITEM
-            val generalCartItemGroup =
-                CartItemGroup()
-            generalCartItemGroup.type = GENERAL_ITEM
-            val connectCartItemGroup =
-                CartItemGroup()
-            connectCartItemGroup.type = CONNECT_ITEM
-            var generalIndex = -1
-            var connectIndex = -1
-            if (cartItemGroups.contains(connectCartItemGroup) && cartItemGroups.contains(
-                    giftCartItemGroup
-                ) && cartItemGroups.contains(
-                    generalCartItemGroup
-                )
-            ) {
-                for (cartGroupIndex in cartItemGroups.indices) {
-                    val cartItemGroup = cartItemGroups[cartGroupIndex]
-                    if (cartItemGroup.type.equals(CONNECT_ITEM, ignoreCase = true)) {
-                        connectIndex = cartGroupIndex
-                    }
-                    if (cartItemGroup.type.equals(GIFT_ITEM, ignoreCase = true)) {
-                        giftCartItemGroup = cartItemGroup
-                        cartItemGroups.removeAt(cartGroupIndex)
-                    }
-                }
-                cartItemGroups.add(connectIndex + 1, giftCartItemGroup)
-            }
-            else if (cartItemGroups.contains(giftCartItemGroup) && cartItemGroups.contains(
-                    generalCartItemGroup
-                )
-            ) {
-                for (cartGroupIndex in cartItemGroups.indices) {
-                    val cartItemGroup = cartItemGroups[cartGroupIndex]
-                    if (cartItemGroup.type.equals(GENERAL_ITEM, ignoreCase = true)) {
-                        generalIndex = cartGroupIndex
-                    }
-                    if (cartItemGroup.type.equals(GIFT_ITEM, ignoreCase = true)) {
-                        giftCartItemGroup = cartItemGroup
-                        cartItemGroups.removeAt(cartGroupIndex)
-                    }
-                }
-                cartItemGroups.add(generalIndex + 1, giftCartItemGroup)
-            }*/
             cartResponse.cartItems = cartItemGroups
         } catch (e: JSONException) {
             FirebaseManager.logException(e)

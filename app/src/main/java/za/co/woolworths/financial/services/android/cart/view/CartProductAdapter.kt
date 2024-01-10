@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
@@ -135,11 +136,12 @@ class CartProductAdapter(
             CartRowType.HEADER -> {
                 val headerHolder = holder as CartHeaderViewHolder
                 val commerceItems = itemRow.commerceItems
+                val pCategory = if (itemRow.category == ProductType.CONNECT_COMMERCE_ITEM.shortHeader) AppConstant.W_CONNECT else capitaliseFirstLetter(itemRow.category).toString()
                 headerHolder.tvHeaderTitle.setText(mContext?.resources?.getQuantityString(
                     R.plurals.category_item,
                     commerceItems?.sumOf { it.commerceItemInfo.quantity } ?: 0,
                     commerceItems?.sumOf { it.commerceItemInfo.quantity } ?: 0,
-                    capitaliseFirstLetter(itemRow.category)))
+                    pCategory))
                 // Boolean flag to show GWP label on toast when added to list
                 // Cart contains Gift product + Its not Food Commerce item
                 val containsGWP = hasGiftProduct &&

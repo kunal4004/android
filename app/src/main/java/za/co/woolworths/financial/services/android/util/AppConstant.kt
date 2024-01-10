@@ -187,6 +187,7 @@ class AppConstant {
 
         // Order Again
         const val FROM_SCREEN: String = "fromScreen"
+        const val W_CONNECT = "WConnect"
     }
 
     class Keys {
