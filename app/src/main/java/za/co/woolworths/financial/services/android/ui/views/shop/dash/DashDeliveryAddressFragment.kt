@@ -644,9 +644,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                                     requireActivity(),
                                                     count
                                                 )
-                                                mProductList?.let { it2 ->
+                                                mProductList?.let { it1 ->
                                                     FirebaseAnalyticsEventHelper.addToCart(
-                                                        it2,
+                                                        it1,
                                                         count
                                                     )
                                                 }

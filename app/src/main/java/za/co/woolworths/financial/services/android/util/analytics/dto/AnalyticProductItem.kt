@@ -113,7 +113,7 @@ fun CommerceItem.toAnalyticItem(): AnalyticProductItem {
         itemListName = null,
         itemVariant = commerceItemInfo.color,
         quantity = commerceItemInfo.quantity,
-        price = priceInfo.amount,
+        price = priceInfo.listPrice,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt(),
     )

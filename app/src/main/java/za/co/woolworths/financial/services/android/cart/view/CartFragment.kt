@@ -2358,8 +2358,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         changeQuantity(response, mChangeQuantityList?.getOrNull(0))
                         mCommerceItem?.let { it ->
                             FirebaseAnalyticsEventHelper.addToCart(
-                                it,
-                                1
+                                it
                             )
                         }
                     } else {
