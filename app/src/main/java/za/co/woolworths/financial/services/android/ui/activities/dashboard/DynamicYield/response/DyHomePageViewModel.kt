@@ -23,10 +23,8 @@ class DyHomePageViewModel @Inject constructor(
                 for (myData in response.data?.cookies!!) {
                     if (myData.name.equals("_dyid_server")) {
                         Utils.saveDyServerId(myData.value)
-                        Utils.sessionDaoSaveDyServerId(SessionDao.KEY.DY_SERVER_ID, myData.value)
                     }else if (myData.name.equals("_dyjsession")) {
                         Utils.saveDySessionId(myData.value)
-                        Utils.sessionDaoSaveDySessionId(SessionDao.KEY.DY_SESSION_ID, myData.value)
                     }
                 }
             }
