@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.awfs.coordination.R
@@ -127,12 +129,25 @@ class AddToListFragment : WBottomSheetDialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ) = contentView(
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
 
         OneAppTheme {
+
+            // If `lifecycleOwner` changes, dispose and reset the effect
+            DisposableEffect(viewLifecycleOwner) {
+                val observer = LifecycleEventObserver { _, _ -> }
+
+                // Add the observer to the lifecycle
+                viewLifecycleOwner.lifecycle.addObserver(observer)
+
+                // When the effect leaves the Composition, remove the observer
+                onDispose {
+                    viewLifecycleOwner.lifecycle.removeObserver(observer)
+                }
+            }
 
             val listState = viewModel.getListState()
 

@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.CancelOrderRespons
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity
+import za.co.woolworths.financial.services.android.models.dto.CheckoutSuccess
 import za.co.woolworths.financial.services.android.models.dto.CreateList
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice
@@ -136,8 +137,8 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
@@ -401,6 +402,12 @@ open class OneAppService(
             getSessionToken(), getDeviceIdentityToken(), listId,
             addToListRequest
         )
+
+    suspend fun addProductsToListV2(
+       copyItemToListRequest: CopyItemToListRequest
+    ): retrofit2.Response<CopyListResponse> = mApiInterface.addProductsToListV2(
+        getSessionToken(), getDeviceIdentityToken(), copyItemToListRequest
+    )
 
     suspend fun copyToList(
         request: CopyItemToListRequest
@@ -1422,4 +1429,9 @@ open class OneAppService(
         )
     }
 
+    suspend fun postCheckoutComplete(suburbId: String) = mApiInterface.postCheckoutSuccess(
+        getSessionToken(),
+        getDeviceIdentityToken(),
+        CheckoutSuccess(suburbId)
+    )
 }

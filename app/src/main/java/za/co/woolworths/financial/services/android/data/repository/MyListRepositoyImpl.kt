@@ -4,12 +4,10 @@ import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import za.co.woolworths.financial.services.android.domain.repository.MyListRepository
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
-import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.CreateList
 import za.co.woolworths.financial.services.android.models.dto.OrderToListReponse
 import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.ApiInterface
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -27,9 +25,8 @@ class MyListRepositoryImpl @Inject constructor(
         OneAppService().getShoppingList()
 
     override suspend fun addProductsToListById(
-        listId: String,
-        products: List<AddToListRequest>,
-    ): Response<ShoppingListItemsResponse> = OneAppService().addProductsToList(products, listId)
+        copyItemToListRequest: CopyItemToListRequest,
+    ): Response<CopyListResponse> = OneAppService().addProductsToListV2(copyItemToListRequest)
 
 
     override suspend fun copyToList(

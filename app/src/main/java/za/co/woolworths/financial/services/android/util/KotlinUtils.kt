@@ -2025,6 +2025,17 @@ class KotlinUtils {
                 return deliveryDetailsArray?.getOrNull(1)
             }
         }
+
+        fun getPreferredSuburbId(): String {
+            val fulfillmentDetails: FulfillmentDetails? = getDeliveryType()
+            fulfillmentDetails ?: return ""
+            return when (getPreferredDeliveryType()) {
+                Delivery.STANDARD -> fulfillmentDetails.address?.placeId ?: ""
+                Delivery.CNC,
+                Delivery.DASH -> fulfillmentDetails.storeId ?: ""
+                null -> ""
+            }
+        }
     }
 }
 
