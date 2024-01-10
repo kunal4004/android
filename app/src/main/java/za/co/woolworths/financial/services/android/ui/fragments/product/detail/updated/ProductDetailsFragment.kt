@@ -1630,7 +1630,11 @@ class ProductDetailsFragment :
                         freeGiftWithPurchaseLayout.freeSim.visibility = View.VISIBLE
                         freeGiftWithPurchaseLayout.giftPurchase.visibility = View.GONE
                         freeGiftWithPurchaseLayout.freeSimTitle.text = getString(R.string.free_sim_with_purchase,it.network)
-                        freeGiftWithPurchaseLayout.freeSimDesc.text = it.freeGiftText
+                        freeGiftWithPurchaseLayout.freeSimDesc.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Html.fromHtml(it.freeGiftText, Html.FROM_HTML_MODE_COMPACT)
+                        } else {
+                            Html.fromHtml(it.freeGiftText)
+                        }
                         freeGiftWithPurchaseLayout.root.visibility = View.VISIBLE
                         freeGiftWithPurchaseLayout.downArrow.setOnClickListener {
                             if(freeGiftWithPurchaseLayout.freeSimDesc.visibility == View.VISIBLE) {
@@ -1646,6 +1650,11 @@ class ProductDetailsFragment :
                         freeGiftWithPurchaseLayout.freeSim.visibility = View.GONE
                         freeGiftWithPurchaseLayout.giftPurchase.visibility = View.VISIBLE
                         freeGiftWithPurchaseLayout.freeGiftText.text = it.freeGiftText
+                        freeGiftWithPurchaseLayout.freeGiftText.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Html.fromHtml(it.freeGiftText, Html.FROM_HTML_MODE_COMPACT)
+                        } else {
+                            Html.fromHtml(it.freeGiftText)
+                        }
 
                     }
                 }
