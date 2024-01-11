@@ -37,16 +37,33 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 @Composable
 fun ListOfListView(
     modifier: Modifier = Modifier,
+    isClickedOnShareList: Boolean = false,
     listDataState: ListDataState,
     onEvent: (event: MyLIstUIEvents) -> Unit,
 ) {
+     ShowList(modifier, isClickedOnShareList, listDataState, onEvent)
+}
+
+@Composable
+private fun ShowList(
+    modifier: Modifier,
+    isClickedOnShareList: Boolean,
+    listDataState: ListDataState,
+    onEvent: (event: MyLIstUIEvents) -> Unit
+) {
+    val list = if (isClickedOnShareList)
+        listDataState.shareList
+    else
+        listDataState.list
+
     LazyColumn(
         state = rememberLazyListState(),
         modifier = modifier,
     ) {
-        itemsIndexed(listDataState.list, key = { _, item ->
-            item.listId
-        }) { index, listItem ->
+        itemsIndexed(
+            list, key = { _, item ->
+                item
+            }) { index, listItem ->
 
             SwipeToRevealView(
                 modifier = Modifier
@@ -62,20 +79,21 @@ fun ListOfListView(
                     onEvent(MyLIstUIEvents.ListItemCollapsed(listItem))
                 },
                 rowContent = {
-                    Column(modifier = Modifier
-                        .background(Color.White),
+                    Column(
+                        modifier = Modifier
+                            .background(Color.White),
                     ) {
                         MyListItemRowView(
                             modifier = Modifier
                                 .padding(horizontal = 24.dp, vertical = 15.dp),
                             listDataState, listItem, onDetailsArrowClick = { list ->
-                            onEvent(MyLIstUIEvents.ListItemClick(list))
-                        }, onShareIconClick = { list ->
-                            onEvent(MyLIstUIEvents.ShareListClick(list))
-                        },
-                        onDeleteIconClick = {
-                            onEvent(MyLIstUIEvents.OnSwipeDeleteAction(it, index))
-                        })
+                                onEvent(MyLIstUIEvents.ListItemClick(list))
+                            }, onShareIconClick = { list ->
+                                onEvent(MyLIstUIEvents.ShareListClick(list))
+                            },
+                            onDeleteIconClick = {
+                                onEvent(MyLIstUIEvents.OnSwipeDeleteAction(it, index))
+                            })
 
                         if (listItem.listCount != 0 && listDataState.list.size == index + 1) {
                             // If list has no products then we don't need extra spacing.
@@ -114,7 +132,6 @@ fun ListOfListView(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun ListOfListViewPreview() {
@@ -131,9 +148,10 @@ fun ListOfListViewPreview() {
             ListDataState(
                 mockListData,
                 emptyList(),
+                emptyList(),
                 R.drawable.ic_share,
                 R.drawable.ic_white_chevron_right
             )
-        ListOfListView(modifier = Modifier.background(Color.White), listData, onEvent = {})
+        ListOfListView(modifier = Modifier.background(Color.White) , true, listData, onEvent = {})
     }
 }
