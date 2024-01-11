@@ -104,12 +104,12 @@ fun MyListScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(
+/*        Spacer(
             modifier = Modifier
                 .height(1.dp)
                 .fillMaxWidth()
                 .background(color = colorResource(id = R.color.color_D8D8D8))
-        )
+        )*/
 
         if (listStateData.isError ||
             (listStateData.list.isEmpty() && listStateData.isSuccessResponse && !myListviewModel.isClickedOnShareLists())) {
@@ -133,12 +133,12 @@ fun MyListScreen(
                 }
             }
 
-            Spacer(
+/*            Spacer(
                 modifier = Modifier
                     .height(1.dp)
                     .fillMaxWidth()
                     .background(color = colorResource(id = R.color.color_D8D8D8))
-            )
+            )*/
 
             ListOfListView(modifier = Modifier.background(Color.White),
                 myListviewModel.isClickedOnShareLists(),
