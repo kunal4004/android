@@ -17,6 +17,7 @@ data class ShoppingList(
     var shoppingListRowWasSelected: Boolean = false,
     var wasSentToServer: Boolean = false,
     var modifiedListCount: String = "",
+    val numOfCollaborators: Int = 0,
     @SerializedName("productImageURLs")
-    var productImageList: List<String> = emptyList() // todo This will get replace once we get actual data from response.
+    var productImageURLs: List<String> = emptyList()
 ): Parcelable
