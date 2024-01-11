@@ -46,6 +46,9 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 fun AddToListScreen(
     modifier: Modifier = Modifier,
     listUiState: AddToListUiState = AddToListUiState(),
+    copyItemToList: Boolean = false,
+    moveItemToList: Boolean = false,
+    copyListId: String? ="",
     onEvent: (event: AddToListScreenEvents) -> Unit
 ) {
     Box(
@@ -68,7 +71,12 @@ fun AddToListScreen(
             HeaderView(
                 modifier = Modifier.padding(top = 20.dp, bottom = 24.dp),
                 headerViewState = HeaderViewState.HeaderStateType2(
-                    title = stringResource(id = R.string.add_to_list)
+                    title = if (copyItemToList)
+                        stringResource(id = R.string.copy_to_list)
+                            else if (moveItemToList)
+                        stringResource(id = R.string.move_to_list)
+                    else
+                        stringResource(id = R.string.add_to_list)
                 )
             ) {
                 onEvent(AddToListScreenEvents.CreateListClick)
@@ -91,7 +99,10 @@ fun AddToListScreen(
                     modifier = Modifier
                         .weight(1f)
                         .background(Color.White),
-                    list = listUiState.list,
+                    list = if (copyItemToList || moveItemToList)
+                        listUiState.list.filter {
+                            it.listId != copyListId
+                        } else listUiState.list,
                     selectedItemsList = listUiState.selectedListItem
                 ) {
                     onEvent(AddToListScreenEvents.OnItemClick(it))
@@ -106,7 +117,13 @@ fun AddToListScreen(
                     text = stringResource(id = R.string.confirm).uppercase(),
                     enabled = listUiState.selectedListItem.isNotEmpty()
                 ) {
-                    onEvent(AddToListScreenEvents.ConfirmClick)
+                    if (copyItemToList) {
+                        onEvent(AddToListScreenEvents.CopyConfirmClick)
+                    } else if (moveItemToList) {
+                        onEvent(AddToListScreenEvents.MoveConfirmClick)
+                    } else {
+                        onEvent(AddToListScreenEvents.ConfirmClick)
+                    }
                 }
 
                 UnderlineButton(
@@ -116,7 +133,6 @@ fun AddToListScreen(
                         .padding(bottom = 8.dp)
                         .height(50.dp),
                     text = stringResource(id = R.string.cancel)
-                        .uppercase()
                 ) {
                     onEvent(AddToListScreenEvents.CancelClick)
                 }
@@ -195,9 +211,9 @@ fun SingleLabelCheckBox(
             modifier = Modifier.padding(24.dp),
             painter = painterResource(
                 id = if (selectedListItems.contains(item))
-                    R.drawable.check_mark_icon
+                    R.drawable.filled_checkbox
                 else
-                    R.drawable.uncheck_item
+                    R.drawable.empty_checkbox
             ),
             contentDescription = null
         )

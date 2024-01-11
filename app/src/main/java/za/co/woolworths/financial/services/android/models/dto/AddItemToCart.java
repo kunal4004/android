@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem;
+
 public class AddItemToCart {
 
 	private String productId;
@@ -33,4 +36,24 @@ public class AddItemToCart {
 	public String getCatalogRefId() {
 		return catalogRefId;
 	}
+
+    public AnalyticProductItem toAnalyticItem(String category) {
+        return new AnalyticProductItem(
+                productId,
+                "",
+                category,
+				"",
+                "",
+                category,
+                "",
+				"",
+				category,
+				"",
+                quantity,
+                0.0,
+                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
+                Integer.parseInt(FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE),
+                ""
+        );
+    }
 }

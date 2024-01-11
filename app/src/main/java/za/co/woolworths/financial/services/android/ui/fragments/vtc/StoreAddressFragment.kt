@@ -378,7 +378,7 @@ class StoreAddressFragment : BaseFragmentBinding<FragmentStoreAddressBinding>(
         activity?.runOnUiThread {
             val locationRequestRequest = OneAppService().getStoresForNPC(
                 location?.latitude
-                    ?: 0.0, location?.longitude ?: 0.0, "", null
+                    ?: 0.0, location?.longitude ?: 0.0, "", true
             )
             OneAppService.forceNetworkUpdate = true
             binding.processingView.visibility = View.VISIBLE

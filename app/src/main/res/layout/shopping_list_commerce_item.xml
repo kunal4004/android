@@ -13,32 +13,70 @@
         android:layout_width="@dimen/two_hundred_dp"
         android:layout_height="match_parent"
         android:background="@color/delete_red_bg"
-        android:gravity="center"
         android:tag="Bottom3">
 
-        <ProgressBar
-            android:id="@+id/pbDeleteIndicator"
-            android:layout_width="@dimen/thirty_two_dp"
-            android:layout_height="@dimen/thirty_two_dp"
-            android:layout_centerInParent="true"
-            android:indeterminateTint="@color/white"
-            android:visibility="invisible" />
+        <RelativeLayout
+            android:layout_centerHorizontal="true"
+            android:layout_toStartOf="@id/rlAddToCart"
+            android:background="@color/delete_red_bg"
+            android:layout_width="@dimen/hundred_dp"
+            android:layout_height="match_parent">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvDelete"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:drawableEnd="@drawable/close_white"
-            android:drawablePadding="@dimen/four_dp"
-            android:gravity="center_horizontal|center_vertical"
-            android:paddingStart="0dp"
-            android:paddingEnd="@dimen/sixteen_dp"
-            android:text="@string/delete"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="@dimen/twenty_sp"
-            app:WTextView_font="medium" />
+            <ProgressBar
+                android:id="@+id/pbDeleteIndicator"
+                android:layout_width="@dimen/thirty_two_dp"
+                android:layout_height="@dimen/thirty_two_dp"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="@color/white"
+                android:visibility="invisible" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvDelete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableTop="@drawable/delete_24"
+                android:drawableTint="@color/white"
+                android:drawablePadding="@dimen/four_dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/remove"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twelve_sp"
+                app:WTextView_font="semi_bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_alignParentEnd="true"
+            android:id="@+id/rlAddToCart"
+            android:gravity="center|end"
+            android:background="@color/black"
+            android:layout_width="@dimen/hundred_dp"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/pbAddIndicator"
+                android:layout_width="@dimen/thirty_two_dp"
+                android:layout_height="@dimen/thirty_two_dp"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="@color/white"
+                android:visibility="invisible" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvAddItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableTop="@drawable/cart_icon"
+                android:drawableTint="@color/white"
+                android:drawablePadding="@dimen/four_dp"
+                android:textAlignment="center"
+                android:text="@string/add_to_cart"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twelve_sp"
+                app:WTextView_font="semi_bold" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -102,19 +140,30 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/sixteen_dp"
             app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/icon_kebab"
             app:layout_constraintStart_toEndOf="@id/cartProductImage"
             app:layout_constraintTop_toTopOf="@id/cartProductImage"
             tools:text="Slim Fit Pique Golfer" />
+
+        <ImageView
+            android:id="@+id/icon_kebab"
+            android:layout_width="@dimen/fifty_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/sixteen_dp"
+            android:src="@drawable/icon_kebab_active"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle" />
 
         <TextView
             android:id="@+id/tvColorSize"
             style="@style/style_cart_item_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/opensans_semi_bold"
             android:textSize="@dimen/ten_sp"
             app:layout_constrainedWidth="true"
-            android:fontFamily="@font/opensans_semi_bold"
             app:layout_constraintStart_toStartOf="@id/tvTitle"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
             tools:text="NAVY BLUE, SMALL" />
@@ -156,10 +205,10 @@
             <ImageView
                 android:id="@+id/minusDeleteCountImage"
                 android:layout_width="@dimen/thirty_two_dp"
-                android:padding="@dimen/ten_dp"
                 android:layout_height="@dimen/thirty_two_dp"
                 android:background="@drawable/circle_grey"
                 android:contentDescription="@string/reduce_count_button"
+                android:padding="@dimen/ten_dp"
                 android:src="@drawable/ic_minus_black" />
 
             <RelativeLayout
@@ -191,7 +240,7 @@
             <ImageView
                 android:id="@+id/addCountImage"
                 android:layout_width="@dimen/thirty_two_dp"
-                android:layout_height="@dimen/thirty_two_dp"
+                android:layout_height="match_parent"
                 android:background="@drawable/circle_grey"
                 android:contentDescription="@string/add_item_count"
                 android:padding="@dimen/seven_dp"

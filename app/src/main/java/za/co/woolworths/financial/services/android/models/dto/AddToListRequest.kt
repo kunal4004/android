@@ -2,6 +2,9 @@ package za.co.woolworths.financial.services.android.models.dto
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ItemDetail
+import za.co.woolworths.financial.services.android.util.analytics.dto.AnalyticProductItem
 
 @Parcelize
 data class AddToListRequest(
@@ -12,4 +15,19 @@ data class AddToListRequest(
     var listId: String? = null,
     var isGWP: Boolean = false,
     var size: String? = null
-): Parcelable
+) : Parcelable
+
+fun AddToListRequest.toItemDetail(): ItemDetail = ItemDetail(
+    skuID = skuID ?: "",
+    catalogRefId = catalogRefId ?: "",
+    quantity = "1"
+)
+
+fun AddToListRequest.toAnalyticItem(category: String?) = AnalyticProductItem(
+    itemId = skuID,
+    category = category,
+    itemListName = category,
+    quantity = 1,
+    affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
+    index = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt()
+)
