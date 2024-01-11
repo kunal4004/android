@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.ConfirmationBottomsheetDialogFragment
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Product
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Recommendation
@@ -552,7 +553,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         when (view.id) {
             bindingListDetails.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
             bindingListDetails.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
-            bindingListDetails.viewEditOnlyLayout.addItemsToListText.id -> {}
+            bindingListDetails.viewEditOnlyLayout.addItemsToListText.id -> {
+                openAddToListScreen()
+            }
             R.id.selectDeselectAllTextView -> onOptionsItemSelected()
             R.id.textProductSearch -> openProductSearchActivity()
             R.id.btnRetry -> if (NetworkManager.getInstance().isConnectedToNetwork(
@@ -567,10 +570,31 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             R.id.closeWhiteBtn -> hideBlackToolTip()
             R.id.txtMoreOptions -> {
                 isSingleItemSelected = false
-                openMoreOptionsDialog()
+                if (viewType.isNotEmpty()) {
+                    // This is share list flow from Deeplinking.
+                    openAddToListScreen()
+                } else {
+                    openMoreOptionsDialog()
+                }
             }
             else -> {}
         }
+    }
+
+    private fun openAddToListScreen() {
+        viewModel.mShoppingListItems.forEach {
+            if (it.isSelected) {
+                listOfItems.add(AddToListRequest(skuID = it.catalogRefId, catalogRefId = it.catalogRefId, quantity = "1"))
+            }
+        }
+        val fragment =
+            listOfItems?.let {
+                AddToListFragment.newInstance(
+                    this@ShoppingListDetailFragment, viewModel.listId, false,
+                    it
+                )
+            }
+        fragment?.show(parentFragmentManager, AddToListFragment::class.simpleName)
     }
 
     private fun enableAddToListOption() {
@@ -579,10 +603,15 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             R.plurals.add_items_to_list,
             shoppingListItemsAdapter?.addedItemsCount ?: 0
         )
+        bindingListDetails.txtMoreOptions.text = requireContext().resources.getQuantityString(
+            R.plurals.add_items_to_list,
+            shoppingListItemsAdapter?.addedItemsCount ?: 0
+        )
     }
 
     private fun disableAddToListOption() {
         bindingListDetails.viewEditOnlyLayout.addItemsToListText.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.color_9D9D9D))
+        bindingListDetails.txtMoreOptions.text = getString(R.string.more_options_btn)
     }
 
     private fun launchShopToggleScreen() {
@@ -986,7 +1015,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
         if (itemWasSelected) {
             bindingListDetails.rlCheckOut.visibility = VISIBLE
-            enableAddToListOption()
+            if (viewType.isNotEmpty()) {
+                // This is share list flow from Deeplinking.
+                enableAddToListOption()
+            }
             val count = shoppingListItemsAdapter?.addedItemsCount ?: 0
             bindingListDetails.btnCheckOut.text =
                 requireContext().resources.getQuantityString(
