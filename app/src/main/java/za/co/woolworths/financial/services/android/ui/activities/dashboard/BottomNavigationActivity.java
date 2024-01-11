@@ -1328,11 +1328,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 appInstanceObject.setBiometricWalkthroughPresented(false);
             }
             mBundle = getIntent().getExtras();
-            String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
-            if (deepLinkData !=null){
-                //Redirect to deepLink flow.
-                parseDeepLinkData();
-                renderUI();
+            if (mBundle != null) {
+                String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
+                if (deepLinkData != null) {
+                    //Redirect to deepLink flow.
+                    parseDeepLinkData();
+                    renderUI();
+                }
             }
             //load count on login success
             switch (getCurrentSection()) {
