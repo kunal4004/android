@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableA
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
@@ -50,7 +50,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment(R.layout.fragment_s
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var localPlaceId: String? = null
-    private val dyHomePageViewModel: DyHomePageViewModel by viewModels()
+    private val dyHomePageViewModel: DyChooseVariationCallViewModel by viewModels()
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717

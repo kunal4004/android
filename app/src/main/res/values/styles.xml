@@ -117,6 +117,9 @@
         <item name="android:windowExitAnimation">@anim/alpha_anim_exit</item>
     </style>
 
+    <style name="top_bottom_padding_scrollbar">
+        <item name="android:scrollbarThumbVertical">@drawable/custom_scrollbar</item>
+    </style>
 
     <style name="WRewardsInfo" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
@@ -3361,6 +3364,20 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+    <style name="gift_item_quantity_textView_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">3dp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:layout_marginBottom">32dp</item>
     </style>
 
 </resources>

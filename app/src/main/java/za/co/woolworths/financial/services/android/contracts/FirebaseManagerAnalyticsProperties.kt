@@ -453,6 +453,9 @@ open class FirebaseManagerAnalyticsProperties {
         /*enhance substitution*/
         const val SUBSTITUTION: String = "substitution"
         const val ADD_SUBSTITUTION: String = "add_substitute"
+
+        // Order Again
+        const val ORDER_AGAIN: String = "order_again"
     }
 
     class PropertyNames {
@@ -586,8 +589,13 @@ open class FirebaseManagerAnalyticsProperties {
             const val DELIVERY_TYPE = "delivery_type"
 
             const val SEARCH_RESULT_COUNT: String = "search_result_count"
+            const val SEARCH_COUNT: String = "search_count"
             const val LOCATION_ID: String = "location_id"
             const val PRODUCT_NAME: String = "product_name"
+
+            // Order Again
+            const val LOCATION: String = "location"
+
         }
     }
 
@@ -595,6 +603,7 @@ open class FirebaseManagerAnalyticsProperties {
         companion object {
             const val OUT_OF_STOCK_MESSAGE = "out of stock"
             const val NOT_APPLICABLE: String = "N/A"
+            const val RECOMMENDED: String = "recommended"
 
             // Chanel
             const val ACTION_BRAND_LANDING_PAGE_CATEGORY = "Customer selects a category which takes them to the relevant category page."
@@ -667,7 +676,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val CURRENCY_VALUE: String = "ZAR"
             const val INDEX_VALUE: String = "1"
             const val AFFILIATION_VALUE: String = "WWOneApp"
-            const val CREATIVE_NAME_VALUE: String = "Product List"
+            const val NONE: String = "NONE"
             const val PAYMENT_TYPE_VALUE: String = "Gift Card"
             const val SHIPPING_TIER_VALUE_DASH: String = "Dash"
             const val SHIPPING_TIER_VALUE_CNC: String = "CNC"
@@ -731,6 +740,13 @@ open class FirebaseManagerAnalyticsProperties {
             const val BASKET = "basket"
 
             const val BACK = "back"
+
+            // Order Again
+            const val ORDER_AGAIN: String = "Order Again"
+            const val STANDARD_LANDING_PAGE: String = "Standard Landing Page"
+            const val CNC_LANDING_PAGE: String = "Click And Collect Landing Page"
+            const val DASH_LANDING_PAGE: String = "Dash Landing Page"
+            const val MY_ACCOUNTS: String = "My Accounts"
 
 
         }
@@ -828,6 +844,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
             const val SSO_FORGOT_PASSWORD: String = "SSO Forgot Password"
+            const val DASH_LANDING: String = "Dash Landing"
 
         }
     }

@@ -22,7 +22,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_CREATE_LIST
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_CODE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_FAILED
@@ -77,7 +76,7 @@ class CreateListFragment : Fragment() {
         setFragmentResult(
             REQUEST_CODE_CREATE_LIST.toString(),
             bundleOf(
-                RESULT_CODE to if (success) arguments?.getInt(REQUEST_CODE) else RESULT_FAILED
+                RESULT_CODE to if (success) REQUEST_CODE_CREATE_LIST else RESULT_FAILED
             )
         )
         activity?.onBackPressed()

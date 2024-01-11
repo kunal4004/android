@@ -8,7 +8,7 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 
 interface IProductListing {
-    fun openProductDetailView(productList: ProductList)
+    fun openProductDetailView(productList: ProductList, position: Int)
     fun queryInventoryForStore(fulfilmentTypeId: String, addItemToCart: AddItemToCart?, productList: ProductList)
     fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems)
     fun setMyRecycleViewHolder(recyclerViewHolder: MyRecycleViewHolder)

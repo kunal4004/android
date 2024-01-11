@@ -1,19 +1,23 @@
 package za.co.woolworths.financial.services.android.util.expand;
 
 import android.os.Bundle;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, PVH extends ParentViewHolder, CVH extends ChildViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ParentViewHolder.ParentListItemExpandCollapseListener {
+import za.co.woolworths.financial.services.android.util.AppConstant;
+
+public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, OAVH extends OrderAgainViewHolder, PVH extends ParentViewHolder, CVH extends ChildViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ParentViewHolder.ParentListItemExpandCollapseListener {
 
 	private static final String EXPANDED_STATE_MAP = "ExpandableRecyclerAdapter.ExpandedStateMap";
 	private static final int TYPE_PARENT = 0;
 	private static final int TYPE_CHILD = 1;
 	private static final int TYPE_HEADER = 2;
+	private static final int TYPE_ORDER_AGAIN_HEADER = 3;
 
 	protected List<Object> mItemList;
 
@@ -47,6 +51,8 @@ public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, PV
 			return pvh;
 		} else if (viewType == TYPE_HEADER) {
 			return onCreateHeaderViewHolder(viewGroup);
+		} else if (viewType == TYPE_ORDER_AGAIN_HEADER) {
+			return onCreateOrderAgainViewHolder(viewGroup);
 		} else if (viewType == TYPE_CHILD) {
 			return onCreateChildViewHolder(viewGroup, viewType);
 		} else {
@@ -60,6 +66,8 @@ public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, PV
 		Object listItem = getListItem(position);
 		if ((listItem instanceof ParentWrapper) && position == 0) {
 			onBindHeaderViewHolder((HVH) holder, position, ((ParentWrapper) listItem).getParentListItem());
+		} else if (holder instanceof OrderAgainViewHolder) {
+			onBindOrderAgainViewHolder((OAVH) holder, position, ((ParentWrapper) listItem).getParentListItem());
 		} else if (listItem instanceof ParentWrapper) {
 			PVH parentViewHolder = (PVH) holder;
 
@@ -83,11 +91,15 @@ public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, PV
 
 	public abstract HVH onCreateHeaderViewHolder(ViewGroup parentViewGroup);
 
+	public abstract OAVH onCreateOrderAgainViewHolder(ViewGroup parentViewGroup);
+
 	public abstract void onBindParentViewHolder(PVH parentViewHolder, int position, ParentListItem parentListItem);
 
 	public abstract void onBindChildViewHolder(CVH childViewHolder, int position, Object childListItem);
 
 	public abstract void onBindHeaderViewHolder(HVH headerViewHolder, int position, ParentListItem childListItem);
+
+	public abstract void onBindOrderAgainViewHolder(OAVH orderAgainViewHolder, int position, ParentListItem item);
 
 	@Override
 	public int getItemCount() {
@@ -97,10 +109,24 @@ public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, PV
 	@Override
 	public int getItemViewType(int position) {
 		Object listItem = getListItem(position);
-		if (listItem instanceof ParentWrapper && position == 0) {
-			return TYPE_HEADER;
-		} else if (listItem instanceof ParentWrapper) {
-			return TYPE_PARENT;
+		if (listItem instanceof ParentWrapper) {
+			switch (position) {
+				case 0:
+					return TYPE_HEADER;
+				case 1:
+					int type = TYPE_PARENT;
+					ParentWrapper item = (ParentWrapper) listItem;
+					ParentListItem parentListItem = item.getParentListItem();
+					if (parentListItem instanceof SubCategoryModel) {
+						String categoryId = ((SubCategoryModel) parentListItem).getCategoryId();
+						//Verify if Root category is FOOD either by ID
+						if (AppConstant.FOOD_CATEGORY_ID.equals(categoryId))
+							type = TYPE_ORDER_AGAIN_HEADER;
+					}
+					return type;
+				default:
+					return TYPE_PARENT;
+			}
 		} else if (listItem == null) {
 			throw new IllegalStateException("Null object added");
 		} else {

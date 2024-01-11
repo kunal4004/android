@@ -162,7 +162,7 @@ fun CreateListScreen(
                         .padding(horizontal = 24.dp)
                         .padding(bottom = 8.dp)
                         .height(50.dp),
-                    text = state.cancelText.uppercase()
+                    text = state.cancelText
                 ) {
                     onEvent(CreateListScreenEvent.CancelClick)
                 }

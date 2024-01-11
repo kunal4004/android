@@ -113,10 +113,10 @@ public class ProductSearchActivity extends AppCompatActivity
 
     private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
         config = new NetworkConfig(new AppContextProviderImpl());
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID);
+        if (Utils.getDyServerId() != null)
+            dyServerId = Utils.getDyServerId();
+        if (Utils.getDySessionId() != null)
+            dySessionId = Utils.getDySessionId();
         User user = new User(dyServerId, dyServerId);
         Session session = new Session(dySessionId);
         Device device = new Device(IPAddress,config.getDeviceModel());

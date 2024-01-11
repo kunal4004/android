@@ -318,6 +318,7 @@
     <string name="cd_checkout_gift_switch">checkoutGiftSwitch</string>
     <string name="cd_checkout_gift_instruction_value">checkoutGiftInstructionsText</string>
     <string name="cd_checkout_delivery_instruction_value">checkoutSpecialDeliveryInstructionsText</string>
+    <string name="cd_empty_state_icon">orderAgainEmptyScreenIcon</string>
 
     <!-- Unique Ids for need help-->
     <string name="next_title">next</string>
@@ -335,4 +336,11 @@
     <string name="tips_and_tricks_image">tips_and_tricks_image</string>
     <string name="faq_title">faq_title</string>
     <string name="faq_description">faq_description</string>
+
+    <!-- Order Again -->
+    <string name="cd_product_checkbox" />
+    <string name="cd_product_increase_quantity">productIncreaseQuantity</string>
+    <string name="cd_options_menu">itemOptionsMenu</string>
+    <string name="cd_product_decrease_quantity">productDecreaseQuantity</string>
+    <string name="cd_information_icon">Information Icon</string>
 </resources>

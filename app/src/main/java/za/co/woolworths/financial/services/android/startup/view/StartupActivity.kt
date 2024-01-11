@@ -12,10 +12,12 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -24,8 +26,6 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivitySplashScreenBinding
 import com.awfs.coordination.databinding.ActivityStartupBinding
 import com.awfs.coordination.databinding.ActivityStartupResourcenotfoundBinding
-import com.clarisite.mobile.Glassbox
-import com.clarisite.mobile.StartupSettings.StartupSettingsBuilder.aSettingsBuilder
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -42,8 +42,9 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton.glassBox
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.startOCChatService
@@ -54,6 +55,8 @@ import za.co.woolworths.financial.services.android.startup.service.repository.St
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
@@ -88,6 +91,7 @@ class StartupActivity :
 
     @Inject
     lateinit var notificationUtils: NotificationUtils
+    private val dyHomePageViewModel: DyHomePageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,6 +129,25 @@ class StartupActivity :
             setContentView(bindingResourceNotFound.root)
             isAppSideLoaded = true
         }
+    }
+
+    private fun setupDynamicChooseCall() {
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true) {
+                prepareDynamicYieldRequestEvent()
+            }
+        }
+    }
+
+    private fun prepareDynamicYieldRequestEvent() {
+        val config = NetworkConfig(AppContextProviderImpl())
+        val dyData = ArrayList<String>()
+        val device = Device(Utils.IPAddress, config.getDeviceModel())
+        val page = Page(dyData, Utils.MOBILE_LANDING_PAGE, Utils.HOME_PAGE, null, null)
+        val context = Context(device, page, Utils.DY_CHANNEL)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(null, null, context, options)
+        dyHomePageViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun setupDataListener() {
@@ -498,7 +521,6 @@ class StartupActivity :
                         else -> onConfigSuccess()
                     }
 
-                    initializeGlassBoxSDK()
                 }
             }
         }
@@ -536,6 +558,7 @@ class StartupActivity :
 
     fun presentNextScreenOrServerMessage() {
         Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITHOUT_CTA)
+        setupDynamicChooseCall()
         bindingStartup.showNonVideoViewWithoutErrorLayout()
         presentNextScreen()
     }
@@ -736,21 +759,7 @@ class StartupActivity :
         }
     }
 
-    // GlassBox SDK for record screen session
-    private fun initializeGlassBoxSDK() {
-        try {
-            Glassbox.start(
-                aSettingsBuilder()
-                    .withApplicationCtx(this)
-                    .withAppId(glassBox?.appId)
-                    .withReportUrl(glassBox?.reportUrl)
-                    .hybridMode()
-                    .build(),
-            )
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
-        }
-    }
+
 
     @VisibleForTesting
     fun testsetupLoadingScreen() {

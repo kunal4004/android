@@ -18,7 +18,6 @@ import za.co.woolworths.financial.services.android.domain.usecase.AddToListUC
 import za.co.woolworths.financial.services.android.domain.usecase.CreateNewListUC
 import za.co.woolworths.financial.services.android.domain.usecase.GetMyListsUC
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
@@ -30,6 +29,9 @@ import za.co.woolworths.financial.services.android.presentation.addtolist.compon
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.AddedToListState
 import za.co.woolworths.financial.services.android.presentation.addtolist.components.CreateNewListState
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ItemDetail
+import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session
@@ -39,8 +41,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.BUNDLE_WISHLIST_EVENT_DATA
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
+import java.lang.StringBuilder
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,6 +62,8 @@ class AddToListViewModel @Inject constructor(
         savedStateHandle[ARG_ITEMS_TO_BE_ADDED] ?: ArrayList()
     private var mAddToWishListEventData: AddToWishListFirebaseEventData? =
         savedStateHandle[BUNDLE_WISHLIST_EVENT_DATA]
+
+    private val copyListId: String? = savedStateHandle[MoreOptionDialogFragment.COPY_LIST_ID]
 
     private val _addedToListState = MutableStateFlow(emptyList<AddedToListState>())
     val addedToList: StateFlow<List<AddedToListState>> = _addedToListState.asStateFlow()
@@ -179,83 +183,91 @@ class AddToListViewModel @Inject constructor(
             _addedToListState.update { emptyList() }
             // Specific to Order Details Page
             val orderId = savedStateHandle.get<String>(ARG_ORDER_ID) ?: ""
-            listState.value.selectedListItem.forEach {
 
-                mAddToWishListEventData?.let { eventData ->
-                    if (it.listName.isNotEmpty()){
-                        eventData.shoppingListName = it.listName
-                        FirebaseAnalyticsEventHelper.addToWishlistEvent(eventData)
-                    }
-                }
+            if (orderId.isNotEmpty()) {
+                addToListByOrderId(orderId, listState.value.selectedListItem)
+                return@launch
+            }
 
-                if (orderId.isNotEmpty()) {
-                    addToListByOrderId(orderId, it)
-                    return@launch
-                }
+            if (items.isEmpty()) {
+                return@launch
+            }
+            val itemList = mutableListOf<ItemDetail>()
 
-                if (items.isEmpty()) {
-                    return@launch
-                }
-                val listId = it.listId
-                // If giftListId is empty pass listId as giftListId
-                items.map { item -> if(item.giftListId.isNullOrEmpty()) { item.giftListId = listId } }
+            /*todo need to add new firebase events */
 
-                async {
-                    addProductsToList(listId, items.toList()).collect {
-                        viewModelScope.launch(Dispatchers.Main) {
-                            when (it.status) {
-                                Status.SUCCESS -> {
-                                    _addedToListState.update { list ->
-                                        val updatedList = list.toMutableList()
-                                        updatedList.add(
-                                            AddedToListState(
-                                                isSuccess = true,
-                                                listId = listId
-                                            )
+            /*created new request from existing request for multi-list api*/
+            items.map {
+                itemList.add(
+                    ItemDetail(
+                        skuID = it.skuID?: "",
+                        catalogRefId = it.catalogRefId?: "",
+                        quantity = "1"
+                    )
+                )
+            }
+
+            val giftListIds = mutableListOf<String>()
+            listState.value.selectedListItem.map {
+                giftListIds.add(it.listId)
+            }
+
+            val copyItemToListRequest =
+                CopyItemToListRequest(items = itemList, giftListIds = giftListIds)
+
+            async {
+                addProductsToList(copyItemToListRequest).collect {
+                    viewModelScope.launch(Dispatchers.Main) {
+                        when (it.status) {
+                            Status.SUCCESS -> {
+                                _addedToListState.update { list ->
+                                    val updatedList = list.toMutableList()
+                                    updatedList.add(
+                                        AddedToListState(
+                                            isSuccess = true
                                         )
-                                        return@update updatedList
-                                    }
-                                    val isSuccess = _addedToListState.value.size ==
-                                            listState.value.selectedListItem.size
-                                    listState.value = listState.value.copy(
-                                        isAddToListInProgress = false,
-                                        isAddToListSuccess = isSuccess
                                     )
-                                    AppConfigSingleton.dynamicYieldConfig?.apply {
-                                        if (isDynamicYieldEnabled == true) {
-                                            items.forEach { item ->
-                                                prepareDyAddToWishListRequestEvent(
-                                                    item.skuID,
-                                                    item.size
-                                                )
-                                            }
+                                    return@update updatedList
+                                }
+                                val isSuccess = _addedToListState.value.size ==
+                                        listState.value.selectedListItem.size
+                                listState.value = listState.value.copy(
+                                    isAddToListInProgress = false,
+                                    isAddToListSuccess = isSuccess
+                                )
+                                AppConfigSingleton.dynamicYieldConfig?.apply {
+                                    if (isDynamicYieldEnabled == true) {
+                                        items.forEach { item ->
+                                            prepareDyAddToWishListRequestEvent(
+                                                item.skuID,
+                                                item.size
+                                            )
                                         }
                                     }
                                 }
+                            }
 
-                                Status.ERROR -> {
-                                    _addedToListState.update { list ->
-                                        val updatedList = list.toMutableList()
-                                        updatedList.add(
-                                            AddedToListState(
-                                                isSuccess = false,
-                                                listId = listId
-                                            )
+                            Status.ERROR -> {
+                                _addedToListState.update { list ->
+                                    val updatedList = list.toMutableList()
+                                    updatedList.add(
+                                        AddedToListState(
+                                            isSuccess = false
                                         )
-                                        return@update updatedList
-                                    }
-                                    val isSuccess = _addedToListState.value.size ==
-                                            listState.value.selectedListItem.size
-                                    listState.value = listState.value.copy(
-                                        isAddToListInProgress = false,
-                                        isAddToListSuccess = isSuccess
                                     )
+                                    return@update updatedList
                                 }
-
-                                Status.LOADING -> listState.value = listState.value.copy(
-                                    isAddToListInProgress = true
+                                val isSuccess = _addedToListState.value.size ==
+                                        listState.value.selectedListItem.size
+                                listState.value = listState.value.copy(
+                                    isAddToListInProgress = false,
+                                    isAddToListSuccess = isSuccess
                                 )
                             }
+
+                            Status.LOADING -> listState.value = listState.value.copy(
+                                isAddToListInProgress = true
+                            )
                         }
                     }
                 }
@@ -276,11 +288,11 @@ class AddToListViewModel @Inject constructor(
         var dyServerId: String? = null
         var dySessionId: String? = null
         val config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
+        if (Utils.getDyServerId() != null) {
+            dyServerId = Utils.getDyServerId()
         }
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null) {
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        if (Utils.getDySessionId() != null) {
+            dySessionId = Utils.getDySessionId()
         }
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
@@ -305,13 +317,24 @@ class AddToListViewModel @Inject constructor(
 
     private suspend fun addToListByOrderId(
         orderId: String,
-        listDetails: ShoppingList
+        listDetails: List<ShoppingList>
     ) {
+         val listId = StringBuilder()
+
+        listDetails.forEachIndexed {
+                index, shoppingList ->
+           listId.apply {
+               this.append(shoppingList.listId)
+               if (listDetails.lastIndex !=index) {
+                   this.append(",")
+               }
+           }
+        }
+
         viewModelScope.launch {
             addToListByOrderIdUC(
                 orderId, OrderToShoppingListRequestBody(
-                    shoppingListId = listDetails.listId,
-                    shoppingListName = listDetails.listName
+                    shoppingListId = listId.toString()
                 )
             ).collect {
                 viewModelScope.launch(Dispatchers.Main) {
@@ -321,8 +344,7 @@ class AddToListViewModel @Inject constructor(
                                 val updatedList = list.toMutableList()
                                 updatedList.add(
                                     AddedToListState(
-                                        isSuccess = true,
-                                        listId = listDetails.listId
+                                        isSuccess = true
                                     )
                                 )
                                 return@update updatedList
@@ -333,6 +355,7 @@ class AddToListViewModel @Inject constructor(
                                 isAddToListInProgress = false,
                                 isAddToListSuccess = isSuccess
                             )
+
                             AppConfigSingleton.dynamicYieldConfig?.apply {
                                 if (isDynamicYieldEnabled == true) {
                                     items.forEach { item ->
@@ -347,8 +370,7 @@ class AddToListViewModel @Inject constructor(
                                 val updatedList = list.toMutableList()
                                 updatedList.add(
                                     AddedToListState(
-                                        isSuccess = false,
-                                        listId = listDetails.listId
+                                        isSuccess = false
                                     )
                                 )
                                 return@update updatedList
@@ -386,6 +408,14 @@ class AddToListViewModel @Inject constructor(
         }
     }
 
+    fun getSelectedListForCopyItem():ArrayList<ShoppingList> {
+        val list = ArrayList<ShoppingList>()
+         getListState().selectedListItem.forEach {
+            list.add(it)
+        }
+        return list
+    }
+
     fun getListState(): AddToListUiState {
         return listState.value
     }
@@ -395,4 +425,7 @@ class AddToListViewModel @Inject constructor(
     }
 
     fun getAddedListItems(): List<AddToListRequest> = items.toList()
+
+    fun getCopyListID(): String? = copyListId
+    fun getItemsToBeAdded() = items
 }
