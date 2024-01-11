@@ -44,6 +44,7 @@ fun EmptyStateTemplate(
         title = uiState.title,
         description = uiState.description,
         buttonText = uiState.buttonText,
+        isButtonVisible = uiState.isButtonVisible,
         onClickEvent = {
             onClickEvent(uiState.isSignedOut)
         }
@@ -57,6 +58,7 @@ fun EmptyStateTemplateStateless(
     @StringRes title: Int,
     @StringRes description: Int,
     @StringRes buttonText: Int,
+    isButtonVisible: Boolean,
     onClickEvent: () -> Unit,
 ) {
     Column(
@@ -92,23 +94,25 @@ fun EmptyStateTemplateStateless(
             color = colorResource(id = R.color.color_444444)
         )
         Spacer(modifier = Modifier.height(40.dp))
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .padding(horizontal = 24.dp)
-                .background(color = Color.White, shape = RectangleShape),
-            onClick = {
-                onClickEvent()
-            }) {
-            Text(
-                text = stringResource(id = buttonText).uppercase(),
-                letterSpacing = 1.5.sp,
-                fontFamily = FuturaFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = colorResource(id = R.color.black)
-            )
+        if (isButtonVisible) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(horizontal = 24.dp)
+                    .background(color = Color.White, shape = RectangleShape),
+                onClick = {
+                    onClickEvent()
+                }) {
+                Text(
+                    text = stringResource(id = buttonText).uppercase(),
+                    letterSpacing = 1.5.sp,
+                    fontFamily = FuturaFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                    color = colorResource(id = R.color.black)
+                )
+            }
         }
     }
 }
