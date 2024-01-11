@@ -40,6 +40,7 @@ class ShopOptimiserViewModel @Inject constructor(
 
     val userAccountsFlow = MutableSharedFlow<NetworkStatusUI<UserAccountResponse>>(replay = 0)
 
+    var isPayFlexViewVisible : Boolean = false
     // Other properties...
     private var pdpProductVariant by mutableStateOf(PdpProductVariant())
     var shoptimiserProductsList = mutableStateMapOf<String, ProductOnDisplay>()
