@@ -41,7 +41,6 @@ fun MyListItemRowView(
     modifier: Modifier = Modifier,
     listDataState: ListDataState,
     listItem: ShoppingList,
-    isShareButtonVisible: Boolean = false,
     onDeleteIconClick: (item: ShoppingList) -> Unit,
     onShareIconClick: (item: ShoppingList) -> Unit,
     onDetailsArrowClick: (item: ShoppingList) -> Unit,
@@ -89,8 +88,6 @@ fun MyListItemRowView(
                             }
                     )
                 } else {
-                    if(isShareButtonVisible) {
-                        /* will remove later once share list available*/
                         Icon(painter = painterResource(id = listDataState.shareIcon),
                             contentDescription = "Share List",
                             modifier = Modifier
@@ -100,7 +97,6 @@ fun MyListItemRowView(
                                     onShareIconClick(listItem)
                                 }
                         )
-                    }
 
                     Icon(
                         painter = painterResource(id = listDataState.openIcon),
