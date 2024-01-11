@@ -667,7 +667,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         val fragment =
             listOfItems?.let {
                 AddToListFragment.newInstance(
-                    this@ShoppingListDetailFragment, viewModel.listId, false,
+                    this@ShoppingListDetailFragment,
+                    viewModel.listId,
+                    false,
+                    moveItemToList = false,
                     it
                 )
             }
