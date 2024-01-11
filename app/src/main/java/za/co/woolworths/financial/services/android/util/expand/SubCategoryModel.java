@@ -21,6 +21,10 @@ public class SubCategoryModel implements ParentListItem {
 		return subCategory.categoryName;
 	}
 
+	public String getCategoryId() {
+		return subCategory.categoryId;
+	}
+
 	public String getImageUrl() {
 		return subCategory.imgUrl;
 	}

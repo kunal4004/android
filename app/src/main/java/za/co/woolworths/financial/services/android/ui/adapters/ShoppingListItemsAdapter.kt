@@ -34,6 +34,7 @@ class ShoppingListItemsAdapter(
 ) : RecyclerSwipeAdapter<RecyclerView.ViewHolder>() {
 
     companion object {
+
         private const val ITEM_VIEW_TYPE_HEADER = 0
         private const val ITEM_VIEW_TYPE_BASIC = 1
     }
@@ -71,6 +72,7 @@ class ShoppingListItemsAdapter(
                 val headerViewHolder = viewHolder as HeaderViewHolder
                 headerViewHolder.tvSearchText.setOnClickListener { navigator.onShoppingSearchClick() }
             }
+
             ITEM_VIEW_TYPE_BASIC -> {
                 val holder = viewHolder as? ShoppingListItemViewHolder ?: return
                 val shoppingListItem = getItem(position) ?: return
@@ -79,7 +81,10 @@ class ShoppingListItemsAdapter(
 
                 when (shoppingListItem.availability) {
                     ProductAvailability.UNAVAILABLE.value -> holder.bindUnavailableProduct()
-                    ProductAvailability.OUT_OF_STOCK.value -> holder.bindOutOfStockProduct(shoppingListItem)
+                    ProductAvailability.OUT_OF_STOCK.value -> holder.bindOutOfStockProduct(
+                        shoppingListItem
+                    )
+
                     else -> holder.bindAvailableProduct(shoppingListItem)
                 }
             }
@@ -178,6 +183,9 @@ class ShoppingListItemsAdapter(
                 cbShoppingList.visibility = GONE
                 cbShoppingList.isEnabled = false
                 llQuantity.visibility = GONE
+                rlAddToCart.visibility = if (shoppingListItem.quantityInStock > 0) VISIBLE else GONE
+                pbAddIndicator.visibility =
+                    if (shoppingListItem.isAddToCartInProgress) VISIBLE else GONE
 
                 // Product Image
                 cartProductImage.setOnClickListener {
@@ -192,6 +200,19 @@ class ShoppingListItemsAdapter(
                     if (!mAdapterIsClickable) return@setOnClickListener
                     val item = getItem(position) ?: return@setOnClickListener
                     navigator.onItemDeleteClick(item)
+                }
+                // Swipe to add click
+                tvAddItem.setOnClickListener {
+                    if (!mAdapterIsClickable) return@setOnClickListener
+                    adapterClickable(false)
+                    val item = getItem(position) ?: return@setOnClickListener
+                    item.userQuantity = 1
+                    item.isSelected = true
+                    item.isAddToCartInProgress = true
+                    shoppingListItems?.set(position - 1, item)
+                    notifyItemChanged(position)
+                    pbAddIndicator.visibility = VISIBLE
+                    navigator.onItemAddClick(item)
                 }
             }
         }
@@ -355,8 +376,8 @@ class ShoppingListItemsAdapter(
     @Synchronized
     fun setList(listItems: ArrayList<ShoppingListItem>?) {
         if (listItems.isNullOrEmpty()) {
-                return
-            }
+            return
+        }
         type = getPreferredDeliveryType()
         userShouldSetSuburb = userShouldSetSuburb()
         shoppingListItems = listItems
@@ -387,8 +408,21 @@ class ShoppingListItemsAdapter(
         }?.map {
             it.userQuantity = 0
             it.isSelected = false
+            it.isAddToCartInProgress = false
         }
         notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
         navigator.onItemSelectionChange(false)
+    }
+
+    fun setAddToCartProgress(itemId: String, isProgress: Boolean) {
+
+        shoppingListItems?.filter {
+            it.isAddToCartInProgress
+        }?.map {
+            it.userQuantity = 0
+            it.isSelected = false
+            it.isAddToCartInProgress = false
+        }
+        notifyItemRangeChanged(0, (shoppingListItems?.size ?: 0).plus(1))
     }
 }

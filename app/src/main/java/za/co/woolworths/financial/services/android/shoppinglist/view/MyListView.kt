@@ -103,14 +103,6 @@ fun MyListScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ChangeLocationView(
-            modifier = Modifier.background(Color.White),
-            icon = myListviewModel.deliveryDetailsState.value.icon,
-            deliveryType = myListviewModel.deliveryDetailsState.value.deliveryType,
-            deliveryLocation = myListviewModel.deliveryDetailsState.value.deliveryLocation
-        ) {
-            onEvent(MyLIstUIEvents.ChangeLocationClick)
-        }
 
         Spacer(
             modifier = Modifier

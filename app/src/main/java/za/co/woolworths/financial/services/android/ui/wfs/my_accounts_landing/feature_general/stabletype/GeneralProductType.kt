@@ -4,6 +4,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.contact_us_key
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_detail_key
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_message_key
+import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_order_again_key
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_orders_key
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_preferences_key
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AutomationTestScreenLocator.Locator.my_shopping_lists
@@ -78,6 +79,14 @@ sealed class GeneralProductType {
             clickable = MyProfile.Order,
             automationLocatorKey = my_orders_key
         )) : GeneralProductType()
+    data class OrderAgain(
+        val general: CommonItem.General = CommonItem.General(
+            isShimmerDividedByTwo = true,
+            icon = R.drawable.ic_order_again,
+            title = R.string.my_account_order_again,
+            clickable = MyProfile.OrderAgain,
+            automationLocatorKey = my_order_again_key
+        )) : GeneralProductType()
     data class Messages(
         var unreadMessageCount: Int = 0, val general: CommonItem.General = CommonItem.General(
             icon = R.drawable.ic_messages,
@@ -105,6 +114,8 @@ sealed class GeneralProductType {
             add(Messages())
             add(CommonItem.Divider)
             add(MyShoppingLists())
+            add(CommonItem.Divider)
+            add(OrderAgain())
             add(CommonItem.SectionDivider)
         }
         fun getGeneralItems(item : GeneralProductType) = when(item) {
@@ -118,6 +129,7 @@ sealed class GeneralProductType {
             is SignOut -> item.general
             is StoreLocator -> item.general
             is UpdatePassword -> item.general
+            is OrderAgain -> item.general
         }
         fun generalProduct() = mutableListOf(
             MyAccountSectionHeaderType.General.title(),

@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.FulfillmentStoreMap
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
@@ -18,6 +21,9 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyListResponse
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.MoveItemApiRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -46,6 +52,10 @@ class ShoppingListDetailViewModel @Inject constructor(
     private val _copyItemsToList = MutableLiveData<Event<Resource<CopyListResponse>>>()
     val copyItemsToList: LiveData<Event<Resource<CopyListResponse>>> =
         _copyItemsToList
+
+    private val _moveItemFromList = MutableSharedFlow<ViewState<CopyListResponse>>(0)
+    val moveItemFromList: SharedFlow<ViewState<CopyListResponse>> = _moveItemFromList
+
 
     init {
         listId = savedStateHandle[ARG_LIST_ID] ?: ""
@@ -163,16 +173,16 @@ class ShoppingListDetailViewModel @Inject constructor(
     }
 
     fun setItem(updatedItem: ShoppingListItem) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             if (mShoppingListItems.isEmpty()) return@launch
-            val itemList = mShoppingListItems.filter {
+            val item = mShoppingListItems.find {
                 it.catalogRefId.equals(
                     updatedItem.catalogRefId,
                     ignoreCase = true
                 )
             }
-            if (itemList.isNotEmpty()) {
-                val index = mShoppingListItems.indexOf(itemList[0])
+            item?.let {
+                val index = mShoppingListItems.indexOf(item)
                 if (index < 0 || index >= mShoppingListItems.size) return@launch
                 mShoppingListItems[index] = updatedItem
             }
@@ -233,9 +243,26 @@ class ShoppingListDetailViewModel @Inject constructor(
         }
     }
 
+
+      suspend fun moveItemsFromList(moveItemApiRequest: MoveItemApiRequest) =
+        viewModelScope.launch {
+            mapNetworkCallToViewStateFlow {
+                shoppingListDetailRepository.moveMultipleItemsFromList(moveItemApiRequest)
+            }.collectLatest {
+                _moveItemFromList.emit(it)
+            }
+    }
+
     fun setIsCheckedDontAskAgain(checkedDontAskAgain: Boolean) {
         isCheckedDontAskAgain = checkedDontAskAgain
     }
 
     fun isCheckedDontAskAgain() = isCheckedDontAskAgain
+
+    fun updateListForMoveItem(): List<ShoppingListItem> {
+        mShoppingListItems = mShoppingListItems.filter {
+            !it.isSelected
+        } as ArrayList<ShoppingListItem>
+        return mShoppingListItems
+    }
 }

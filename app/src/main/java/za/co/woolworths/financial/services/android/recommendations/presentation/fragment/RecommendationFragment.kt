@@ -111,9 +111,10 @@ class RecommendationFragment :
 
     private fun submitViewItemListFirebaseEvent(actionItemList: List<Action>, position: Int) {
         if (actionItemList.isNotEmpty() && position >= 0 && position < actionItemList.size) {
-            FirebaseAnalyticsEventHelper.viewItemListRecommendations(
+            FirebaseAnalyticsEventHelper.viewItemList(
                 products = actionItemList[position].products,
-                category = actionItemList[position].componentName
+                category = actionItemList[position].componentName,
+                itemListName = FirebaseManagerAnalyticsProperties.PropertyValues.RECOMMENDED
             )
         }
     }
@@ -222,7 +223,7 @@ class RecommendationFragment :
         }
     }
 
-    override fun openProductDetailView(productList: ProductList) {
+    override fun openProductDetailView(productList: ProductList, position: Int) {
         if(isConnectedToNetwork() == true) {
             WoolworthsApplication.getInstance().recommendationAnalytics.submitRecClicks(products = listOf(productList))
         }

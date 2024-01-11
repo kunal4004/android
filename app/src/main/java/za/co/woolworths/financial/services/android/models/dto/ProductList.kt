@@ -82,5 +82,6 @@ data class ProductList(
     @SerializedName("reviewCount")
     @Expose
     var reviewCount: String? = null,
-    var network: String? = null
+    var network: String? = null,
+    var stockAvailable: Int? = null
 ) : Parcelable, Serializable

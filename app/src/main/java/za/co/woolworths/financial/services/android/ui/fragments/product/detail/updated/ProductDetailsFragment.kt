@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.viewmode
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.AddToCartLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmLocationResponseLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UpdateScreenLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -79,6 +80,9 @@ import za.co.woolworths.financial.services.android.presentation.addtolist.AddToL
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.ProductX
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
+import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.getToggleFulfilmentResultWithUnSellable
+import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -88,7 +92,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
@@ -244,6 +248,7 @@ class ProductDetailsFragment :
     private var saveVtoApplyImage: Bitmap? = null
     private var isColorSelectionLayoutOnTop: Boolean = false
     private var isLiveCamera: Boolean = false
+    private var unSellableFlowFromOnActivityResult: Boolean = false
     private var isColorAppliedWithLiveCamera: Boolean = false
     private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
     private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
@@ -306,7 +311,7 @@ class ProductDetailsFragment :
 
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
     private var productId: String? = null
-    private val dyChooseVariationViewModel: DyHomePageViewModel by viewModels()
+    private val dyChooseVariationViewModel: DyChooseVariationCallViewModel by viewModels()
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
@@ -330,7 +335,7 @@ class ProductDetailsFragment :
 
         const val PRODUCTLIST = "PRODUCT_LIST"
         fun newInstance(
-                productList: ProductList?,
+            productList: ProductList?,
         ) = ProductDetailsFragment().withArgs {
             putSerializable(PRODUCTLIST, productList)
         }
@@ -362,10 +367,10 @@ class ProductDetailsFragment :
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
         productId = productDetails?.productId
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        if (Utils.getDyServerId() != null)
+            dyServerId = Utils.getDyServerId()
+        if (Utils.getDySessionId() != null)
+            dySessionId = Utils.getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -376,7 +381,6 @@ class ProductDetailsFragment :
         addFragmentListener()
         setUniqueIds()
         productDetails?.let {
-            addViewItemEvent(it)
             wfsShoptimiserProduct.addProductDetails(it)
         }
         setUpCartCountPDP()
@@ -440,20 +444,7 @@ class ProductDetailsFragment :
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             binding.getUpdatedValidateResponse()
         }
-        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
-            // Proceed with add to cart as we have moved unsellable items to List.
-            onConfirmLocation()
-        }
-
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
-            val resultCode =
-                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
-            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
-                // Proceed with add to cart as we have moved unsellable items to List.
-                onConfirmLocation()
-            }
-        }
-
+        listenerForUnsellable()
         KotlinUtils.setAddToListFragmentResultListener(
             ADD_TO_SHOPPING_LIST_REQUEST_CODE,
             requireActivity(),
@@ -484,29 +475,6 @@ class ProductDetailsFragment :
                 }
             }
         }
-    }
-
-    //firebase event view_item
-    private fun addViewItemEvent(productDetails: ProductDetails) {
-        val viewItemListParams = Bundle()
-        viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        viewItemListParams.putString(FirebaseManagerAnalyticsProperties.BUSINESS_UNIT,
-            productDetails?.productType)
-            val viewItem = Bundle()
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
-            productDetails?.price?.toDouble()
-                ?.let { viewItem.putDouble(FirebaseAnalytics.Param.PRICE, it) }
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
-                productDetails?.colourSizeVariants)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
-            viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
-            viewItemListParams)
     }
 
     override fun onAttach(context: Context) {
@@ -607,6 +575,7 @@ class ProductDetailsFragment :
             updateAddToCartButtonForSelectedSKU()
             setUpToolBar()
             isUnSellableItemsRemoved()
+            listenerForUnsellable()
         }
     }
 
@@ -651,7 +620,7 @@ class ProductDetailsFragment :
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
             R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
-            R.id.editDeliveryLocation -> updateDeliveryLocation()
+            R.id.editDeliveryLocation -> updateDeliveryLocation(launchNewToggleScreen = false)
             R.id.productDetailsInformation -> showDetailsInformation(
                 ProductInformationActivity.ProductInformationType.DETAILS
             )
@@ -1119,13 +1088,14 @@ class ProductDetailsFragment :
         unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
         deliveryType: Delivery
     ) {
-            val unsellableItemsBottomSheetDialog =
-                confirmAddressViewModel?.let { it1 ->
-                    UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, deliveryType, binding.progressBar,
-                        it1, this)
-                }
-            unsellableItemsBottomSheetDialog?.show(requireFragmentManager(),
-                UnsellableItemsBottomSheetDialog::class.java.simpleName)
+        unSellableFlowFromOnActivityResult=false
+        val unsellableItemsBottomSheetDialog =
+            confirmAddressViewModel?.let { it1 ->
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, deliveryType, binding.progressBar,
+                    it1, this,)
+            }
+        unsellableItemsBottomSheetDialog?.show(requireFragmentManager(),
+            UnsellableItemsBottomSheetDialog::class.java.simpleName)
     }
 
     fun addItemToCart() {
@@ -1256,7 +1226,7 @@ class ProductDetailsFragment :
         if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
-        callViewPromotionFirebaseEvent()
+        callFirebaseEvents()
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
@@ -1610,9 +1580,12 @@ class ProductDetailsFragment :
         return otherSKUsByGroupKey
     }
 
-    private fun callViewPromotionFirebaseEvent() {
-        productDetails?.promotionsList?.let { promoList ->
-            FirebaseAnalyticsEventHelper.viewPromotion(productDetails!!, promoList)
+    private fun callFirebaseEvents() {
+        productDetails?.let { details ->
+            FirebaseAnalyticsEventHelper.viewItem(details)
+            productDetails?.promotionsList?.let { promoList ->
+                FirebaseAnalyticsEventHelper.viewPromotion(details, promoList)
+            }
         }
     }
 
@@ -1657,7 +1630,11 @@ class ProductDetailsFragment :
                         freeGiftWithPurchaseLayout.freeSim.visibility = View.VISIBLE
                         freeGiftWithPurchaseLayout.giftPurchase.visibility = View.GONE
                         freeGiftWithPurchaseLayout.freeSimTitle.text = getString(R.string.free_sim_with_purchase,it.network)
-                        freeGiftWithPurchaseLayout.freeSimDesc.text = it.freeGiftText
+                        freeGiftWithPurchaseLayout.freeSimDesc.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Html.fromHtml(it.freeGiftText, Html.FROM_HTML_MODE_COMPACT)
+                        } else {
+                            Html.fromHtml(it.freeGiftText)
+                        }
                         freeGiftWithPurchaseLayout.root.visibility = View.VISIBLE
                         freeGiftWithPurchaseLayout.downArrow.setOnClickListener {
                             if(freeGiftWithPurchaseLayout.freeSimDesc.visibility == View.VISIBLE) {
@@ -1673,6 +1650,11 @@ class ProductDetailsFragment :
                         freeGiftWithPurchaseLayout.freeSim.visibility = View.GONE
                         freeGiftWithPurchaseLayout.giftPurchase.visibility = View.VISIBLE
                         freeGiftWithPurchaseLayout.freeGiftText.text = it.freeGiftText
+                        freeGiftWithPurchaseLayout.freeGiftText.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Html.fromHtml(it.freeGiftText, Html.FROM_HTML_MODE_COMPACT)
+                        } else {
+                            Html.fromHtml(it.freeGiftText)
+                        }
 
                     }
                 }
@@ -1701,27 +1683,6 @@ class ProductDetailsFragment :
                                     Html.fromHtml(editedPromotionalText)
                             }
                         }
-                        val arguments = HashMap<String, String>()
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =
-                            productDetails?.productId
-                                ?: ""
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] =
-                            productDetails?.productName
-                                ?: ""
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] =
-                            productDetails?.price
-                                ?: ""
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CREATIVE_NAME] =
-                            FirebaseManagerAnalyticsProperties.PropertyValues.CREATIVE_NAME_VALUE
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME] =
-                            Html.fromHtml(editedPromotionalText).toString()
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] =
-                            FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
-                        Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SELECT_PROMOTION,
-                            arguments,
-                            activity
-                        )
                     }
                 } else {
                     onlinePromotionalTextView1?.text = ""
@@ -1809,7 +1770,7 @@ class ProductDetailsFragment :
             txtSubstitutionEdit.setOnClickListener(this@ProductDetailsFragment)
             if (SessionUtilities.getInstance().isUserAuthenticated) {
                 if (substitutionProductItem == null) {
-                      callGetSubstitutionApi(isInventoryCalled)
+                    callGetSubstitutionApi(isInventoryCalled)
                 } else {
                     /*set Locally product name */
                     selectionChoice = SubstitutionChoice.USER_CHOICE.name
@@ -1875,7 +1836,7 @@ class ProductDetailsFragment :
     }
 
     private fun openManageSubstitutionFragment(substiutionSelection: String?)  =
-            ManageSubstitutionFragment.newInstance(substiutionSelection, commarceItemId, prodId, getSelectedSku()?.sku)
+        ManageSubstitutionFragment.newInstance(substiutionSelection, commarceItemId, prodId, getSelectedSku()?.sku)
 
 
     private fun hideSubstitutionLayout() {
@@ -2746,41 +2707,17 @@ class ProductDetailsFragment :
                     FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS -> {
                         findItemInStore()
                     }
-                    REQUEST_SUBURB_CHANGE_FOR_STOCK -> {
-
-                        updateStockAvailabilityLocation()
-                        showSubstituteItemCell(true, substitutionProductItem)
-
-                        Utils.getPreferredDeliveryLocation()?.let {
-                            if (!this.productDetails?.productType.equals(
-                                    getString(R.string.food_product_type),
-                                    ignoreCase = true
-                                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
-                            ) {
-                                storeIdForInventory = ""
-                                clearStockAvailability()
-                                showProductUnavailable()
-                                showProductNotAvailableForCollection()
-                                reloadFragment()
-                                return
-                            }
+                    REQUEST_SUBURB_CHANGE_FOR_STOCK, ShopToggleActivity.REQUEST_DELIVERY_TYPE -> {
+                        val toggleFulfilmentResultWithUnsellable= getToggleFulfilmentResultWithUnSellable(data)
+                        if(toggleFulfilmentResultWithUnsellable!=null){
+                            unSellableFlowFromOnActivityResult=true
+                            refreshScreen()
+                            UnsellableAccess.navigateToUnsellableItemsFragment(ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                                toggleFulfilmentResultWithUnsellable.deliveryType,confirmAddressViewModel,
+                                binding.progressBar,this,parentFragmentManager,)
                         }
-
-                        if (Utils.retrieveStoreId(productDetails?.fulfillmentType)
-                                .isNullOrEmpty()
-                        ) {
-                            storeIdForInventory = ""
-                            clearStockAvailability()
-                            showProductUnavailable()
-                            reloadFragment()
-                            return
-                        }
-
-                        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType)
-                                .equals(storeIdForInventory, ignoreCase = true)
-                        ) {
-                            updateStockAvailability(true)
-                            reloadFragment()
+                        else {
+                            updateAddtoCartWithNewToggleFullfillment()
                         }
                     }
 
@@ -3221,15 +3158,19 @@ class ProductDetailsFragment :
         }
     }
 
-    override fun updateDeliveryLocation() {
+    override fun updateDeliveryLocation(launchNewToggleScreen: Boolean) {
         activity?.apply {
             when (SessionUtilities.getInstance().isUserAuthenticated) {
-                true -> KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    this,
-                    REQUEST_SUBURB_CHANGE_FOR_STOCK,
-                    KotlinUtils.getPreferredDeliveryType(),
-                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                )
+                true -> if (launchNewToggleScreen) {
+                    launchShopToggleScreen()
+                } else {
+                    KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                        this,
+                        REQUEST_SUBURB_CHANGE_FOR_STOCK,
+                        KotlinUtils.getPreferredDeliveryType(),
+                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                    )
+                }
                 false -> ScreenManager.presentSSOSigninActivity(this,
                     SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK, isUserBrowsing)
             }
@@ -3383,6 +3324,7 @@ class ProductDetailsFragment :
             job?.cancel()
         }
         isLiveCameraResumeState = true
+        UpdateScreenLiveData.removeObservers(viewLifecycleOwner)
     }
 
     override fun onResume() {
@@ -3415,22 +3357,29 @@ class ProductDetailsFragment :
     }
 
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
-        if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
-            isOutOfStockFragmentAdded = true
-            updateAddToCartButtonForSelectedSKU()
-            try {
-                activity?.supportFragmentManager?.beginTransaction()?.apply {
-                    val productDetailsFindInStoreDialog =
-                        ProductDetailsFindInStoreDialog.newInstance(
-                            this@ProductDetailsFragment
-                        )
-                    productDetailsFindInStoreDialog.show(
-                        this,
-                        ProductDetailsFindInStoreDialog::class.java.simpleName
-                    )
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                binding.productImagesViewPager.alpha = 0.5f
+            } else {
+                if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
+                    isOutOfStockFragmentAdded = true
+                    updateAddToCartButtonForSelectedSKU()
+                    try {
+                        activity?.supportFragmentManager?.beginTransaction()?.apply {
+                            val productDetailsFindInStoreDialog =
+                                ProductDetailsFindInStoreDialog.newInstance(
+                                    this@ProductDetailsFragment
+                                )
+                            productDetailsFindInStoreDialog.show(
+                                this,
+                                ProductDetailsFindInStoreDialog::class.java.simpleName
+                            )
+                        }
+                    } catch (ex: IllegalStateException) {
+                        logException(ex)
+                    }
                 }
-            } catch (ex: IllegalStateException) {
-                logException(ex)
             }
         }
     }
@@ -3550,7 +3499,17 @@ class ProductDetailsFragment :
     }
 
     override fun onChangeDeliveryOption() {
-        this.updateDeliveryLocation()
+        this.updateDeliveryLocation(launchNewToggleScreen = false)
+    }
+
+    override fun onChangeDeliveryOptionFromNewToggleFulfilment() {
+        updateDeliveryLocation(launchNewToggleScreen = true)
+    }
+
+    private fun launchShopToggleScreen() {
+        Intent(requireActivity(), ShopToggleActivity::class.java).apply {
+            startActivityForResult(this, ShopToggleActivity.REQUEST_DELIVERY_TYPE)
+        }
     }
 
     override fun onFindInStore() {
@@ -3558,7 +3517,7 @@ class ProductDetailsFragment :
     }
 
     override fun openChangeFulfillmentScreen() {
-        this.updateDeliveryLocation()
+        this.updateDeliveryLocation(launchNewToggleScreen = false)
     }
 
     override fun clearStockAvailability() {
@@ -4542,6 +4501,82 @@ class ProductDetailsFragment :
             }
         } else {
             ScreenManager.presentSSOSignin(activity, SSO_REQUEST_FOR_ENHANCE_SUBSTITUTION)
+        }
+    }
+    private fun refreshScreen(){
+        if(isVisible) {
+            UpdateScreenLiveData.observe(viewLifecycleOwner) {
+                if (it == UnsellableAccess.updateUnsellableLiveData) {
+                    updateAddtoCartWithNewToggleFullfillment()
+                    UpdateScreenLiveData.value = UnsellableAccess.resetUnsellableLiveData
+                }
+            }
+        }
+    }
+
+    private fun updateAddtoCartWithNewToggleFullfillment(){
+
+        updateStockAvailabilityLocation()
+        showSubstituteItemCell(true, substitutionProductItem)
+
+        Utils.getPreferredDeliveryLocation()?.let {
+            if (!this.productDetails?.productType.equals(
+                    getString(R.string.food_product_type),
+                    ignoreCase = true
+                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
+            ) {
+                storeIdForInventory = ""
+                clearStockAvailability()
+                showProductUnavailable()
+                showProductNotAvailableForCollection()
+                reloadFragment()
+                return
+            }
+        }
+
+        if (Utils.retrieveStoreId(productDetails?.fulfillmentType)
+                .isNullOrEmpty()
+        ) {
+            storeIdForInventory = ""
+            clearStockAvailability()
+            showProductUnavailable()
+            reloadFragment()
+            return
+        }
+
+        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType)
+                .equals(storeIdForInventory, ignoreCase = true)
+        ) {
+            updateStockAvailability(true)
+            reloadFragment()
+        }
+    }
+
+    private fun listenerForUnsellable(){
+        setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
+            // Proceed with add to cart as we have moved unsellable items to List.
+            if(unSellableFlowFromOnActivityResult) {
+                updateAddtoCartWithNewToggleFullfillment()
+                unSellableFlowFromOnActivityResult=false
+            }
+            else {
+                onConfirmLocation()
+            }
+        }
+
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { requestKey, bundle ->
+            val resultCode =
+                bundle.getString(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT)
+            if (resultCode == UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) {
+                // Proceed with add to cart as we have moved unsellable items to List.
+                if(unSellableFlowFromOnActivityResult) {
+                    updateAddtoCartWithNewToggleFullfillment()
+                    unSellableFlowFromOnActivityResult=false
+                }
+                else {
+                    onConfirmLocation()
+                }
+            }
         }
     }
 }

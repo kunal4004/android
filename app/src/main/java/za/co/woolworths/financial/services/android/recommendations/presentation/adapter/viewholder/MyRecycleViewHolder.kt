@@ -21,7 +21,8 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
         productList: ProductList,
         navigator: IProductListing,
         nextProduct: ProductList? = null,
-        previousProduct: ProductList? = null
+        previousProduct: ProductList? = null,
+        position: Int
     ) {
         with(productList) {
             setProductImage(this)
@@ -38,16 +39,16 @@ class MyRecycleViewHolder(val mProductListingPageRowBinding: RecommendationsProd
             )
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
-            setOnClickListener(navigator, this)
+            setOnClickListener(navigator, this, position)
         }
     }
 
-    private fun setOnClickListener(navigator: IProductListing, productList: ProductList
+    private fun setOnClickListener(navigator: IProductListing, productList: ProductList, position: Int
     ) {
-        mProductListingPageRowBinding.imProductImage.setOnClickListener { navigator.openProductDetailView(productList) }
-        mProductListingPageRowBinding.brandName.setOnClickListener { navigator.openProductDetailView(productList) }
-        mProductListingPageRowBinding.tvRangeName.setOnClickListener { navigator.openProductDetailView(productList) }
-        mProductListingPageRowBinding.tvProductName.setOnClickListener { navigator.openProductDetailView(productList) }
+        mProductListingPageRowBinding.imProductImage.setOnClickListener { navigator.openProductDetailView(productList,position) }
+        mProductListingPageRowBinding.brandName.setOnClickListener { navigator.openProductDetailView(productList,position) }
+        mProductListingPageRowBinding.tvRangeName.setOnClickListener { navigator.openProductDetailView(productList,position) }
+        mProductListingPageRowBinding.tvProductName.setOnClickListener { navigator.openProductDetailView(productList,position) }
     }
 
     private fun setProductImage(productList: ProductList) {

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.databinding.VirtualCardNumberInfoDialogBinding
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardsUniqueLocators
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class VirtualCardNumberInfoDialogFragment : WBottomSheetDialogFragment() {
@@ -25,6 +26,14 @@ class VirtualCardNumberInfoDialogFragment : WBottomSheetDialogFragment() {
         binding.gotItButton.setOnClickListener {
             dismissAllowingStateLoss()
         }
+        setLocators()
+    }
+
+    private fun setLocators() {
+        binding.imageIcon.contentDescription = WRewardsUniqueLocators.VIRTUAL_CARD_NUMBER_IMAGE_ICON.value
+        binding.title.contentDescription = WRewardsUniqueLocators.VIRTUAL_CARD_NUMBER_TITLE_TEXT.value
+        binding.description.contentDescription = WRewardsUniqueLocators.VIRTUAL_CARD_NUMBER_DESC.value
+        binding.gotItButton.contentDescription = WRewardsUniqueLocators.GOT_IT_BUTTON.value
     }
 
 }

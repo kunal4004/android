@@ -51,4 +51,5 @@ public class ShoppingListItem {
 
 	@Nullable
 	public String visibility;
+	public boolean isAddToCartInProgress = false;
 }

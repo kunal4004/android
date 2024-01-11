@@ -43,6 +43,7 @@ import android.animation.AnimatorListenerAdapter
 import com.awfs.coordination.databinding.WrewardsOverviewFragmentBinding
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ShakeDetectorImpl
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper
 
 class WRewardsOverviewFragment : Fragment(R.layout.wrewards_overview_fragment), View.OnClickListener {
 
@@ -176,6 +177,16 @@ class WRewardsOverviewFragment : Fragment(R.layout.wrewards_overview_fragment), 
             promotionsLayout?.contentDescription = getString(R.string.featured_promotions)
             vipLogo?.contentDescription = getString(R.string.vipLogoLayout)
         }
+        WRewardUniqueLocatorsHelper.setOverViewFragLocators(
+            includeWrewardsVirtualCardNumberRow.virtualCardNumberTitleTextView,
+            includeWrewardsVirtualCardNumberRow.moreInfoVirtualCardTextView,
+            tvBenefits,
+            tvMoreInfo,
+            tvSavings,
+            savings,
+            tvRewardToGetToVip,
+            toNextTire
+        )
     }
 
     fun scrollToTop() = binding.scrollWRewardsOverview?.let { ObjectAnimator.ofInt(it, "scrollY", it.scrollY, 0).setDuration(500).start() }

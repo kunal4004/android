@@ -1475,7 +1475,7 @@ class CheckoutAddAddressNewUserFragment :
 
     private fun getLiquorOrder(): Boolean {
         var liquorOrder = false
-        arguments?.apply {
+        bundle?.apply {
             liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
         }
         return liquorOrder
@@ -1483,7 +1483,7 @@ class CheckoutAddAddressNewUserFragment :
 
     private fun getLiquorImageUrl(): String {
         var liquorImageUrl = ""
-        arguments?.apply {
+        bundle?.apply {
             liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
         }
         return liquorImageUrl
