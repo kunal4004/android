@@ -5,8 +5,6 @@ import static za.co.woolworths.financial.services.android.util.Utils.IDENTIFY;
 import static za.co.woolworths.financial.services.android.util.Utils.IDENTIFY_V1;
 import static za.co.woolworths.financial.services.android.util.Utils.LOGIN;
 import static za.co.woolworths.financial.services.android.util.Utils.LOGIN_V1;
-import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_PAGE;
-import static za.co.woolworths.financial.services.android.util.Utils.OTHER;
 import static za.co.woolworths.financial.services.android.util.Utils.SIGNUP;
 import static za.co.woolworths.financial.services.android.util.Utils.SIGNUP_V1;
 
@@ -70,9 +68,6 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel;
@@ -159,7 +154,6 @@ public class SSOActivity extends WebViewActivity {
 	private String jwt = null;
 	private DyChangeAttributeViewModel dyReportEventViewModel;
 	private NetworkConfig config;
-	private DyHomePageViewModel dyHomePageViewModel;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -181,17 +175,6 @@ public class SSOActivity extends WebViewActivity {
 		showProfileProgressBar();
 		config = new NetworkConfig(new AppContextProviderImpl());
 		dyReportEventViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
-		dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
-	}
-
-	private void prepareDynamicYieldRequestEvent() {
-		ArrayList dyData = new ArrayList<>();
-		Device device = new Device(Utils.IPAddress, config.getDeviceModel());
-		Page page = new Page(dyData, MOBILE_PAGE, OTHER, null,null);
-		Context context = new Context(device,page, DY_CHANNEL,null);
-		Options options = new Options(false);
-		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
-		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
 	}
 
 	// Display progress bar as soon as user land on profile
@@ -583,9 +566,6 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
-			if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
-				prepareDynamicYieldRequestEvent();
-			}
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -674,13 +654,13 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void extractFormDataAndCloseSSOIfNeeded(String ssoActivityEvent){
-		if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
-			dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
+		if (Utils.getDyServerId() != null) {
+			dyServerId = Utils.getDyServerId();
 		} else {
 			dyServerId = "";
 		}
-		if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null) {
-			dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID);
+		if (Utils.getDySessionId() != null) {
+			dySessionId = Utils.getDySessionId();
 		} else {
 			dySessionId = "";
 		}

@@ -551,7 +551,7 @@ class UnsellableUtils {
                     item.commerceItemInfo.externalImageRefV2,
                     item.commerceItemInfo.productDisplayName,
                     item.fulfillmentType,
-                    cartItemsGroup?.get(i)?.type,
+                    cartItemsGroup?.getOrNull(i)?.type,
                     item.commerceItemInfo.commerceId,
                     item.isItemRemoved
                 )

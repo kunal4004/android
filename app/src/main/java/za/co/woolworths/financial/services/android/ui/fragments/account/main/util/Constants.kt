@@ -9,4 +9,5 @@ object Constants {
 
     // required for dynamically set tag background color
     const val GreenColorCode = "#bad110"
+    const val UNABLE_TO_PARSE_LAST_ORDER_RESPONSE="Unable to parse LastOrderDetailsResponse class"
 }

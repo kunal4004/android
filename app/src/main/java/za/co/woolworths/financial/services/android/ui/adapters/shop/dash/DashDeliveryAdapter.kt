@@ -15,7 +15,6 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDashLandingNavigationListener
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDataUpdateListener
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDemandNavigationListener
 import za.co.woolworths.financial.services.android.util.ImageManager
 
@@ -23,7 +22,6 @@ class DashDeliveryAdapter(
     @NonNull val context: Context,
     val onDemandNavigationListener: OnDemandNavigationListener,
     val dashLandingNavigationListener: OnDashLandingNavigationListener,
-    val onDataUpdateListener: OnDataUpdateListener? = null,
     private val iProductListing: IProductListing,
     private val activity: FragmentActivity?,
     private val recommendationViewModel: RecommendationViewModel
@@ -192,7 +190,8 @@ class DashDeliveryAdapter(
                     categoryList[position] as ProductCatalogue,
                     iProductListing,
                     dashLandingNavigationListener,
-                    recommendationViewModel
+                    recommendationViewModel,
+                    position
                 )
             }
             is LongBannerCarouselLayoutViewHolder -> {
@@ -295,7 +294,6 @@ class DashDeliveryAdapter(
         mergeRecommendations(list, recommendedProducts)
         removeEmptyRecommendationCarousel(list)
         categoryList = list
-        onDataUpdateListener?.onProductCatalogueUpdate(productCatalogues = dashCategories)
     }
 }
 
@@ -388,7 +386,8 @@ class ProductCarouselLayoutViewHolder(val itemBinding: ItemLayoutProductCarousel
         productCatalogue: ProductCatalogue?,
         iProductListing: IProductListing,
         dashLandingNavigationListener: OnDashLandingNavigationListener,
-        recommendationViewModel: RecommendationViewModel
+        recommendationViewModel: RecommendationViewModel,
+        carouselPosition: Int
     ) {
         itemBinding.dashCategoryTitle.text = productCatalogue?.headerText
         itemBinding.rvDashCategories?.apply {
@@ -396,7 +395,7 @@ class ProductCarouselLayoutViewHolder(val itemBinding: ItemLayoutProductCarousel
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = productCarouselAdapter
             productCatalogue?.let {
-                productCarouselAdapter.setData(it)
+                productCarouselAdapter.setData(it, carouselPosition)
             }
         }
     }

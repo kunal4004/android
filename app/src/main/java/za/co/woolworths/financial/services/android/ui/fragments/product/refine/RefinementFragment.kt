@@ -11,7 +11,6 @@ import com.awfs.coordination.databinding.FragmentRefinementBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Refinement
 import za.co.woolworths.financial.services.android.models.dto.RefinementCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
@@ -209,10 +208,10 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         var dySessionId: String? = null
         var config: NetworkConfig? = null
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
+        if (Utils.getDyServerId() != null)
+            dyServerId = Utils.getDyServerId()
+        if (Utils.getDySessionId() != null)
+            dySessionId = Utils.getDySessionId()
 
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)

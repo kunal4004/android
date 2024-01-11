@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.startup.service.network.Start
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.util.Locale
@@ -66,6 +67,9 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
 
     fun queryCartSummary() = viewModelScope.launch(Dispatchers.IO) {
         startUpRepository.queryCartSummary().collect {
+            it.data?.data?.getOrNull(0)?.deliveryDetails?.apply {
+                Utils.saveDeliveryDetails(this)
+            }
             _cartSummary.value = it
         }
     }

@@ -7,7 +7,9 @@ sealed class HeaderViewState {
 
     data class HeaderStateType1(
         @DrawableRes val icon: Int = R.drawable.back24,
-        val title: String = ""
+        val title: String = "",
+        val titleRes: Int = R.string.empty,
+        val rightButtonRes: Int = R.string.empty
     ) : HeaderViewState()
 
     data class HeaderStateType2(

@@ -9,6 +9,8 @@ import za.co.woolworths.financial.services.android.ui.activities.MessagesActivit
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
+import za.co.woolworths.financial.services.android.ui.fragments.order_again.OrderAgainFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.analytics.AccountLandingFirebaseManagerImpl
 import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.viewmodel.UserAccountLandingViewModel
@@ -22,6 +24,7 @@ interface IProfileIntent {
     )
     fun createDetailIntent()
     fun createOrderIntent()
+    fun createOrderAgainIntent()
     fun createShoppingListIntent()
     fun getBottomNavigationActivity(): BottomNavigationActivity?
 }
@@ -66,6 +69,18 @@ class ProfileIntent @Inject constructor(private val activity : Activity?,
                     MyOrdersAccountFragment()
                 )
                 is MyAccountActivity -> replaceFragment(MyOrdersAccountFragment())
+            }
+        }
+    }
+
+    override fun createOrderAgainIntent() {
+        activity?.apply {
+//            analytics.onMyOrderItem()
+            when (this) {
+                is BottomNavigationActivity -> getBottomNavigationActivity()?.pushFragment(
+                    OrderAgainFragment()
+                )
+                is MyAccountActivity -> replaceFragment(OrderAgainFragment())
             }
         }
     }

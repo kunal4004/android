@@ -359,7 +359,6 @@ class MyListViewModel @Inject constructor(
     private fun getUpdatedList(list: List<ShoppingList>): List<ShoppingList> {
         list.mapIndexed { index, shoppingList ->
             shoppingList.modifiedListCount = "(" + shoppingList.listCount + ")"
-            shoppingList.productImageList = getImageListData(index, shoppingList)
         }
         return list
     }
