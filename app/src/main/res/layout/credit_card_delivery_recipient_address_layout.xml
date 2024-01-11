@@ -81,7 +81,7 @@
                 android:id="@+id/cityOrTown"
                 style="@style/credi_card_delivery_edittext_style"
                 android:contentDescription="@string/cd_ccd_txtcity"
-                android:hint="@string/hint_suburb"
+                android:hint="@string/hint_city_town"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/cityPlaceHolder" />

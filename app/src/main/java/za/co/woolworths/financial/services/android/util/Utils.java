@@ -907,9 +907,8 @@ public class Utils {
     }
 
     public static ShoppingDeliveryLocation getPreferredDeliveryLocation() {
-        ShoppingDeliveryLocation preferredDeliveryLocation = null;
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-        return (currentUserObject.preferredShoppingDeliveryLocation != null && currentUserObject.preferredShoppingDeliveryLocation.fulfillmentDetails != null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
+        return (currentUserObject.preferredShoppingDeliveryLocation != null && currentUserObject.preferredShoppingDeliveryLocation.fulfillmentDetails != null) ? currentUserObject.preferredShoppingDeliveryLocation : null;
     }
 
     public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
@@ -1704,26 +1703,54 @@ public class Utils {
         return currentUserObject.mId;
     }
 
-    public static void saveDyServerId(String dyServerId) {
-        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-        currentUserObject.serverDyId = dyServerId;
-        currentUserObject.save();
+    public static void saveDyServerId(String value) {
+        try {
+            if (TextUtils.isEmpty(value)) {
+                return;
+            }
+            String firstTime = Utils.getSessionDaoValue(KEY.DY_SERVER_ID);
+            if (TextUtils.isEmpty(firstTime)) {
+                Utils.sessionDaoSave(KEY.DY_SERVER_ID, value);
+            }
+        } catch (Exception ignored) {
+            FirebaseManager.Companion.logException(ignored);
+        }
     }
 
     public static String getDyServerId() {
-        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-        return currentUserObject.serverDyId;
+        String token = "";
+        try {
+            token = Utils.getSessionDaoValue(KEY.DY_SERVER_ID);
+        } catch (Exception ignored) {
+            return null;
+        }
+
+        return token;
     }
 
-    public static void saveDySessionId(String dySessionId) {
-        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-        currentUserObject.sessionDyId = dySessionId;
-        currentUserObject.save();
+    public static void saveDySessionId(String value) {
+        try {
+            if (TextUtils.isEmpty(value)) {
+                return;
+            }
+            String firstTime = Utils.getSessionDaoValue(KEY.DY_SESSION_ID);
+            if (firstTime == null) {
+                Utils.sessionDaoSave(KEY.DY_SESSION_ID, value);
+            }
+        } catch (Exception ignored) {
+            FirebaseManager.Companion.logException(ignored);
+        }
     }
 
     public static String getDySessionId() {
-        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-        return currentUserObject.sessionDyId;
+        String token = "";
+        try {
+            token = Utils.getSessionDaoValue(KEY.DY_SESSION_ID);
+        } catch (Exception ignored) {
+            return null;
+        }
+
+        return token;
     }
     public static void sessionDaoSaveDyServerId(SessionDao.KEY key, String value) {
         SessionDao sessionDao = SessionDao.getByKey(key);

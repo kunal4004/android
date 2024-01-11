@@ -1,14 +1,15 @@
 package za.co.woolworths.financial.services.android.shoppinglist.view
 
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -17,40 +18,51 @@ import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment
 import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListViewModel
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.ConfirmationBottomsheetDialogFragment
+import za.co.woolworths.financial.services.android.shoppinglist.component.MoreOptionsElement
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+
 import za.co.woolworths.financial.services.android.util.AppConstant
 
-@OptIn(ExperimentalComposeUiApi::class)
 @AndroidEntryPoint
 class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
 
     private var listId: String? = ""
     private var selectedItemCount = 0
     private var isConfirmClicked = false
-    private var listOfItems:ArrayList<AddToListRequest>? = ArrayList<AddToListRequest>()
+    private var listOfItems:ArrayList<AddToListRequest>? = ArrayList(0)
+    private lateinit var optionsList : ArrayList<MoreOptionsElement>
     companion object {
         var listener : MyShoppingListItemClickListener? = null
         const val ITEM_COUNT = "ITEM_COUNT"
         const val COPY_LIST_ID = "COPY_LIST_ID"
         const val COPY_ITEM_LIST = "COPY_ITEM_LIST"
+        const val MOVE_ITEM_LIST = "MOVE_ITEM_LIST"
         const val CONFIRM_CLICKED = "CONFIRM_CLICKED"
+        const val MORE_OPTION_CANCEL_CLICK_LISTENER = 1414
 
         fun newInstance(shoppingListItemClickListener:MyShoppingListItemClickListener,
                         itemCount:Int,
                         listId:String,
                         isConfirmClick:Boolean,
-                        listOfItems:ArrayList<AddToListRequest>) = MoreOptionDialogFragment().withArgs {
+                        listOfItems:ArrayList<AddToListRequest>,
+                        optionsList: ArrayList<MoreOptionsElement>) = MoreOptionDialogFragment().withArgs {
             listener = shoppingListItemClickListener
             putInt(ITEM_COUNT, itemCount)
             putString(COPY_LIST_ID, listId)
             putBoolean(CONFIRM_CLICKED, isConfirmClick)
+            putParcelableArrayList(AppConstant.ARG_LIST_OPTIONS, optionsList)
             putParcelableArrayList(AddToListViewModel.ARG_ITEMS_TO_BE_ADDED, listOfItems)
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        optionsList = arguments?.getParcelableArrayList(AppConstant.ARG_LIST_OPTIONS) ?: ArrayList(0)
     }
 
     override fun onCreateView(
@@ -59,21 +71,34 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
     ) = contentView(
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
+
         OneAppTheme {
             MoreOptionDialog(
                 selectedItemCount,
+                optionsList,
                 {
                     /*copy item*/
                     dialog?.dismiss()
                     val fragment =
                         listOfItems?.let {
-                            AddToListFragment.newInstance(listener, listId, true,
+                            AddToListFragment.newInstance(
+                                listener, listId, true,
+                                moveItemToList = false,
                                 it
                             )
                         }
                     fragment?.show(parentFragmentManager, AddToListFragment::class.simpleName)
                 }, {
                    /*move item*/
+                    dialog?.dismiss()
+                    val fragment =
+                        listOfItems?.let {
+                            AddToListFragment.newInstance(
+                                listener, listId, false, moveItemToList = true,
+                                it
+                            )
+                        }
+                    fragment?.show(parentFragmentManager, AddToListFragment::class.simpleName)
                 }) {
                  /*remove item*/
                 dialog?.dismiss()
@@ -119,5 +144,10 @@ class MoreOptionDialogFragment : WBottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        setFragmentResult(MORE_OPTION_CANCEL_CLICK_LISTENER.toString(), bundleOf())
     }
 }

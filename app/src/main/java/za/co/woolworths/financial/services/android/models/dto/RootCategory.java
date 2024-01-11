@@ -20,6 +20,10 @@ public class RootCategory {
     @Expose
     public String categoryId;
 
+    @SerializedName("catId")
+    @Expose
+    public String catId;
+
     @SerializedName("hasChildren")
     @Expose
     public Boolean hasChildren;

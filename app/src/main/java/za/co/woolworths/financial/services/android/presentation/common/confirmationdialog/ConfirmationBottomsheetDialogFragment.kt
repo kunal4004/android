@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.presentation.common.confirmationdialog
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -25,6 +26,7 @@ import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationDialogEvents
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationDialogUiState
+import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -104,5 +106,10 @@ class ConfirmationBottomsheetDialogFragment : WBottomSheetDialogFragment() {
     private fun setResultAndDismiss(bundle: Bundle = bundleOf()) {
         setFragmentResult(REQUEST_KEY_CONFIRMATION_DIALOG, bundle)
         dismiss()
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        setFragmentResult(MoreOptionDialogFragment.MORE_OPTION_CANCEL_CLICK_LISTENER.toString(), bundleOf())
     }
 }

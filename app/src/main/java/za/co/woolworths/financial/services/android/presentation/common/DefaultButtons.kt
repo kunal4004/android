@@ -50,7 +50,8 @@ fun BlackButton(
 fun UnderlineButton(
     modifier: Modifier = Modifier,
     text: String = "",
-    textColor: Color = Color666666,
+    texColor: Color = Color666666,
+    enabled: Boolean = true,
     onButtonClick: () -> Unit
 ) {
     Button(
@@ -59,15 +60,16 @@ fun UnderlineButton(
             .height(50.dp),
         onClick = { onButtonClick() },
         colors = ButtonDefaults.buttonColors(Color.Transparent),
-        shape = RectangleShape
+        shape = RectangleShape,
+        enabled = enabled
     ) {
         Text(
-            text = text,
+            text = text.uppercase(),
             style = TextStyle(
                 fontFamily = FuturaFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
-                color = Color666666,
+                color = texColor,
                 textDecoration = TextDecoration.Underline
             ),
             letterSpacing = 1.5.sp

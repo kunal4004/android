@@ -187,11 +187,13 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
                         }
                         is StoreCardFeatureType.ActivateVirtualTempCard -> {
                             when(primaryStoreCard.upShellMessage){
-                                is StoreCardUpShellMessage.FreezeCard -> {
+                                is StoreCardUpShellMessage.ActivateVirtualTempCard -> {
+                                    listOfStoreCardFeatures.add(primaryStoreCard)
+                                }
+                                else ->{
                                     listOfStoreCardFeatures.add(primaryStoreCard)
                                     listOfStoreCardFeatures.add(StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage(primaryStoreCard.storeCard))
                                 }
-                                else -> listOfStoreCardFeatures.add(primaryStoreCard)
                             }
                         }
                         else -> listOfStoreCardFeatures.add(primaryStoreCard)

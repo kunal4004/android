@@ -11,6 +11,7 @@ class AppConstant {
 
     companion object {
 
+
         const val WOOLWOORTH_CALL_CENTER_NUMBER: String = "0861 50 20 20"
 
         /*****************************************************************************************
@@ -71,6 +72,8 @@ class AppConstant {
         const val REQUEST_CODE_BARCODE_ACTIVITY = 1947
 
         const val REQUEST_CODE_CREATE_LIST = 9001
+        const val REQUEST_CODE_ORDER_AGAIN_LOGIN = 9002
+        const val REQUEST_CODE_DELIVERY_LOCATION_CHANGE = 9003
 
         const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
@@ -148,6 +151,7 @@ class AppConstant {
         const val CONST_NO_SIZE = "NO SZ"
         const val LOCATION_PERMISSION_REQUEST_CODE = 1
         const val TAG_ADD_TO_LIST_PLP: String = "ProductListingFragment"
+        const val ARG_LIST_OPTIONS: String = "LIST_OPTIONS"
 
         //Payflex info html
         const val PAYFLEX_POP_UP_URL = "https://widgets.payflex.co.za/how_to.html?"
@@ -159,6 +163,10 @@ class AppConstant {
         const val SCREEN_NAME_DELETE_LIST_CONFIRMATION = "Delete List Confirmation Screen"
         const val SCREEN_NAME_DELETE_LIST_PROGRESS_BAR = "Delete List Progress Bar Screen"
         const val SCREEN_NAME_DELETE_ITEM_CONFIRMATION = "Delete Item Confirmation Screen"
+
+        //out of stock availability details
+        const val STOCK_AVAILABILITY_MINUS1 = -1
+        const val STOCK_AVAILABILITY_0 = 0
 
 
 
@@ -176,6 +184,13 @@ class AppConstant {
         const val HUAWEI_APP_COMMENTS_APP_PACKAGE_NAME = "com.huawei.appmarket"
 
         const val actionItemTnC = "ACTION_ITEMS_TnC"
+
+        // Shop Landing Standard / CnC
+        const val FOOD_CATEGORY_ID = "cat606520"
+
+        // Order Again
+        const val FROM_SCREEN: String = "fromScreen"
+        const val W_CONNECT = "WConnect"
     }
 
     class Keys {

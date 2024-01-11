@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
-import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
@@ -40,6 +39,7 @@ fun MyListItemRowView(
     modifier: Modifier = Modifier,
     listDataState: ListDataState,
     listItem: ShoppingList,
+    isShareButtonVisible: Boolean = false,
     onDeleteIconClick: (item: ShoppingList) -> Unit,
     onShareIconClick: (item: ShoppingList) -> Unit,
     onDetailsArrowClick: (item: ShoppingList) -> Unit,
@@ -87,15 +87,18 @@ fun MyListItemRowView(
                             }
                     )
                 } else {
-                    Icon(painter = painterResource(id = listDataState.shareIcon),
-                        contentDescription = "Share List",
-                        modifier = Modifier
-                            .padding(5.dp, 0.dp, 7.dp, 0.dp)
-                            .size(16.dp)
-                            .clickable {
-                                onShareIconClick(listItem)
-                            }
-                    )
+                    if(isShareButtonVisible) {
+                        /* will remove later once share list available*/
+                        Icon(painter = painterResource(id = listDataState.shareIcon),
+                            contentDescription = "Share List",
+                            modifier = Modifier
+                                .padding(5.dp, 0.dp, 7.dp, 0.dp)
+                                .size(16.dp)
+                                .clickable {
+                                    onShareIconClick(listItem)
+                                }
+                        )
+                    }
 
                     Icon(
                         painter = painterResource(id = listDataState.openIcon),
@@ -128,16 +131,7 @@ private fun MyListItemRowPreview() {
             listName = "Test"
             listCount = 14
             modifiedListCount = "(14)"
-            val productListDetails = ProductListDetails().apply {
-                imgUrl =
-                    "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
-            }
-
-            val mockListDetails = ArrayList<ProductListDetails>()
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            mockListDetails.add(productListDetails)
-            productImageList = mockListDetails
+            productImageList = listOf("https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&")
         }
         val mockListData: List<ShoppingList> = emptyList()
         mockListData.plus(mockList)
