@@ -106,6 +106,7 @@ import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.payflex.PayFlexBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.NotifyBackInStockFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
@@ -1546,10 +1547,10 @@ class ProductDetailsFragment :
     }
 
     private fun checkAllItemsZeroQuantity() {
-        val isAllZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.all {
-            it.quantity == 0
-        }
-        if (isAllZeroQuantity == true) {
+        /* val isAllZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.all {
+             it.quantity == 0
+         }*/
+        if (isAllProductsOutOfStock()) {
             binding.showOutOfStockForSelectedSize()
         } else  binding.hideLowStockForSize()
     }
@@ -4648,11 +4649,19 @@ class ProductDetailsFragment :
     private fun navigateToNotifyMeScreen() {
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSigninActivity(activity,
-                    SSO_REQUEST_ADD_TO_CART,
-                    isUserBrowsing)
+                SSO_REQUEST_ADD_TO_CART,
+                isUserBrowsing)
             return
         } else {
-            //TODO in APP2-1575 ticket
+            val fragment = NotifyBackInStockFragment()
+            val bundle = Bundle()
+            bundle.putSerializable("otherSKUsByGroupKey", otherSKUsByGroupKey)
+            bundle.putString("selectedGroupKey", getSelectedGroupKey())
+            bundle.putParcelable("selectedSku", getSelectedSku())
+            bundle.putBoolean("hasColor", hasColor)
+            bundle.putBoolean("hasSize", hasSize)
+            fragment.arguments = bundle
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(fragment)
         }
     }
 }
