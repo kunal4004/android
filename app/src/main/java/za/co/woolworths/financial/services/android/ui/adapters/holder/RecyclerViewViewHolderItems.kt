@@ -195,7 +195,7 @@ class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding)
                                     includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
                                 }
                                 else -> {
-                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = GONE
+                                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = VISIBLE
                                 }
                             }
                         }
