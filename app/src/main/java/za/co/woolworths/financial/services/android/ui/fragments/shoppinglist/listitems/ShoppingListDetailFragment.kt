@@ -18,6 +18,8 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -69,13 +71,17 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoader
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoaderImpl
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationLoadingNotifier
+import za.co.woolworths.financial.services.android.shoppinglist.component.EmptyStateData
 import za.co.woolworths.financial.services.android.shoppinglist.component.MoreOptionsElement
+import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
+import za.co.woolworths.financial.services.android.shoppinglist.component.MyListFlowType
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
 import za.co.woolworths.financial.services.android.shoppinglist.model.RemoveItemApiRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.CopyItemToListRequest
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.ItemDetail
 import za.co.woolworths.financial.services.android.shoppinglist.service.network.MoveItemApiRequest
+import za.co.woolworths.financial.services.android.shoppinglist.view.EmptyStateView
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.shoppinglist.view.ShoppingListErrorView
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
@@ -110,6 +116,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListFromSearchResultToast
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
@@ -117,9 +124,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.CustomProgressBar
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
-import za.co.woolworths.financial.services.android.util.EmptyCartView
 import za.co.woolworths.financial.services.android.util.EmptyCartView.EmptyCartInterface
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
@@ -181,7 +186,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
         }
 
-    private var mErrorHandlerView: ErrorHandlerView? = null
     private var openFromMyList = false
     private var addedToCart = false
     private var errorMessageWasPopUp = false
@@ -214,6 +218,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             listName = getString(ARG_LIST_NAME, "")
             openFromMyList = getBoolean(ARG_OPEN_FROM_MY_LIST, false)
             viewType = getString("viewType", "")
+            setViewTypeValue()
         }
         Utils.updateStatusBarBackground(activity)
     }
@@ -236,7 +241,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         super.onViewCreated(view, savedInstanceState)
         addSubscribeEvents()
         addFragmentListener()
-        if (viewType.isNotEmpty()) {
+        if (MyListFlowType.getFlowType() != MyListFlowType.FlowTypeNormal) {
             // This is share list flow from Deeplinking.
             viewLifecycleOwner.lifecycleScope.launch {
                 val viewType = !(arguments?.getString("viewType", "viewOnly")?.contains("edit") ?: false)
@@ -249,6 +254,22 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
     }
 
+    private fun setViewTypeValue() {
+        when (viewType) {
+            null, getString(R.string.empty) -> {
+                MyListFlowType.setFlowType(MyListFlowType.FlowTypeNormal)
+            }
+
+            getString(R.string.view_only_text) -> {
+                MyListFlowType.setFlowType(MyListFlowType.FlowTypeViewOnly)
+            }
+
+            getString(R.string.view_edit_text) -> {
+                MyListFlowType.setFlowType(MyListFlowType.FlowTypeEdit)
+            }
+        }
+    }
+
     private fun addSubscribeEvents() {
         // Shopping List items
         viewModel.shoppListDetails.observe(viewLifecycleOwner) {
@@ -256,7 +277,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             setRecommendationDividerVisibility(visibility = false)
             when (it.peekContent().status) {
                 Status.LOADING -> {
-                    mErrorHandlerView?.hideErrorHandler()
                     bindingListDetails.apply {
                         rlEmptyListView.visibility = GONE
                         rcvShoppingListItems.visibility = GONE
@@ -265,7 +285,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     }
                 }
                 Status.SUCCESS -> {
-                    if (viewType.isNotEmpty()) {
+                    if (MyListFlowType.getFlowType() != MyListFlowType.FlowTypeNormal) {
                         // This is share list flow from Deeplinking.
                         setDeliveryLocation()
                         initViewAndEvent()
@@ -273,7 +293,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     onShoppingListItemsResponse(response)
                 }
                 Status.ERROR -> {
-                    if (viewType.isNotEmpty()) {
+                    if (MyListFlowType.getFlowType() != MyListFlowType.FlowTypeNormal) {
                         // This is share list flow from Deeplinking.
                         setDeliveryLocation()
                         initViewAndEvent()
@@ -296,7 +316,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             when (it.peekContent().status) {
                 Status.LOADING -> {
                     enableAdapterClickEvent(false)
-                    mErrorHandlerView?.hideErrorHandler()
                     bindingListDetails.rlEmptyListView.visibility = GONE
                     bindingListDetails.rcvShoppingListItems.visibility = VISIBLE
                     bindingListDetails.loadingBar.visibility = VISIBLE
@@ -500,6 +519,34 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
     }
 
+    private fun showEmptyState() {
+        bindingListDetails.nestedScrollView.visibility = GONE
+        bindingListDetails.emptyListView.apply {
+            visibility = VISIBLE
+            val uiStateData = EmptyStateData(
+                title = R.string.view_only_empty_state_title,
+                description = R.string.view_only_empty_state_sub_title,
+                isButtonVisible = false
+            )
+            setContent {
+                OneAppTheme {
+                    EmptyStateView(modifier = Modifier
+                        .fillMaxSize(), uiStateData) { event ->
+                        when (event) {
+                            is MyLIstUIEvents.StartShoppingClick -> {
+
+                            }
+
+                            else -> {
+                                // Do Nothing
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun setUpToolbar(listName: String?) {
         bindingListDetails.shoppingListTitleTextView.text = listName
         (activity as? BottomNavigationActivity)?.apply {
@@ -533,21 +580,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             btnRetry.setOnClickListener(this@ShoppingListDetailFragment)
             txtMoreOptions.setOnClickListener(this@ShoppingListDetailFragment)
 
-            if (viewType.isNotEmpty()) {
-                // This is share list flow from Deeplinking.
-                viewEditOnlyLayout.root.visibility = VISIBLE
-                viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
+            when(MyListFlowType.getFlowType()){
+                MyListFlowType.FlowTypeViewOnly -> {
+                    viewEditOnlyLayout.root.visibility = VISIBLE
+                    viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
+                }
+                MyListFlowType.FlowTypeEdit -> {
+                    viewEditOnlyLayout.root.visibility = VISIBLE
+                    viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
+                }
+                else -> {
+                    viewEditOnlyLayout.root.visibility = GONE
+                }
             }
-
-            mErrorHandlerView = ErrorHandlerView(activity, noConnectionLayout)
-            mErrorHandlerView?.setMargin(noConnectionLayout, 0, 0, 0, 0)
-            val emptyCartView = EmptyCartView(root, this@ShoppingListDetailFragment)
-            emptyCartView.setView(
-                getString(R.string.title_empty_shopping_list),
-                getString(R.string.description_empty_shopping_list),
-                getString(R.string.button_empty_shopping_list),
-                R.drawable.empty_list_icon
-            )
         }
 
         // Show Bottom Navigation Menu
@@ -631,6 +676,21 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             bindingListDetails.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
             bindingListDetails.fulfilmentAndLocationLayout.layoutLocation.root.id -> launchStoreOrLocationSelection()
             bindingListDetails.viewEditOnlyLayout.addItemsToListText.id -> {
+                when (MyListFlowType.getFlowType()) {
+                    MyListFlowType.FlowTypeViewOnly -> {
+                        openAddToListScreen()
+                    }
+
+                    MyListFlowType.FlowTypeEdit -> {
+                        // Share List
+                    }
+
+                    else -> {
+                        // Do nothing
+                    }
+                }
+
+
                 openAddToListScreen()
             }
             R.id.selectDeselectAllTextView -> onOptionsItemSelected()
@@ -647,11 +707,19 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             R.id.closeWhiteBtn -> hideBlackToolTip()
             R.id.txtMoreOptions -> {
                 isSingleItemSelected = false
-                if (viewType.isNotEmpty()) {
-                    // This is share list flow from Deeplinking.
-                    openAddToListScreen()
-                } else {
-                    openMoreOptionsDialog()
+
+                when (MyListFlowType.getFlowType()) {
+                    MyListFlowType.FlowTypeViewOnly -> {
+                        openAddToListScreen()
+                    }
+
+                    MyListFlowType.FlowTypeEdit -> {
+                        openMoreOptionsDialog()
+                    }
+
+                    else -> {
+                        openMoreOptionsDialog()
+                    }
                 }
             }
             else -> {}
@@ -797,14 +865,15 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             HTTP_OK -> {
                 bindingListDetails.loadingBar.visibility = GONE
                 viewModel.syncListWithAdapter(shoppingListItemsAdapter?.shoppingListItems)
+                if (shoppingListItemsResponse.listItems.isEmpty()){
+                    showEmptyState()
+                    return
+                }
                 viewModel.makeInventoryCalls()
                 if (viewModel.isShoppingListContainsUnavailableItems())
                     showBlackToolTip()
                 else
                     hideBlackToolTip()
-
-                setUpView()
-                shoppingListItemsAdapter?.setList(viewModel.mShoppingListItems)
                 showRecommendedProducts(viewModel.mShoppingListItems)
             }
             HTTP_SESSION_TIMEOUT_440 -> SessionUtilities.getInstance().setSessionState(

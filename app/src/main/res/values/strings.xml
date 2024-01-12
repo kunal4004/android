@@ -3263,7 +3263,11 @@
 
     <!--shopping List enhancement-->
     <string name="view_only_option">View Only</string>
+    <string name="view_only_text">viewOnly</string>
+    <string name="view_edit_text">viewAndEdit</string>
     <string name="view_only_desc">Anyone with a link can view your list without making changes.</string>
+    <string name="view_only_empty_state_title">You Don’t Have Any Items In Your List Yet.</string>
+    <string name="view_only_empty_state_sub_title">Items Will Appear Here When The Owner Of The List Adds Items.</string>
     <string name="edit_option">Edit</string>
     <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
     <string name="share_btn">SHARE</string>
