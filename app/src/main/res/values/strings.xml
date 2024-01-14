@@ -3266,8 +3266,9 @@
     <string name="view_only_text">viewOnly</string>
     <string name="view_edit_text">viewAndEdit</string>
     <string name="view_only_desc">Anyone with a link can view your list without making changes.</string>
-    <string name="view_only_empty_state_title">You Don’t Have Any Items In Your List Yet.</string>
-    <string name="view_only_empty_state_sub_title">Items Will Appear Here When The Owner Of The List Adds Items.</string>
+    <string name="edit_empty_state_title">You Don’t Have Any Items In Your List Yet.</string>
+    <string name="view_only_empty_state_title">There Aren’t Any Items In This List Yet.</string>
+    <string name="view_only_empty_state_sub_title">When collaborators save items to this list, they will appear here.</string>
     <string name="edit_option">Edit</string>
     <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
     <string name="share_btn">SHARE</string>
@@ -3278,6 +3279,7 @@
     <string name="remove_from_list">Remove from List </string>
     <string name="confirmation_title">Are You Sure?</string>
     <string name="remove_title">REMOVE</string>
+    <string name="empty_list_description">Add your favourite groceries by using the search bar or tapping the list icon while shopping.</string>
 
     <string name="my_list_delete_this_list">Delete This List?</string>
     <string name="my_list_delete_this_list_desc">If you choose to remove this list, you can still shop for the items in the app.</string>

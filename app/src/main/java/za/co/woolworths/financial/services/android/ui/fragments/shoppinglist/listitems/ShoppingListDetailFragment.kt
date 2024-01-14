@@ -243,6 +243,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         addFragmentListener()
         if (MyListFlowType.getFlowType() != MyListFlowType.FlowTypeNormal) {
             // This is share list flow from Deeplinking.
+
             viewLifecycleOwner.lifecycleScope.launch {
                 val viewType = !(arguments?.getString("viewType", "viewOnly")?.contains("edit") ?: false)
                 viewModel.getItemsInSharedShoppingList(arguments?.getString("listId", "") ?: "", viewType)
@@ -287,6 +288,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 Status.SUCCESS -> {
                     if (MyListFlowType.getFlowType() != MyListFlowType.FlowTypeNormal) {
                         // This is share list flow from Deeplinking.
+                        setUpToolbar(response?.description)
                         setDeliveryLocation()
                         initViewAndEvent()
                     }
@@ -524,9 +526,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         bindingListDetails.emptyListView.apply {
             visibility = VISIBLE
             val uiStateData = EmptyStateData(
-                title = R.string.view_only_empty_state_title,
-                description = R.string.view_only_empty_state_sub_title,
-                isButtonVisible = false
+                title = if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) R.string.view_only_empty_state_title else R.string.edit_empty_state_title,
+                description = if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) R.string.view_only_empty_state_sub_title else R.string.empty_list_description,
+                isButtonVisible = MyListFlowType.getFlowType() != MyListFlowType.FlowTypeViewOnly,
+                buttonText = if (MyListFlowType.getFlowType() != MyListFlowType.FlowTypeViewOnly) R.string.start_shopping else R.string.button_no_shopping_lists
             )
             setContent {
                 OneAppTheme {
@@ -583,13 +586,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             when(MyListFlowType.getFlowType()){
                 MyListFlowType.FlowTypeViewOnly -> {
                     viewEditOnlyLayout.root.visibility = VISIBLE
+                    searchBarLayout.visibility = GONE
                     viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
                 }
                 MyListFlowType.FlowTypeEdit -> {
                     viewEditOnlyLayout.root.visibility = VISIBLE
+                    searchBarLayout.visibility = VISIBLE
                     viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
                 }
                 else -> {
+                    searchBarLayout.visibility = VISIBLE
                     viewEditOnlyLayout.root.visibility = GONE
                 }
             }
