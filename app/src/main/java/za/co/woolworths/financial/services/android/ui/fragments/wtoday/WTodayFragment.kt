@@ -180,7 +180,10 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface, PermissionResultCall
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         when (hidden) {
-            false -> (activity as? BottomNavigationActivity)?.hideToolbar()
+            false -> {
+                (activity as? BottomNavigationActivity)?.hideToolbar()
+                activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.WTODAY) }
+            }
             true -> cancelPDPRequest()
         }
     }
