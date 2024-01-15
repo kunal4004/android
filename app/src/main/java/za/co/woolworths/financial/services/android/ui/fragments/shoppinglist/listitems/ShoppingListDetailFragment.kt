@@ -689,6 +689,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             shoppingListItemsAdapter?.addedItemsCount ?: 0
         }
 
+        listOfItems.clear()
         viewModel.mShoppingListItems.forEach {
            if (it.isSelected) {
                listOfItems.add(AddToListRequest(skuID = it.catalogRefId, catalogRefId = it.catalogRefId, quantity = "1"))
@@ -1556,6 +1557,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun naviagteToMoreOptionDialog(shoppingListItem: ShoppingListItem) {
         isSingleItemSelected = true
         singleShoppingListItem = shoppingListItem
+        shoppingListItem.apply {
+            isSelected = true
+        }
         openMoreOptionsDialog()
     }
 
