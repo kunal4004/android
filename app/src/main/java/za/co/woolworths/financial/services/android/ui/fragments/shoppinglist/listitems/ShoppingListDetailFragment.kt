@@ -523,18 +523,28 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private fun showEmptyState() {
         bindingListDetails.nestedScrollView.visibility = GONE
+        bindingListDetails.rlEmptyListView.visibility = VISIBLE
+        bindingListDetails.emptyStateMainLayout.visibility = GONE
         bindingListDetails.emptyListView.apply {
             visibility = VISIBLE
-            val uiStateData = EmptyStateData(
-                title = if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) R.string.view_only_empty_state_title else R.string.edit_empty_state_title,
-                description = if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) R.string.view_only_empty_state_sub_title else R.string.empty_list_description,
-                isButtonVisible = MyListFlowType.getFlowType() != MyListFlowType.FlowTypeViewOnly,
-                buttonText = if (MyListFlowType.getFlowType() != MyListFlowType.FlowTypeViewOnly) R.string.start_shopping else R.string.button_no_shopping_lists
-            )
+            var uiStateData = EmptyStateData()
+            if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) {
+                bindingListDetails.searchBarLayout.visibility = GONE
+                uiStateData.title = R.string.view_only_empty_state_title
+                uiStateData.description = R.string.view_only_empty_state_sub_title
+                uiStateData.isButtonVisible = false
+                uiStateData.buttonText = R.string.button_no_shopping_lists
+            } else {
+                bindingListDetails.searchBarLayout.visibility = VISIBLE
+                uiStateData.title = R.string.edit_empty_state_title
+                uiStateData.description = R.string.empty_list_description
+                uiStateData.isButtonVisible = true
+                uiStateData.buttonText = R.string.start_shopping
+            }
+
             setContent {
                 OneAppTheme {
-                    EmptyStateView(modifier = Modifier
-                        .fillMaxSize(), uiStateData) { event ->
+                    EmptyStateView(uiStateData) { event ->
                         when (event) {
                             is MyLIstUIEvents.StartShoppingClick -> {
 
@@ -660,7 +670,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
 
     private fun setUpView() {
-        bindingListDetails.rlEmptyListView.visibility =
+        bindingListDetails.emptyStateMainLayout.visibility =
             if (viewModel.mShoppingListItems.isEmpty()) VISIBLE else GONE
         // 1 to exclude header
         bindingListDetails.rcvShoppingListItems.visibility =

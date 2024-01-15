@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.shoppinglist.view
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import za.co.woolworths.financial.services.android.shoppinglist.component.EmptyStateData
 import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIstUIEvents
 
@@ -13,11 +11,9 @@ import za.co.woolworths.financial.services.android.shoppinglist.component.MyLIst
 
 @Composable
 fun EmptyStateView(
-    modifier: Modifier = Modifier,
     emptyStateData: EmptyStateData,
     onEvent: (event: MyLIstUIEvents) -> Unit,
 ) {
-    Box(modifier = modifier) {
         EmptyStateTemplate(
             emptyStateData,
             onClickEvent = {
@@ -26,5 +22,4 @@ fun EmptyStateView(
                 }
             }
         )
-    }
 }
