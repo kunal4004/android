@@ -2649,10 +2649,16 @@
     <string name="account_in_recovery_cc_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
 
     <!--FICA -->
-    <string name="fica_dialog_title">We need you to confirm your personal details.</string>
-    <string name="fica_dialog_desc">As required by law we need you to submit all FICA documentation and/or to verify information requested from you. To continue enjoying all the benefits of your Woolies card, please verify your info.</string>
+    <string name="fica_dialog_title">Confirm Your Personal Details</string>
+    <string name="fica_dialog_desc">By law, you need to submit all FICA documentation and/or verify information requested. To continue enjoying the benefits of your Woolies card, verify your personal details.</string>
     <string name="fica_dialog_verify">Verify MY DETAILS</string>
     <string name="fica_dialog_later"><u>maybe later</u></string>
+    <string name="fica_details_time_section_title">5 Minutes of your time</string>
+    <string name="fica_details_time_section_desc">This is a quick and easy process.</string>
+    <string name="fica_details_id_section_title">South African Identity Document (ID)</string>
+    <string name="fica_details_id_section_desc">We need photos of either your Smart Card ID or Green Book ID to verify your identity.</string>
+    <string name="fica_details_residence_section_title">Proof of Residence</string>
+    <string name="fica_details_residence_section_desc">This will be used to verify the details you’ve provided, and will remain secured.</string>
 
     <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>
@@ -3303,7 +3309,7 @@
 
     <plurals name="edit_items">
         <item quantity="one">Edit Item </item>
-        <item quantity="other">%d Edit Items</item>
+        <item quantity="other"> Edit %d Items</item>
     </plurals>
 
 

@@ -71,7 +71,7 @@
         android:textColor="@color/white"
         android:gravity="center"
         android:visibility="gone"
-        android:fontFamily="@font/opensans_bold"
+        android:fontFamily="@font/futura_semi_bold"
         android:layout_marginTop="@dimen/_8sdp"
         android:layout_marginStart="@dimen/_8sdp"
         app:layout_constraintTop_toTopOf="@+id/mainImgLayout"
