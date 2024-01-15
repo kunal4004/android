@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/eight_dp"
         android:fontFamily="@font/opensans_regular"
-        android:text="View Only"
+        android:text="@string/view_only_option"
         android:textColor="@color/black"
         android:textFontWeight="@integer/six_hundred"
         android:textSize="@dimen/thirteen_sp"

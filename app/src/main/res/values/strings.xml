@@ -485,6 +485,7 @@
 
     <!-- new list item-->
     <string name="create_list">create list</string>
+    <string name="share_list">SHARE LIST</string>
     <string name="new_list">new list</string>
     <string name="shopping_search_hint">Add Items To Your List</string>
     <string name="total_item">Total*</string>
@@ -3268,6 +3269,7 @@
     <string name="gift_price">R 0.00</string>
 
     <!--shopping List enhancement-->
+    <string name="pending_collaborators">Pending Collaborators</string>
     <string name="view_only_option">View Only</string>
     <string name="view_only_text">viewOnly</string>
     <string name="view_edit_text">viewAndEdit</string>

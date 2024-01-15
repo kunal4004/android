@@ -18,6 +18,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -150,9 +151,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private var customProgressDialog: CustomProgressBar? = null
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
-    val selectedItems  = ArrayList<ItemDetail>()
-    val shoppingListId  = ArrayList<String>()
-    val removalGiftItemIds  = ArrayList<String>()
+    private val selectedItems  = ArrayList<ItemDetail>()
+    private val shoppingListId  = ArrayList<String>()
+    private val removalGiftItemIds  = ArrayList<String>()
 
     private val productSearchResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -207,7 +208,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private var selectedShoppingList:ArrayList<ShoppingList>? = null
     private var listOfItems =  ArrayList<AddToListRequest>()
-    private var viewType = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -215,8 +215,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         arguments?.apply {
             listName = getString(ARG_LIST_NAME, "")
             openFromMyList = getBoolean(ARG_OPEN_FROM_MY_LIST, false)
-            viewType = getString("viewType", "")
-            setViewTypeValue()
+            setViewTypeValue(getString("viewType", ""))
         }
         Utils.updateStatusBarBackground(activity)
     }
@@ -243,7 +242,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             // This is share list flow from Deeplinking.
 
             viewLifecycleOwner.lifecycleScope.launch {
-                val viewType = !(arguments?.getString("viewType", "viewOnly")?.contains("edit") ?: false)
+                val viewType = !(arguments?.getString("viewType", "viewOnly")?.contains("Edit") ?: false)
                 viewModel.getItemsInSharedShoppingList(arguments?.getString("listId", "") ?: "", viewType)
             }
         } else {
@@ -253,7 +252,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
     }
 
-    private fun setViewTypeValue() {
+    private fun setViewTypeValue(viewType: String) {
         when (viewType) {
             null, getString(R.string.empty) -> {
                 MyListFlowType.setFlowType(MyListFlowType.FlowTypeNormal)
@@ -596,11 +595,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     viewEditOnlyLayout.root.visibility = VISIBLE
                     searchBarLayout.visibility = GONE
                     viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
+                    viewEditOnlyLayout.viewOnlyText.text = getString(R.string.view_only_option)
                 }
                 MyListFlowType.FlowTypeEdit -> {
                     viewEditOnlyLayout.root.visibility = VISIBLE
                     searchBarLayout.visibility = VISIBLE
+                    viewEditOnlyLayout.addItemsToListText.text = getString(R.string.share_list)
+                    txtMoreOptions.text = getString(R.string.more_options_btn)
                     viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
+                    viewEditOnlyLayout.viewOnlyText.text = getString(R.string.pending_collaborators)
+                    viewEditOnlyLayout.eyeImgView.background = AppCompatResources.getDrawable(requireContext(), R.drawable.collaborators)
                 }
                 else -> {
                     searchBarLayout.visibility = VISIBLE
@@ -1262,17 +1266,20 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         // if no item then hide bottom view
         if (viewModel.mShoppingListItems.size == 0) {
             bindingListDetails.rlCheckOut.visibility = GONE
-            disableAddToListOption()
+            if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) {
+                disableAddToListOption()
+            }
             setScrollViewBottomMargin(0)
             return
         }
 
         if (itemWasSelected) {
             bindingListDetails.rlCheckOut.visibility = VISIBLE
-            if (viewType.isNotEmpty()) {
-                // This is share list flow from Deeplinking.
+
+            if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) {
                 enableAddToListOption()
             }
+
             val count = shoppingListItemsAdapter?.addedItemsCount ?: 0
             bindingListDetails.btnCheckOut.text =
                 requireContext().resources.getQuantityString(
