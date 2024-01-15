@@ -310,17 +310,23 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (mBundle == null) {
             return;
         }
-        String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
-        if (deepLinkData == null) {
-            return;
-        }
-        try {
-            appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
-        } catch (Exception e) {
-            mOnNavigationItemSelectedListener.onNavigationItemSelected(
-                    getBottomNavigationById().getMenu().findItem(R.id.navigation_today));
-        }
 
+        if (!SessionUtilities.getInstance().isUserAuthenticated()) {
+            // Show Login screen.
+            getGlobalState().setDetermineLocationPopUpEnabled(true);
+            ScreenManager.presentCartSSOSignin(BottomNavigationActivity.this);
+        } else {
+            String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
+            if (deepLinkData == null) {
+                return;
+            }
+            try {
+                appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
+            } catch (Exception e) {
+                mOnNavigationItemSelectedListener.onNavigationItemSelected(
+                        getBottomNavigationById().getMenu().findItem(R.id.navigation_today));
+            }
+        }
     }
 
     private void queryBadgeCountOnStart() {
@@ -1320,6 +1326,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             AppInstanceObject appInstanceObject = AppInstanceObject.get();
             if (appInstanceObject!=null) {
                 appInstanceObject.setBiometricWalkthroughPresented(false);
+            }
+            mBundle = getIntent().getExtras();
+            if (mBundle != null) {
+                String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
+                if (deepLinkData != null) {
+                    //Redirect to deepLink flow.
+                    parseDeepLinkData();
+                    renderUI();
+                }
             }
             //load count on login success
             switch (getCurrentSection()) {

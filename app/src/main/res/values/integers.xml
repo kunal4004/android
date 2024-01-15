@@ -11,4 +11,6 @@
     <integer name="thirty">30</integer>
     <integer name="forty">40</integer>
     <integer name="fifty">50</integer>
+    <integer name="six_hundred">600</integer>
+    <integer name="five_hundred">500</integer>
 </resources>
