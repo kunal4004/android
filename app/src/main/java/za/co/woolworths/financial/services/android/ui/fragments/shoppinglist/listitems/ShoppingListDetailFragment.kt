@@ -18,8 +18,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Modifier
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -705,9 +703,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         // Do nothing
                     }
                 }
-
-
-                openAddToListScreen()
             }
             R.id.selectDeselectAllTextView -> onOptionsItemSelected()
             R.id.textProductSearch -> openProductSearchActivity()
@@ -762,19 +757,34 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     }
 
     private fun enableAddToListOption() {
-        bindingListDetails.viewEditOnlyLayout.addItemsToListText.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.black))
-        bindingListDetails.viewEditOnlyLayout.addItemsToListText.text = requireContext().resources.getQuantityString(
-            R.plurals.add_items_to_list,
-            shoppingListItemsAdapter?.addedItemsCount ?: 0
-        )
-        bindingListDetails.txtMoreOptions.text = requireContext().resources.getQuantityString(
-            R.plurals.add_items_to_list,
-            shoppingListItemsAdapter?.addedItemsCount ?: 0
-        )
+        bindingListDetails.apply {
+            viewEditOnlyLayout.addItemsToListText.setTextColor(
+                ContextCompat.getColor(
+                    this@ShoppingListDetailFragment.requireContext(),
+                    R.color.black
+                )
+            )
+            viewEditOnlyLayout.addItemsToListText.text =
+                requireContext().resources.getQuantityString(
+                    R.plurals.add_items_to_list,
+                    shoppingListItemsAdapter?.addedItemsCount ?: 0
+                )
+            viewEditOnlyLayout.addItemsToListText.isEnabled = true
+            txtMoreOptions.text = requireContext().resources.getQuantityString(
+                R.plurals.add_items_to_list,
+                shoppingListItemsAdapter?.addedItemsCount ?: 0
+            )
+        }
     }
 
     private fun disableAddToListOption() {
-        bindingListDetails.viewEditOnlyLayout.addItemsToListText.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.color_9D9D9D))
+        bindingListDetails.viewEditOnlyLayout.addItemsToListText.setTextColor(
+            ContextCompat.getColor(
+                this.requireContext(),
+                R.color.color_9D9D9D
+            )
+        )
+        bindingListDetails.viewEditOnlyLayout.addItemsToListText.isEnabled = false
         bindingListDetails.txtMoreOptions.text = getString(R.string.more_options_btn)
     }
 
@@ -1614,11 +1624,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             totalQuantity += item.quantity
         }
         return totalQuantity
-    }
-
-    override fun onDestroy() {
-        (activity as? BottomNavigationActivity)?.showToolbar()
-        super.onDestroy()
     }
 
     override fun onRecommendationsLoadedSuccessfully() {
