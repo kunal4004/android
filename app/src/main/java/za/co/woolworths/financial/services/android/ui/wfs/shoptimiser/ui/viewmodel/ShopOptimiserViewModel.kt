@@ -206,7 +206,7 @@ class ShopOptimiserViewModel @Inject constructor(
      * Checks if the Stand-Alone PayFlex view is enabled for the current product.
      * @return `true` if Stand-Alone PayFlex is enabled, `false` otherwise.
      */
-    fun isStandAlonePayFlexViewEnabled() = isLoggedIn() && isStandAlonePayFlexEnabled(pdpProductVariant.productDetail)
+    fun isStandAlonePayFlexViewEnabled() = isStandAlonePayFlexEnabled(pdpProductVariant.productDetail)
 
     /**
      * Retrieves the PayFlex payment details for display.
