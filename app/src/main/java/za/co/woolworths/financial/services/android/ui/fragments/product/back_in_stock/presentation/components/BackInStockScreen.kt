@@ -24,18 +24,16 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.presentation.common.BlackButton
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewState
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.viewmodel.NotifyBackInStockViewModel.BackToStockUiState
-import za.co.woolworths.financial.services.android.ui.wfs.my_accounts_landing.extensions.noRippleClickable
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
 @Composable
 fun BackInStockScreen(
     modifier: Modifier = Modifier,
-    listUiState: BackToStockUiState = BackToStockUiState(),
+    backToStockUiState: BackToStockUiState = BackToStockUiState(),
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
     selectedGroupKey: String?,
     selectedSku: OtherSkus?,
@@ -74,6 +72,7 @@ fun BackInStockScreen(
 
             AddBISView(
                 modifier = modifier,
+                backToStockUiState,
                 otherSKUsByGroupKey,
                 selectedGroupKey,
                 selectedSku,
@@ -96,7 +95,7 @@ fun BackInStockScreen(
                     .padding(bottom = 24.dp)
                     .height(50.dp),
                 text = stringResource(id = R.string.confirm).uppercase(),
-                enabled = true
+                enabled = backToStockUiState.selectedSize.isNotEmpty()
             ) {
                 onEvent(BackInStockScreenEvents.ConfirmClick)
             }
@@ -113,6 +112,7 @@ fun BackInStockScreen(
 @Composable
 private fun AddBISView(
     modifier: Modifier = Modifier,
+    backToStockUiState: BackToStockUiState = BackToStockUiState(),
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
     selectedGroupKey: String?,
     selectedSku: OtherSkus?,
@@ -215,8 +215,12 @@ private fun AddBISView(
                     modifier = Modifier
                         .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
                         .fillMaxWidth(),
-                    preselectedSize = selectedSku ?: zeroQuantityList[0]
-                ) { selectedSize -> /* do something with selected */ }
+                    //  preselectedSize = if(selectedSku!= null && selectedSku.quantity == 0) selectedSku else  zeroQuantityList[0]
+                    preselectedSize = selectedSku
+
+                ) { selectedSize -> /* do something with selected */
+                    backToStockUiState.selectedSize = selectedSize
+                }
             }
         }
         Text(
@@ -247,8 +251,7 @@ private fun AddBISView(
             ),
             modifier = Modifier
                 .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
-                //.border(width = 0.dp, color = Color(R.color.color_EEEEEE))
-                .background(Color(R.drawable.recipient_details_input_edittext_bg))
+                .border(width = 0.dp, color = Color(R.color.color_9D9D9D))
                 .fillMaxWidth(),
             textStyle = TextStyle(
                 fontSize = 14.sp,
@@ -260,36 +263,6 @@ private fun AddBISView(
         )
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun BackInStockScreenPreview() {
-    OneAppTheme {
-        BackInStockScreen(
-            modifier = Modifier,
-            listUiState = BackToStockUiState(
-                isLoading = false,
-                isError = false,
-                selectedListItem = listOf(
-                    ShoppingList(
-                        listId = "1",
-                        listName = "Favourites"
-                    ),
-                    ShoppingList(
-                        listId = "4",
-                        listName = "Healthy Foods 2"
-                    )
-                )
-            ),
-            linkedMapOf(),
-            selectedGroupKey = "selectedGroupKey",
-            OtherSkus(),
-            hasColor = true,
-            hasSize = true
-        ) { }
-    }
-}
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -313,10 +286,10 @@ fun SpinnerColourView(
                 },
                 modifier = Modifier
                     .then(modifier)
-                    .background(Color(R.drawable.recipient_details_input_edittext_bg))
-                    .noRippleClickable {
-
-                    },
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { },
                 trailingIcon = {
                     Icon(
                         painter = painterResource(
@@ -325,12 +298,7 @@ fun SpinnerColourView(
                         contentDescription = null
                     )
                 },
-                readOnly = true,
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.White,
-                    focusedContainerColor = Color.White,
-                    disabledContainerColor = Color.White
-                )
+                readOnly = true
             )
             DropdownMenu(
                 modifier = Modifier
@@ -350,13 +318,12 @@ fun SpinnerColourView(
                         colourNames.add(entry.key)
                     }
                 }
-
+                colourNames.reverse()
                 colourNames.forEach { colourName ->
                     DropdownMenuItem(
                         modifier = Modifier
-                            .border(width = 0.dp, color = Color(R.color.non_editable_button_bg))
-                            .background(Color.White)
-                            .then(modifier),
+                            .border(width = 0.dp, color = Color(R.color.color_9D9D9D))
+                            .background(Color.White),
                         onClick = {
                             selectedColour = colourName
                             expanded = false
@@ -398,21 +365,36 @@ fun SpinnerSizeView(
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
     selectedGroupKey: String?,
     modifier: Modifier = Modifier,
-    preselectedSize: OtherSkus,
+    preselectedSize: OtherSkus?,
     onSelectionChanged: (selectedSize: String) -> Unit
 ) {
-
-    var selectedSize by remember { mutableStateOf(preselectedSize) }
+    var preselectedSizeString = ""
+    if (preselectedSize != null && preselectedSize.quantity == 0) {
+        preselectedSizeString = preselectedSize.size.toString()
+    } else {
+        preselectedSizeString = ""
+    }
+    var selectedSize by remember { mutableStateOf(preselectedSizeString) }
     var expanded by remember { mutableStateOf(false) } // initial value
 
     Box {
         Column {
             OutlinedTextField(
-                value = (selectedSize.size.toString()),
-                onValueChange = {
-                    onSelectionChanged(it)
-                },
+                value = selectedSize,
+                onValueChange = onSelectionChanged,
                 modifier = modifier,
+                placeholder = {
+                    Text(
+                        text = "Select a size",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            lineHeight = 21.sp,
+                            fontFamily = FontFamily(Font(R.font.opensans_medium)),
+                            fontWeight = FontWeight(400),
+                            color = Color(R.color.color_9D9D9D)
+                        )
+                    )
+                },
                 trailingIcon = {
                     Icon(
                         painter = painterResource(
@@ -436,12 +418,12 @@ fun SpinnerSizeView(
                 otherSKUList?.forEach { otherSKU ->
                     DropdownMenuItem(
                         modifier = Modifier
-                            .border(width = 0.dp, color = Color(R.color.non_editable_button_bg))
-                            .background(Color.White)
-                            .then(modifier),
+                            .border(width = 0.dp, color = Color(R.color.color_9D9D9D))
+                            .background(Color.White),
                         onClick = {
-                            selectedSize = otherSKU
+                            selectedSize = otherSKU.size.toString()
                             expanded = false
+                            onSelectionChanged(selectedSize)
                         },
                         text = {
                             Text(
@@ -487,5 +469,21 @@ fun SpinnerColourPreview() {
                 .fillMaxWidth(),
             preselectedColour = "White"
         ) { selectedColour -> /* do something with selected */ }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BackInStockScreenPreview() {
+    OneAppTheme {
+        BackInStockScreen(
+            modifier = Modifier,
+            backToStockUiState = BackToStockUiState(),
+            linkedMapOf(),
+            selectedGroupKey = "selectedGroupKey",
+            OtherSkus(),
+            hasColor = true,
+            hasSize = true
+        ) { }
     }
 }

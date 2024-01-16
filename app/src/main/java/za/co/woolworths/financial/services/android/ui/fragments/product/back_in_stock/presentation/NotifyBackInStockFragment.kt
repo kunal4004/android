@@ -126,7 +126,7 @@ class NotifyBackInStockFragment : Fragment() {
                     BackInStockScreen(
                         modifier = Modifier
                             .fillMaxHeight(),
-                        listUiState = listState,
+                        backToStockUiState = NotifyBackInStockViewModel.BackToStockUiState(),
                         otherSKUsByGroupKey,
                         selectedGroupKey,
                         selectedSku,

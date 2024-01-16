@@ -30,7 +30,7 @@ class NotifyBackInStockViewModel @Inject constructor(
             val isConfirmInProgress: Boolean = false,
             val isConfirmSuccess: Boolean = false,
             val showCreateList: Boolean = false,
-            val selectedListItem: List<ShoppingList> = emptyList()
+            var selectedSize: String = ""
     )
 
     fun onEvent(event: BackInStockScreenEvents) {
