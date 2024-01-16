@@ -123,7 +123,8 @@ fun OrderItem.toAnalyticItem(): AnalyticProductItem {
     return AnalyticProductItem(
         itemId = productId,
         itemName = productDisplayName,
-        category = null,
+        category = productType,
+        productType = productType,
         itemBrand = brandName,
         itemListName = null,
         itemVariant = commerceItemInfo?.color,
