@@ -3292,7 +3292,7 @@
 
     <plurals name="edit_items">
         <item quantity="one">Edit Item </item>
-        <item quantity="other">%d Edit Items</item>
+        <item quantity="other"> Edit %d Items</item>
     </plurals>
 
 
