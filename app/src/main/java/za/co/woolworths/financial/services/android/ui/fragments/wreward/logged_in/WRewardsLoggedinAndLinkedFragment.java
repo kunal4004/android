@@ -43,6 +43,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsOverviewFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsSavingsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardsUniqueLocators;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.WfsBiometricManagerImpl;
 import za.co.woolworths.financial.services.android.ui.wfs.common.state.AppLifeCycleObserver;
@@ -175,7 +177,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			wrewardsViewPager.setContentDescription(getString(R.string.reward_items_layout));
 			mRlConnect.setContentDescription(getString(R.string.no_connection));
 		}
-
+		setToolBarTitleUniqueID(WRewardsUniqueLocators.WREWARDS_TOOLBAR_TEXT.getValue());
 		wrewardsViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			public void onPageScrollStateChanged(int state) {
 			}
@@ -236,6 +238,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		String[] tabTitle = {getActivity().getString(R.string.overview), getActivity().getString(R.string.vouchers), getActivity().getString(R.string.savings)};
 		for (int i = 0; i < tabTitle.length; i++) {
 			tabLayout.getTabAt(i).setCustomView(prepareTabView(i, tabTitle, activeVoucherCount));
+			WRewardUniqueLocatorsHelper.Companion.setTabBarIDs(tabLayout.getTabAt(i).view.findViewById(R.id.tv_title),i);
 		}
 		tabLayout.getTabAt(0).getCustomView().setSelected(true);
 	}
@@ -486,3 +489,4 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 }
+

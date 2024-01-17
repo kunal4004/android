@@ -18,4 +18,5 @@ interface SubCategoryNavigator {
         adapterPosition: Int
     )
     fun onCloseIconPressed()
+    fun onOrderAgainClicked()
 }

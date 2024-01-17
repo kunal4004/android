@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsSavingsHorizontalScrollAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.unique_locators.WRewardUniqueLocatorsHelper;
 import za.co.woolworths.financial.services.android.ui.views.ScrollingLinearLayoutManager;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
@@ -119,18 +120,16 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		uniqueIdsForWRewardsSavings();
-	}
-
-	private void uniqueIdsForWRewardsSavings() {
-		Activity activity = getActivity();
-		if (activity != null && activity.getResources() != null) {
-			noSavingsView.setContentDescription(getString(R.string.savingsLayout));
-			wRewardInstantSavingsRelativeLayout.setContentDescription(getString(R.string.tvWRewardInstantSavingLayout));
-			savingSinceRelativeLayout.setContentDescription(getString(R.string.savingSinceLayout));
-			quartlyVoucherEarnedRelativeLayout.setContentDescription(getString(R.string.quarterlyVouchersEarnedLayout));
-			yearDateSpendRelativeLayout.setContentDescription(getString(R.string.yearToDateSpendTextLayout));
-		}
+		WRewardUniqueLocatorsHelper.Companion.setSavingsFragLocators(view.findViewById(R.id.tvWRewardInstantSaving),
+				wRewardsInstantSaving,
+				view.findViewById(R.id.savingSinceTitle),
+				savingSince,
+				savingSinceInfo,
+				view.findViewById(R.id.quarterlyVouchersEarnedTitle),
+				quarterlyVoucherEarned,
+				yearToDateSpend,
+				yearToDateSpendText,
+				yearToDateSpendInfo);
 	}
 
 	@Override

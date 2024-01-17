@@ -32,6 +32,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.Depart
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_CREATE_LIST
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_CODE
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.GetCartSummary
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -305,7 +307,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
     }
 
     private fun deleteShoppingListItem(shoppingList: ShoppingList) {
-        val deleteShoppingList = OneAppService().deleteShoppingList(shoppingList.listId)
+        /*val deleteShoppingList = OneAppService().deleteShoppingList(shoppingList.listId)
         deleteShoppingList.enqueue(CompletionHandler(object :
             IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse?) {
@@ -324,7 +326,7 @@ class MyListsFragment : DepartmentExtensionFragment(R.layout.shopping_list_fragm
                 activity?.let { it.runOnUiThread { ErrorHandlerView(it).showToast() } }
             }
 
-        }, ShoppingListsResponse::class.java))
+        }, ShoppingListsResponse::class.java))*/
     }
 
     override fun onShoppingListItemDeleted(shoppingList: ShoppingList, position: Int) {

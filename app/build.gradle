@@ -13,10 +13,10 @@ apply plugin: 'kotlin-parcelize'
 android {
 
     def major = "9"
-    def minor = "14"
-    def fix = "1"
-    def jobNumberProduction = 240
-    def jobNumberQa = 750
+    def minor = "15"
+    def fix = "0"
+    def jobNumberProduction = 241
+    def jobNumberQa = 756
 
     buildFeatures {
         dataBinding true
@@ -411,12 +411,12 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:1.4.3"
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose'
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation 'androidx.paging:paging-common-ktx:3.0.1'
     implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
-    // glassbox SDK for record screen session
-    implementation 'com.clarisite.mobile.android:glassbox:6.660'
+
     // Kotlin reflexion
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_reflect"
     // truth library for testing
@@ -425,6 +425,9 @@ dependencies {
     //leak canary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
     debugImplementation 'com.squareup.leakcanary:leakcanary-object-watcher-android:2.12'
+
+    // Compose image lib
+    implementation "io.coil-kt:coil-compose:2.4.0"
 }
 
 apply plugin: 'com.google.gms.google-services'

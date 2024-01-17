@@ -83,7 +83,6 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Cart
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
@@ -127,6 +126,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyChooseVariationCallViewModel
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAndLocation
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.Utils.*
@@ -176,7 +176,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
-    private val dyHomePageViewModel: DyHomePageViewModel by viewModels()
+    private val dyHomePageViewModel: DyChooseVariationCallViewModel by viewModels()
     private val dyChangeAttributeViewModel: DyChangeAttributeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -240,11 +240,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setPriceInformationVisibility(false)
         addScrollListeners()
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null)
-            dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID)
-        if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null)
-            dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID)
-
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -709,6 +704,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
             loadShoppingCart()
         }
         if (!hidden) {
+            Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST)
            listenerForUnsellable()
         }
     }
@@ -1363,6 +1359,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 showRecommendedProducts()
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
+                        if (getDyServerId() != null)
+                            dyServerId = getDyServerId()
+                        if (getDySessionId() != null)
+                            dySessionId = getDySessionId()
                         prepareDynamicYieldCartViewRequestEvent()
                         prepareSyncCartRequestEvent()
                     }
@@ -1754,7 +1754,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         cartItems?.forEach { cartItemGroup: CartItemGroup ->
             if (cartItemGroup.type.equals(GIFT_ITEM, ignoreCase = true)) {
                 for (commerceItem: CommerceItem in cartItemGroup.commerceItems) {
-                    commerceItem.commerceItemInfo.quantity = 1
+                  //commerceItem.commerceItemInfo.quantity = 1
                     commerceItem.quantityInStock = 2
                     commerceItem.isStockChecked = true
                 }
@@ -2355,6 +2355,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     if (response?.httpCode == HTTP_OK) {
                         updateUIForCartResponse(response)
                         changeQuantity(response, mChangeQuantityList?.getOrNull(0))
+                        mCommerceItem?.let { it ->
+                            FirebaseAnalyticsEventHelper.addToCart(
+                                it
+                            )
+                        }
                     } else {
                         onChangeQuantityComplete()
                     }

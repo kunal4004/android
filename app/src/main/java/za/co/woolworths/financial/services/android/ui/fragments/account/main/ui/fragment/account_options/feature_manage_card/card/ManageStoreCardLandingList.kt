@@ -68,11 +68,28 @@ class ManageStoreCardLandingList(
         fragment?.viewLifecycleOwner?.lifecycleScope?.launch(Dispatchers.Main) {
             hideAllRows()
             when (val featureType = storeCardFeatureType.feature) {
-
-                    is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage,
+                    is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage->{
+                        showTempCardFreeze()
+                        if (actionForStoreCardUsage1Item(
+                                featureType.storeCard,
+                                callback
+                            )
+                        ) return@launch
+                    }
                     is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
-                        hideAllRows()
-                        includeListOptions.parentLinearLayout.removeAllViewsInLayout()
+                        if (actionForStoreCardUsage1Item(
+                                featureType.storeCard,
+                                callback
+                            )
+                        ){
+                            includeListOptions.parentLinearLayout.apply {
+                                removeAllViewsInLayout()
+                                visibility = GONE
+                            }
+                            showActivateVirtualTempCardRow(true)
+                            return@launch
+                        }
+
                     }
 
                     is StoreCardFeatureType.ActivateVirtualTempCard -> {
@@ -179,6 +196,12 @@ class ManageStoreCardLandingList(
         }
     }
 
+    private fun showTempCardFreeze(){
+        with(includeListOptions) {
+            temporaryFreezeCardFragmentContainerView.visibility = VISIBLE
+            cardFreezeViewModel.isSwitcherEnabled.value = false
+        }
+    }
     private fun showInstantReplacementCardAndInactive() {
         with(includeListOptions) {
             replacementCardDivider.visibility = VISIBLE

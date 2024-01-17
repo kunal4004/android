@@ -5,8 +5,6 @@ import static za.co.woolworths.financial.services.android.util.Utils.IDENTIFY;
 import static za.co.woolworths.financial.services.android.util.Utils.IDENTIFY_V1;
 import static za.co.woolworths.financial.services.android.util.Utils.LOGIN;
 import static za.co.woolworths.financial.services.android.util.Utils.LOGIN_V1;
-import static za.co.woolworths.financial.services.android.util.Utils.MOBILE_PAGE;
-import static za.co.woolworths.financial.services.android.util.Utils.OTHER;
 import static za.co.woolworths.financial.services.android.util.Utils.SIGNUP;
 import static za.co.woolworths.financial.services.android.util.Utils.SIGNUP_V1;
 
@@ -182,16 +180,6 @@ public class SSOActivity extends WebViewActivity {
 		config = new NetworkConfig(new AppContextProviderImpl());
 		dyReportEventViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
 		dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
-	}
-
-	private void prepareDynamicYieldRequestEvent() {
-		ArrayList dyData = new ArrayList<>();
-		Device device = new Device(Utils.IPAddress, config.getDeviceModel());
-		Page page = new Page(dyData, MOBILE_PAGE, OTHER, null,null);
-		Context context = new Context(device,page, DY_CHANNEL,null);
-		Options options = new Options(false);
-		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null,null,context,options);
-		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
 	}
 
 	// Display progress bar as soon as user land on profile
@@ -674,13 +662,13 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void extractFormDataAndCloseSSOIfNeeded(String ssoActivityEvent){
-		if (Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID) != null) {
-			dyServerId = Utils.getSessionDaoDyServerId(SessionDao.KEY.DY_SERVER_ID);
+		if (Utils.getDyServerId() != null) {
+			dyServerId = Utils.getDyServerId();
 		} else {
 			dyServerId = "";
 		}
-		if (Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID) != null) {
-			dySessionId = Utils.getSessionDaoDySessionId(SessionDao.KEY.DY_SESSION_ID);
+		if (Utils.getDySessionId() != null) {
+			dySessionId = Utils.getDySessionId();
 		} else {
 			dySessionId = "";
 		}
@@ -1019,6 +1007,16 @@ public class SSOActivity extends WebViewActivity {
 	private void startOCDashChatServices() {
 		// Start service to listen to incoming messages from Stream
 		OCConstant.Companion.startOCChatService(this);
+	}
+
+	private void prepareDynamicYieldRequestEvent() {
+		ArrayList<String> dyData = new ArrayList<>();
+		Device device = new Device(Utils.IPAddress, config.getDeviceModel());
+		Page page = new Page(dyData, Utils.MOBILE_LANDING_PAGE, Utils.HOME_PAGE, null, null);
+		Context context = new Context(device, page, Utils.DY_CHANNEL, null);
+		Options options = new Options(true);
+		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null, null, context, options);
+		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
 	}
 
 }

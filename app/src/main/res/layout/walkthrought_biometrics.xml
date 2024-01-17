@@ -19,15 +19,18 @@
 
         <FrameLayout
             android:id="@+id/closeWindow"
-            android:layout_width="@dimen/twenty_four_dp"
-            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/four_dp"
             android:layout_gravity="end">
-            <ImageView
+
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/close_24"
-                android:contentDescription="@string/close_icon_tapped" />
+                android:background="@null"
+                android:contentDescription="@string/close_icon_tapped"
+                android:src="@drawable/close_24" />
         </FrameLayout>
 
 

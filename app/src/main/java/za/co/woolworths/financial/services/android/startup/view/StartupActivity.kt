@@ -12,10 +12,12 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -24,8 +26,6 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivitySplashScreenBinding
 import com.awfs.coordination.databinding.ActivityStartupBinding
 import com.awfs.coordination.databinding.ActivityStartupResourcenotfoundBinding
-import com.clarisite.mobile.Glassbox
-import com.clarisite.mobile.StartupSettings.StartupSettingsBuilder.aSettingsBuilder
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -42,8 +42,9 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton.glassBox
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.startOCChatService
@@ -54,6 +55,8 @@ import za.co.woolworths.financial.services.android.startup.service.repository.St
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.*
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
@@ -88,6 +91,7 @@ class StartupActivity :
 
     @Inject
     lateinit var notificationUtils: NotificationUtils
+    private val dyHomePageViewModel: DyHomePageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,6 +129,25 @@ class StartupActivity :
             setContentView(bindingResourceNotFound.root)
             isAppSideLoaded = true
         }
+    }
+
+    private fun setupDynamicChooseCall() {
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true) {
+                prepareDynamicYieldRequestEvent()
+            }
+        }
+    }
+
+    private fun prepareDynamicYieldRequestEvent() {
+        val config = NetworkConfig(AppContextProviderImpl())
+        val dyData = ArrayList<String>()
+        val device = Device(Utils.IPAddress, config.getDeviceModel())
+        val page = Page(dyData, Utils.MOBILE_LANDING_PAGE, Utils.HOME_PAGE, null, null)
+        val context = Context(device, page, Utils.DY_CHANNEL)
+        val options = Options(true)
+        val homePageRequestEvent = HomePageRequestEvent(null, null, context, options)
+        dyHomePageViewModel.createDyRequest(homePageRequestEvent)
     }
 
     private fun setupDataListener() {
@@ -176,68 +199,83 @@ class StartupActivity :
         firebaseRemoteConfig.setDefaultsAsync(defaultValues as Map<String, Any>)
     }
 
-    private fun fetchFirebaseConfigData(isComingFromSuccess: Boolean) {
-        firebaseRemoteConfig
-            .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
-            .addOnCompleteListener { task ->
-                run {
-                    if (task.isSuccessful) {
-                        // set dynamic ui here
-                        firebaseRemoteConfig.activate()
-                        remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
-
-                        if (isComingFromSuccess) {
-                            // success of api
-                            if (remoteConfigJsonString.isEmpty()) {
-                                // api successful but firebase not configured so navigate with normal flow
-                                presentNextScreenOrServerMessage()
-                            } else {
-                                // api successful and  firebase also configured so display sunsetting ui
-                                bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
-                                setContentView(bindingSplash.root)
-                                val configData: ConfigData? =
-                                    startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
-                                if (configData?.expiryTime == -1L || configData == null) {
-                                    // in case we get json exception while parsing then we navigate with normal flow
-                                    bindingSplash.progressBar?.visibility = View.GONE
-                                    presentNextScreenOrServerMessage()
-                                } else {
-                                    bindingSplash.setDataOnUI(configData, true)
-                                }
-                            }
-                        } else {
-                            // error  of api
-                            if (remoteConfigJsonString.isEmpty()) {
-                                // api is  failed and firebase not configured so show error screen of api response
-                                bindingStartup.showNonVideoViewWithErrorLayout()
-                            } else {
-                                // api is failed and sunsetting is configured then show sunsetting ui
-
-                                val configData: ConfigData? =
-                                    startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
-                                if (configData?.expiryTime == -1L || configData == null) {
-                                    // in case we get json exception while parsing then show error screen of api
-                                    bindingStartup.showNonVideoViewWithErrorLayout()
-                                } else {
-                                    bindingSplash =
-                                        ActivitySplashScreenBinding.inflate(layoutInflater)
-                                    setContentView(bindingSplash.root)
-                                    bindingSplash.setDataOnUI(configData, false)
-                                }
-                            }
-                        }
+    private fun onRemoteConfigFetchComplete(isSuccessful: Boolean, isComingFromSuccess: Boolean) {
+        if (isSuccessful) {
+            // set dynamic ui here
+            remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
+            if (isComingFromSuccess) {
+                // success of api
+                if (remoteConfigJsonString.isEmpty()) {
+                    // api successful but firebase not configured so navigate with normal flow
+                    presentNextScreenOrServerMessage()
+                } else {
+                    // api successful and  firebase also configured so display sunsetting ui
+                    bindingSplash = ActivitySplashScreenBinding.inflate(layoutInflater)
+                    setContentView(bindingSplash.root)
+                    val configData: ConfigData? =
+                            startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                    if (configData?.expiryTime == -1L || configData == null) {
+                        // in case we get json exception while parsing then we navigate with normal flow
+                        bindingSplash.progressBar?.visibility = View.GONE
+                        presentNextScreenOrServerMessage()
                     } else {
-                        // firebase fail
-                        if (isComingFromSuccess) {
-                            // api is success and firebase  is failed so navigate to next screen
-                            presentNextScreenOrServerMessage()
-                        } else {
-                            // api is failed and firebase  is failed so display error layout
-                            bindingStartup.showNonVideoViewWithErrorLayout()
-                        }
+                        bindingSplash.setDataOnUI(configData, true)
+                    }
+                }
+            } else {
+                // error  of api
+                if (remoteConfigJsonString.isEmpty()) {
+                    // api is  failed and firebase not configured so show error screen of api response
+                    bindingStartup.showNonVideoViewWithErrorLayout()
+                } else {
+                    // api is failed and sunsetting is configured then show sunsetting ui
+
+                    val configData: ConfigData? =
+                            startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                    if (configData?.expiryTime == -1L || configData == null) {
+                        // in case we get json exception while parsing then show error screen of api
+                        bindingStartup.showNonVideoViewWithErrorLayout()
+                    } else {
+                        bindingSplash =
+                                ActivitySplashScreenBinding.inflate(layoutInflater)
+                        setContentView(bindingSplash.root)
+                        bindingSplash.setDataOnUI(configData, false)
                     }
                 }
             }
+        } else {
+            // firebase fail
+            if (isComingFromSuccess) {
+                // api is success and firebase  is failed so navigate to next screen
+                presentNextScreenOrServerMessage()
+            } else {
+                // api is failed and firebase  is failed so display error layout
+                bindingStartup.showNonVideoViewWithErrorLayout()
+            }
+        }
+    }
+
+    private fun fetchFirebaseConfigData(isComingFromSuccess: Boolean) {
+        val isFirstTime = startupViewModel.getSessionDao(SessionDao.KEY.ON_BOARDING_SCREEN)
+        if (isFirstTime) {
+            firebaseRemoteConfig
+                    .fetchAndActivate()
+                    .addOnCompleteListener { task ->
+                        run {
+                            onRemoteConfigFetchComplete(task.isSuccessful, isComingFromSuccess)
+                        }
+                    }
+        } else {
+            firebaseRemoteConfig
+                    .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
+                    .addOnCompleteListener { task ->
+                        run {
+                            if (task.isSuccessful)
+                                firebaseRemoteConfig.activate()
+                            onRemoteConfigFetchComplete(task.isSuccessful, isComingFromSuccess)
+                        }
+                    }
+        }
     }
 
     private fun ActivitySplashScreenBinding.setDataOnUI(
@@ -483,7 +521,6 @@ class StartupActivity :
                         else -> onConfigSuccess()
                     }
 
-                    initializeGlassBoxSDK()
                 }
             }
         }
@@ -521,6 +558,7 @@ class StartupActivity :
 
     fun presentNextScreenOrServerMessage() {
         Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITHOUT_CTA)
+        setupDynamicChooseCall()
         bindingStartup.showNonVideoViewWithoutErrorLayout()
         presentNextScreen()
     }
@@ -721,21 +759,7 @@ class StartupActivity :
         }
     }
 
-    // GlassBox SDK for record screen session
-    private fun initializeGlassBoxSDK() {
-        try {
-            Glassbox.start(
-                aSettingsBuilder()
-                    .withApplicationCtx(this)
-                    .withAppId(glassBox?.appId)
-                    .withReportUrl(glassBox?.reportUrl)
-                    .hybridMode()
-                    .build(),
-            )
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
-        }
-    }
+
 
     @VisibleForTesting
     fun testsetupLoadingScreen() {
