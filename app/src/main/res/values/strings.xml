@@ -3270,6 +3270,7 @@
 
     <!--shopping List enhancement-->
     <string name="pending_collaborators">Pending Collaborators</string>
+    <string name="number_of_collaborators">%s Collaborators</string>
     <string name="view_only_option">View Only</string>
     <string name="view_only_text">viewOnly</string>
     <string name="view_edit_text">viewAndEdit</string>

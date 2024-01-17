@@ -83,6 +83,7 @@ import za.co.woolworths.financial.services.android.shoppinglist.service.network.
 import za.co.woolworths.financial.services.android.shoppinglist.view.EmptyStateView
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.shoppinglist.view.ShoppingListErrorView
+import za.co.woolworths.financial.services.android.shoppinglist.view.ShoppingListShareDialogFragment
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.resetUnsellableLiveData
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
@@ -544,7 +545,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     EmptyStateView(uiStateData) { event ->
                         when (event) {
                             is MyLIstUIEvents.StartShoppingClick -> {
-
+                                openShopTab()
                             }
 
                             else -> {
@@ -554,6 +555,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     }
                 }
             }
+        }
+    }
+
+    private fun openShopTab() {
+        (requireActivity() as? BottomNavigationActivity)?.apply {
+            navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null)
         }
     }
 
@@ -601,6 +608,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     viewEditOnlyLayout.root.visibility = VISIBLE
                     searchBarLayout.visibility = VISIBLE
                     viewEditOnlyLayout.addItemsToListText.text = getString(R.string.share_list)
+                    viewEditOnlyLayout.addItemsToListText.setTextColor(
+                        ContextCompat.getColor(
+                            this@ShoppingListDetailFragment.requireContext(),
+                            R.color.black
+                        )
+                    )
                     txtMoreOptions.text = getString(R.string.more_options_btn)
                     viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
                     viewEditOnlyLayout.viewOnlyText.text = getString(R.string.pending_collaborators)
@@ -700,7 +713,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     }
 
                     MyListFlowType.FlowTypeEdit -> {
-                        // Share List
+                        arguments?.getString("listId", "")?.let { navigateToShareListDialog(it) }
                     }
 
                     else -> {
@@ -739,6 +752,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
             else -> {}
         }
+    }
+
+    private fun navigateToShareListDialog(listId: String) {
+        val fragment = ShoppingListShareDialogFragment.newInstance(listId)
+        fragment.show(parentFragmentManager, ShoppingListShareDialogFragment::class.simpleName)
     }
 
     private fun openAddToListScreen() {
@@ -896,9 +914,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             HTTP_OK -> {
                 bindingListDetails.loadingBar.visibility = GONE
                 viewModel.syncListWithAdapter(shoppingListItemsAdapter?.shoppingListItems)
-                if (shoppingListItemsResponse.listItems.isEmpty()){
+                if (shoppingListItemsResponse.listItems.isEmpty()) {
                     showEmptyState()
                     return
+                }
+                if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeEdit) {
+                    bindingListDetails.viewEditOnlyLayout.viewOnlyText.text =
+                        if (shoppingListItemsResponse.numOfCollaborators > 0) getString(
+                            R.string.number_of_collaborators,
+                            shoppingListItemsResponse.numOfCollaborators.toString()
+                        ) else getString(R.string.pending_collaborators)
                 }
                 viewModel.makeInventoryCalls()
                 if (viewModel.isShoppingListContainsUnavailableItems())
@@ -1292,7 +1317,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             (activity as? BottomNavigationActivity)?.hideBottomNavigationMenu()
         } else {
             bindingListDetails.rlCheckOut.visibility = GONE
-            disableAddToListOption()
+            if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) {
+                disableAddToListOption()
+            }
             setScrollViewBottomMargin(0)
             (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
         }
