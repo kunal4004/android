@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.back_in
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,11 +18,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.IntentCompat.getParcelableExtra
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
@@ -94,11 +91,10 @@ class NotifyBackInStockFragment : Fragment() {
                 }
             }
 
-
-            val listState = viewModel.getState()
+            val backInStockState = viewModel.getState()
             when {
 
-                listState.isConfirmInProgress -> {
+                backInStockState.isConfirmInProgress -> {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Spacer(
                             modifier = Modifier
@@ -120,13 +116,11 @@ class NotifyBackInStockFragment : Fragment() {
                         )
                     }
                 }
-
-
                 else -> {
                     BackInStockScreen(
                         modifier = Modifier
                             .fillMaxHeight(),
-                        backToStockUiState = NotifyBackInStockViewModel.BackToStockUiState(),
+                        backToStockUiState = viewModel.backInStockState,
                         otherSKUsByGroupKey,
                         selectedGroupKey,
                         selectedSku,

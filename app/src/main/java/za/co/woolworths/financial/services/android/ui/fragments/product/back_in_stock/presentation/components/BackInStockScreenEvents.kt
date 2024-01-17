@@ -10,4 +10,6 @@ sealed class BackInStockScreenEvents {
     object SizeSpinnerClick: BackInStockScreenEvents()
     object EmailEditTextClick: BackInStockScreenEvents()
 
+    data class onColorSelected(val selectedColor : String): BackInStockScreenEvents()
+    data class onSizeSelected(val selectedSize : String): BackInStockScreenEvents()
 }
