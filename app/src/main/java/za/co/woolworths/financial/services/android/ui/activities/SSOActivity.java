@@ -68,6 +68,9 @@ import za.co.woolworths.financial.services.android.recommendations.data.response
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Options;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Page;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.response.DyHomePageViewModel;
@@ -154,6 +157,7 @@ public class SSOActivity extends WebViewActivity {
 	private String jwt = null;
 	private DyChangeAttributeViewModel dyReportEventViewModel;
 	private NetworkConfig config;
+	private DyHomePageViewModel dyHomePageViewModel;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -175,6 +179,7 @@ public class SSOActivity extends WebViewActivity {
 		showProfileProgressBar();
 		config = new NetworkConfig(new AppContextProviderImpl());
 		dyReportEventViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
+		dyHomePageViewModel = new ViewModelProvider(this).get(DyHomePageViewModel.class);
 	}
 
 	// Display progress bar as soon as user land on profile
@@ -566,6 +571,9 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
+			if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+				prepareDynamicYieldRequestEvent();
+			}
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -999,6 +1007,16 @@ public class SSOActivity extends WebViewActivity {
 	private void startOCDashChatServices() {
 		// Start service to listen to incoming messages from Stream
 		OCConstant.Companion.startOCChatService(this);
+	}
+
+	private void prepareDynamicYieldRequestEvent() {
+		ArrayList<String> dyData = new ArrayList<>();
+		Device device = new Device(Utils.IPAddress, config.getDeviceModel());
+		Page page = new Page(dyData, Utils.MOBILE_LANDING_PAGE, Utils.HOME_PAGE, null, null);
+		Context context = new Context(device, page, Utils.DY_CHANNEL, null);
+		Options options = new Options(true);
+		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null, null, context, options);
+		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
 	}
 
 }
