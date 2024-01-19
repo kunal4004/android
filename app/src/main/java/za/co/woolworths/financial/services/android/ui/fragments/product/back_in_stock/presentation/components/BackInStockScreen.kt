@@ -213,6 +213,8 @@ private fun AddBISView(
                         zeroQuantityList.add(otherSKU)
                     }
                 }
+                // remove available item list from map and keep only non available items in map
+                // to display non available items only
                 otherSKUsByGroupKey.remove(selectedGroupKey)?.let {
                     otherSKUsByGroupKey.put(selectedGroupKey.toString(), zeroQuantityList)
                 }
