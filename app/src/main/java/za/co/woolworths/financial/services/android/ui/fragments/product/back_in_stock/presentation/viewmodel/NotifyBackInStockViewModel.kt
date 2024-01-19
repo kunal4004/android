@@ -27,9 +27,11 @@ class NotifyBackInStockViewModel @Inject constructor(private val savedStateHandl
 
     fun getArguments() {
         val selectedSku = savedStateHandle.get<OtherSkus>("selectedSku")
+        val selectedGroupKey = savedStateHandle.get<String>("selectedGroupKey")
         backInStockState = backInStockState.copy(
             selectedSku = selectedSku,
-            isSizeSelected = selectedSku != null && selectedSku.quantity == 0
+            isSizeSelected = selectedSku != null && selectedSku.quantity == 0,
+            selectedGroupKey = selectedGroupKey
         )
     }
 
@@ -44,7 +46,8 @@ class NotifyBackInStockViewModel @Inject constructor(private val savedStateHandl
         val isConfirmSuccess: Boolean = false,
         val showCreateList: Boolean = false,
         var isSizeSelected: Boolean = false,
-        var selectedSku: OtherSkus? = null
+        var selectedSku: OtherSkus? = null,
+        var selectedGroupKey: String? = null
     )
 
     fun onEvent(event: BackInStockScreenEvents) {
@@ -53,7 +56,8 @@ class NotifyBackInStockViewModel @Inject constructor(private val savedStateHandl
             /* BackInStockScreenEvents.CreateListClick -> backInStockState.value = backInStockState.value.copy(
                  showCreateList = true
              )*/
-            is BackInStockScreenEvents.onSizeSelected -> onSizeClick(event.selectedSize)
+            is BackInStockScreenEvents.OnSizeSelected -> onSizeClick(event.selectedSize)
+            is BackInStockScreenEvents.OnColorSelected-> onColorClick(event.selectedColor)
 
             //  BackInStockScreenEvents.RetryClick -> getMyList()
             BackInStockScreenEvents.ConfirmClick -> notifyMe()
@@ -72,13 +76,15 @@ class NotifyBackInStockViewModel @Inject constructor(private val savedStateHandl
     }
 
     private fun onSizeClick(selectedSize: String) {
-        // viewModelScope.launch(Dispatchers.Default) {
         val isSizeUpdated = selectedSize.isNotEmpty()
-        //   viewModelScope.launch(Dispatchers.Main) {
         backInStockState = backInStockState.copy(
             isSizeSelected = isSizeUpdated
         )
-        //      }
-        // }
+    }
+
+    private fun onColorClick(selectedColor: String) {
+        backInStockState = backInStockState.copy(
+            selectedGroupKey = selectedColor
+        )
     }
 }

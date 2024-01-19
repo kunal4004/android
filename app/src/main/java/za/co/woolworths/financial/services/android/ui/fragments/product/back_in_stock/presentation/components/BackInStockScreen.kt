@@ -4,15 +4,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius.Companion.Zero
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,7 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
@@ -80,12 +75,12 @@ fun BackInStockScreen(
                 modifier = modifier,
                 backToStockUiState,
                 otherSKUsByGroupKey,
-                selectedGroupKey,
-                selectedSku,
+              //  selectedGroupKey,
+              //  selectedSku,
                 hasColor,
                 hasSize
-            ) {
-                onEvent(BackInStockScreenEvents.onSizeSelected(it))
+            ) { backInStockEvents ->
+                onEvent(backInStockEvents)
             }
         }
 
@@ -122,11 +117,11 @@ private fun AddBISView(
     modifier: Modifier = Modifier,
     backToStockUiState: BackToStockUiState,
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
-    selectedGroupKey: String?,
-    selectedSku: OtherSkus?,
+    //selectedGroupKey: String?,
+    //selectedSku: OtherSkus?,
     hasColor: Boolean,
     hasSize: Boolean,
-    onSizeClick: (selectedSize: String) -> Unit
+    onEvent: (event: BackInStockScreenEvents) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -178,6 +173,7 @@ private fun AddBISView(
                     .fillMaxWidth()
             )
 
+            val selectedGroupKey = backToStockUiState.selectedGroupKey
             otherSKUsByGroupKey[selectedGroupKey]?.let {
                 if (selectedGroupKey != null) {
                     SpinnerColourView(
@@ -187,8 +183,8 @@ private fun AddBISView(
                             .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
                             .fillMaxWidth(),
                         preselectedColour = selectedGroupKey
-                    ) { selectedColour -> /* do something with selected */
-                        //selectedGroupKey = selectedColour
+                    ) { selectedColour ->
+                        onEvent(BackInStockScreenEvents.OnColorSelected(selectedColour))
                     }
                 }
             }
@@ -208,7 +204,8 @@ private fun AddBISView(
                     .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 0.dp)
                     .fillMaxWidth()
             )
-
+            val selectedGroupKey = backToStockUiState.selectedGroupKey
+            val selectedSku = backToStockUiState.selectedSku
             otherSKUsByGroupKey[selectedGroupKey]?.let { otherSKUList ->
                 val zeroQuantityList = ArrayList<OtherSkus>()
                 otherSKUList.forEach { otherSKU ->
@@ -228,9 +225,9 @@ private fun AddBISView(
                     //  preselectedSize = if(selectedSku!= null && selectedSku.quantity == 0) selectedSku else  zeroQuantityList[0]
                     preselectedSize = selectedSku
 
-                ) { selectedSize -> /* do something with selected */
-
-                    onSizeClick(selectedSize)
+                ) { selectedSize ->
+                    onEvent(BackInStockScreenEvents.OnSizeSelected(selectedSize))
+                    //onSizeClick(selectedSize)
                 }
             }
         }
@@ -292,9 +289,7 @@ fun SpinnerColourView(
         Column {
             TextField(
                 value = convertToTitleCase(selectedColour),
-                onValueChange = {
-                    onSelectionChanged(it)
-                },
+                onValueChange = onSelectionChanged,
                 modifier = Modifier
                     .then(modifier)
                     .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE)),
@@ -345,6 +340,7 @@ fun SpinnerColourView(
                         onClick = {
                             selectedColour = colourName
                             expanded = false
+                            onSelectionChanged(selectedColour)
                         },
                         text = {
                             Text(

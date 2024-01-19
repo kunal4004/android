@@ -120,7 +120,7 @@ class NotifyBackInStockFragment : Fragment() {
                     BackInStockScreen(
                         modifier = Modifier
                             .fillMaxHeight(),
-                        backToStockUiState = viewModel.backInStockState,
+                        backToStockUiState = backInStockState,
                         otherSKUsByGroupKey,
                         selectedGroupKey,
                         selectedSku,
