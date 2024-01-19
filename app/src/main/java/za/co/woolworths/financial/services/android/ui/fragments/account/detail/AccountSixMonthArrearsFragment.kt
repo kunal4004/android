@@ -159,10 +159,11 @@ class AccountSixMonthArrearsFragment : Fragment(R.layout.account_six_month_arrea
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             visibility = VISIBLE
         }
+
         when (eligibilityPlan?.actionText) {
             ActionText.VIEW_ELITE_PLAN.value -> {
                 callTheCallCenterUnderlinedButton?.apply {
-                    visibility = GONE
+                    visibility = VISIBLE
                     isEnabled = false
                 }
                 viewTreatmentPlansButton.text = requireContext().displayLabel()
