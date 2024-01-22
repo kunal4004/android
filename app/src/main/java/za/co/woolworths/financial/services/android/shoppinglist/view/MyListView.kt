@@ -59,7 +59,7 @@ fun MyListView(
             CustomTabRow(
                 list,
                 selectedIndex,
-                Modifier.padding(start = 24.dp, end = 24.dp)
+                Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
             ) { index ->
                 selectedIndex = index
             }

@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.shoppinglist.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
-@SuppressLint("SuspiciousIndentation")
 @Composable
 fun CustomTabRow(
     list: List<String>,
@@ -56,7 +54,7 @@ fun CustomTabRow(
                 .clip(RoundedCornerShape(50)),
             containerColor = Color(0xFFEEEEEE),
             divider = {},
-            indicator = { tabPositions ->
+            indicator = { _ ->
                 TabRowDefaults.Indicator(
                     color = Color.Transparent
                 )

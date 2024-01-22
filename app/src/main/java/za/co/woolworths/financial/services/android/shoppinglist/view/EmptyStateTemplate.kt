@@ -64,7 +64,7 @@ fun EmptyStateTemplateStateless(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.color_F3F3F3)),
+            .background(color = colorResource(id = R.color.color_FFFFFF)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
