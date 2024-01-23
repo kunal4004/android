@@ -295,7 +295,7 @@ fun SpinnerColourView(
                             id = R.drawable.spinner_icon
                         ),
                         tint = Color.Black,
-                        contentDescription = stringResource(id = R.string.description)
+                        contentDescription = stringResource(id = R.string.c_description)
                     )
                 },
                 colors = TextFieldDefaults.colors(
@@ -415,7 +415,7 @@ fun SpinnerSizeView(
                             id = R.drawable.spinner_icon
                         ),
                         tint = Color.Black,
-                        contentDescription = stringResource(id = R.string.description)
+                        contentDescription = stringResource(id = R.string.c_description)
                     )
                 },
                 readOnly = true,
