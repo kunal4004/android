@@ -53,6 +53,14 @@ fun HeaderView(
         ) {
             onHeaderEvent(HeaderViewEvent.IconClick)
         }
+
+        is HeaderViewState.HeaderStateType3 -> HeaderType3(
+            modifier = modifier,
+            icon = headerViewState.icon,
+            title = headerViewState.title
+        ) {
+            onHeaderEvent(HeaderViewEvent.IconClick)
+        }
     }
 }
 
@@ -117,6 +125,45 @@ private fun HeaderType2(
     onIconClick: () -> Unit
 ) {
 
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .then(modifier),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Text(
+            text = title.uppercase(),
+            modifier = Modifier.weight(0.6f),
+            textAlign = TextAlign.Center,
+            style = TextStyle(
+                fontFamily = FuturaFontFamily,
+                fontWeight = FontWeight.W600,
+                fontSize = 12.sp,
+                color = HeaderGrey
+            ),
+            letterSpacing = 1.5.sp
+        )
+
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            modifier = Modifier.clickable {
+                onIconClick()
+            }
+        )
+    }
+}
+
+@Composable
+private fun HeaderType3(
+    modifier: Modifier = Modifier,
+    @DrawableRes icon: Int = R.drawable.icon_close_16,
+    title: String = "",
+    onIconClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

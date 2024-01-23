@@ -281,13 +281,23 @@
                     app:layout_constraintTop_toBottomOf="@id/freeGiftWithPurchaseLayout" />
 
                 <include
+                    android:id="@+id/outOfStockLayout"
+                    layout="@layout/product_details_out_of_stock_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginLeft="@dimen/twenty_four_dp"
+                    android:layout_marginRight="@dimen/twenty_four_dp"
+                    app:layout_constraintTop_toBottomOf="@id/sizeColorSelectorLayout" />
+
+                <include
                     android:id="@+id/deliveryLocationLayout"
                     layout="@layout/product_details_delivery_location_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/twenty_four_dp"
                     android:layout_marginRight="@dimen/twenty_four_dp"
-                    app:layout_constraintTop_toBottomOf="@id/sizeColorSelectorLayout" />
+                    app:layout_constraintTop_toBottomOf="@id/outOfStockLayout" />
 
                 <include
                     android:id="@+id/productDetailOptionsAndInformation"
