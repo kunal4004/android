@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.shoptoggle.domain.model.ToggleModel
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.NotifyBackInStockFragment.Companion.SELECTED_GROUP_KEY
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.NotifyBackInStockFragment.Companion.SELECTED_SKU
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.BackInStockScreenEvents
 import javax.inject.Inject
 
@@ -26,8 +28,8 @@ class NotifyBackInStockViewModel @Inject constructor(private val savedStateHandl
     }
 
     fun getArguments() {
-        val selectedSku = savedStateHandle.get<OtherSkus>("selectedSku")
-        val selectedGroupKey = savedStateHandle.get<String>("selectedGroupKey")
+        val selectedSku = savedStateHandle.get<OtherSkus>(SELECTED_SKU)
+        val selectedGroupKey = savedStateHandle.get<String>(SELECTED_GROUP_KEY)
         backInStockState = backInStockState.copy(
             selectedSku = selectedSku,
             isSizeSelected = selectedSku != null && selectedSku.quantity == 0,
