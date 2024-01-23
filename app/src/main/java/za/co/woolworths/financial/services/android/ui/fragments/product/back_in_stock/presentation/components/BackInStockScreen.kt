@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components
 
-import androidx.compose.ui.geometry.Size
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -8,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -75,8 +75,8 @@ fun BackInStockScreen(
                 modifier = modifier,
                 backToStockUiState,
                 otherSKUsByGroupKey,
-              //  selectedGroupKey,
-              //  selectedSku,
+                //  selectedGroupKey,
+                //  selectedSku,
                 hasColor,
                 hasSize
             ) { backInStockEvents ->
@@ -105,11 +105,6 @@ fun BackInStockScreen(
         }
     }
 
-    /* if (listUiState.isLoading) {
-         CircularProgressIndicator(
-                 color = Color.Black
-         )
-     }*/
 }
 
 @Composable
@@ -127,7 +122,7 @@ private fun AddBISView(
         modifier = modifier
     ) {
         Text(
-            text = "Set up Back in Stock notifications",
+            text = stringResource(id = R.string.bis_title),
 
             style = TextStyle(
                 fontSize = 18.sp,
@@ -143,7 +138,7 @@ private fun AddBISView(
         )
 
         Text(
-            text = "Enter your email address and if this product is back in stock you'll be the first to know!",
+            text = stringResource(id = R.string.bis_desc),
 
             style = TextStyle(
                 fontSize = 13.sp,
@@ -159,7 +154,7 @@ private fun AddBISView(
 
         if (hasColor) {
             Text(
-                text = "Select a Colour: *",
+                text = stringResource(id = R.string.select_color),
 
                 style = TextStyle(
                     fontSize = 13.sp,
@@ -191,7 +186,7 @@ private fun AddBISView(
         }
         if (hasSize) {
             Text(
-                text = "Select a Size: *",
+                text = stringResource(id = R.string.select_size),
 
                 style = TextStyle(
                     fontSize = 13.sp,
@@ -224,7 +219,6 @@ private fun AddBISView(
                     modifier = Modifier
                         .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
                         .fillMaxWidth(),
-                    //  preselectedSize = if(selectedSku!= null && selectedSku.quantity == 0) selectedSku else  zeroQuantityList[0]
                     preselectedSize = selectedSku
 
                 ) { selectedSize ->
@@ -234,7 +228,7 @@ private fun AddBISView(
             }
         }
         Text(
-            text = "Email Address: *",
+            text = stringResource(id = R.string.email_address),
 
             style = TextStyle(
                 fontSize = 13.sp,
@@ -301,7 +295,7 @@ fun SpinnerColourView(
                             id = R.drawable.spinner_icon
                         ),
                         tint = Color.Black,
-                        contentDescription = "description"
+                        contentDescription = stringResource(id = R.string.description)
                     )
                 },
                 colors = TextFieldDefaults.colors(
@@ -405,7 +399,7 @@ fun SpinnerSizeView(
                     .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE)),
                 placeholder = {
                     Text(
-                        text = "Select a size",
+                        text = stringResource(id = R.string.placeholder_select_size),
                         style = TextStyle(
                             fontSize = 14.sp,
                             lineHeight = 21.sp,
@@ -421,7 +415,7 @@ fun SpinnerSizeView(
                             id = R.drawable.spinner_icon
                         ),
                         tint = Color.Black,
-                        contentDescription = "description"
+                        contentDescription = stringResource(id = R.string.description)
                     )
                 },
                 readOnly = true,

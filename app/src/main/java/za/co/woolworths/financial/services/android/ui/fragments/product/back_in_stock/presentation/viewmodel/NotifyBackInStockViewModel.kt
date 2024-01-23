@@ -53,24 +53,15 @@ class NotifyBackInStockViewModel @Inject constructor(private val savedStateHandl
     fun onEvent(event: BackInStockScreenEvents) {
 
         when (event) {
-            /* BackInStockScreenEvents.CreateListClick -> backInStockState.value = backInStockState.value.copy(
-                 showCreateList = true
-             )*/
             is BackInStockScreenEvents.OnSizeSelected -> onSizeClick(event.selectedSize)
             is BackInStockScreenEvents.OnColorSelected-> onColorClick(event.selectedColor)
-
-            //  BackInStockScreenEvents.RetryClick -> getMyList()
             BackInStockScreenEvents.ConfirmClick -> notifyMe()
-            /* is AddToListScreenEvents.OnItemClick -> onListItemClick(event.item)
-             is AddToListScreenEvents.ConfirmCreateList -> createList(event.name)
-             BackInStockScreenEvents.CreateListBackPressed -> listState.value = listState.value.copy(
-                 showCreateList = false
-             )*/
+            else -> {
 
-            else -> {}
+            }
         }
     }
-
+    //TODO implement API call here
     private fun notifyMe() {
 
     }

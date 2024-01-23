@@ -2,13 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.back_in
 
 sealed class BackInStockScreenEvents {
 
-    object CreateListClick : BackInStockScreenEvents()
     object RetryClick : BackInStockScreenEvents()
     object ConfirmClick: BackInStockScreenEvents()
     object CancelClick: BackInStockScreenEvents()
-    object ColorSpinnerClick: BackInStockScreenEvents()
-    object SizeSpinnerClick: BackInStockScreenEvents()
-    object EmailEditTextClick: BackInStockScreenEvents()
+    object ColorDropdownClick: BackInStockScreenEvents()
+    object SizeDropdownClick: BackInStockScreenEvents()
 
     data class OnColorSelected(val selectedColor : String): BackInStockScreenEvents()
     data class OnSizeSelected(val selectedSize : String): BackInStockScreenEvents()

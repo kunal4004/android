@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -43,6 +42,15 @@ class NotifyBackInStockFragment : Fragment() {
     private var selectedGroupKey: String? = null
     private var hasColor: Boolean = false
     private var hasSize: Boolean = false
+
+    companion object {
+        const val OTHER_SKUSBYGROUP_KEY = "otherSKUsByGroupKey"
+        const val SELECTED_SKU = "selectedSku"
+        const val SELECTED_GROUP_KEY = "selectedGroupKey"
+        const val HAS_COLOR = "hasColor"
+        const val HAS_SIZE = "hasSize"
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (activity as? BottomNavigationActivity)?.apply {
@@ -55,18 +63,18 @@ class NotifyBackInStockFragment : Fragment() {
         this.arguments?.apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 otherSKUsByGroupKey = getSerializable(
-                    "otherSKUsByGroupKey",
+                    OTHER_SKUSBYGROUP_KEY,
                     OtherSkus::class.java
                 ) as LinkedHashMap<String, ArrayList<OtherSkus>>
-                selectedSku = getParcelable("selectedSku", OtherSkus::class.java)
+                selectedSku = getParcelable(SELECTED_SKU, OtherSkus::class.java)
             } else {
                 otherSKUsByGroupKey =
-                    getSerializable("otherSKUsByGroupKey") as LinkedHashMap<String, ArrayList<OtherSkus>>
-                selectedSku = getParcelable<OtherSkus>("selectedSku")
+                    getSerializable(OTHER_SKUSBYGROUP_KEY) as LinkedHashMap<String, ArrayList<OtherSkus>>
+                selectedSku = getParcelable<OtherSkus>(SELECTED_SKU)
             }
-            selectedGroupKey = getString("selectedGroupKey")
-            hasColor = getBoolean("hasColor")
-            hasSize = getBoolean("hasSize")
+            selectedGroupKey = getString(SELECTED_GROUP_KEY)
+            hasColor = getBoolean(HAS_COLOR)
+            hasSize = getBoolean(HAS_SIZE)
         }
     }
 
@@ -141,12 +149,5 @@ class NotifyBackInStockFragment : Fragment() {
             }
         }
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-
-    }
-
 
 }

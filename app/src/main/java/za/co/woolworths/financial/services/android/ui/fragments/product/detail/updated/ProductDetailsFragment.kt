@@ -4655,11 +4655,11 @@ class ProductDetailsFragment :
         } else {
             val fragment = NotifyBackInStockFragment()
             val bundle = Bundle()
-            bundle.putSerializable("otherSKUsByGroupKey", otherSKUsByGroupKey)
-            bundle.putString("selectedGroupKey", getSelectedGroupKey())
-            bundle.putParcelable("selectedSku", getSelectedSku())
-            bundle.putBoolean("hasColor", hasColor)
-            bundle.putBoolean("hasSize", hasSize)
+            bundle.putSerializable(NotifyBackInStockFragment.OTHER_SKUSBYGROUP_KEY, otherSKUsByGroupKey)
+            bundle.putString(NotifyBackInStockFragment.SELECTED_GROUP_KEY, getSelectedGroupKey())
+            bundle.putParcelable(NotifyBackInStockFragment.SELECTED_SKU, getSelectedSku())
+            bundle.putBoolean(NotifyBackInStockFragment.HAS_COLOR, hasColor)
+            bundle.putBoolean(NotifyBackInStockFragment.HAS_SIZE, hasSize)
             fragment.arguments = bundle
             (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(fragment)
         }
