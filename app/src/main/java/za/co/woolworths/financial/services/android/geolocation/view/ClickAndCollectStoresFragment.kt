@@ -589,8 +589,8 @@ class ClickAndCollectStoresFragment :
         // Apply the custom typefaces to specific text
         spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannableString.setSpan(CustomText(futureSemiBoldTypeFace, blackColor) , 5, 15, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 15, 49, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(CustomText(futureSemiBoldTypeFace, blackColor) , 49, spannableString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 16, 47, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(futureSemiBoldTypeFace, blackColor) , 48, spannableString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         return spannableString
     }
@@ -604,8 +604,8 @@ class ClickAndCollectStoresFragment :
         val blackColor =  ContextCompat.getColor(context, R.color.black)
         // Apply the custom typefaces to specific text
         spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(CustomText(futureSemiBoldTypeFace, blackColor) , 5, 34, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 35, spannableString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(futureSemiBoldTypeFace, blackColor) , 5, 35, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 36, spannableString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         return spannableString
     }
