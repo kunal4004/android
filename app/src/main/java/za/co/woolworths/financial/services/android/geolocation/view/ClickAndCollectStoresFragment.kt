@@ -2,11 +2,17 @@ package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.TextWatcher
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -39,9 +45,11 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.shoptoggle.presentation.ShopToggleActivity
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.ui.views.tooltip.CustomText
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
@@ -256,6 +264,19 @@ class ClickAndCollectStoresFragment :
     override fun onStoreSelected(mStore: Store?) {
         dataStore = mStore
         binding.tvConfirmStore?.isEnabled = true
+        val editDeliveryLocationActivity = activity as? EditDeliveryLocationActivity
+        if(dataStore?.storeDeliveryType.equals("food")) {
+            binding.tvStoreSelect.visibility = View.VISIBLE
+            binding.tvStoreSelect.text= editDeliveryLocationActivity?.let { foodSelectionStoreText(it,dataStore?.storeName) }
+        }
+        else if(dataStore?.storeDeliveryType.equals("other")){
+            binding.tvStoreSelect.visibility = View.VISIBLE
+            binding.tvStoreSelect.text=
+                editDeliveryLocationActivity?.let { fbhStoreText(it) }
+        }
+        else {
+            binding.tvStoreSelect.visibility = View.GONE
+        }
     }
 
     override fun onClick(v: View?) {
@@ -556,6 +577,37 @@ class ClickAndCollectStoresFragment :
 
 
 
+    }
+
+    private fun foodSelectionStoreText(context: Context,foodSelectionText: String?): SpannableString {
+        val descriptionText=getString(R.string.food_item_select)+" "+foodSelectionText
+        val spannableString = SpannableString(descriptionText)
+        val futureMediumTypeFace: Typeface? = ResourcesCompat.getFont(context, R.font.futura_medium)
+        val futureSemiBoldTypeFace: Typeface? = ResourcesCompat.getFont(context, R.font.futura_semi_bold)
+
+        val blackColor =  ContextCompat.getColor(context, R.color.black)
+        // Apply the custom typefaces to specific text
+        spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(futureSemiBoldTypeFace, blackColor) , 5, 15, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 15, 49, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(futureSemiBoldTypeFace, blackColor) , 49, spannableString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        return spannableString
+    }
+
+    private fun fbhStoreText(context: Context): SpannableString {
+        val fbhText=getString(R.string.fbh_item_select)
+        val spannableString = SpannableString(fbhText)
+        val futureMediumTypeFace: Typeface? = ResourcesCompat.getFont(context, R.font.futura_medium)
+        val futureSemiBoldTypeFace: Typeface? = ResourcesCompat.getFont(context, R.font.futura_semi_bold)
+
+        val blackColor =  ContextCompat.getColor(context, R.color.black)
+        // Apply the custom typefaces to specific text
+        spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(futureSemiBoldTypeFace, blackColor) , 5, 34, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(CustomText(futureMediumTypeFace, blackColor) , 35, spannableString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        return spannableString
     }
 
 }
