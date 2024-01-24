@@ -681,19 +681,21 @@ class OrderConfirmationFragment :
     }
 
     private fun initialiseItemsOrder(items: OrderItems?) {
-        if (!items?.other.isNullOrEmpty()) {
-            itemsOrder?.addAll(items?.other!!)
-        }
-        if (!items?.food.isNullOrEmpty()) {
-            itemsOrder?.addAll(items?.food!!)
+        if (itemsOrder.isNullOrEmpty()) {
+            if (!items?.other.isNullOrEmpty()) {
+                itemsOrder?.addAll(items?.other!!)
+            }
+            if (!items?.food.isNullOrEmpty()) {
+                itemsOrder?.addAll(items?.food!!)
+            }
         }
     }
 
     private fun initialiseCncItemsOrder(items: OrderItems?) {
-        if (!items?.other.isNullOrEmpty()) {
+        if (!items?.other.isNullOrEmpty()&&cncOtherItemsOrder.isNullOrEmpty()) {
             cncOtherItemsOrder?.addAll(items?.other!!)
         }
-        if (!items?.food.isNullOrEmpty()) {
+        if (!items?.food.isNullOrEmpty()&&cncFoodItemsOrder.isNullOrEmpty()) {
             cncFoodItemsOrder?.addAll(items?.food!!)
         }
     }
