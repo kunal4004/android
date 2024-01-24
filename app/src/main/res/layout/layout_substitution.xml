@@ -34,6 +34,25 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_substitution" />
 
     <TextView
+        android:id="@+id/txt_substitution_out_of_stock"
+        style="@style/opensans_regular_15_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:ellipsize="end"
+        android:drawablePadding="@dimen/eight_dp"
+        android:maxLines="1"
+        android:text="@string/substitute_availaibility_msg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txt_substitution_edit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <TextView
+        tools:visibility="gone"
         android:id="@+id/txt_substitution_title"
         style="@style/opensans_regular_text_style_14sp_black"
         android:layout_width="0dp"

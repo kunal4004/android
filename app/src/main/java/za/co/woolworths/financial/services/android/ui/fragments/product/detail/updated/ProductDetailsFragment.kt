@@ -1405,11 +1405,34 @@ class ProductDetailsFragment :
                 productDetails?.otherSkus?.forEach {
                     if (it.sku.equals(selectedSku.sku, ignoreCase = true)) {
                         selectedSku.quantity = it.quantity
+                        // Show enhance subst out of stock msg
+                        // if selected product is oos
+                        if (selectedSku.quantity <= 0) {
+                            showEnhancedSubstitutionOutOfStock()
+                        }
                         return@forEach
                     }
                 }
             }
             addItemToCart()
+        }
+    }
+
+    private fun showEnhancedSubstitutionOutOfStock() {
+        if ((KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false)
+            || (productDetails?.fulfillmentType != getString(R.string.fullfilment_type_01) && productDetails?.productType != getString(
+                R.string.food_product_type
+            ))
+        ) {
+            binding.productDetailOptionsAndInformation.substitutionLayout.root?.visibility =
+                View.GONE
+            return
+        }
+        binding.productDetailOptionsAndInformation.substitutionLayout.apply {
+            root.visibility = View.VISIBLE
+            txtSubstitutionOutOfStock.visibility = View.VISIBLE
+            txtSubstitutionTitle.visibility = View.GONE
+            txtSubstitutionEdit.visibility = View.GONE
         }
     }
 
@@ -1741,10 +1764,12 @@ class ProductDetailsFragment :
                     Status.LOADING -> {
                         binding.progressBar.visibility = View.VISIBLE
                     }
+
                     Status.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
                         showSubstitutionLayout(isInventoryCalled, resource)
                     }
+
                     Status.ERROR -> {
                         binding.progressBar.visibility = View.GONE
                         hideSubstitutionLayout()
@@ -1759,14 +1784,18 @@ class ProductDetailsFragment :
         substitutionProductItem: ProductList? = null
     ) {
         if ((KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false)
-            || (productDetails?.fulfillmentType != getString(R.string.fullfilment_type_01) && productDetails?.productType !=getString(R.string.food_product_type))
+            || (productDetails?.fulfillmentType != getString(R.string.fullfilment_type_01) && productDetails?.productType != getString(
+                R.string.food_product_type
+            ))
         ) {
-            binding.productDetailOptionsAndInformation.substitutionLayout.root?.visibility = View.GONE
+            binding.productDetailOptionsAndInformation.substitutionLayout.root?.visibility =
+                View.GONE
             return
         }
 
         binding.productDetailOptionsAndInformation.substitutionLayout.apply {
             root.visibility = View.VISIBLE
+            txtSubstitutionOutOfStock.visibility = View.GONE
             txtSubstitutionEdit.setOnClickListener(this@ProductDetailsFragment)
             if (SessionUtilities.getInstance().isUserAuthenticated) {
                 if (substitutionProductItem == null) {
@@ -1778,6 +1807,21 @@ class ProductDetailsFragment :
                     txtSubstitutionTitle.text = substitutionProductItem.productName
                     txtSubstitutionEdit.text = context?.getString(R.string.change)
                 }
+
+                if (isInventoryCalled) {
+                    getSelectedSku()?.let { selectedSku ->
+                        productDetails?.otherSkus?.forEach {
+                            if (it.sku.equals(selectedSku.sku, ignoreCase = true)) {
+                                // Show enhance subst out of stock msg
+                                // if selected product is oos
+                                if (selectedSku.quantity <= 0) {
+                                    showEnhancedSubstitutionOutOfStock()
+                                }
+                                return@forEach
+                            }
+                        }
+                    }
+                }
             } else {
                 txtSubstitutionTitle.text = context?.getString(R.string.sign_in_label)
                 txtSubstitutionEdit.text = context?.getString(R.string.sign_in)
@@ -1785,7 +1829,7 @@ class ProductDetailsFragment :
         }
     }
 
-    fun updateItemCellForEnhanceSubstitution(title: String?,  substitutionChoice:String) {
+    fun updateItemCellForEnhanceSubstitution(title: String?, substitutionChoice: String) {
         binding.productDetailOptionsAndInformation.substitutionLayout.apply {
             txtSubstitutionTitle.text = title
             txtSubstitutionEdit.text = context?.getString(R.string.change)

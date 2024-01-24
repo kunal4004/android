@@ -3289,6 +3289,7 @@
     <string name="remove_copy_msg">An error occurred while copying your items. \n Please try again later.</string>
     <string name="remove_move_msg">An error occurred while moving your items. \n Please try again later.</string>
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
+    <string name="substitute_availaibility_msg">Only available when product is in stock.</string>
 
     <plurals name="edit_items">
         <item quantity="one">Edit Item </item>
