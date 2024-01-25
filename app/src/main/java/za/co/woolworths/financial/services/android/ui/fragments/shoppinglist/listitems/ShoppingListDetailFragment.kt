@@ -1204,11 +1204,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         requireActivity().apply {
             if(isVisible) {
                 Utils.setScreenName(this, SHOPPING_LIST_ITEMS)
-                registerReceiver(
-                    mConnectionBroadcast,
-                    IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
-                )
             }
+            registerReceiver(
+                mConnectionBroadcast,
+                IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+            )
         }
     }
 
