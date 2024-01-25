@@ -238,24 +238,29 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
             onActivityResult = { result ->
                 when (result.resultCode) {
                     Activity.RESULT_OK -> {
-                        val toggleFulfilmentResultWithUnsellable =
-                            UnsellableAccess.getToggleFulfilmentResultWithUnSellable(result.data)
-                        if (toggleFulfilmentResultWithUnsellable != null) {
-                            UnsellableAccess.navigateToUnsellableItemsFragment(
-                                ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
-                                toggleFulfilmentResultWithUnsellable.deliveryType,
-                                confirmAddressViewModel,
-                                ProgressBar(requireContext()),
-                                this,
-                                parentFragmentManager
-                            )
-                        } else {
-                            viewModel.setDeliveryLocation()
-                            viewModel.refreshInventory()
-                        }
+                        onLocationChange(result.data)
                     }
                 }
             })
+    }
+
+    private fun onLocationChange(data: Intent?) {
+
+        val toggleFulfilmentResultWithUnsellable =
+            UnsellableAccess.getToggleFulfilmentResultWithUnSellable(data)
+        if (toggleFulfilmentResultWithUnsellable != null) {
+            UnsellableAccess.navigateToUnsellableItemsFragment(
+                ArrayList(toggleFulfilmentResultWithUnsellable.unsellableItemsList),
+                toggleFulfilmentResultWithUnsellable.deliveryType,
+                confirmAddressViewModel,
+                ProgressBar(requireContext()),
+                this,
+                parentFragmentManager
+            )
+        } else {
+            viewModel.setDeliveryLocation()
+            viewModel.refreshInventory()
+        }
     }
 
     private fun launchStoreOrLocationSelection() {
@@ -289,6 +294,14 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
             newDelivery = Delivery.CNC,
             needStoreSelection = true,
         )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            BundleKeysConstants.UPDATE_STORE_REQUEST -> {
+                onLocationChange(data)
+            }
+        }
     }
 
 

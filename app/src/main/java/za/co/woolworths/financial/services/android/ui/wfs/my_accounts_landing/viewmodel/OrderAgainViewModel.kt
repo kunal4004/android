@@ -218,6 +218,7 @@ class OrderAgainViewModel @Inject constructor(
         viewModelScope.launch {
             _orderAgainUiState.update {
                 val newList = it.revealedList.toMutableList()
+                newList.clear()
                 if (item.quantityInStock > 1) {
                     newList.add(item.id)
                 }
@@ -327,38 +328,42 @@ class OrderAgainViewModel @Inject constructor(
             }
 
             orderAgainUC(plistId).collectLatest {
-                _orderAgainUiState.update { state ->
-                    when (it.status) {
-                        Status.SUCCESS -> {
-                            // Get all product Ids for inventory call.
-                            val productIds = getProductIds(it.data)
 
-                            val items = getOrderList(it.data)
-                            val updatedList = items.map { it.toProductItem() }
-                            orderList.clear()
-                            orderList.addAll(updatedList)
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        // Get all product Ids for inventory call.
+                        val productIds = getProductIds(it.data)
 
-                            // Firebase event
-                            FirebaseAnalyticsEventHelper.sendViewItemListOrderAgainEvent(updatedList, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
+                        val items = getOrderList(it.data)
+                        val updatedList = items.map { it.toProductItem() }
+                        orderList.clear()
+                        orderList.addAll(updatedList)
 
-                            // If no food product available in response show empty screen.
-                            if (productIds.isEmpty()) {
-                                state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen())
-                            } else {
-
-                                // get all product ids and make inventory call
-                                callInventoryApi(productIds)
-                                state.copy(
-                                    screenState = OrderAgainScreenState.Loading
-                                )
-                            }
-                        }
-
-                        Status.ERROR -> state.copy(
-                            screenState = OrderAgainScreenState.ShowErrorScreen()
+                        // Firebase event
+                        FirebaseAnalyticsEventHelper.sendViewItemListOrderAgainEvent(
+                            updatedList,
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN
                         )
 
-                        Status.LOADING -> state.copy(
+                        // If no food product available in response show empty screen.
+                        if (productIds.isEmpty()) {
+                            _orderAgainUiState.update { state ->
+                                state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen())
+                            }
+                        } else {
+                            // get all product ids and make inventory call
+                            callInventoryApi(productIds)
+                        }
+                    }
+
+                    Status.ERROR -> _orderAgainUiState.update { state ->
+                        state.copy(
+                            screenState = OrderAgainScreenState.ShowErrorScreen()
+                        )
+                    }
+
+                    Status.LOADING -> _orderAgainUiState.update { state ->
+                        state.copy(
                             screenState = OrderAgainScreenState.Loading,
                             headerState = state.headerState.copy(
                                 rightButtonRes = R.string.empty
@@ -384,14 +389,18 @@ class OrderAgainViewModel @Inject constructor(
             val skuIds = productIds.joinToString("-")
             // Fetching store id for fulfillment type 01 since all are food items
             val storeId = Utils.retrieveStoreId("01")
-            // If store id is not found meaning all product are unavailable.
-            if (storeId.isNullOrEmpty()) {
-                _orderAgainUiState.value = _orderAgainUiState.value.copy(
-                    screenState = OrderAgainScreenState.ShowErrorScreen()
-                )
+            _orderAgainUiState.update {
+                // If store id is not found meaning all product are unavailable.
+                if (storeId.isNullOrEmpty())
+                    _orderAgainUiState.value.copy(
+                        screenState = OrderAgainScreenState.ShowErrorScreen()
+                    )
+                else _orderAgainUiState.value.copy(screenState = OrderAgainScreenState.Loading)
+            }
+            
+            if(storeId.isNullOrEmpty()) {
                 return@launch
             }
-
             orderAgainInventoryUC(storeId, skuIds).collectLatest {
                 _orderAgainUiState.value = when (it.status) {
                     Status.SUCCESS -> {
