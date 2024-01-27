@@ -7,7 +7,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -118,9 +117,7 @@ private fun AddBISView(
     hasSize: Boolean,
     onEvent: (event: BackInStockScreenEvents) -> Unit
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column {
         Text(
             text = stringResource(id = R.string.bis_title),
 
@@ -213,18 +210,18 @@ private fun AddBISView(
                 otherSKUsByGroupKey.remove(selectedGroupKey)?.let {
                     otherSKUsByGroupKey.put(selectedGroupKey.toString(), zeroQuantityList)
                 }
-                SpinnerSizeView(
-                    otherSKUsByGroupKey,
-                    selectedGroupKey,
-                    modifier = Modifier
-                        .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
-                        .fillMaxWidth(),
-                    preselectedSize = selectedSku
+            }
+            SpinnerSizeView(
+                otherSKUsByGroupKey,
+                selectedGroupKey,
+                modifier = Modifier
+                    .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
+                    .fillMaxWidth(),
+                preselectedSize = selectedSku
 
-                ) { selectedSize ->
-                    onEvent(BackInStockScreenEvents.OnSizeSelected(selectedSize))
-                    //onSizeClick(selectedSize)
-                }
+            ) { selectedSize ->
+                onEvent(BackInStockScreenEvents.OnSizeSelected(selectedSize))
+                //onSizeClick(selectedSize)
             }
         }
         Text(
@@ -280,14 +277,110 @@ fun SpinnerColourView(
 
     var selectedColour by remember { mutableStateOf(preselectedColour) }
     var expanded by remember { mutableStateOf(false) } // initial value
-    var rowSize by remember { mutableStateOf(Size.Zero) }
+    /*Box {
+         Column {
+             TextField(
+                 value = convertToTitleCase(selectedColour),
+                 onValueChange = onSelectionChanged,
+                 modifier = Modifier
+                     .then(modifier)
+                     .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE)),
+                 trailingIcon = {
+                     Icon(
+                         painter = painterResource(
+                             id = R.drawable.spinner_icon
+                         ),
+                         tint = Color.Black,
+                         contentDescription = stringResource(id = R.string.c_description)
+                     )
+                 },
+                 colors = TextFieldDefaults.colors(
+                     focusedContainerColor = Color.Transparent,
+                     unfocusedContainerColor = Color.Transparent,
+                     disabledIndicatorColor = Color.Transparent
+                 ),
+                 readOnly = true
+             )
+             DropdownMenu(
+                 modifier = Modifier
+                     .background(Color.White)
+                     .then(modifier),
+                 expanded = expanded,
+                 properties = PopupProperties(focusable = false),
+                 onDismissRequest = { expanded = false },
+             ) {
+                 val colourNames = ArrayList<String>()
+                 otherSKUsByGroupKey.forEach { entry ->
+                     val otherSKUList = otherSKUsByGroupKey[entry.key]
+                     val isZeroQuantity = otherSKUList?.any {
+                         (it.quantity == 0) // show colours which have zero quantity
+                     }
+                     if (isZeroQuantity == true) {
+                         colourNames.add(entry.key)
+                     }
+                 }
+                 colourNames.reverse()
+                 colourNames.forEach { colourName ->
+                     DropdownMenuItem(
+                         modifier = Modifier
+                             .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE))
+                             .background(Color.White)
+                             .clickable(
+                                 interactionSource = remember { MutableInteractionSource() },
+                                 indication = null
+                             ) { },
+                         onClick = {
+                             selectedColour = colourName
+                             expanded = false
+                             onSelectionChanged(selectedColour)
+                         },
+                         text = {
+                             Text(
+                                 text = (convertToTitleCase(colourName)),
+                                 modifier = Modifier
+                                     .wrapContentWidth()
+                                     .align(Alignment.Start),
+                                 color = Color.Black,
+                                 style = TextStyle(
+                                     fontSize = 14.sp,
+                                     lineHeight = 21.sp,
+                                     fontFamily = FontFamily(Font(R.font.opensans_medium)),
+                                     fontWeight = FontWeight(400),
+                                     color = Color.Black
+                                 )
+                             )
+                         }
+                     )
+                 }
+             }
+         }
+         Spacer(
+             modifier = Modifier
+                 .matchParentSize()
+                 .background(Color.Transparent)
+                 .padding(1.dp)
+                 .clickable(
+                     onClick = { expanded = !expanded },
+                     interactionSource = remember { MutableInteractionSource() },
+                     indication = null
+                 )
+         )
+     }*/
     Box {
-        Column {
+        ExposedDropdownMenuBox(
+            modifier = modifier,
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
+
             TextField(
                 value = convertToTitleCase(selectedColour),
                 onValueChange = onSelectionChanged,
                 modifier = Modifier
-                    .then(modifier)
+                    .menuAnchor()
+                    .fillMaxWidth()
                     .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE)),
                 trailingIcon = {
                     Icon(
@@ -307,12 +400,11 @@ fun SpinnerColourView(
             )
             DropdownMenu(
                 modifier = Modifier
-                    .background(Color.White)
-                    .then(modifier),
+                    .exposedDropdownSize()
+                    .background(Color.White),
                 expanded = expanded,
                 properties = PopupProperties(focusable = false),
-                onDismissRequest = { expanded = false },
-            ) {
+                onDismissRequest = { false }) {
                 val colourNames = ArrayList<String>()
                 otherSKUsByGroupKey.forEach { entry ->
                     val otherSKUList = otherSKUsByGroupKey[entry.key]
@@ -327,7 +419,11 @@ fun SpinnerColourView(
                 colourNames.forEach { colourName ->
                     DropdownMenuItem(
                         modifier = Modifier
-                            .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE))
+                            .fillMaxWidth()
+                            .border(
+                                width = 1.dp,
+                                color = colorResource(R.color.color_EEEEEE)
+                            )
                             .background(Color.White)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
@@ -358,20 +454,10 @@ fun SpinnerColourView(
                 }
             }
         }
-        Spacer(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Color.Transparent)
-                .padding(1.dp)
-                .clickable(
-                    onClick = { expanded = !expanded },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                )
-        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpinnerSizeView(
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
@@ -390,12 +476,19 @@ fun SpinnerSizeView(
     var expanded by remember { mutableStateOf(false) } // initial value
 
     Box {
-        Column {
+        ExposedDropdownMenuBox(
+            modifier = modifier,
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
             TextField(
                 value = selectedSize,
                 onValueChange = onSelectionChanged,
                 modifier = Modifier
-                    .then(modifier)
+                    .menuAnchor()
+                    .fillMaxWidth()
                     .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE)),
                 placeholder = {
                     Text(
@@ -418,26 +511,26 @@ fun SpinnerSizeView(
                         contentDescription = stringResource(id = R.string.c_description)
                     )
                 },
-                readOnly = true,
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
-                )
+                ),
+                readOnly = true
             )
             DropdownMenu(
                 modifier = Modifier
-                    .background(Color.White)
-                    .then(modifier),
-                expanded = expanded,
+                    .exposedDropdownSize()
+                    .background(Color.White),
                 properties = PopupProperties(focusable = false),
-                onDismissRequest = { expanded = false },
-            ) {
+                expanded = expanded,
+                onDismissRequest = { false }) {
 
                 val otherSKUList = otherSKUsByGroupKey[selectedGroupKey]
                 otherSKUList?.forEach { otherSKU ->
                     DropdownMenuItem(
                         modifier = Modifier
+                            .fillMaxWidth()
                             .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE))
                             .background(Color.White),
                         onClick = {
@@ -465,17 +558,6 @@ fun SpinnerSizeView(
                 }
             }
         }
-        Spacer(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Color.Transparent)
-                .padding(1.dp)
-                .clickable(
-                    onClick = { expanded = !expanded },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                )
-        )
     }
 }
 
