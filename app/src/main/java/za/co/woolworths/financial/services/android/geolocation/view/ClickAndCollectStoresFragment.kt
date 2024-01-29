@@ -62,6 +62,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.NEED_STORE_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
+import za.co.woolworths.financial.services.android.util.Constant.Companion.FOOD
+import za.co.woolworths.financial.services.android.util.Constant.Companion.OTHER
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.setLocationEvent
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper.switchDeliverModeEvent
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -265,17 +267,18 @@ class ClickAndCollectStoresFragment :
         dataStore = mStore
         binding.tvConfirmStore?.isEnabled = true
         val editDeliveryLocationActivity = activity as? EditDeliveryLocationActivity
-        if(dataStore?.storeDeliveryType.equals("food")) {
-            binding.tvStoreSelect.visibility = View.VISIBLE
-            binding.tvStoreSelect.text= editDeliveryLocationActivity?.let { foodSelectionStoreText(it,dataStore?.storeName) }
-        }
-        else if(dataStore?.storeDeliveryType.equals("other")){
-            binding.tvStoreSelect.visibility = View.VISIBLE
-            binding.tvStoreSelect.text=
-                editDeliveryLocationActivity?.let { fbhStoreText(it) }
-        }
-        else {
-            binding.tvStoreSelect.visibility = View.GONE
+        when (dataStore?.storeDeliveryType) {
+            FOOD -> {
+                binding.tvStoreSelect.visibility = View.VISIBLE
+                binding.tvStoreSelect.text = editDeliveryLocationActivity?.let { foodSelectionStoreText(it, dataStore?.storeName) }
+            }
+            OTHER -> {
+                binding.tvStoreSelect.visibility = View.VISIBLE
+                binding.tvStoreSelect.text = editDeliveryLocationActivity?.let { fbhStoreText(it) }
+            }
+            else -> {
+                binding.tvStoreSelect.visibility = View.GONE
+            }
         }
     }
 
