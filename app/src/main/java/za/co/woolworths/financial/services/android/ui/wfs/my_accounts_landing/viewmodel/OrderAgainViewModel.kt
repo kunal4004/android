@@ -537,7 +537,7 @@ class OrderAgainViewModel @Inject constructor(
                             it.copy(
                                 snackbarData = it.snackbarData.copy(
                                     count = copyItems.size,
-                                    errorTitle = R.string.copy_to_list_error_msg,
+                                    errorTitle = R.string.empty,
                                     listName = item?.listName ?: "",
                                     listId = item?.listId ?: ""
                                 )
