@@ -420,10 +420,7 @@ fun SpinnerColourView(
                     DropdownMenuItem(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(
-                                width = 1.dp,
-                                color = colorResource(R.color.color_EEEEEE)
-                            )
+                            .border(width = 0.25.dp, color = colorResource(R.color.color_EEEEEE))
                             .background(Color.White)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
@@ -531,7 +528,7 @@ fun SpinnerSizeView(
                     DropdownMenuItem(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE))
+                            .border(width = 0.25.dp, color = colorResource(R.color.color_EEEEEE))
                             .background(Color.White),
                         onClick = {
                             selectedSize = otherSKU.size.toString()
