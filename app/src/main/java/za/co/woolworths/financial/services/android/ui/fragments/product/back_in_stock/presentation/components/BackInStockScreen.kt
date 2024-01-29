@@ -167,21 +167,20 @@ private fun AddBISView(
             )
 
             val selectedGroupKey = backToStockUiState.selectedGroupKey
-            otherSKUsByGroupKey[selectedGroupKey]?.let {
-                if (selectedGroupKey != null) {
-                    SpinnerColourView(
-                        otherSKUsByGroupKey,
-                        selectedGroupKey,
-                        modifier = Modifier
-                            .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
-                            .fillMaxWidth(),
-                        preselectedColour = selectedGroupKey
-                    ) { selectedColour ->
-                        onEvent(BackInStockScreenEvents.OnColorSelected(selectedColour))
-                    }
+            if (selectedGroupKey != null) {
+                SpinnerColourView(
+                    otherSKUsByGroupKey,
+                    selectedGroupKey,
+                    modifier = Modifier
+                        .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
+                        .fillMaxWidth(),
+                    preselectedColour = selectedGroupKey
+                ) { selectedColour ->
+                    onEvent(BackInStockScreenEvents.OnColorSelected(selectedColour))
                 }
             }
         }
+
         if (hasSize) {
             Text(
                 text = stringResource(id = R.string.select_size),
@@ -278,7 +277,7 @@ fun SpinnerColourView(
 
     var selectedColour by remember { mutableStateOf(preselectedColour) }
     var expanded by remember { mutableStateOf(false) } // initial value
-   
+
     Box {
         ExposedDropdownMenuBox(
             modifier = modifier,
