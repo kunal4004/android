@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.presentation.common.BlackButton
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewState
+import za.co.woolworths.financial.services.android.ui.compose.NoRippleInteractionSource
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.viewmodel.NotifyBackInStockViewModel.BackToStockUiState
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
@@ -421,11 +422,8 @@ fun SpinnerColourView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .border(width = 0.25.dp, color = colorResource(R.color.color_EEEEEE))
-                            .background(Color.White)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { },
+                            .background(Color.White),
+                        interactionSource = NoRippleInteractionSource(),
                         onClick = {
                             selectedColour = colourName
                             expanded = false
@@ -530,6 +528,7 @@ fun SpinnerSizeView(
                             .fillMaxWidth()
                             .border(width = 0.25.dp, color = colorResource(R.color.color_EEEEEE))
                             .background(Color.White),
+                        interactionSource = NoRippleInteractionSource(),
                         onClick = {
                             selectedSize = otherSKU.size.toString()
                             expanded = false
