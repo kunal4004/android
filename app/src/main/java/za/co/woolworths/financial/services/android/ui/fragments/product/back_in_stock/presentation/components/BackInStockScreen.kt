@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
