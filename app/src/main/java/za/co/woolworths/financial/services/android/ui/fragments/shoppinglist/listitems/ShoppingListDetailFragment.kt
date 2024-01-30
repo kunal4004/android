@@ -111,6 +111,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_SEARCH_TERM
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.REFRESH_SHOPPING_LIST_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.VIEW_TYPE
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.VIEW_TYPE_EDIT
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.VIEW_TYPE_VIEW_ONLY
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
@@ -243,8 +246,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             // This is share list flow from Deeplinking.
 
             viewLifecycleOwner.lifecycleScope.launch {
-                val viewType = !(arguments?.getString("viewType", "viewOnly")?.contains("Edit") ?: false)
-                viewModel.getItemsInSharedShoppingList(arguments?.getString("listId", "") ?: "", viewType)
+                val viewType = !(arguments?.getString(VIEW_TYPE, VIEW_TYPE_VIEW_ONLY)?.contains(VIEW_TYPE_EDIT) ?: false)
+                viewModel.getItemsInSharedShoppingList(arguments?.getString(MY_LIST_LIST_ID, "") ?: "", viewType)
             }
         } else {
             setUpToolbar(listName)
