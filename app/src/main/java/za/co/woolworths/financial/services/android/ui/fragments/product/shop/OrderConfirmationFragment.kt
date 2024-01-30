@@ -86,11 +86,18 @@ class OrderConfirmationFragment :
     private var isEndlessAisleJourney: Boolean? = false
     private val dyChooseVariationViewModel: DyChooseVariationCallViewModel by viewModels()
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
+    private var isOrderFetched: Boolean = false
+    private lateinit var submittedOrderResponse: SubmittedOrderResponse
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isEndlessAisleJourney = arguments?.getBoolean(BundleKeysConstants.IS_ENDLESS_AISLE_JOURNEY)
-        getOrderDetails()
+        if (!isOrderFetched) {
+            getOrderDetails()
+        } else {
+            updateUi(submittedOrderResponse)
+        }
         addFragmentResultListener()
     }
 
@@ -121,30 +128,8 @@ class OrderConfirmationFragment :
                         is SubmittedOrderResponse -> {
                             when (response.httpCode) {
                                 AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
-                                    response.orderSummary?.orderId?.let { setToolbar(it) }
-                                    setupDeliveryOrCollectionDetails(response)
-                                    setupOrderTotalDetails(response)
-                                    displayVocifNeeded(response)
-                                    if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
-                                    {
-                                        showPurchaseEvent(response)
-                                        isPurchaseEventTriggered = false
-                                    }
-
-                                    //Make this call to recommendation API after receiving the 200 or 201 from the order
-                                    orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
-                                    AppConfigSingleton.dynamicYieldConfig?.apply {
-                                        if (isDynamicYieldEnabled == true) {
-                                            prepareDYConfirmationPageViewRequest(response)
-                                            prepareDYPurchaseOrderRequest(response)
-                                        }
-                                    }
-                                    // Update Layout depending on endless aisle journey is enabled or not
-                                    if(isEndlessAisleJourney == true &&
-                                        response?.orderSummary?.endlessAisleOrder == true &&
-                                        !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()){
-                                        updateLayoutForEndlessAisleJourney(response)
-                                    }
+                                    submittedOrderResponse=response
+                                    updateUi(response)
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -280,6 +265,7 @@ class OrderConfirmationFragment :
             orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
             btnClose.setOnClickListener { requireActivity().onBackPressed() }
             helpTextView.setOnClickListener {
+                isOrderFetched=true
                 findNavController()?.navigate(R.id.action_OrderConfirmationFragment_to_helpAndSupportFragment)
             }
         }
@@ -854,6 +840,33 @@ class OrderConfirmationFragment :
                     FirebaseManager.Companion.logException(e);
                 }
             }
+        }
+    }
+
+    private fun updateUi(response: SubmittedOrderResponse){
+        response.orderSummary?.orderId?.let { setToolbar(it) }
+        setupDeliveryOrCollectionDetails(response)
+        setupOrderTotalDetails(response)
+        displayVocifNeeded(response)
+        if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
+        {
+            showPurchaseEvent(response)
+            isPurchaseEventTriggered = false
+        }
+
+        //Make this call to recommendation API after receiving the 200 or 201 from the order
+        orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true) {
+                prepareDYConfirmationPageViewRequest(response)
+                prepareDYPurchaseOrderRequest(response)
+            }
+        }
+        // Update Layout depending on endless aisle journey is enabled or not
+        if(isEndlessAisleJourney == true &&
+            response?.orderSummary?.endlessAisleOrder == true &&
+            !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()){
+            updateLayoutForEndlessAisleJourney(response)
         }
     }
 }
