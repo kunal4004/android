@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -28,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.presentation.common.BlackButton
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewState
+import za.co.woolworths.financial.services.android.ui.compose.NoRippleInteractionSource
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.viewmodel.NotifyBackInStockViewModel.BackToStockUiState
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
@@ -118,9 +117,7 @@ private fun AddBISView(
     hasSize: Boolean,
     onEvent: (event: BackInStockScreenEvents) -> Unit
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column {
         Text(
             text = stringResource(id = R.string.bis_title),
 
@@ -169,21 +166,20 @@ private fun AddBISView(
             )
 
             val selectedGroupKey = backToStockUiState.selectedGroupKey
-            otherSKUsByGroupKey[selectedGroupKey]?.let {
-                if (selectedGroupKey != null) {
-                    SpinnerColourView(
-                        otherSKUsByGroupKey,
-                        selectedGroupKey,
-                        modifier = Modifier
-                            .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
-                            .fillMaxWidth(),
-                        preselectedColour = selectedGroupKey
-                    ) { selectedColour ->
-                        onEvent(BackInStockScreenEvents.OnColorSelected(selectedColour))
-                    }
+            if (selectedGroupKey != null) {
+                SpinnerColourView(
+                    otherSKUsByGroupKey,
+                    selectedGroupKey,
+                    modifier = Modifier
+                        .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
+                        .fillMaxWidth(),
+                    preselectedColour = selectedGroupKey
+                ) { selectedColour ->
+                    onEvent(BackInStockScreenEvents.OnColorSelected(selectedColour))
                 }
             }
         }
+
         if (hasSize) {
             Text(
                 text = stringResource(id = R.string.select_size),
@@ -213,18 +209,18 @@ private fun AddBISView(
                 otherSKUsByGroupKey.remove(selectedGroupKey)?.let {
                     otherSKUsByGroupKey.put(selectedGroupKey.toString(), zeroQuantityList)
                 }
-                SpinnerSizeView(
-                    otherSKUsByGroupKey,
-                    selectedGroupKey,
-                    modifier = Modifier
-                        .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
-                        .fillMaxWidth(),
-                    preselectedSize = selectedSku
+            }
+            SpinnerSizeView(
+                otherSKUsByGroupKey,
+                selectedGroupKey,
+                modifier = Modifier
+                    .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
+                    .fillMaxWidth(),
+                preselectedSize = selectedSku
 
-                ) { selectedSize ->
-                    onEvent(BackInStockScreenEvents.OnSizeSelected(selectedSize))
-                    //onSizeClick(selectedSize)
-                }
+            ) { selectedSize ->
+                onEvent(BackInStockScreenEvents.OnSizeSelected(selectedSize))
+                //onSizeClick(selectedSize)
             }
         }
         Text(
@@ -280,14 +276,22 @@ fun SpinnerColourView(
 
     var selectedColour by remember { mutableStateOf(preselectedColour) }
     var expanded by remember { mutableStateOf(false) } // initial value
-    var rowSize by remember { mutableStateOf(Size.Zero) }
+
     Box {
-        Column {
+        ExposedDropdownMenuBox(
+            modifier = modifier,
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
+
             TextField(
                 value = convertToTitleCase(selectedColour),
                 onValueChange = onSelectionChanged,
                 modifier = Modifier
-                    .then(modifier)
+                    .menuAnchor()
+                    .fillMaxWidth()
                     .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE)),
                 trailingIcon = {
                     Icon(
@@ -307,12 +311,11 @@ fun SpinnerColourView(
             )
             DropdownMenu(
                 modifier = Modifier
-                    .background(Color.White)
-                    .then(modifier),
+                    .exposedDropdownSize()
+                    .background(Color.White),
                 expanded = expanded,
                 properties = PopupProperties(focusable = false),
-                onDismissRequest = { expanded = false },
-            ) {
+                onDismissRequest = { false }) {
                 val colourNames = ArrayList<String>()
                 otherSKUsByGroupKey.forEach { entry ->
                     val otherSKUList = otherSKUsByGroupKey[entry.key]
@@ -327,12 +330,10 @@ fun SpinnerColourView(
                 colourNames.forEach { colourName ->
                     DropdownMenuItem(
                         modifier = Modifier
-                            .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE))
-                            .background(Color.White)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { },
+                            .fillMaxWidth()
+                            .border(width = 0.25.dp, color = colorResource(R.color.color_EEEEEE))
+                            .background(Color.White),
+                        interactionSource = NoRippleInteractionSource(),
                         onClick = {
                             selectedColour = colourName
                             expanded = false
@@ -358,20 +359,10 @@ fun SpinnerColourView(
                 }
             }
         }
-        Spacer(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Color.Transparent)
-                .padding(1.dp)
-                .clickable(
-                    onClick = { expanded = !expanded },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                )
-        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpinnerSizeView(
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
@@ -390,12 +381,19 @@ fun SpinnerSizeView(
     var expanded by remember { mutableStateOf(false) } // initial value
 
     Box {
-        Column {
+        ExposedDropdownMenuBox(
+            modifier = modifier,
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
             TextField(
                 value = selectedSize,
                 onValueChange = onSelectionChanged,
                 modifier = Modifier
-                    .then(modifier)
+                    .menuAnchor()
+                    .fillMaxWidth()
                     .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE)),
                 placeholder = {
                     Text(
@@ -418,28 +416,29 @@ fun SpinnerSizeView(
                         contentDescription = stringResource(id = R.string.c_description)
                     )
                 },
-                readOnly = true,
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
-                )
+                ),
+                readOnly = true
             )
             DropdownMenu(
                 modifier = Modifier
-                    .background(Color.White)
-                    .then(modifier),
-                expanded = expanded,
+                    .exposedDropdownSize()
+                    .background(Color.White),
                 properties = PopupProperties(focusable = false),
-                onDismissRequest = { expanded = false },
-            ) {
+                expanded = expanded,
+                onDismissRequest = { false }) {
 
                 val otherSKUList = otherSKUsByGroupKey[selectedGroupKey]
                 otherSKUList?.forEach { otherSKU ->
                     DropdownMenuItem(
                         modifier = Modifier
-                            .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE))
+                            .fillMaxWidth()
+                            .border(width = 0.25.dp, color = colorResource(R.color.color_EEEEEE))
                             .background(Color.White),
+                        interactionSource = NoRippleInteractionSource(),
                         onClick = {
                             selectedSize = otherSKU.size.toString()
                             expanded = false
@@ -465,17 +464,6 @@ fun SpinnerSizeView(
                 }
             }
         }
-        Spacer(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Color.Transparent)
-                .padding(1.dp)
-                .clickable(
-                    onClick = { expanded = !expanded },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                )
-        )
     }
 }
 

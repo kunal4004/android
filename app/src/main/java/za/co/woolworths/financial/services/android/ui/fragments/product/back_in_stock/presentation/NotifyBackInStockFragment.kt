@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -19,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LifecycleEventObserver
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
@@ -84,24 +82,10 @@ class NotifyBackInStockFragment : Fragment() {
     ) = contentView(
         ViewCompositionStrategy.DisposeOnDetachedFromWindow
     ) {
-
         OneAppTheme {
-            // If `lifecycleOwner` changes, dispose and reset the effect
-            DisposableEffect(viewLifecycleOwner) {
-                val observer = LifecycleEventObserver { _, _ -> }
-
-                // Add the observer to the lifecycle
-                viewLifecycleOwner.lifecycle.addObserver(observer)
-
-                // When the effect leaves the Composition, remove the observer
-                onDispose {
-                    viewLifecycleOwner.lifecycle.removeObserver(observer)
-                }
-            }
-
             val backInStockState = viewModel.getState()
-            when {
 
+            when {
                 backInStockState.isConfirmInProgress -> {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Spacer(

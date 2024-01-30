@@ -1415,6 +1415,8 @@ class ProductDetailsFragment :
             }
             addItemToCart()
         }
+        checkAllItemsZeroQuantity()
+        checkNotifyMeLayout()
     }
 
     override fun getImageByWidth(imageUrl: String?, context: Context): String {
@@ -1534,7 +1536,8 @@ class ProductDetailsFragment :
         checkNotifyMeLayout()
     }
     private fun checkNotifyMeLayout() {
-        val isZeroQuantity = otherSKUsByGroupKey[getSelectedGroupKey()]?.any {
+        val colorKey : String = (getSelectedGroupKey() ?: defaultGroupKey) as String
+        val isZeroQuantity = otherSKUsByGroupKey[colorKey]?.any {
             (it.quantity == 0)
         }
         binding.outOfStockLayout.apply {
@@ -1552,7 +1555,8 @@ class ProductDetailsFragment :
          }*/
         if (isAllProductsOutOfStock()) {
             binding.showOutOfStockForSelectedSize()
-        } else  binding.hideLowStockForSize()
+        } else if (hasSize) binding.hideLowStockForSize()
+        else if (hasColor) binding.hideLowStockFromSelectedColor()
     }
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): LinkedHashMap<String, ArrayList<OtherSkus>> {
 
@@ -2161,6 +2165,9 @@ class ProductDetailsFragment :
             && !hasSize && getSelectedSku()?.quantity!! > 0 && AppConfigSingleton.lowStock?.isEnabled == true
         ) {
             binding.showLowStockForSelectedColor()
+            binding.sizeColorSelectorLayout.colorPlaceholder?.text = ""
+        } else if (getSelectedSku()?.quantity == 0) {
+            binding.showOutOfStockForSelectedColor()
             binding.sizeColorSelectorLayout.colorPlaceholder?.text = ""
         } else {
             binding.hideLowStockFromSelectedColor()
@@ -4379,6 +4386,37 @@ class ProductDetailsFragment :
                 layoutLowStockColor.root.visibility = View.VISIBLE
                 layoutLowStockColor.txtStockIndicator.text =
                     AppConfigSingleton.lowStock?.lowStockCopy
+                colorPlaceholder?.visibility = View.GONE
+                layoutLowStockColor?.txtStockIndicator?.background =
+                    bindDrawable(R.drawable.bg_low_stock_indicator)
+            }
+            (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToBottom = R.id.layoutLowStockColor
+                colorSelectorRecycleView?.layoutParams = it
+            }
+            (moreColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.topToTop = R.id.layoutLowStockColor
+                it.bottomToBottom = R.id.layoutLowStockColor
+                moreColor?.layoutParams = it
+            }
+        }
+    }
+
+    /**
+     * Show out of stock for selected color
+     */
+    private fun ProductDetailsFragmentBinding.showOutOfStockForSelectedColor() {
+        sizeColorSelectorLayout.apply {
+            (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+                it.startToEnd = R.id.layoutLowStockColor
+                it.topToTop = R.id.layoutLowStockColor
+                it.bottomToBottom = R.id.layoutLowStockColor
+                selectedColor?.layoutParams = it
+                layoutLowStockColor.root.visibility = View.VISIBLE
+                layoutLowStockColor?.txtStockIndicator?.background =
+                    bindDrawable(R.drawable.bg_out_of_stock_indicator)
+                layoutLowStockColor.txtStockIndicator.text =
+                    getString(R.string.out_of_stock)
                 colorPlaceholder?.visibility = View.GONE
             }
             (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
