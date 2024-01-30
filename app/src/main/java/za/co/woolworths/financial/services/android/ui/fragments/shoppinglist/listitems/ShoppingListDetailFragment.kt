@@ -18,6 +18,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -82,6 +83,7 @@ import za.co.woolworths.financial.services.android.shoppinglist.service.network.
 import za.co.woolworths.financial.services.android.shoppinglist.view.EmptyStateView
 import za.co.woolworths.financial.services.android.shoppinglist.view.MoreOptionDialogFragment
 import za.co.woolworths.financial.services.android.shoppinglist.view.ShoppingListErrorView
+import za.co.woolworths.financial.services.android.shoppinglist.view.ShoppingListShareDialogFragment
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.resetUnsellableLiveData
 import za.co.woolworths.financial.services.android.shoptoggle.common.UnsellableAccess.Companion.updateUnsellableLiveData
@@ -109,6 +111,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_LIST_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.MY_LIST_SEARCH_TERM
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.REFRESH_SHOPPING_LIST_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.VIEW_TYPE
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.VIEW_TYPE_EDIT
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.Companion.VIEW_TYPE_VIEW_ONLY
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildAddToCartSuccessToast
@@ -150,9 +155,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     private var customProgressDialog: CustomProgressBar? = null
     private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
-    val selectedItems  = ArrayList<ItemDetail>()
-    val shoppingListId  = ArrayList<String>()
-    val removalGiftItemIds  = ArrayList<String>()
+    private val selectedItems  = ArrayList<ItemDetail>()
+    private val shoppingListId  = ArrayList<String>()
+    private val removalGiftItemIds  = ArrayList<String>()
 
     private val productSearchResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -207,7 +212,6 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
 
     private var selectedShoppingList:ArrayList<ShoppingList>? = null
     private var listOfItems =  ArrayList<AddToListRequest>()
-    private var viewType = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -215,8 +219,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         arguments?.apply {
             listName = getString(ARG_LIST_NAME, "")
             openFromMyList = getBoolean(ARG_OPEN_FROM_MY_LIST, false)
-            viewType = getString("viewType", "")
-            setViewTypeValue()
+            setViewTypeValue(getString("viewType", ""))
         }
         Utils.updateStatusBarBackground(activity)
     }
@@ -243,8 +246,8 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             // This is share list flow from Deeplinking.
 
             viewLifecycleOwner.lifecycleScope.launch {
-                val viewType = !(arguments?.getString("viewType", "viewOnly")?.contains("edit") ?: false)
-                viewModel.getItemsInSharedShoppingList(arguments?.getString("listId", "") ?: "", viewType)
+                val viewType = !(arguments?.getString(VIEW_TYPE, VIEW_TYPE_VIEW_ONLY)?.contains(VIEW_TYPE_EDIT) ?: false)
+                viewModel.getItemsInSharedShoppingList(arguments?.getString(MY_LIST_LIST_ID, "") ?: "", viewType)
             }
         } else {
             setUpToolbar(listName)
@@ -253,7 +256,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
     }
 
-    private fun setViewTypeValue() {
+    private fun setViewTypeValue(viewType: String) {
         when (viewType) {
             null, getString(R.string.empty) -> {
                 MyListFlowType.setFlowType(MyListFlowType.FlowTypeNormal)
@@ -545,7 +548,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     EmptyStateView(uiStateData) { event ->
                         when (event) {
                             is MyLIstUIEvents.StartShoppingClick -> {
-
+                                openShopTab()
                             }
 
                             else -> {
@@ -555,6 +558,12 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     }
                 }
             }
+        }
+    }
+
+    private fun openShopTab() {
+        (requireActivity() as? BottomNavigationActivity)?.apply {
+            navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null)
         }
     }
 
@@ -596,11 +605,22 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     viewEditOnlyLayout.root.visibility = VISIBLE
                     searchBarLayout.visibility = GONE
                     viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
+                    viewEditOnlyLayout.viewOnlyText.text = getString(R.string.view_only_option)
                 }
                 MyListFlowType.FlowTypeEdit -> {
                     viewEditOnlyLayout.root.visibility = VISIBLE
                     searchBarLayout.visibility = VISIBLE
+                    viewEditOnlyLayout.addItemsToListText.text = getString(R.string.share_list)
+                    viewEditOnlyLayout.addItemsToListText.setTextColor(
+                        ContextCompat.getColor(
+                            this@ShoppingListDetailFragment.requireContext(),
+                            R.color.black
+                        )
+                    )
+                    txtMoreOptions.text = getString(R.string.more_options_btn)
                     viewEditOnlyLayout.addItemsToListText.setOnClickListener(this@ShoppingListDetailFragment)
+                    viewEditOnlyLayout.viewOnlyText.text = getString(R.string.pending_collaborators)
+                    viewEditOnlyLayout.eyeImgView.background = AppCompatResources.getDrawable(requireContext(), R.drawable.collaborators)
                 }
                 else -> {
                     searchBarLayout.visibility = VISIBLE
@@ -696,7 +716,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     }
 
                     MyListFlowType.FlowTypeEdit -> {
-                        // Share List
+                        arguments?.getString("listId", "")?.let { navigateToShareListDialog(it) }
                     }
 
                     else -> {
@@ -735,6 +755,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             }
             else -> {}
         }
+    }
+
+    private fun navigateToShareListDialog(listId: String) {
+        val fragment = ShoppingListShareDialogFragment.newInstance(listId)
+        fragment.show(parentFragmentManager, ShoppingListShareDialogFragment::class.simpleName)
     }
 
     private fun openAddToListScreen() {
@@ -892,9 +917,16 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             HTTP_OK -> {
                 bindingListDetails.loadingBar.visibility = GONE
                 viewModel.syncListWithAdapter(shoppingListItemsAdapter?.shoppingListItems)
-                if (shoppingListItemsResponse.listItems.isEmpty()){
+                if (shoppingListItemsResponse.listItems.isEmpty()) {
                     showEmptyState()
                     return
+                }
+                if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeEdit) {
+                    bindingListDetails.viewEditOnlyLayout.viewOnlyText.text =
+                        if (shoppingListItemsResponse.numOfCollaborators > 0) getString(
+                            R.string.number_of_collaborators,
+                            shoppingListItemsResponse.numOfCollaborators.toString()
+                        ) else getString(R.string.pending_collaborators)
                 }
                 viewModel.makeInventoryCalls()
                 if (viewModel.isShoppingListContainsUnavailableItems())
@@ -1262,17 +1294,20 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         // if no item then hide bottom view
         if (viewModel.mShoppingListItems.size == 0) {
             bindingListDetails.rlCheckOut.visibility = GONE
-            disableAddToListOption()
+            if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) {
+                disableAddToListOption()
+            }
             setScrollViewBottomMargin(0)
             return
         }
 
         if (itemWasSelected) {
             bindingListDetails.rlCheckOut.visibility = VISIBLE
-            if (viewType.isNotEmpty()) {
-                // This is share list flow from Deeplinking.
+
+            if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) {
                 enableAddToListOption()
             }
+
             val count = shoppingListItemsAdapter?.addedItemsCount ?: 0
             bindingListDetails.btnCheckOut.text =
                 requireContext().resources.getQuantityString(
@@ -1285,7 +1320,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             (activity as? BottomNavigationActivity)?.hideBottomNavigationMenu()
         } else {
             bindingListDetails.rlCheckOut.visibility = GONE
-            disableAddToListOption()
+            if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) {
+                disableAddToListOption()
+            }
             setScrollViewBottomMargin(0)
             (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
         }
