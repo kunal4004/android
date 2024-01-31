@@ -304,10 +304,6 @@ class ShoppingListItemsAdapter(
                     val item = getItem(bindingAdapterPosition) ?: return@setOnClickListener
                     if (enableClickEvent(item) || !mAdapterIsClickable) return@setOnClickListener
 
-                    if (swipe.isSwipeEnabled){
-                        swipe.close()
-                    }
-
                     if (!item.isSelected && userShouldSetSuburb()) {
                         item.isSelected = false
                         notifyItemChanged(position, shoppingListItems?.size)

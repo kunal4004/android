@@ -3329,11 +3329,6 @@
     </plurals>
 
 
-
-<!--
-    <item quantity="one"><![CDATA[<b>1</b> cat</b>]]></item>
--->
-
     <plurals name="copy_item_msg">
         <item quantity="one">%1$d ITEM COPIED TO %2$s</item>
         <item quantity="other">%1$d ITEMS COPIED TO %2$s</item>
