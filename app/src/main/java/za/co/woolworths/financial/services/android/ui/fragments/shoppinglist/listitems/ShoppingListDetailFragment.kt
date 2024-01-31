@@ -363,7 +363,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                    val message = HtmlCompat.fromHtml( "\t\t" + getFormatedString(
                         count = selectedItemsForRemoval, R.plurals.remove_list) +"\t\t" + listName , HtmlCompat.FROM_HTML_MODE_LEGACY)
 
-                    showSuccessMessage( message.toString(), false)
+                    showSuccessMessage(message.toString(),getString(R.string.edit_operation_removed) ,false)
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
@@ -399,7 +399,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     ) ?: ""
 
                     shoppingListItemsAdapter?.resetSelection()
-                    showSuccessMessage( title, buttonIsVisible = listName != getString(R.string.multiple_lists))
+                    showSuccessMessage( title,getString(R.string.edit_operation_copied), buttonIsVisible = listName != getString(R.string.multiple_lists))
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
@@ -437,7 +437,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         ) ?: ""
 
                         updateUiForMovedItem()
-                        showSuccessMessage(title, buttonIsVisible = listName != getString(R.string.multiple_lists))
+                        showSuccessMessage(title,getString(R.string.edit_operation_moved), buttonIsVisible = listName != getString(R.string.multiple_lists))
                     }
                     renderFailure {
                         showErrorMessage(getString(R.string.remove_move_msg))
@@ -455,12 +455,13 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         setUpView()
     }
 
-    private fun showSuccessMessage(message: String, buttonIsVisible:Boolean = false) {
+    private fun showSuccessMessage(message: String, editOperation: String = "" , buttonIsVisible:Boolean = false) {
         bindingListDetails.errorListView.visibility = GONE
         ToastFactory.buildShoppingListEditOptions(
             activity = requireActivity(),
             viewLocation = bindingListDetails.rlCheckOut,
             message = message,
+            editOperation = editOperation,
             buttonIsVisible = buttonIsVisible
         ) {
             selectedShoppingList?.getOrNull(0)?.let {
@@ -1057,6 +1058,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             } else {
                 addedToCartDatum.productCountMap?.let { productCountMap ->
                     // else display shopping list toast
+                    val message = size.toString() +"\t\t" +getString(R.string.toast_added_to_cart)
                     when (getPreferredDeliveryType()) {
                         Delivery.DASH, Delivery.CNC ->
                             if (productCountMap.quantityLimit?.foodLayoutColour != null) {
@@ -1069,11 +1071,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                                 )
                             } else {
                                 buildAddToCartSuccessToast(
-                                    bindingListDetails.rlCheckOut, true, requireActivity(), this
+                                    bindingListDetails.rlCheckOut, true, requireActivity(),message,  this
                                 )
                             }
                         else -> buildAddToCartSuccessToast(
-                            bindingListDetails.rlCheckOut, true, requireActivity(), this
+                            bindingListDetails.rlCheckOut, true, requireActivity(), message, this
                         )
                     }
                 }

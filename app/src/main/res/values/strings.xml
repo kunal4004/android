@@ -3344,4 +3344,8 @@
         <item quantity="other">%1$d ITEMS MOVED TO %2$s</item>
     </plurals>
 
+    <string name="edit_operation_copied">COPIED</string>
+    <string name="edit_operation_moved">MOVED</string>
+    <string name="edit_operation_removed">REMOVED</string>
+
 </resources>

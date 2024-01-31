@@ -187,6 +187,7 @@ class ToastFactory {
             activity: Activity,
             viewLocation: View,
             message: String,
+            editOperation:String = "",
             buttonIsVisible: Boolean = false,
             onButtonClick: () -> Unit
         ): PopupWindow? {
@@ -196,7 +197,23 @@ class ToastFactory {
             val binding = LayoutEditShoppingListBinding.inflate(LayoutInflater.from(context))
 
             binding.apply {
-                txtMessage.text = message
+
+                val start = message.indexOf(editOperation)
+                val end = start + editOperation.length
+
+                txtMessage.text = buildSpannedString {
+                    append(message)
+                    val typeface = ResourcesCompat.getFont(context, R.font.futura_bold_ttf)
+                    if (editOperation.isNotEmpty()) {
+                        setSpan(
+                            CustomTypefaceSpan("futura", typeface),
+                            start,
+                            end,
+                            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                        )
+                    }
+                }
+
                 if (buttonIsVisible) {
                     txtAction.visibility = VISIBLE
                     txtMessage.gravity = Gravity.START
@@ -351,6 +368,7 @@ class ToastFactory {
             viewLocation: View,
             buttonIsVisible: Boolean,
             activity: Activity,
+            message: String = "",
             toastInterface: IToastInterface?
         ): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
@@ -371,7 +389,7 @@ class ToastFactory {
 
             tvButtonClick?.visibility = if (buttonIsVisible) VISIBLE else GONE
             tvBoldTitle?.visibility = GONE
-            tvAddedTo?.text = context.getString(R.string.toast_added_to_cart)
+            tvAddedTo?.text = message
             tvAddedTo?.isAllCaps = true
 
             tvButtonClick?.setOnClickListener {
