@@ -82,7 +82,7 @@ fun MyListItemRowView(
                     Icon(painter = painterResource(id = listDataState.deleteIcon),
                         contentDescription = "Delete List",
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(16.dp)
                             .clickable {
                                 onDeleteIconClick(listItem)
                             }

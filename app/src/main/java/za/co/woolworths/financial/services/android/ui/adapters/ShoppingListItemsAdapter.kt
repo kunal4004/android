@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -303,6 +304,10 @@ class ShoppingListItemsAdapter(
                     val item = getItem(bindingAdapterPosition) ?: return@setOnClickListener
                     if (enableClickEvent(item) || !mAdapterIsClickable) return@setOnClickListener
 
+                    if (swipe.isSwipeEnabled){
+                        swipe.close()
+                    }
+
                     if (!item.isSelected && userShouldSetSuburb()) {
                         item.isSelected = false
                         notifyItemChanged(position, shoppingListItems?.size)
@@ -320,6 +325,7 @@ class ShoppingListItemsAdapter(
                     navigator.onItemSelectionChange(item.isSelected)
                     notifyItemChanged(position, item)
                 }
+
 
                 minusDeleteCountImage.setOnClickListener {
 

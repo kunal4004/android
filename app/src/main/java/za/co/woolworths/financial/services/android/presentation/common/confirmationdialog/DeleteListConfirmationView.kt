@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.presentation.common.Descripti
 import za.co.woolworths.financial.services.android.presentation.common.TitleText
 import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationUiState
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
 
 @Composable
 fun DeleteListConfirmationView(
@@ -62,7 +63,7 @@ fun DeleteListConfirmationView(
                     onCheckedChange = onCheckBoxChange,
                     colors = CheckboxDefaults.colors(
                         checkedColor = Color.Black,
-                        uncheckedColor = Color.Black,
+                        uncheckedColor = ColorD8D8D8,
                         checkmarkColor = Color.White
                     )
                 )

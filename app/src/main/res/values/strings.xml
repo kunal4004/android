@@ -3295,7 +3295,7 @@
     <string name="view_only_url_option">viewOnly</string>
     <string name="edit_url_option">viewAndEdit</string>
     <string name="remove_from">Removed from</string>
-    <string name="delete_item_title">Delete these Items?</string>
+    <string name="delete_item_title">Delete These Items?</string>
     <string name="delete_item_desc">If you remove these products from your list, you can \n still shop for them in the app.</string>
     <string name="remove_error_msg">An error occurred while removing your item. \n Please try again later.</string>
     <string name="remove_copy_msg">An error occurred while copying your items. \n Please try again later.</string>
@@ -3327,6 +3327,12 @@
         <item quantity="one">Moving Your Item to</item>
         <item quantity="other">Moving Your Items to </item>
     </plurals>
+
+
+
+<!--
+    <item quantity="one"><![CDATA[<b>1</b> cat</b>]]></item>
+-->
 
     <plurals name="copy_item_msg">
         <item quantity="one">%1$d ITEM COPIED TO %2$s</item>
