@@ -3033,6 +3033,9 @@
 
     <string name="store_selection">store selection</string>
 
+    <string name="fbh_item_select">only fashion, beauty and home items are\navailable at this collection point</string>
+    <string name="food_item_select">only food items are available for\ncollection AT</string>
+
     <!--Pet Insurance -->
     <string name="pet_insurance_covered"> • COVERED</string>
     <string name="pet_insurance_pending"> • PENDING</string>
