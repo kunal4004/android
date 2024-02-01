@@ -457,7 +457,7 @@ open class FirebaseManagerAnalyticsProperties {
         // Order Again
         const val ORDER_AGAIN: String = "order_again"
 
-        // Endless Asile
+        // Endless Aisle
         const val ENDLESS_AISLE: String = "endless_aisle"
     }
 
