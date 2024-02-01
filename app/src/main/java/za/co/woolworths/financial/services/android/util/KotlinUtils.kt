@@ -422,10 +422,11 @@ class KotlinUtils {
 
             val transactionList: MutableList<Transaction> = mutableListOf()
 
-            groupTransactionsByMonth?.onEachIndexed { index, transactionMap ->
-                transactionList.add(TransactionHeader(transactionMap.key, index) )
+            groupTransactionsByMonth?.onEachIndexed { headerIndex, transactionMap ->
+                transactionList.add(TransactionHeader(transactionMap.key, headerIndex) )
                 transactionMap.value.mapIndexed { itemIndex, transactionItem ->
-                    transactionItem.count = itemIndex
+                    transactionItem.headerCount = headerIndex
+                    transactionItem.itemCount = itemIndex
                     transactionList.add(
                         transactionItem
                     )
