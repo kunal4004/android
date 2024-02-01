@@ -35,10 +35,37 @@
                 android:layout_marginStart="@dimen/sixteen_dp"
                 android:layout_marginTop="@dimen/sixteen_dp"
                 android:layout_marginEnd="@dimen/sixteen_dp"
-                android:src="@drawable/back24"
-                app:layout_constraintStart_toStartOf="parent"
+                android:src="@drawable/close_new_16"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/top_padding_view"
                 />
+
+            <TextView
+                android:id="@+id/tvTittleStoreLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:textSize="@dimen/twelve_sp"
+                app:layout_constraintTop_toBottomOf="@id/top_padding_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/black"
+                android:lineSpacingExtra="@dimen/five_sp"
+                android:letterSpacing="@integer/point_one"
+                android:fontFamily="@font/futura_semi_bold"
+                android:textAllCaps="true"
+                android:text="@string/store_selection"/>
+
+
+            <View
+                android:id="@+id/viewSeparatorTop"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/eight_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:background="@color/color_F5F5F5"
+                app:layout_constraintTop_toBottomOf="@id/tvTittleStoreLabel"
+                app:layout_constraintEnd_toEndOf="parent" />
 
 
 
@@ -56,7 +83,7 @@
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/backButton" />
+                app:layout_constraintTop_toBottomOf="@id/viewSeparatorTop" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etEnterNewAddress"
