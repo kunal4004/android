@@ -180,6 +180,7 @@ class OrderAgainViewModel @Inject constructor(
     }
 
     private fun onSelectAllClick() {
+        collapseItems()
         viewModelScope.launch(Dispatchers.Default) {
 
             _onScreenEvent.update {
@@ -237,8 +238,17 @@ class OrderAgainViewModel @Inject constructor(
         }
     }
 
+    fun collapseItems() {
+        viewModelScope.launch {
+            _orderAgainUiState.update {
+                it.copy(revealedList = emptyList())
+            }
+        }
+    }
+
 
     private fun onChangeProductQuantity(count: Int, productItem: ProductItem) {
+        collapseItems()
         viewModelScope.launch {
             orderList.find { item -> item.id == productItem.id }?.let { item ->
                 if (item.id == productItem.id) {
@@ -473,6 +483,7 @@ class OrderAgainViewModel @Inject constructor(
     }
 
     private fun onProductCheckedChange(isChecked: Boolean, productItem: ProductItem) {
+        collapseItems()
         _orderAgainUiState.update {
             orderList.find { item -> item.id == productItem.id }?.let { item ->
                 item.quantity = item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)

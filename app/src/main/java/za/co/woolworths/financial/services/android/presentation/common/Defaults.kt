@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.ShimmerColor
 
 @Composable
 fun CircleIcon(
+    modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
     isEnabled: Boolean = true,
     contentDesc: String = "",
@@ -31,6 +32,7 @@ fun CircleIcon(
             .size(32.dp)
             .background(background, RoundedCornerShape(32.dp))
             .padding(8.dp)
+            .then(modifier)
             .clickable(enabled = isEnabled) {
                 onIconClick()
             },

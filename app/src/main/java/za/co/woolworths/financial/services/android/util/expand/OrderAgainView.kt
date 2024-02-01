@@ -51,16 +51,14 @@ fun OrderAgainView(
     ) {
         Image(
             modifier = Modifier
-                .height(82.dp)
                 .fillMaxWidth(),
             painter = painterResource(id = R.drawable.bg_order_again_category),
-            contentDescription = "Order Again",
-            contentScale = ContentScale.FillBounds
+            contentDescription = stringResource(id = R.string.cd_order_again)
         )
         Column(
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(12.dp)
+                .padding(14.dp)
 
         ) {
             Text(
@@ -77,7 +75,7 @@ fun OrderAgainView(
             Text(
                 modifier = Modifier
                     .background(Color.Black, RoundedCornerShape(4.dp))
-                    .padding(8.dp),
+                    .padding(6.dp),
                 text = stringResource(id = text).uppercase(),
                 style = TextStyle(
                     fontFamily = FuturaFontFamily,

@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
 import za.co.woolworths.financial.services.android.models.dto.order_again.toAddToListRequest
+import za.co.woolworths.financial.services.android.presentation.addtolist.AddToListFragment
 import za.co.woolworths.financial.services.android.shoppinglist.component.MoreOptionsElement
 import za.co.woolworths.financial.services.android.shoppinglist.listener.MyShoppingListItemClickListener
 import za.co.woolworths.financial.services.android.shoppinglist.model.EditOptionType
@@ -81,7 +82,7 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
                     OrderAgainScreenEvents.StartShoppingClicked -> onStartShoppingClicked()
                     OrderAgainScreenEvents.SnackbarViewClicked -> onAddToCartToastViewClick()
                     OrderAgainScreenEvents.CopyToListClicked -> onCopyToListClicked()
-                    is OrderAgainScreenEvents.CopyItemToListClicked -> onCopyToListClicked(it.item)
+                    is OrderAgainScreenEvents.CopyItemToListClicked -> onCopyItemsToListClicked(it.item)
                     is OrderAgainScreenEvents.ShowSnackBar -> showAddToCartSnackbar(it.snackbarDetails)
                     is OrderAgainScreenEvents.CopyToListSuccess -> onCopyListSuccess(it.snackbarDetails)
                     is OrderAgainScreenEvents.ShowProgressView -> showLoadingProgress(
@@ -170,7 +171,22 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
         customProgressDialog?.dismiss()
     }
 
-    private fun onCopyToListClicked(item: ProductItem? = null) {
+    private fun onCopyToListClicked() {
+        viewModel.collapseItems()
+        val items = viewModel.getCopyToListItems()
+        val fragment =
+            AddToListFragment.newInstance(
+                shoppingListItemClickListener = this@OrderAgainFragment,
+                listId = "",
+                copyItemToList = true,
+                moveItemToList = false,
+                items
+            )
+        fragment.show(parentFragmentManager, AddToListFragment::class.simpleName)
+    }
+
+    private fun onCopyItemsToListClicked(item: ProductItem? = null) {
+        viewModel.collapseItems()
         val items = if (item != null) {
             ArrayList<AddToListRequest>(0).apply {
                 add(item.toAddToListRequest())
@@ -179,7 +195,7 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
             viewModel.getCopyToListItems()
         }
 
-        val options = ArrayList<MoreOptionsElement>(0).apply{
+        val options = ArrayList<MoreOptionsElement>(0).apply {
             add(
                 MoreOptionsElement(
                     R.drawable.ic_copy,
@@ -233,6 +249,7 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
     }
 
     private fun launchShopToggleScreen() {
+        viewModel.collapseItems()
         activityLauncher.launch(
             input = Intent(requireActivity(), ShopToggleActivity::class.java),
             onActivityResult = { result ->
@@ -264,6 +281,7 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
     }
 
     private fun launchStoreOrLocationSelection() {
+        viewModel.collapseItems()
         val delivery = Delivery.getType(KotlinUtils.getDeliveryType()?.deliveryType)
         if (delivery == Delivery.CNC) {
             launchStoreSelection()
