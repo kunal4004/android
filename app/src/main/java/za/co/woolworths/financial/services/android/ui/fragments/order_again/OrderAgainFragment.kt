@@ -2,10 +2,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.order_again
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.window.OnBackInvokedCallback
+import androidx.activity.addCallback
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -345,5 +348,10 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
 
     override fun onToastButtonClicked(jsonElement: JsonElement?) {
 
+    }
+
+    override fun onDestroyView() {
+        hideBottomNavigation(false)
+        super.onDestroyView()
     }
 }
