@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SWITCH_BROWSE_MODE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SWITCH_DELIVERY_MODE
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
 import za.co.woolworths.financial.services.android.models.dto.order_again.toAnalyticItem
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -601,5 +602,23 @@ object FirebaseAnalyticsEventHelper {
             putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING, (productDetails.averageRating).toString())
         }
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, addToCartParams)
+    }
+
+    fun purchase(response: SubmittedOrderResponse) {
+        val otherItems = response.items?.other?.map { orderItem -> orderItem.toAnalyticItem().apply { fillOtherCategories(orderItem.breadcrumbs?.map { it.label }) } }
+        val foodItems = response.items?.food?.map { orderItem -> orderItem.toAnalyticItem().apply { fillOtherCategories(orderItem.breadcrumbs?.map { it.label }) } }
+        val analyticItem: List<AnalyticProductItem> = otherItems.orEmpty() + foodItems.orEmpty()
+
+        val analyticsParams = Bundle().apply {
+            putParcelableArray(FirebaseAnalytics.Param.ITEMS, analyticItem.map { it.toBundle() }.toTypedArray())
+            putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+            putString(FirebaseAnalytics.Param.TRANSACTION_ID, response.orderSummary?.orderId.valueOrNone())
+            putString(FirebaseAnalytics.Param.SHIPPING, response.deliveryDetails?.shippingAmount.toString())
+            putString(FirebaseAnalytics.Param.AFFILIATION, FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+            response.orderSummary?.total?.let {
+                putDouble(FirebaseAnalytics.Param.VALUE, it)
+            }
+        }
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, analyticsParams)
     }
 }
