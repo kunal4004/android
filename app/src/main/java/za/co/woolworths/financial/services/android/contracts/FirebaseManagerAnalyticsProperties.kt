@@ -456,6 +456,9 @@ open class FirebaseManagerAnalyticsProperties {
 
         // Order Again
         const val ORDER_AGAIN: String = "order_again"
+
+        // Endless Asile
+        const val ENDLESS_AISLE: String = "endless_aisle"
     }
 
     class PropertyNames {
@@ -595,6 +598,9 @@ open class FirebaseManagerAnalyticsProperties {
 
             // Order Again
             const val LOCATION: String = "location"
+
+            // Endless Aisle
+            const val PAYMENT_TYPE: String = "payment_type"
 
         }
     }
