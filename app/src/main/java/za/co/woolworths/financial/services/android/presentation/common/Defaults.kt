@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
@@ -37,7 +38,7 @@ fun CircleIcon(
                 onIconClick()
             },
         painter = painterResource(id = icon),
-        tint = LocalContentColor.current.copy(alpha = if(isEnabled) 1f else 0.5f),
+        tint = LocalContentColor.current.copy(alpha = if (isEnabled) 1f else 0.5f),
         contentDescription = contentDesc
     )
 }
@@ -47,6 +48,12 @@ fun CircleIcon(
 @Composable
 private fun PreviewCircleIcon() {
     OneAppTheme {
-        CircleIcon(R.drawable.add_black, false, "", ShimmerColor){}
+        CircleIcon(
+            modifier = Modifier.size(12.dp).padding(3.dp),
+            icon = R.drawable.ic_minus_black,
+            isEnabled = false,
+            contentDesc = "",
+            background = ShimmerColor
+        ) {}
     }
 }
