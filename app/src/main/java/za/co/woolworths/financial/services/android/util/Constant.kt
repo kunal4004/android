@@ -19,5 +19,7 @@ class Constant {
         const val PARGO="pargo"
         const val AUTO_SHOPPING_LIST_NAME = "Saved Shopping"
         const val IS_MIXED_BASKET = "is Mixed Basket"
+        const val FOOD = "food"
+        const val OTHER = "other"
     }
 }
