@@ -5,32 +5,28 @@ import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.common.ClickOnDialogButton
+import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
-import za.co.woolworths.financial.services.android.presentation.common.ProgressView
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.BackInStockScreen
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.BackInStockScreenEvents
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.showProgressDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.showSuccessDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.viewmodel.NotifyBackInStockViewModel
-import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import javax.inject.Inject
 
-@OptIn(ExperimentalComposeUiApi::class)
 @AndroidEntryPoint
 class NotifyBackInStockFragment : Fragment() {
 
@@ -38,8 +34,13 @@ class NotifyBackInStockFragment : Fragment() {
     private var otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>> = linkedMapOf()
     private var selectedSku: OtherSkus? = null
     private var selectedGroupKey: String? = null
+    private var productId: String? = null
+    private var storeId: String? = null
     private var hasColor: Boolean = false
     private var hasSize: Boolean = false
+
+    @Inject
+    lateinit var errorBottomSheetDialog: CommonErrorBottomSheetDialog
 
     companion object {
         const val OTHER_SKUSBYGROUP_KEY = "otherSKUsByGroupKey"
@@ -47,6 +48,9 @@ class NotifyBackInStockFragment : Fragment() {
         const val SELECTED_GROUP_KEY = "selectedGroupKey"
         const val HAS_COLOR = "hasColor"
         const val HAS_SIZE = "hasSize"
+        const val SOURCE_SYSTEM = "oneapp"
+        const val PRODUCT_ID = "productId"
+        const val STORE_ID = "storeId"
     }
 
     override fun onAttach(context: Context) {
@@ -71,6 +75,8 @@ class NotifyBackInStockFragment : Fragment() {
                 selectedSku = getParcelable<OtherSkus>(SELECTED_SKU)
             }
             selectedGroupKey = getString(SELECTED_GROUP_KEY)
+            productId = getString(PRODUCT_ID)
+            storeId = getString(STORE_ID)
             hasColor = getBoolean(HAS_COLOR)
             hasSize = getBoolean(HAS_SIZE)
         }
@@ -84,29 +90,34 @@ class NotifyBackInStockFragment : Fragment() {
     ) {
         OneAppTheme {
             val backInStockState = viewModel.getState()
+            val notifyMeState by viewModel.notifyMeState.collectAsStateWithLifecycle()
 
             when {
-                backInStockState.isConfirmInProgress -> {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Spacer(
-                            modifier = Modifier
-                                .width(40.dp)
-                                .height(4.dp)
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(ColorD8D8D8)
-                        )
-
-                        ProgressView(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = 290.dp),
-                            title = stringResource(
-                                id = R.string.please_wait,
-                                ""
-                            ),
-                            desc = stringResource(id = R.string.processing_your_request_desc)
-                        )
+                notifyMeState.isSuccess -> {
+                    showSuccessDialog(backToStockUiState = backInStockState) { event ->
+                        when (event) {
+                            BackInStockScreenEvents.CancelClick -> {
+                                navigateToPreviousScreen()
+                            }
+                            else -> {}
+                        }
                     }
+
+                }
+                notifyMeState.isLoading -> {
+                    showProgressDialog(backToStockUiState = backInStockState) { event ->
+                        when (event) {
+                            BackInStockScreenEvents.CancelClick -> {
+                                navigateToPreviousScreen()
+                            }
+                            else -> {}
+                        }
+                    }
+
+                }
+                notifyMeState.isError -> {
+                    showErrorDialog(notifyMeState.errorMessage)
+
                 }
                 else -> {
                     BackInStockScreen(
@@ -121,12 +132,15 @@ class NotifyBackInStockFragment : Fragment() {
                     ) { event ->
                         when (event) {
                             BackInStockScreenEvents.CancelClick -> {
-                                if (childFragmentManager.backStackEntryCount > 0) {
-                                    childFragmentManager.popBackStack()
-                                } else
-                                    activity?.onBackPressed()
+                                navigateToPreviousScreen()
                             }
-                            else -> viewModel.onEvent(event)
+                            else -> viewModel.onEvent(
+                                hasColor,
+                                hasSize,
+                                event,
+                                productId,
+                                storeId
+                            )
                         }
                     }
                 }
@@ -134,4 +148,34 @@ class NotifyBackInStockFragment : Fragment() {
         }
     }
 
+    private fun navigateToPreviousScreen() {
+        if (childFragmentManager.backStackEntryCount > 0) {
+            childFragmentManager.popBackStack()
+        } else
+            activity?.onBackPressed()
+    }
+
+    fun onDeviceBackPressed() {
+        //close success dialog if device back button pressed
+        viewModel.getState().isSuccess = false
+    }
+
+    private fun showErrorDialog(errorMessage : String) {
+        errorBottomSheetDialog.showCommonErrorBottomDialog(
+            object : ClickOnDialogButton {
+                override fun onClick() {
+                    navigateToPreviousScreen()
+                }
+
+                override fun onDismiss() {
+                }
+            },
+            requireActivity(),
+            getString(R.string.generic_error_something_wrong_newline),
+            errorMessage,
+            getString(R.string.got_it),
+            false,
+            false,
+        )
+    }
 }

@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductColorSelectorListItemBinding
@@ -14,7 +15,12 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeVie
 import za.co.woolworths.financial.services.android.util.DrawImage
 import java.util.*
 
-class ProductColorSelectorAdapter(val otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>, var listener: ProductDetailsContract.ProductDetailsView, spanCount: Int, selectedGroupKey: String?) : RecyclerView.Adapter<ProductColorSelectorAdapter.ViewHolder>() {
+class ProductColorSelectorAdapter(
+    val hasColor: Boolean,
+    val hasSize : Boolean,
+    val otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
+    var listener: ProductDetailsContract.ProductDetailsView, spanCount: Int, selectedGroupKey: String?)
+    : RecyclerView.Adapter<ProductColorSelectorAdapter.ViewHolder>() {
 
     private var selectedColor: String? = null
     private var colorsList: List<String> = arrayListOf()
@@ -69,14 +75,29 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: LinkedHashMap<String,
                         itemBinding.color,
                         otherSKUsByGroupKey[color]?.get(0)?.externalColourRef
                     )
-                    border.apply {
-                        setBackgroundResource(
-                            if (it.equals(
+                    if (otherSKUsByGroupKey[color]?.get(0)?.quantity == 0 && hasColor && !hasSize) {
+                        border.visibility = View.GONE
+                        borderWithOverlay.visibility = View.VISIBLE
+                        borderWithOverlay.apply {
+                            foreground = if (it.equals(
                                     selectedColor,
                                     true
                                 )
-                            ) R.drawable.product_color_selected_background else R.drawable.product_color_un_selected_background
-                        )
+                            ) ContextCompat.getDrawable(context, R.drawable.colour_swatch_black_border)
+                            else ContextCompat.getDrawable(context, R.drawable.colour_swatch)
+                        }
+                    } else {
+                        borderWithOverlay.visibility = View.GONE
+                        border.visibility = View.VISIBLE
+                        border.apply {
+                            setBackgroundResource(
+                                if (it.equals(
+                                        selectedColor,
+                                        true
+                                    )
+                                ) R.drawable.product_color_selected_background else R.drawable.product_color_un_selected_background
+                            )
+                        }
                     }
                 }
             }

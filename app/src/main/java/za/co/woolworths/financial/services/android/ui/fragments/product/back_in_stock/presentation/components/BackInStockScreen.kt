@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.back_in
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.PopupProperties
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
@@ -26,7 +29,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.presentation.common.BlackButton
 import za.co.woolworths.financial.services.android.presentation.common.HeaderView
 import za.co.woolworths.financial.services.android.presentation.common.HeaderViewState
-import za.co.woolworths.financial.services.android.ui.compose.NoRippleInteractionSource
+import za.co.woolworths.financial.services.android.presentation.common.ProgressView
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.viewmodel.NotifyBackInStockViewModel.BackToStockUiState
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 
@@ -97,7 +100,7 @@ fun BackInStockScreen(
                     .padding(bottom = 24.dp)
                     .height(50.dp),
                 text = stringResource(id = R.string.confirm).uppercase(),
-                enabled = backToStockUiState.isSizeSelected
+                enabled = backToStockUiState.isColourOrSizeSelected
             ) {
                 onEvent(BackInStockScreenEvents.ConfirmClick)
             }
@@ -216,12 +219,14 @@ private fun AddBISView(
                 modifier = Modifier
                     .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
                     .fillMaxWidth(),
-                preselectedSize = selectedSku
-
-            ) { selectedSize ->
-                onEvent(BackInStockScreenEvents.OnSizeSelected(selectedSize))
-                //onSizeClick(selectedSize)
-            }
+                preselectedSize = selectedSku,
+                onSelectionChanged = { selectedSize ->
+                    onEvent(BackInStockScreenEvents.OnSizeSelected(selectedSize))
+                },
+                onOtherSkusChanged = { otherSkus ->
+                    onEvent(BackInStockScreenEvents.OnOtherSKusSelected(otherSkus))
+                }
+            )
         }
         Text(
             text = stringResource(id = R.string.email_address),
@@ -245,13 +250,13 @@ private fun AddBISView(
             readOnly = true,
             enabled = false,
             colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White,
-                disabledContainerColor = Color.White
+                unfocusedContainerColor = colorResource(R.color.color_F3F3F3),
+                focusedContainerColor = colorResource(R.color.color_F3F3F3),
+                disabledContainerColor = colorResource(R.color.color_F3F3F3)
             ),
             modifier = Modifier
                 .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
-                .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE))
+                .border(width = 1.dp, color = colorResource(R.color.color_D8D8D8))
                 .fillMaxWidth(),
             textStyle = TextStyle(
                 fontSize = 14.sp,
@@ -293,6 +298,18 @@ fun SpinnerColourView(
                     .menuAnchor()
                     .fillMaxWidth()
                     .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE)),
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.placeholder_select_color),
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            lineHeight = 21.sp,
+                            fontFamily = FontFamily(Font(R.font.opensans_medium)),
+                            fontWeight = FontWeight(400),
+                            color = colorResource(R.color.color_9D9D9D)
+                        )
+                    )
+                },
                 trailingIcon = {
                     Icon(
                         painter = painterResource(
@@ -331,9 +348,9 @@ fun SpinnerColourView(
                     DropdownMenuItem(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(width = 0.25.dp, color = colorResource(R.color.color_EEEEEE))
+                            .border(width = 0.5.dp, color = colorResource(R.color.color_EEEEEE))
                             .background(Color.White),
-                        interactionSource = NoRippleInteractionSource(),
+                        // interactionSource = NoRippleInteractionSource(),
                         onClick = {
                             selectedColour = colourName
                             expanded = false
@@ -369,7 +386,8 @@ fun SpinnerSizeView(
     selectedGroupKey: String?,
     modifier: Modifier = Modifier,
     preselectedSize: OtherSkus?,
-    onSelectionChanged: (selectedSize: String) -> Unit
+    onSelectionChanged: (selectedSize: String) -> Unit,
+    onOtherSkusChanged: (otherSkus: OtherSkus) -> Unit
 ) {
     var preselectedSizeString = ""
     if (preselectedSize != null && preselectedSize.quantity == 0) {
@@ -436,13 +454,14 @@ fun SpinnerSizeView(
                     DropdownMenuItem(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(width = 0.25.dp, color = colorResource(R.color.color_EEEEEE))
+                            .border(width = 0.5.dp, color = colorResource(R.color.color_EEEEEE))
                             .background(Color.White),
-                        interactionSource = NoRippleInteractionSource(),
+                        //   interactionSource = NoRippleInteractionSource(),
                         onClick = {
                             selectedSize = otherSKU.size.toString()
                             expanded = false
                             onSelectionChanged(selectedSize)
+                            onOtherSkusChanged(otherSKU)
                         },
                         text = {
                             Text(
@@ -495,5 +514,196 @@ fun BackInStockScreenPreview() {
             hasColor = true,
             hasSize = true
         ) { }
+    }
+}
+
+@Composable
+fun showProgressDialog(
+    backToStockUiState: BackToStockUiState,
+    onEvent: (event: BackInStockScreenEvents) -> Unit
+) {
+    var showDialog by remember { mutableStateOf(backToStockUiState.isLoading) }
+
+    Dialog(
+        onDismissRequest = { showDialog = false },
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .background(Color.White)
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth(), contentAlignment = Alignment.Center
+            ) {
+                HeaderView(
+                    modifier = Modifier.padding(top = 20.dp, bottom = 24.dp),
+                    headerViewState = HeaderViewState.HeaderStateType3(
+                        title = ""
+                    )
+                ) {
+                    onEvent(BackInStockScreenEvents.CancelClick)
+                }
+            }
+
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+
+                ProgressView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun showSuccessDialog(
+    backToStockUiState: BackToStockUiState,
+    onEvent: (event: BackInStockScreenEvents) -> Unit
+) {
+    var showDialog by remember { mutableStateOf(backToStockUiState.isSuccess) }
+
+    Dialog(
+        onDismissRequest = { showDialog = false },
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .background(Color.White)
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth(), contentAlignment = Alignment.Center
+            ) {
+                HeaderView(
+                    modifier = Modifier.padding(top = 20.dp, bottom = 24.dp),
+                    headerViewState = HeaderViewState.HeaderStateType3(
+                        title = ""
+                    )
+                ) {
+                    onEvent(BackInStockScreenEvents.CancelClick)
+                }
+            }
+
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.loader),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 5.dp)
+                            .clickable {},
+                        contentDescription = stringResource(id = R.string.c_description)
+                    )
+                    Text(
+                        modifier = Modifier.padding(24.dp),
+                        text = stringResource(id = R.string.notify_me_success_message),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            lineHeight = 30.sp,
+                            fontFamily = FontFamily(Font(R.font.futura_semi_bold)),
+                            fontWeight = FontWeight(600),
+                            color = Color(0xFF000000),
+                            textAlign = TextAlign.Center,
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun showFullScreenDialog(
+    backToStockUiState: BackToStockUiState,
+    showDialog: Boolean,
+    isProgressDialog: Boolean,
+    onEvent: (event: BackInStockScreenEvents) -> Unit
+) {
+    var showDialog by remember { mutableStateOf(showDialog) }
+    if (showDialog) {
+        Dialog(
+            onDismissRequest = { showDialog = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            // Custom layout for the dialog
+            Surface(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(0.dp),
+                color = Color.White
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    HeaderView(
+                        modifier = Modifier.padding(top = 20.dp, bottom = 24.dp),
+                        headerViewState = HeaderViewState.HeaderStateType3(
+                            title = ""
+                        )
+                    ) {
+                        showDialog = false
+                        onEvent(BackInStockScreenEvents.CancelClick)
+                    }
+
+                    if (isProgressDialog) {
+                        ProgressView(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                        )
+                    } else {
+                        Column(
+                            modifier = Modifier.fillMaxHeight(),
+                            verticalArrangement = Arrangement.Center,
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.loader),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(end = 5.dp)
+                                    .clickable {},
+                                contentDescription = stringResource(id = R.string.c_description)
+                            )
+                            Text(
+                                modifier = Modifier.padding(24.dp),
+                                text = stringResource(id = R.string.notify_me_success_message),
+                                style = TextStyle(
+                                    fontSize = 20.sp,
+                                    lineHeight = 30.sp,
+                                    fontFamily = FontFamily(Font(R.font.futura_semi_bold)),
+                                    fontWeight = FontWeight(600),
+                                    color = Color(0xFF000000),
+                                    textAlign = TextAlign.Center,
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }

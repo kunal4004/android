@@ -115,6 +115,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawer
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.AmplifyInit;
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.NotifyBackInStockFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
@@ -921,6 +922,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         if (mNavController.getCurrentFrag() instanceof ShoppingListDetailFragment) {
             showBottomNavigationMenu();
+        }
+
+        if (mNavController.getCurrentFrag() instanceof NotifyBackInStockFragment) {
+            ((NotifyBackInStockFragment) mNavController.getCurrentFrag()).onDeviceBackPressed();
         }
 
         // Close slide up panel when expanded

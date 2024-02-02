@@ -1483,6 +1483,8 @@ class ProductDetailsFragment :
                 onColorSelection(this@ProductDetailsFragment.defaultGroupKey, true)
             }
             productColorSelectorAdapter = ProductColorSelectorAdapter(
+                hasColor,
+                hasSize,
                 otherSKUsByGroupKey,
                 this@ProductDetailsFragment,
                 spanCount,
@@ -2166,7 +2168,7 @@ class ProductDetailsFragment :
         ) {
             binding.showLowStockForSelectedColor()
             binding.sizeColorSelectorLayout.colorPlaceholder?.text = ""
-        } else if (getSelectedSku()?.quantity == 0) {
+        } else if (getSelectedSku()?.quantity == 0 && hasColor && !hasSize) {
             binding.showOutOfStockForSelectedColor()
             binding.sizeColorSelectorLayout.colorPlaceholder?.text = ""
         } else {
@@ -2379,7 +2381,7 @@ class ProductDetailsFragment :
             groupAddToCartAction?.visibility = View.GONE
             findInStoreAction?.visibility = View.VISIBLE
         }
-        if (hasColor) hideLowStockFromSelectedColor()
+        if (hasColor && quantity != 0) hideLowStockFromSelectedColor()
         if (hasSize && quantity != 0) hideLowStockForSize()
     }
 
@@ -3164,6 +3166,7 @@ class ProductDetailsFragment :
     private fun ProductDetailsFragmentBinding.showSelectedColor() {
         activity?.apply {
             getSelectedGroupKey()?.let {
+                sizeColorSelectorLayout.colorPlaceholder?.text = requireContext().getString(R.string.selected_colour)
                 sizeColorSelectorLayout.colorPlaceholder?.setTextColor(ContextCompat.getColor(this,
                     R.color.black))
                 sizeColorSelectorLayout.selectedColor?.text = "  -  $it"
@@ -4436,9 +4439,10 @@ class ProductDetailsFragment :
      * This method used hide low stock when selected color have not
      * not have lowStockThreshold > quantity
      */
-    private fun ProductDetailsFragmentBinding.hideLowStockFromSelectedColor() {
+    private fun ProductDetailsFragmentBinding.
+            hideLowStockFromSelectedColor() {
         sizeColorSelectorLayout.apply {
-            colorPlaceholder?.text = requireContext().getString(R.string.selected_colour)
+            //colorPlaceholder?.text = requireContext().getString(R.string.select_colour)
             (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
                 it.startToEnd = R.id.colorPlaceholder
                 it.topToTop = R.id.colorPlaceholder
@@ -4694,12 +4698,36 @@ class ProductDetailsFragment :
             val fragment = NotifyBackInStockFragment()
             val bundle = Bundle()
             bundle.putSerializable(NotifyBackInStockFragment.OTHER_SKUSBYGROUP_KEY, otherSKUsByGroupKey)
-            bundle.putString(NotifyBackInStockFragment.SELECTED_GROUP_KEY, getSelectedGroupKey())
-            bundle.putParcelable(NotifyBackInStockFragment.SELECTED_SKU, getSelectedSku())
+            bundle.putString(NotifyBackInStockFragment.SELECTED_GROUP_KEY, checkSelectedGroupKeyForOnlyColour() ?: "")
+            bundle.putParcelable(NotifyBackInStockFragment.SELECTED_SKU, checkSelectedSkuForOnlyColour())
             bundle.putBoolean(NotifyBackInStockFragment.HAS_COLOR, hasColor)
             bundle.putBoolean(NotifyBackInStockFragment.HAS_SIZE, hasSize)
+
+            bundle.putString(NotifyBackInStockFragment.PRODUCT_ID, productId)
+            bundle.putString(NotifyBackInStockFragment.STORE_ID, storeIdForInventory)
+
             fragment.arguments = bundle
             (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(fragment)
         }
+    }
+
+    private fun checkSelectedGroupKeyForOnlyColour() : String? {
+        var key: String? = null
+        if (getSelectedSku() != null && getSelectedSku()?.quantity != 0 && hasColor && !hasSize) {
+            key // for only color
+        } else {
+            key = getSelectedGroupKey() // for both color and size
+        }
+        return key
+    }
+
+    private fun checkSelectedSkuForOnlyColour() : OtherSkus? {
+        var selectedSku: OtherSkus? = null
+        if (getSelectedSku() != null && getSelectedSku()?.quantity != 0 && hasColor && !hasSize) {
+            selectedSku // for only color
+        } else {
+            selectedSku = getSelectedSku() // for both color and size
+        }
+        return selectedSku
     }
 }

@@ -15,7 +15,8 @@ class CommonErrorBottomSheetDialogImpl @Inject constructor(): CommonErrorBottomS
         title: String,
         desc: String,
         buttonText: String,
-        isDismissButtonNeeded: Boolean
+        isDismissButtonNeeded: Boolean,
+        isCanceledOnTouchOutside : Boolean
     ) {
         val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
         val binding = CommonErrorBottomDialogLayoutBinding.inflate(dialog.layoutInflater, null, false)
@@ -38,6 +39,7 @@ class CommonErrorBottomSheetDialogImpl @Inject constructor(): CommonErrorBottomS
             dialog.dismiss()
         }
         dialog.setContentView(binding.root)
+        dialog.setCanceledOnTouchOutside(isCanceledOnTouchOutside)
         dialog.show()
     }
 }
