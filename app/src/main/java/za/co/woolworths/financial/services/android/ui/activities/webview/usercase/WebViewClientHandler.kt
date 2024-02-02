@@ -166,13 +166,17 @@ class WebViewClientHandler @Inject constructor():IWebViewClientHandler {
         return true
     }
     fun getQueryString(url: String?): HashMap<String, String> {
-        val uri = Uri.parse(url)
         val map = HashMap<String, String>()
-        for (paramName in uri.queryParameterNames) {
-            if (paramName != null) {
-                val paramValue = uri.getQueryParameter(paramName)
-                if (paramValue != null) {
-                    map[paramName] = paramValue
+        if (!url.isNullOrBlank()) {
+            val uri = Uri.parse(url)
+            if (uri.isHierarchical) {
+                for (paramName in uri.queryParameterNames) {
+                    if (paramName != null) {
+                        val paramValue = uri.getQueryParameter(paramName)
+                        if (paramValue != null) {
+                            map[paramName] = paramValue
+                        }
+                    }
                 }
             }
         }
