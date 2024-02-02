@@ -84,11 +84,18 @@ class OrderConfirmationFragment :
     private var isEndlessAisleJourney: Boolean? = false
     private val dyChooseVariationViewModel: DyChooseVariationCallViewModel by viewModels()
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
+    private var isOrderFetched: Boolean = false
+    private lateinit var submittedOrderResponse: SubmittedOrderResponse
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isEndlessAisleJourney = arguments?.getBoolean(BundleKeysConstants.IS_ENDLESS_AISLE_JOURNEY)
-        getOrderDetails()
+        if (!isOrderFetched) {
+            getOrderDetails()
+        } else {
+            updateUi(submittedOrderResponse)
+        }
         addFragmentResultListener()
     }
 
@@ -119,9 +126,8 @@ class OrderConfirmationFragment :
                         is SubmittedOrderResponse -> {
                             when (response.httpCode) {
                                 AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
-                                    response.orderSummary?.orderId?.let { setToolbar(it) }
-                                    setupDeliveryOrCollectionDetails(response)
-                                    setupOrderTotalDetails(response)
+                                    submittedOrderResponse=response
+                                    updateUi(response)
                                     displayVocifNeeded(response)
                                     if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
                                     {
@@ -225,6 +231,7 @@ class OrderConfirmationFragment :
             orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
             btnClose.setOnClickListener { requireActivity().onBackPressed() }
             helpTextView.setOnClickListener {
+                isOrderFetched=true
                 findNavController()?.navigate(R.id.action_OrderConfirmationFragment_to_helpAndSupportFragment)
             }
         }
@@ -626,19 +633,21 @@ class OrderConfirmationFragment :
     }
 
     private fun initialiseItemsOrder(items: OrderItems?) {
-        if (!items?.other.isNullOrEmpty()) {
-            itemsOrder?.addAll(items?.other!!)
-        }
-        if (!items?.food.isNullOrEmpty()) {
-            itemsOrder?.addAll(items?.food!!)
+        if (itemsOrder.isNullOrEmpty()) {
+            if (!items?.other.isNullOrEmpty()) {
+                itemsOrder?.addAll(items?.other!!)
+            }
+            if (!items?.food.isNullOrEmpty()) {
+                itemsOrder?.addAll(items?.food!!)
+            }
         }
     }
 
     private fun initialiseCncItemsOrder(items: OrderItems?) {
-        if (!items?.other.isNullOrEmpty()) {
+        if (!items?.other.isNullOrEmpty()&&cncOtherItemsOrder.isNullOrEmpty()) {
             cncOtherItemsOrder?.addAll(items?.other!!)
         }
-        if (!items?.food.isNullOrEmpty()) {
+        if (!items?.food.isNullOrEmpty()&&cncFoodItemsOrder.isNullOrEmpty()) {
             cncFoodItemsOrder?.addAll(items?.food!!)
         }
     }
@@ -798,5 +807,11 @@ class OrderConfirmationFragment :
                 }
             }
         }
+    }
+
+    private fun updateUi(response: SubmittedOrderResponse){
+        response.orderSummary?.orderId?.let { setToolbar(it) }
+        setupDeliveryOrCollectionDetails(response)
+        setupOrderTotalDetails(response)
     }
 }
