@@ -128,9 +128,6 @@ class OrderConfirmationFragment :
                                 AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
                                     submittedOrderResponse=response
                                     updateUi(response)
-                                    response.orderSummary?.orderId?.let { setToolbar(it) }
-                                    setupDeliveryOrCollectionDetails(response)
-                                    setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
                                     if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
                                     {
@@ -816,26 +813,5 @@ class OrderConfirmationFragment :
         response.orderSummary?.orderId?.let { setToolbar(it) }
         setupDeliveryOrCollectionDetails(response)
         setupOrderTotalDetails(response)
-        displayVocifNeeded(response)
-        if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
-        {
-            showPurchaseEvent(response)
-            isPurchaseEventTriggered = false
-        }
-
-        //Make this call to recommendation API after receiving the 200 or 201 from the order
-        orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
-        AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true) {
-                prepareDYConfirmationPageViewRequest(response)
-                prepareDYPurchaseOrderRequest(response)
-            }
-        }
-        // Update Layout depending on endless aisle journey is enabled or not
-        if(isEndlessAisleJourney == true &&
-            response?.orderSummary?.endlessAisleOrder == true &&
-            !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()){
-            updateLayoutForEndlessAisleJourney(response)
-        }
     }
 }
