@@ -353,5 +353,6 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
     override fun onDestroyView() {
         hideBottomNavigation(false)
         super.onDestroyView()
+        customProgressDialog = null
     }
 }
