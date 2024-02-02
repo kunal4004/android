@@ -107,20 +107,7 @@
                         android:focusable="true"
                         android:src="@drawable/ic_share_circle" />
 
-                    <View
-                        android:id="@+id/deadZoneView4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/fifty_six_dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentBottom="true"
-                        android:paddingEnd="@dimen/sixteen_dp"
-                        android:paddingStart="@dimen/sixteen_dp"
-                        android:paddingTop="@dimen/sixteen_dp"
-                        android:paddingBottom="@dimen/sixteen_dp"
-                        android:layout_toLeftOf="@id/share"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="@color/black"/>
+
 
                     <TextView
                         android:id="@+id/pdp_out_of_stock_tag"
@@ -356,7 +343,6 @@
                     android:focusable="true"
                     android:layout_marginRight="@dimen/eighty_two"
                     android:layout_marginLeft="@dimen/sixty_two"
-                    android:background="@color/black"
                     tools:ignore="MissingConstraints" />
 
                 <View
@@ -366,8 +352,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/openCart"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:clickable="true"
-                    android:focusable="true"
-                    android:background="@android:color/holo_blue_light"/>
+                    android:focusable="true" />
 
                 <View
                     android:id="@+id/deadZoneView3"
@@ -376,8 +361,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/openCart"
                     app:layout_constraintRight_toRightOf="parent"
                     android:clickable="true"
-                    android:focusable="true"
-                    android:background="@color/black"/>
+                    android:focusable="true" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
