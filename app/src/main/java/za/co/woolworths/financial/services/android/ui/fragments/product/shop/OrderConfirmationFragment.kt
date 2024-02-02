@@ -18,9 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.DeliveringToCollectionFromBinding
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,7 +57,7 @@ import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.*
-import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
@@ -130,6 +128,30 @@ class OrderConfirmationFragment :
                                 AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
                                     submittedOrderResponse=response
                                     updateUi(response)
+                                    response.orderSummary?.orderId?.let { setToolbar(it) }
+                                    setupDeliveryOrCollectionDetails(response)
+                                    setupOrderTotalDetails(response)
+                                    displayVocifNeeded(response)
+                                    if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
+                                    {
+                                        FirebaseAnalyticsEventHelper.purchase(response)
+                                        isPurchaseEventTriggered = false
+                                    }
+
+                                    //Make this call to recommendation API after receiving the 200 or 201 from the order
+                                    orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
+                                    AppConfigSingleton.dynamicYieldConfig?.apply {
+                                        if (isDynamicYieldEnabled == true) {
+                                            prepareDYConfirmationPageViewRequest(response)
+                                            prepareDYPurchaseOrderRequest(response)
+                                        }
+                                    }
+                                    // Update Layout depending on endless aisle journey is enabled or not
+                                    if(isEndlessAisleJourney == true &&
+                                        response?.orderSummary?.endlessAisleOrder == true &&
+                                        !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()){
+                                        updateLayoutForEndlessAisleJourney(response)
+                                    }
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -183,59 +205,6 @@ class OrderConfirmationFragment :
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
         dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
-    }
-
-    private fun showPurchaseEvent(response: SubmittedOrderResponse) {
-        val purchaseItemParams = Bundle()
-        purchaseItemParams.putString(
-            FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-        )
-        purchaseItemParams.putString(
-            FirebaseAnalytics.Param.AFFILIATION,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
-        )
-        purchaseItemParams.putString(
-            FirebaseAnalytics.Param.TRANSACTION_ID,
-            response.orderSummary?.orderId
-        )
-        response.orderSummary?.total?.let {
-            purchaseItemParams.putDouble(
-                FirebaseAnalytics.Param.VALUE,
-                it
-            )
-        }
-        purchaseItemParams.putString(
-            FirebaseAnalytics.Param.SHIPPING,
-            response.deliveryDetails?.shippingAmount.toString()
-        )
-
-        val purchaseItem = Bundle()
-        purchaseItem.putString(
-            FirebaseAnalytics.Param.ITEM_ID,
-            response.items?.other?.get(0)?.commerceItemInfo?.productId
-        )
-        purchaseItem.putString(
-            FirebaseAnalytics.Param.ITEM_NAME,
-            response.items?.other?.get(0)?.commerceItemInfo?.productDisplayName
-        )
-        purchaseItem.putString(
-            FirebaseAnalytics.Param.QUANTITY,
-            response.items?.other?.get(0)?.commerceItemInfo?.quantity.toString()
-        )
-        response.items?.other?.get(0)?.priceInfo?.amount?.let {
-            purchaseItem.putDouble(
-                FirebaseAnalytics.Param.PRICE,
-                it
-            )
-        }
-        purchaseItem.putString(
-            FirebaseAnalytics.Param.ITEM_VARIANT,
-            response.items?.other?.get(0)?.color
-        )
-        purchaseItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(purchaseItem))
-
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, purchaseItemParams)
     }
 
     private fun displayVocifNeeded(response: SubmittedOrderResponse) {
