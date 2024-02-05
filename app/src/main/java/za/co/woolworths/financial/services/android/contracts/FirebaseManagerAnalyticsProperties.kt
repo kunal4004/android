@@ -754,7 +754,8 @@ open class FirebaseManagerAnalyticsProperties {
             const val DASH_LANDING_PAGE: String = "Dash Landing Page"
             const val MY_ACCOUNTS: String = "My Accounts"
 
-
+            // Endless Aisle
+            const val IN_STORE = "in_store"
         }
     }
 

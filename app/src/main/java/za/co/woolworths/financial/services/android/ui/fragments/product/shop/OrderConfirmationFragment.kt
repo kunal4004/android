@@ -212,7 +212,7 @@ class OrderConfirmationFragment :
 
     private fun showEndlessAisleEvent() {
         val params = Bundle()
-        params.putString(FirebaseManagerAnalyticsProperties.PropertyNames.PAYMENT_TYPE, "in_store")
+        params.putString(FirebaseManagerAnalyticsProperties.PropertyNames.PAYMENT_TYPE, FirebaseManagerAnalyticsProperties.PropertyValues.IN_STORE)
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ENDLESS_AISLE, params)
     }
 
