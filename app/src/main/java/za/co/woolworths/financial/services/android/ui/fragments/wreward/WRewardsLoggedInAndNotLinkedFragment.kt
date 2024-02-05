@@ -52,7 +52,14 @@ class WRewardsLoggedInAndNotLinkedFragment : WRewardOnBoardingFragment(R.layout.
 
     override fun onResume() {
         super.onResume()
-        activity?.let { activity -> setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_SIGNED_IN_NOT_LINKED) }
+        if(isVisible) {
+            activity?.let { activity ->
+                setScreenName(
+                    activity,
+                    FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_SIGNED_IN_NOT_LINKED
+                )
+            }
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
