@@ -155,11 +155,6 @@ class NotifyBackInStockFragment : Fragment() {
             activity?.onBackPressed()
     }
 
-    fun onDeviceBackPressed() {
-        //close success dialog if device back button pressed
-        viewModel.getState().isSuccess = false
-    }
-
     private fun showErrorDialog(errorMessage : String) {
         errorBottomSheetDialog.showCommonErrorBottomDialog(
             object : ClickOnDialogButton {

@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.back_in
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -631,79 +630,3 @@ fun showSuccessDialog(
     }
 }
 
-
-@Composable
-fun showFullScreenDialog(
-    backToStockUiState: BackToStockUiState,
-    showDialog: Boolean,
-    isProgressDialog: Boolean,
-    onEvent: (event: BackInStockScreenEvents) -> Unit
-) {
-    var showDialog by remember { mutableStateOf(showDialog) }
-    if (showDialog) {
-        Dialog(
-            onDismissRequest = { showDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            // Custom layout for the dialog
-            Surface(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(0.dp),
-                color = Color.White
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    HeaderView(
-                        modifier = Modifier.padding(top = 20.dp, bottom = 24.dp),
-                        headerViewState = HeaderViewState.HeaderStateType3(
-                            title = ""
-                        )
-                    ) {
-                        showDialog = false
-                        onEvent(BackInStockScreenEvents.CancelClick)
-                    }
-
-                    if (isProgressDialog) {
-                        ProgressView(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                        )
-                    } else {
-                        Column(
-                            modifier = Modifier.fillMaxHeight(),
-                            verticalArrangement = Arrangement.Center,
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.loader),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(end = 5.dp)
-                                    .clickable {},
-                                contentDescription = stringResource(id = R.string.c_description)
-                            )
-                            Text(
-                                modifier = Modifier.padding(24.dp),
-                                text = stringResource(id = R.string.notify_me_success_message),
-                                style = TextStyle(
-                                    fontSize = 20.sp,
-                                    lineHeight = 30.sp,
-                                    fontFamily = FontFamily(Font(R.font.futura_semi_bold)),
-                                    fontWeight = FontWeight(600),
-                                    color = Color(0xFF000000),
-                                    textAlign = TextAlign.Center,
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
