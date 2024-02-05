@@ -65,8 +65,9 @@ class AddToListFragment : WBottomSheetDialogFragment() {
 
     var copyItemToList:Boolean = false
     var moveItemToList:Boolean = false
+    private var listener : MyShoppingListItemClickListener? = null
+
     companion object {
-        var listener : MyShoppingListItemClickListener? = null
 
         const val ADD_TO_SHOPPING_LIST_REQUEST_CODE = 1209
         fun newInstance(
@@ -75,8 +76,9 @@ class AddToListFragment : WBottomSheetDialogFragment() {
             copyItemToList:Boolean,
             moveItemToList:Boolean,
             listOfItems:ArrayList<AddToListRequest>
-        ) = AddToListFragment().withArgs {
+        ) = AddToListFragment().apply {
             listener = shoppingListItemClickListener
+        }.withArgs {
             putString(COPY_LIST_ID, listId)
             putBoolean(COPY_ITEM_LIST, copyItemToList)
             putBoolean(MOVE_ITEM_LIST, moveItemToList)
@@ -281,6 +283,12 @@ class AddToListFragment : WBottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Leaking listener.
+        listener = null
     }
 
     override fun onCancel(dialog: DialogInterface) {

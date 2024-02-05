@@ -10,6 +10,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
 import android.text.Spannable
+import android.text.style.StyleSpan
 import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -20,9 +21,11 @@ import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.compose.ui.text.font.Typeface
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LayoutSnackbarAddToListBinding
@@ -367,8 +370,12 @@ class ToastFactory {
 
             productCountMap.let {
                 tvTotalProductCount?.apply {
-                    text = it.totalProductCount.toString()
-                    setTextColor(ContextCompat.getColor(context, R.color.black90))
+                    if(KotlinUtils.isDeliveryOptionStandard()) {
+                        visibility = GONE
+                    } else {
+                        text = it.totalProductCount.toString()
+                        setTextColor(ContextCompat.getColor(context, R.color.black90))
+                    }
 
                     // Removing Toast colors for CNC / Dash toast
 //                    it.quantityLimit?.foodLayoutColour?.let { color -> setTextColor(Color.parseColor(color)) }
@@ -382,7 +389,20 @@ class ToastFactory {
                         context.getString(R.string.dash_item_limit_message, maxQuantity)
                 else
                     tvFoodLayoutMessage?.visibility = GONE
-                tvNoOfItemsAddedToCart?.text = context.resources.getQuantityString(R.plurals.toast_item_added_to_cart_message, count, count)
+                val addToCartMsg = context.resources.getQuantityString(R.plurals.toast_item_added_to_cart_message, count, count).uppercase()
+                val spannableString = buildSpannedString {
+                    append(addToCartMsg.uppercase())
+                    val startIndex = addToCartMsg.indexOf("cart".uppercase())
+                    if(startIndex > -1) {
+                        val typeface = ResourcesCompat.getFont(context, R.font.futura_semi_bold)
+                        setSpan(
+                            CustomTypefaceSpan("futura", typeface),
+                            startIndex, startIndex + 4,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
+                }
+                tvNoOfItemsAddedToCart?.text = spannableString
             }
 
             // View button on toast
