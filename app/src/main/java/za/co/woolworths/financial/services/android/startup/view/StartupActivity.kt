@@ -586,7 +586,7 @@ class StartupActivity :
             handleAppLink(appLinkData)
         } else {
             val activity = this as Activity
-            if (isFirstTime == null || Utils.isAppUpdated(this)) {
+            if (isFirstTime == null) {
                 ScreenManager.presentOnboarding(activity)
             } else {
                 ScreenManager.presentMain(activity)
