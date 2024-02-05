@@ -94,25 +94,17 @@ class NotifyBackInStockFragment : Fragment() {
 
             when {
                 notifyMeState.isSuccess -> {
-                    showSuccessDialog(backToStockUiState = backInStockState) { event ->
-                        when (event) {
-                            BackInStockScreenEvents.CancelClick -> {
-                                navigateToPreviousScreen()
-                            }
-                            else -> {}
-                        }
-                    }
+                    showSuccessDialog(backToStockUiState = backInStockState,
+                        onEvent = {
+                            navigateToPreviousScreen()
+                        })
 
                 }
                 notifyMeState.isLoading -> {
-                    showProgressDialog(backToStockUiState = backInStockState) { event ->
-                        when (event) {
-                            BackInStockScreenEvents.CancelClick -> {
-                                navigateToPreviousScreen()
-                            }
-                            else -> {}
-                        }
-                    }
+                    showProgressDialog(backToStockUiState = backInStockState,
+                        onEvent = {
+                            navigateToPreviousScreen()
+                        })
 
                 }
                 notifyMeState.isError -> {
@@ -155,7 +147,7 @@ class NotifyBackInStockFragment : Fragment() {
             activity?.onBackPressed()
     }
 
-    private fun showErrorDialog(errorMessage : String) {
+    private fun showErrorDialog(errorMessage: String) {
         errorBottomSheetDialog.showCommonErrorBottomDialog(
             object : ClickOnDialogButton {
                 override fun onClick() {
