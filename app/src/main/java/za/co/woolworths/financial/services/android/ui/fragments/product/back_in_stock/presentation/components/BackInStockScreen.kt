@@ -524,7 +524,10 @@ fun showProgressDialog(
     var showDialog by remember { mutableStateOf(backToStockUiState.isLoading) }
 
     Dialog(
-        onDismissRequest = { showDialog = false },
+        onDismissRequest = {
+            showDialog = false
+            onEvent(BackInStockScreenEvents.CancelClick)
+        },
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Column(
@@ -571,8 +574,14 @@ fun showSuccessDialog(
     var showDialog by remember { mutableStateOf(backToStockUiState.isSuccess) }
 
     Dialog(
-        onDismissRequest = { showDialog = false },
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        onDismissRequest = {
+            showDialog = false
+            onEvent(BackInStockScreenEvents.CancelClick)
+        },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnBackPress = true
+        )
     ) {
         Column(
             modifier = Modifier
