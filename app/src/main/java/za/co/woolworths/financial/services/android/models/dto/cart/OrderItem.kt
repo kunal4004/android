@@ -8,6 +8,8 @@ import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 data class OrderItem(
     var commerceItemInfo: CommerceItemInfo? = null,
     var brandName: String = "",
+    var productType: String = "",
+    var breadcrumbs: ArrayList<BreadCrumb>?,
     var quantity: Int = 0,
     var productId: String = "",
     var color: String = "",

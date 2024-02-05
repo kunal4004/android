@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.Color666666
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 
@@ -50,7 +51,7 @@ fun BlackButton(
 fun UnderlineButton(
     modifier: Modifier = Modifier,
     text: String = "",
-    texColor: Color = Color666666,
+    texColor: Color = Black,
     enabled: Boolean = true,
     onButtonClick: () -> Unit
 ) {
@@ -67,7 +68,7 @@ fun UnderlineButton(
             text = text.uppercase(),
             style = TextStyle(
                 fontFamily = FuturaFontFamily,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
                 color = texColor,
                 textDecoration = TextDecoration.Underline
