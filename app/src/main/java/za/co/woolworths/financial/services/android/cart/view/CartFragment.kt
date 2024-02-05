@@ -1516,7 +1516,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     override fun onResume() {
         super.onResume()
         val activity: Activity = requireActivity()
-        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST)
+        if(isVisible) {
+            Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST)
+        }
         activity.registerReceiver(
             mConnectionBroadcast,
             IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
