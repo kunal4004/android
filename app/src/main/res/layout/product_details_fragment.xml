@@ -347,7 +347,7 @@
 
                 <View
                     android:id="@+id/deadZoneView2"
-                    android:layout_width="@dimen/fifty_six_dp"
+                    android:layout_width="@dimen/hundred_and_twelve_dp"
                     android:layout_height="@dimen/sixty_two"
                     app:layout_constraintTop_toBottomOf="@+id/openCart"
                     app:layout_constraintLeft_toLeftOf="parent"
