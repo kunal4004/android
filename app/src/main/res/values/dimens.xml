@@ -196,6 +196,7 @@
     <dimen name="text_size_18sp">18sp</dimen>
     <dimen name="text_size_10sp">10sp</dimen>
     <dimen name="one_twenty_dp">120dp</dimen>
+    <dimen name="one_twenty_four_dp">124dp</dimen>
     <dimen name="one_thirty_four">134dp</dimen>
     <dimen name="fifty_five_sp">55sp</dimen>
     <dimen name="fifty_five_dp">55dp</dimen>
