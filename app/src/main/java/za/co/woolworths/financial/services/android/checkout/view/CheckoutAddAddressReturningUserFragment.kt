@@ -1089,7 +1089,11 @@ class CheckoutAddAddressReturningUserFragment :
                     )
                 }
                 onCheckoutPaymentClick()
-                preparePaymentPageViewRequest(orderTotalValue)
+                AppConfigSingleton.dynamicYieldConfig?.apply {
+                    if (isDynamicYieldEnabled == true) {
+                        preparePaymentPageViewRequest(orderTotalValue)
+                    }
+                }
             }
 
             binding.checkoutDeliveryDetailsLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()

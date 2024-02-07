@@ -1139,7 +1139,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         SHIPPING_TIER_VALUE_DASH, orderTotalValue
                     )
                 }
-                preparePaymentPageViewRequest(orderTotalValue)
+                AppConfigSingleton.dynamicYieldConfig?.apply {
+                    if (isDynamicYieldEnabled == true) {
+                        preparePaymentPageViewRequest(orderTotalValue)
+                    }
+                }
 
             }
             binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()

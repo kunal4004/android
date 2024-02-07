@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -571,9 +572,7 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
-			if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
-				prepareDynamicYieldRequestEvent();
-			}
+			callDyPageView();
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -740,7 +739,7 @@ public class SSOActivity extends WebViewActivity {
 					setStSParameters();
 				}
 				if (ssoActivityEvent == "SIGNIN") {
-					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+					if (Boolean.TRUE.equals(Objects.requireNonNull(AppConfigSingleton.getDynamicYieldConfig()).isDynamicYieldEnabled())) {
 						String hexvalue = null;
 						if (jwtDecodedModel != null) {
 							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
@@ -750,7 +749,7 @@ public class SSOActivity extends WebViewActivity {
 					}
 
 				}else if (ssoActivityEvent == "REGISTER") {
-					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+					if (Boolean.TRUE.equals(Objects.requireNonNull(AppConfigSingleton.getDynamicYieldConfig()).isDynamicYieldEnabled())) {
 						String hexvalue = null;
 						if (jwtDecodedModel != null) {
 							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
@@ -1017,6 +1016,12 @@ public class SSOActivity extends WebViewActivity {
 		Options options = new Options(true);
 		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null, null, context, options);
 		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
+	}
+
+	private void callDyPageView() {
+		if (Boolean.TRUE.equals(Objects.requireNonNull(AppConfigSingleton.getDynamicYieldConfig()).isDynamicYieldEnabled())) {
+			prepareDynamicYieldRequestEvent();
+		}
 	}
 
 }

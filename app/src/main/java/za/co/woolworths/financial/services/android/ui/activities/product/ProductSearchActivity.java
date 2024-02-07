@@ -43,6 +43,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
@@ -197,7 +198,7 @@ public class ProductSearchActivity extends AppCompatActivity
                     intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
-            if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+            if (Boolean.TRUE.equals(Objects.requireNonNull(AppConfigSingleton.getDynamicYieldConfig()).isDynamicYieldEnabled())) {
                 dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
                 prepareDyKeywordSearchRequestEvent(searchProductBrand);
             }

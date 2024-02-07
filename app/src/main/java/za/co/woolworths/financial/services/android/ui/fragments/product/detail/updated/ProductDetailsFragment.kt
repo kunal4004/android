@@ -1296,7 +1296,7 @@ class ProductDetailsFragment :
             if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
                 updateDefaultUI(false)
                 hideProductDetailsLoading()
-                prepareDynamicYieldPageViewRequestEvent()
+                callDyProductDetailsPage()
                 return
             }
 
@@ -1326,6 +1326,10 @@ class ProductDetailsFragment :
             showErrorWhileLoadingProductDetails()
         }
         sendRecommendationsDetail()
+        callDyProductDetailsPage()
+    }
+
+    private fun callDyProductDetailsPage() {
         AppConfigSingleton.dynamicYieldConfig?.apply {
             if (isDynamicYieldEnabled == true)
                 prepareDynamicYieldPageViewRequestEvent()
