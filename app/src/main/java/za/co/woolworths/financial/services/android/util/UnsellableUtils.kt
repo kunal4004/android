@@ -382,6 +382,7 @@ class UnsellableUtils {
                 fragment.getString(R.string.generic_error_something_wrong_newline),
                 fragment.getString(R.string.add_to_list_error_description),
                 fragment.getString(R.string.retry),
+                true,
                 true
             )
         }
@@ -413,6 +414,7 @@ class UnsellableUtils {
                 fragment.getString(R.string.generic_error_something_wrong_newline),
                 fragment.getString(R.string.empty),
                 fragment.getString(R.string.retry),
+                true,
                 true
             )
         }

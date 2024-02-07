@@ -62,7 +62,8 @@ class OCChatActivity : AppCompatActivity() {
             getString(R.string.generic_error_something_wrong_newline),
             getString(R.string.one_cart_chat_error_disc),
             getString(R.string.got_it),
-            false
+            false,
+            true
         )
     }
 

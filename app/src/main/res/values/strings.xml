@@ -3337,4 +3337,6 @@
     <string name="email_address">Email Address: *</string>
     <string name="c_description">description</string>
     <string name="placeholder_select_size">Select a size</string>
+    <string name="placeholder_select_color">Select a colour</string>
+    <string name="notify_me_success_message">You’ll Be Notified When This Product Is Back In Stock</string>
 </resources>
