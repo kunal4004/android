@@ -57,10 +57,14 @@ fun MyListItemRowView(
                 text = listItem.listName,
                 style = TextStyle(
                     fontFamily = OpenSansFontFamily,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.W700,
                     fontSize = 14.sp,
-                    color = Color.Black
-                )
+                    color = Color.Black,
+                    lineHeight = 21.sp
+                ),
+                modifier = Modifier.clickable {
+                    onDetailsArrowClick(listItem)
+                }
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(
@@ -68,9 +72,10 @@ fun MyListItemRowView(
                 text = listItem.modifiedListCount,
                 style = TextStyle(
                     fontFamily = OpenSansFontFamily,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.W700,
                     fontSize = 14.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    lineHeight = 21.sp
                 )
             )
             Row(
@@ -122,14 +127,19 @@ fun MyListItemRowView(
                         fontWeight = FontWeight(400),
                         color = Color(0xFF666666),
                         letterSpacing = 0.22.sp,
-                    )
+                    ),
+                    modifier = Modifier.clickable {
+                        onDetailsArrowClick(listItem)
+                    }
                 )
             }
         }
 
         if (listItem.productImageURLs.isNotEmpty()) {
             Spacer(modifier = Modifier.height(15.dp))
-            ListOfImagesView(listItem, onImageItemClick = {})
+            ListOfImagesView(listItem, onImageItemClick = {
+                onDetailsArrowClick(listItem)
+            })
         }
     }
 }

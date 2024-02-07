@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.runtime.Composable
@@ -58,7 +59,7 @@ fun DeleteListConfirmationView(
             ) {
                 CheckboxTitleText(text = stringResource(id = data.checkBoxTitle))
                 Checkbox(
-                    modifier = Modifier.scale(0.7f),
+                    modifier = Modifier.scale(0.7f).height(20.dp).width(20.dp),
                     checked = data.isChecked,
                     onCheckedChange = onCheckBoxChange,
                     colors = CheckboxDefaults.colors(
