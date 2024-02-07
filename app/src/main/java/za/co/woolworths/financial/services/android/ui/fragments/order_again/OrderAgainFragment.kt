@@ -116,6 +116,7 @@ class OrderAgainFragment : Fragment(), MyShoppingListItemClickListener, IToastIn
 
     private fun onCopyListSuccess(snackbarDetails: SnackbarDetails) {
         hideLoadingProgress()
+        hideBottomNavigation(false)
         view?.let {
             val title = requireContext().resources?.getQuantityString(
                 R.plurals.copy_item_msg,
