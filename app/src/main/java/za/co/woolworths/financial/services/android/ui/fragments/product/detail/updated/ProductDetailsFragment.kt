@@ -1539,7 +1539,7 @@ class ProductDetailsFragment :
     }
     private fun checkNotifyMeLayout() {
         val colorKey : String = (getSelectedGroupKey() ?: defaultGroupKey) as String
-        val isZeroQuantity = otherSKUsByGroupKey[colorKey]?.any {
+        val isZeroQuantity = productDetails?.otherSkus?.any {
             (it.quantity == 0)
         }
         binding.outOfStockLayout.apply {
@@ -4698,8 +4698,8 @@ class ProductDetailsFragment :
             val fragment = NotifyBackInStockFragment()
             val bundle = Bundle()
             bundle.putSerializable(NotifyBackInStockFragment.OTHER_SKUSBYGROUP_KEY, otherSKUsByGroupKey)
-            bundle.putString(NotifyBackInStockFragment.SELECTED_GROUP_KEY, checkSelectedGroupKeyForOnlyColour() ?: "")
-            bundle.putParcelable(NotifyBackInStockFragment.SELECTED_SKU, checkSelectedSkuForOnlyColour())
+            bundle.putString(NotifyBackInStockFragment.SELECTED_GROUP_KEY, checkSelectedGroupKeyWithQuantity() ?: "")
+            bundle.putParcelable(NotifyBackInStockFragment.SELECTED_SKU, checkSelectedSkuWithQuantity())
             bundle.putBoolean(NotifyBackInStockFragment.HAS_COLOR, hasColor)
             bundle.putBoolean(NotifyBackInStockFragment.HAS_SIZE, hasSize)
 
@@ -4711,22 +4711,29 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun checkSelectedGroupKeyForOnlyColour() : String? {
-        var key: String? = null
-        if (getSelectedSku() != null && getSelectedSku()?.quantity != 0 && hasColor && !hasSize) {
-            key // for only color
+    private fun checkSelectedGroupKeyWithQuantity() : String? {
+        var groupKey: String? = null
+        if (!checkZeroQuantity()!!) {
+            groupKey // check for only color & available sizes
         } else {
-            key = getSelectedGroupKey() // for both color and size
+            groupKey = getSelectedGroupKey() // check for both color and unavailable size
         }
-        return key
+        return groupKey
     }
 
-    private fun checkSelectedSkuForOnlyColour() : OtherSkus? {
+    private fun checkZeroQuantity() : Boolean? {
+        val colorKey: String = (getSelectedGroupKey() ?: defaultGroupKey) as String
+        return otherSKUsByGroupKey[colorKey]?.any {
+            (it.quantity == 0)
+        }
+    }
+
+    private fun checkSelectedSkuWithQuantity() : OtherSkus? {
         var selectedSku: OtherSkus? = null
-        if (getSelectedSku() != null && getSelectedSku()?.quantity != 0 && hasColor && !hasSize) {
-            selectedSku // for only color
+        if (getSelectedSku() != null && getSelectedSku()?.quantity != 0 && !checkZeroQuantity()!!) {
+            selectedSku // check for only color & available sizes
         } else {
-            selectedSku = getSelectedSku() // for both color and size
+            selectedSku = getSelectedSku() // check for both color and unavailable size
         }
         return selectedSku
     }

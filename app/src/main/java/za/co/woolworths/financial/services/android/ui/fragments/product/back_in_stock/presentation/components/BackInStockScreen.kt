@@ -218,7 +218,7 @@ private fun AddBISView(
                 modifier = Modifier
                     .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
                     .fillMaxWidth(),
-                preselectedSize = selectedSku,
+                preselectedOtherSkus = selectedSku,
                 onSelectionChanged = { selectedSize ->
                     onEvent(BackInStockScreenEvents.OnSizeSelected(selectedSize))
                 },
@@ -331,7 +331,7 @@ fun SpinnerColourView(
                     .background(Color.White),
                 expanded = expanded,
                 properties = PopupProperties(focusable = false),
-                onDismissRequest = { false }) {
+                onDismissRequest = { expanded = false }) {
                 val colourNames = ArrayList<String>()
                 otherSKUsByGroupKey.forEach { entry ->
                     val otherSKUList = otherSKUsByGroupKey[entry.key]
@@ -384,13 +384,13 @@ fun SpinnerSizeView(
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
     selectedGroupKey: String?,
     modifier: Modifier = Modifier,
-    preselectedSize: OtherSkus?,
+    preselectedOtherSkus: OtherSkus?,
     onSelectionChanged: (selectedSize: String) -> Unit,
     onOtherSkusChanged: (otherSkus: OtherSkus) -> Unit
 ) {
     var preselectedSizeString = ""
-    if (preselectedSize != null && preselectedSize.quantity == 0) {
-        preselectedSizeString = preselectedSize.size.toString()
+    if (preselectedOtherSkus != null && preselectedOtherSkus.quantity == 0) {
+        preselectedSizeString = preselectedOtherSkus.size.toString()
     } else {
         preselectedSizeString = ""
     }
@@ -446,7 +446,7 @@ fun SpinnerSizeView(
                     .background(Color.White),
                 properties = PopupProperties(focusable = false),
                 expanded = expanded,
-                onDismissRequest = { false }) {
+                onDismissRequest = { expanded = false }) {
 
                 val otherSKUList = otherSKUsByGroupKey[selectedGroupKey]
                 otherSKUList?.forEach { otherSKU ->
