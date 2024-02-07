@@ -285,6 +285,7 @@ class ProductDetailsFragment :
     private var substitutionProductItem: ProductList? = null
     private var kiboItem: Item? = null
     private var isSubstiuteItemAdded = false
+    private val SSO_REQUEST_CART_NOT_LOGIN = 1014
 
     private val recommendationViewModel: RecommendationViewModel by viewModels()
     private var bottomSheetWebView: PayFlexBottomSheetDialog? =null
@@ -825,7 +826,15 @@ class ProductDetailsFragment :
 
 
     private fun openCart() {
-        (activity as? BottomNavigationActivity)?.navigateToTabIndex(INDEX_CART, null)
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSigninActivity(
+                activity,
+                SSO_REQUEST_CART_NOT_LOGIN,
+                isUserBrowsing
+            )
+        } else {
+            (activity as? BottomNavigationActivity)?.navigateToTabIndex(INDEX_CART, null)
+        }
     }
 
     private fun onQuantitySelector() {
@@ -2774,6 +2783,9 @@ class ProductDetailsFragment :
                             // request cart summary to get the user's location.
                             productDetailsPresenter?.loadCartSummary()
                         }
+                    }
+                    SSO_REQUEST_CART_NOT_LOGIN -> {
+                        (activity as? BottomNavigationActivity)?.navigateToTabIndex(INDEX_CART, null)
                     }
                     SSO_REQUEST_ADD_TO_SHOPPING_LIST -> {
                         addItemToShoppingList()
