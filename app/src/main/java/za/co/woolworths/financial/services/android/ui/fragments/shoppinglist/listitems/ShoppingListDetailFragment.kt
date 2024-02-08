@@ -363,15 +363,10 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     response?.let { onShoppingListItemDelete(it) }
                     onDeleteUIUpdate()
                     shoppingListItemsAdapter?.notifyDataSetChanged()
-                    val message = HtmlCompat.fromHtml( "\t\t" + getFormatedString(
+                   val message = HtmlCompat.fromHtml( "\t\t" + getFormatedString(
                         count = selectedItemsForRemoval, R.plurals.remove_list) +"\t\t" + listName , HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    ToastFactory.showToast(
-                        requireActivity(),
-                        bindingListDetails.rlCheckOut,
-                        message.toString()
-                    )
-                    //refresh main myList fragment to show updated count.
-                    setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
+
+                    showSuccessMessage(message.toString(),getString(R.string.edit_operation_removed) ,false)
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
@@ -407,7 +402,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                     ) ?: ""
 
                     shoppingListItemsAdapter?.resetSelection()
-                    showSuccessMessage(listName, title)
+                    showSuccessMessage( title,getString(R.string.edit_operation_copied), buttonIsVisible = listName != getString(R.string.multiple_lists))
                 }
                 Status.ERROR -> {
                     hideLoadingProgress()
@@ -445,7 +440,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                         ) ?: ""
 
                         updateUiForMovedItem()
-                        showSuccessMessage(listName, title)
+                        showSuccessMessage(title,getString(R.string.edit_operation_moved), buttonIsVisible = listName != getString(R.string.multiple_lists))
                     }
                     renderFailure {
                         showErrorMessage(getString(R.string.remove_move_msg))
@@ -459,33 +454,28 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         val list : ArrayList<ShoppingListItem>? = viewModel.updateListForMoveItem() as? ArrayList<ShoppingListItem>?
         shoppingListItemsAdapter?.setList(list)
         shoppingListItemsAdapter?.notifyDataSetChanged()
+        (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
         setUpView()
     }
 
-    private fun showSuccessMessage(listName: String, title: String) {
+    private fun showSuccessMessage(message: String, editOperation: String = "" , buttonIsVisible:Boolean = false) {
         bindingListDetails.errorListView.visibility = GONE
-        ToastFactory.buildItemsAddedToList(
+        ToastFactory.buildShoppingListEditOptions(
             activity = requireActivity(),
             viewLocation = bindingListDetails.rlCheckOut,
-            listName = listName,
-            hasGiftProduct = false,
-            count = selectedItems.size,
-            title = title,
-            onButtonClick = {
-                if (selectedShoppingList?.size == 1) {
-                    selectedShoppingList?.getOrNull(0)?.let {
-                        ScreenManager.presentShoppingListDetailActivity(
-                            activity,
-                            it.listId,
-                            it.listName,
-                            false
-                        )
-                    }
-                } else {
-                    ScreenManager.presentMyListScreen(activity)
-                }
+            message = message,
+            editOperation = editOperation,
+            buttonIsVisible = buttonIsVisible
+        ) {
+            selectedShoppingList?.getOrNull(0)?.let {
+                ScreenManager.presentShoppingListDetailActivity(
+                    activity,
+                    it.listId,
+                    it.listName,
+                    false
+                )
             }
-        )
+        }
         //refresh main myList fragment to show updated count.
         setFragmentResult(REFRESH_SHOPPING_LIST_RESULT_CODE.toString(), bundleOf())
     }
@@ -850,7 +840,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         )
     }
 
-    private fun openMoreOptionsDialog() {
+    private fun openMoreOptionsDialog(kebabIconClicked:Boolean = false) {
         bindingListDetails.rlCheckOut.visibility = GONE
         setScrollViewBottomMargin(0)
         val count = if (isSingleItemSelected) {
@@ -860,10 +850,14 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
         }
 
         listOfItems.clear()
-        viewModel.mShoppingListItems.forEach {
-           if (it.isSelected) {
-               listOfItems.add(AddToListRequest(skuID = it.catalogRefId, catalogRefId = it.catalogRefId, quantity = "1"))
-           }
+        if (kebabIconClicked) {
+            listOfItems.add(AddToListRequest(skuID = singleShoppingListItem?.catalogRefId, catalogRefId = singleShoppingListItem?.catalogRefId, quantity = "1"))
+        } else {
+            viewModel.mShoppingListItems.forEach {
+                if (it.isSelected) {
+                    listOfItems.add(AddToListRequest(skuID = it.catalogRefId, catalogRefId = it.catalogRefId, quantity = "1"))
+                }
+            }
         }
 
         val options = ArrayList<MoreOptionsElement>(0).apply{
@@ -1096,6 +1090,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
             } else {
                 addedToCartDatum.productCountMap?.let { productCountMap ->
                     // else display shopping list toast
+                    val message = size.toString() +"\t\t" +getString(R.string.toast_added_to_cart)
                     when (getPreferredDeliveryType()) {
                         Delivery.DASH, Delivery.CNC ->
                             if (productCountMap.quantityLimit?.foodLayoutColour != null) {
@@ -1108,11 +1103,11 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                                 )
                             } else {
                                 buildAddToCartSuccessToast(
-                                    bindingListDetails.rlCheckOut, true, requireActivity(), this
+                                    bindingListDetails.rlCheckOut, true, requireActivity(),message,  this
                                 )
                             }
                         else -> buildAddToCartSuccessToast(
-                            bindingListDetails.rlCheckOut, true, requireActivity(), this
+                            bindingListDetails.rlCheckOut, true, requireActivity(), message, this
                         )
                     }
                 }
@@ -1229,7 +1224,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
                 count, listName
             )?: ""
             shoppingListItemsAdapter?.resetSelection()
-            showSuccessMessage(listName = listName, title = title)
+            showSuccessMessage(message = title, buttonIsVisible = listName != getString(R.string.multiple_lists))
         }
     }
 
@@ -1741,10 +1736,7 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun naviagteToMoreOptionDialog(shoppingListItem: ShoppingListItem) {
         isSingleItemSelected = true
         singleShoppingListItem = shoppingListItem
-        shoppingListItem.apply {
-            isSelected = true
-        }
-        openMoreOptionsDialog()
+        openMoreOptionsDialog(true)
     }
 
     private fun copytemFromList(shoppingList: ArrayList<ShoppingList>) {

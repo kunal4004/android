@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -320,6 +321,7 @@ class ShoppingListItemsAdapter(
                     navigator.onItemSelectionChange(item.isSelected)
                     notifyItemChanged(position, item)
                 }
+
 
                 minusDeleteCountImage.setOnClickListener {
 

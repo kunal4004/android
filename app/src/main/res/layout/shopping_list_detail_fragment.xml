@@ -256,11 +256,12 @@
                         android:gravity="start|center"
                         android:hint="@string/shopping_search_hint"
                         android:inputType="textNoSuggestions"
+                        android:lineSpacingExtra="@dimen/two_sp"
                         android:maxLines="1"
                         android:paddingLeft="@dimen/fifty_dp"
                         android:paddingRight="@dimen/default_margin"
                         android:textColor="@color/black"
-                        android:textColorHint="@color/product_search_hint"
+                        android:textColorHint="@color/color_F3F3F3"
                         android:textSize="@dimen/twelve_sp" />
 
                 </RelativeLayout>
@@ -453,9 +454,9 @@
         <RelativeLayout
             android:id="@+id/rlCheckOutContainer"
             style="@style/blackButtonStyle"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginLeft="@dimen/twenty_four_dp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:layout_marginRight="@dimen/twenty_four_dp">
 
             <ProgressBar
                 android:id="@+id/pbLoadingIndicator"
@@ -479,8 +480,12 @@
             android:layout_below="@+id/rlCheckOutContainer"
             android:layout_centerHorizontal="true"
             android:layout_margin="@dimen/sixteen_dp"
+            android:fontFamily="@font/futura_medium"
             android:text="@string/more_options_btn"
-            android:textColor="@color/color_666666" />
+            android:textColor="@color/color_000000"
+            android:letterSpacing=".15"
+            android:textFontWeight="@integer/five_hundred"
+            android:textSize="@dimen/twelve_sp" />
     </RelativeLayout>
 
     <ProgressBar
