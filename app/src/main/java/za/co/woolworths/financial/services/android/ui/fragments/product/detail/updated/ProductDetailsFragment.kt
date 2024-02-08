@@ -110,6 +110,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.viewmodel.MatchingSetViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
@@ -312,6 +313,7 @@ class ProductDetailsFragment :
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
     private var productId: String? = null
     private val dyChooseVariationViewModel: DyChooseVariationCallViewModel by viewModels()
+    private val matchingSetViewModel: MatchingSetViewModel by viewModels()
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
