@@ -188,6 +188,9 @@ class AppConstant {
         // Order Again
         const val FROM_SCREEN: String = "fromScreen"
         const val W_CONNECT = "WConnect"
+
+        // Awareness Modal
+        const val MODAL_NAME = "modalName"
     }
 
     class Keys {

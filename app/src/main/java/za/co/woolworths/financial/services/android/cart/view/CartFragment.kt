@@ -68,6 +68,8 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.network.*
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
+import za.co.woolworths.financial.services.android.presentation.common.awarenessmodal.AwarenessModalFragment
+import za.co.woolworths.financial.services.android.presentation.common.awarenessmodal.AwarenessModalNames
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
@@ -470,19 +472,19 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         return
                     }
 
-                    // Go to Web checkout journey if...
-                    if (nativeCheckout?.isNativeCheckoutEnabled == false) {
-                        launchCheckoutActivity(Intent(context, CartCheckoutActivity::class.java))
-                    } else {
-                        if (binding.cartProgressBar.visibility == View.VISIBLE) {
-                            return
+                    // Show Substitute AwarenessModal if user uncheck dont show again
+                    if(!KotlinUtils.isCheckedSubstituteAwarenessModal()) {
+                        val bottomSheetDialog = AwarenessModalFragment().apply {
+                            arguments = bundleOf(
+                                AppConstant.MODAL_NAME to AwarenessModalNames.SUBSTITUTIONS
+                            )
                         }
-                        // Get list of saved address and navigate to proper Checkout page.
-                        viewModel.getSavedAddress()
-                    }
-                    AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true)
-                            prepareDynamicYieldCheckoutRequest(deliveryType)
+                        bottomSheetDialog.show(
+                            requireActivity().supportFragmentManager,
+                            AwarenessModalFragment::class.java.name
+                        )
+                    } else {
+                        continueToCheckout()
                     }
                 }
             }
@@ -2647,6 +2649,39 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
             // User Substitute product from search screen and came back to cart
             loadShoppingCart()
+        }
+
+        setFragmentResultListener(AwarenessModalFragment.REQUEST_AWARENESS_MODAL) {_, bundle ->
+            val resultCode = bundle.getInt(AwarenessModalFragment.RESULT_AWARENESS_MODAL)
+            val isDontAskAgainChecked = bundle.getBoolean(AppConstant.Keys.BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED)
+            KotlinUtils.setCheckedSubstituteAwarenessModal(isDontAskAgainChecked)
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                 // Choose Substitute Do Nothing
+                }
+                Activity.RESULT_CANCELED -> {
+                    continueToCheckout()
+                }
+            }
+        }
+    }
+
+    private fun continueToCheckout() {
+        // Go to Web checkout journey if...
+        if (nativeCheckout?.isNativeCheckoutEnabled == false) {
+            launchCheckoutActivity(Intent(context, CartCheckoutActivity::class.java))
+        } else {
+            if (binding.cartProgressBar.visibility == View.VISIBLE) {
+                return
+            }
+            // Get list of saved address and navigate to proper Checkout page.
+            viewModel.getSavedAddress()
+        }
+        val deliveryType =
+            getType(getPreferredDeliveryLocation().fulfillmentDetails.deliveryType)
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true)
+                prepareDynamicYieldCheckoutRequest(deliveryType)
         }
     }
 

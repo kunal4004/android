@@ -3292,6 +3292,10 @@
     <string name="remove_copy_msg">An error occurred while copying your items. \n Please try again later.</string>
     <string name="remove_move_msg">An error occurred while moving your items. \n Please try again later.</string>
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
+    <string name="awareness_substitute_title">Don\'t Forget Your Substitutions</string>
+    <string name="awareness_substitute_desc">Remember to choose alternatives for items to ensure you always get what you need, even when your first choice isn’t available. We’ll save your substitution choices for your next shop.</string>
+    <string name="choose_substitutes">Choose Substitutes</string>
+    <string name="continue_to_checkout">Continue To Checkout</string>
 
     <plurals name="edit_items">
         <item quantity="one">Edit Item </item>

@@ -2036,6 +2036,17 @@ class KotlinUtils {
                 null -> ""
             }
         }
+
+        fun isCheckedSubstituteAwarenessModal(): Boolean {
+            val currentUserObject = AppInstanceObject.get().currentUserObject
+            return currentUserObject.isCheckedSubstituteAwarenessModal
+        }
+
+        fun setCheckedSubstituteAwarenessModal(value: Boolean) {
+            val currentUserObject = AppInstanceObject.get().currentUserObject
+            currentUserObject.isCheckedSubstituteAwarenessModal = value
+            currentUserObject.save()
+        }
     }
 }
 

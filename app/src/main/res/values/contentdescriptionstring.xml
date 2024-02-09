@@ -344,5 +344,6 @@
     <string name="cd_product_decrease_quantity">productDecreaseQuantity</string>
     <string name="cd_information_icon">Information Icon</string>
     <string name="cd_order_again">Order Again Banner</string>
+    <string name="cd_awareness_icon">awarenessIcon</string>
 
 </resources>
