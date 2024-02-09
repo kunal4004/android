@@ -5,9 +5,53 @@
     android:layout_height="match_parent"
     >
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fifty_five_dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/white">
+
+    <View
+        android:id="@+id/top_padding_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/eight_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/color_F5F5F5"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:src="@drawable/close_new_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_padding_view" />
+
+        <TextView
+            android:id="@+id/tvTittleStoreLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="@dimen/twelve_sp"
+            android:textColor="@color/black"
+            android:lineSpacingExtra="@dimen/five_sp"
+            android:letterSpacing="@integer/point_one"
+            android:fontFamily="@font/futura_semi_bold"
+            android:textAllCaps="true"
+            android:text="@string/store_selection"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/fifty_five_dp"
         android:layout_marginBottom="@dimen/_76sdp"
         android:background="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/tvConfirmStoreLayout"
@@ -19,44 +63,6 @@
             android:layout_height="wrap_content"
             tools:context="za.co.woolworths.financial.services.android.geolocation.view.ClickAndCollectStoresFragment">
 
-            <View
-                android:id="@+id/top_padding_view"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/eight_dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:background="@color/color_F5F5F5"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/backButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/sixteen_dp"
-                android:layout_marginTop="@dimen/sixteen_dp"
-                android:layout_marginEnd="@dimen/sixteen_dp"
-                android:src="@drawable/close_new_16"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/top_padding_view"
-                />
-
-            <TextView
-                android:id="@+id/tvTittleStoreLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="@dimen/sixteen_dp"
-                android:layout_marginEnd="@dimen/sixteen_dp"
-                android:textSize="@dimen/twelve_sp"
-                app:layout_constraintTop_toBottomOf="@id/top_padding_view"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:textColor="@color/black"
-                android:lineSpacingExtra="@dimen/five_sp"
-                android:letterSpacing="@integer/point_one"
-                android:fontFamily="@font/futura_semi_bold"
-                android:textAllCaps="true"
-                android:text="@string/store_selection"/>
-
 
             <View
                 android:id="@+id/viewSeparatorTop"
@@ -64,8 +70,9 @@
                 android:layout_height="@dimen/eight_dp"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:background="@color/color_F5F5F5"
-                app:layout_constraintTop_toBottomOf="@id/tvTittleStoreLabel"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                 />
 
 
 
