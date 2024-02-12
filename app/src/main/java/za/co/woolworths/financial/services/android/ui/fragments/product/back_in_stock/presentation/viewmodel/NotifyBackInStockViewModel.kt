@@ -110,7 +110,7 @@ class NotifyBackInStockViewModel @Inject constructor(
 
     private fun notifyMe(productId: String?, storeId: String?) {
         val notifyMeRequest = NotifyMeRequest(
-            AppInstanceObject.getCurrentUsersID(),
+            backInStockState.email,
             productId,
             backInStockState.selectedSku?.sku,
             storeId,
