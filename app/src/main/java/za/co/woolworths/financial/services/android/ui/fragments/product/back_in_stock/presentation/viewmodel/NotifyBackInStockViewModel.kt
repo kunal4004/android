@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.domain.usecases.NotifyMeUC
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.domain.usecases.ValidateEmailUseCase
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.models.NotifyMeRequest
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.NotifyBackInStockFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.NotifyBackInStockFragment.Companion.OTHER_SKUSBYGROUP_KEY
@@ -38,6 +39,8 @@ class NotifyBackInStockViewModel @Inject constructor(
     private val _notifyMeState = MutableStateFlow(BackToStockUiState())
     val notifyMeState: StateFlow<BackToStockUiState> = _notifyMeState.asStateFlow()
 
+    private val validateEmailUseCase = ValidateEmailUseCase()
+
     fun getState(): BackToStockUiState {
         return backInStockState
     }
@@ -49,10 +52,10 @@ class NotifyBackInStockViewModel @Inject constructor(
     fun getArguments() {
         val selectedSku = savedStateHandle.get<OtherSkus>(SELECTED_SKU)
         val selectedGroupKey = savedStateHandle.get<String>(SELECTED_GROUP_KEY)
-        val otherSKUsByGroupKey = savedStateHandle.get<LinkedHashMap<String, ArrayList<OtherSkus>>>(OTHER_SKUSBYGROUP_KEY)
+        val otherSKUsByGroupKey =
+            savedStateHandle.get<LinkedHashMap<String, ArrayList<OtherSkus>>>(OTHER_SKUSBYGROUP_KEY)
         backInStockState = backInStockState.copy(
             selectedSku = selectedSku,
-            isColourOrSizeSelected = selectedSku != null && selectedSku.quantity == 0,
             selectedGroupKey = selectedGroupKey,
             otherSKUsByGroupKey = otherSKUsByGroupKey
         )
@@ -60,11 +63,16 @@ class NotifyBackInStockViewModel @Inject constructor(
 
     data class BackToStockUiState(
         val isError: Boolean = false,
-        var isSuccess: Boolean = false,
+        val isSuccess: Boolean = false,
         val isLoading: Boolean = false,
         val isConfirmSuccess: Boolean = false,
-        var isColourOrSizeSelected: Boolean = false,
+        val isColourSizeEmailSelected: Boolean = false,
+        val isColorSelected: Boolean = false,
+        val isSizeSelected: Boolean = false,
+        val isEmailSelected: Boolean = false,
         val errorMessage: String = "",
+        val email: String = AppInstanceObject.getCurrentUsersID(),
+        val emailError: String? = null,
         var selectedSku: OtherSkus? = null,
         var selectedGroupKey: String? = null,
         var otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>? = linkedMapOf()
@@ -79,14 +87,23 @@ class NotifyBackInStockViewModel @Inject constructor(
     ) {
 
         when (event) {
-            is BackInStockScreenEvents.OnSizeSelected -> onSizeClick(event.selectedSize)
+            is BackInStockScreenEvents.OnSizeSelected -> onSizeClick(
+                event.selectedSize,
+                hasColor,
+                hasSize
+            )
             is BackInStockScreenEvents.OnOtherSKusSelected -> onOtherSKusClick(event.otherSkus)
             is BackInStockScreenEvents.OnColorSelected -> onColorClick(
                 event.selectedColor,
                 hasColor,
                 hasSize
             )
-            BackInStockScreenEvents.ConfirmClick -> notifyMe(productId, storeId)
+            is BackInStockScreenEvents.ConfirmClick -> notifyMe(productId, storeId)
+            is BackInStockScreenEvents.OnEmailChanged -> onEmailChanged(
+                event.email,
+                hasColor,
+                hasSize
+            )
             else -> {}
         }
     }
@@ -140,15 +157,23 @@ class NotifyBackInStockViewModel @Inject constructor(
         }
     }
 
-    private fun onSizeClick(selectedSize: String) {
+    private fun onSizeClick(selectedSize: String, hasColor: Boolean, hasSize: Boolean) {
         val isSizeSelected = selectedSize.isNotEmpty()
-        backInStockState = backInStockState.copy(
-            isColourOrSizeSelected = isSizeSelected
-        )
+        if (!hasColor && hasSize) {
+            backInStockState = backInStockState.copy(
+                isSizeSelected = isSizeSelected,
+                isColourSizeEmailSelected = isSizeSelected && backInStockState.isEmailSelected
+            )
+        } else {
+            backInStockState = backInStockState.copy(
+                isSizeSelected = isSizeSelected,
+                isColourSizeEmailSelected = isSizeSelected && backInStockState.isEmailSelected && backInStockState.isColorSelected
+            )
+        }
     }
 
     private fun onOtherSKusClick(otherSkus: OtherSkus) {
-        if(backInStockState.selectedSku == null) {
+        if (backInStockState.selectedSku == null) {
             backInStockState = backInStockState.copy(
                 selectedSku = otherSkus
             )
@@ -156,19 +181,53 @@ class NotifyBackInStockViewModel @Inject constructor(
     }
 
     private fun onColorClick(selectedColor: String, hasColor: Boolean, hasSize: Boolean) {
+        val isColorSelected = selectedColor.isNotEmpty()
         if (hasColor && !hasSize) {
-            val isColorSelected = selectedColor.isNotEmpty()
             backInStockState = backInStockState.copy(
-                isColourOrSizeSelected = isColorSelected
+                isColorSelected = isColorSelected,
+                isColourSizeEmailSelected = isColorSelected && backInStockState.isEmailSelected
             )
-            if(backInStockState.selectedSku == null && backInStockState.otherSKUsByGroupKey?.get(selectedColor)?.size!! > 0) {
+            if (backInStockState.selectedSku == null && backInStockState.otherSKUsByGroupKey
+                    ?.get(selectedColor)
+                    ?.size != null
+                && backInStockState.otherSKUsByGroupKey?.get(selectedColor)?.size!! > 0
+            ) {
                 backInStockState = backInStockState.copy(
                     selectedSku = backInStockState.otherSKUsByGroupKey?.get(selectedColor)?.get(0)
                 )
             }
         }
         backInStockState = backInStockState.copy(
-            selectedGroupKey = selectedColor,
+            isColorSelected = isColorSelected,
+            selectedGroupKey = selectedColor
         )
+    }
+
+    private fun onEmailChanged(email: String, hasColor: Boolean, hasSize: Boolean) {
+        backInStockState = backInStockState.copy(email = email)
+        val emailResult = validateEmailUseCase.execute(backInStockState.email)
+        if (hasColor && !hasSize) {
+            backInStockState = backInStockState.copy(
+                emailError = emailResult.errorMessage,
+                isEmailSelected = emailResult.successful,
+                isColourSizeEmailSelected = backInStockState.isEmailSelected &&
+                        backInStockState.isColorSelected
+            )
+        } else if (!hasColor && hasSize) {
+            backInStockState = backInStockState.copy(
+                emailError = emailResult.errorMessage,
+                isEmailSelected = emailResult.successful,
+                isColourSizeEmailSelected = backInStockState.isEmailSelected &&
+                        backInStockState.isSizeSelected
+            )
+        } else {
+            backInStockState = backInStockState.copy(
+                emailError = emailResult.errorMessage,
+                isEmailSelected = emailResult.successful,
+                isColourSizeEmailSelected = backInStockState.isEmailSelected
+                        && backInStockState.isColorSelected
+                        && backInStockState.isSizeSelected
+            )
+        }
     }
 }
