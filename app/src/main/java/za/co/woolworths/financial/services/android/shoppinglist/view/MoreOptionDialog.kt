@@ -84,7 +84,6 @@ fun MoreOptionDialog(
                 modifier = Modifier
                     .width(134.dp)
                     .height(5.dp)
-                    .background(Color.Black)
             )
         }
     }

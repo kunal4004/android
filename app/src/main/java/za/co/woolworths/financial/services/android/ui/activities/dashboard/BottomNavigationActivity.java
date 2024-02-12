@@ -189,6 +189,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private BottomNavigationViewModel bottomNavigationViewModel;
     public FragNavController mNavController;
     private Bundle mBundle;
+
+    private String deepLinkFeatureType = "";
     private int currentSection;
     private ToastUtils mToastUtils;
     public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
@@ -309,17 +311,23 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (mBundle == null) {
             return;
         }
-        String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
-        if (deepLinkData == null) {
-            return;
-        }
-        try {
-            appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
-        } catch (Exception e) {
-            mOnNavigationItemSelectedListener.onNavigationItemSelected(
-                    getBottomNavigationById().getMenu().findItem(R.id.navigation_today));
-        }
 
+        if (!SessionUtilities.getInstance().isUserAuthenticated()) {
+            // Show Login screen.
+            getGlobalState().setDetermineLocationPopUpEnabled(true);
+            ScreenManager.presentCartSSOSignin(BottomNavigationActivity.this);
+        } else {
+            String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
+            if (deepLinkData == null) {
+                return;
+            }
+            try {
+                appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
+            } catch (Exception e) {
+                mOnNavigationItemSelectedListener.onNavigationItemSelected(
+                        getBottomNavigationById().getMenu().findItem(R.id.navigation_today));
+            }
+        }
     }
 
     private void queryBadgeCountOnStart() {
@@ -394,10 +402,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         getBottomNavigationById().setOnNavigationItemReselectedListener(mOnNavigationItemReSelectedListener);
         removeToolbar();
         if (mBundle != null && mBundle.get("feature") != null && !TextUtils.isEmpty(mBundle.get("feature").toString())) {
-            String deepLinkType = mBundle.get("feature").toString();
+            deepLinkFeatureType = mBundle.get("feature").toString();
 
-            switch (deepLinkType) {
-                case AppConstant.DP_LINKING_PRODUCT_LISTING:
+            switch (deepLinkFeatureType) {
+                case AppConstant.DP_LINKING_PRODUCT_LISTING: {
                     if (appLinkData == null) {
                         return;
                     }
@@ -415,7 +423,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true, false));
                     }
                     break;
+                }
+                case AppConstant.DP_LINKING_VIEW_SHOPPING_LIST: {
+                    if (appLinkData == null) {
+                        return;
+                    }
+                    if (appLinkData.get("url") == null) {
+                        return;
+                    }
 
+                    AuthenticateUtils.Companion.enableBiometricForCurrentSession(false);
+                    BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
+                    new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_10_MS);
+                    break;
+                }
                 case AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID:
                     if (appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID) == null) {
                         return;
@@ -801,6 +822,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         setToolbarBackgroundColor(R.color.white);
                         switchTab(INDEX_ACCOUNT);
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU, BottomNavigationActivity.this);
+
+                        if (deepLinkFeatureType != null && !deepLinkFeatureType.isEmpty()) {
+                            if (deepLinkFeatureType.equals(AppConstant.DP_LINKING_VIEW_SHOPPING_LIST)) {
+                                Uri linkData = Uri.parse(appLinkData.get("url").getAsString());
+                                String viewOrEditType = linkData.getLastPathSegment();
+                                String listId = linkData.getPathSegments().size() >= 3 ? linkData.getPathSegments().get(3) : "";
+                                if (listId.isEmpty())
+                                    ScreenManager.presentMyListScreen(BottomNavigationActivity.this);
+                                else
+                                    ScreenManager.presentShoppingListDetailActivity(listId, viewOrEditType, BottomNavigationActivity.this);
+                            }
+                        }
                         return true;
                     }
             }
@@ -1295,6 +1328,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             AppInstanceObject appInstanceObject = AppInstanceObject.get();
             if (appInstanceObject!=null) {
                 appInstanceObject.setBiometricWalkthroughPresented(false);
+            }
+            mBundle = getIntent().getExtras();
+            if (mBundle != null) {
+                String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
+                if (deepLinkData != null) {
+                    //Redirect to deepLink flow.
+                    parseDeepLinkData();
+                    renderUI();
+                }
             }
             //load count on login success
             switch (getCurrentSection()) {

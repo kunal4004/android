@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.shoppinglist.component.ListDataState
+import za.co.woolworths.financial.services.android.shoppinglist.service.network.ProductListDetails
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
@@ -39,7 +41,6 @@ fun MyListItemRowView(
     modifier: Modifier = Modifier,
     listDataState: ListDataState,
     listItem: ShoppingList,
-    isShareButtonVisible: Boolean = false,
     onDeleteIconClick: (item: ShoppingList) -> Unit,
     onShareIconClick: (item: ShoppingList) -> Unit,
     onDetailsArrowClick: (item: ShoppingList) -> Unit,
@@ -56,10 +57,14 @@ fun MyListItemRowView(
                 text = listItem.listName,
                 style = TextStyle(
                     fontFamily = OpenSansFontFamily,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.W700,
                     fontSize = 14.sp,
-                    color = Color.Black
-                )
+                    color = Color.Black,
+                    lineHeight = 21.sp
+                ),
+                modifier = Modifier.clickable {
+                    onDetailsArrowClick(listItem)
+                }
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(
@@ -67,9 +72,10 @@ fun MyListItemRowView(
                 text = listItem.modifiedListCount,
                 style = TextStyle(
                     fontFamily = OpenSansFontFamily,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.W700,
                     fontSize = 14.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    lineHeight = 21.sp
                 )
             )
             Row(
@@ -81,14 +87,12 @@ fun MyListItemRowView(
                     Icon(painter = painterResource(id = listDataState.deleteIcon),
                         contentDescription = "Delete List",
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(16.dp)
                             .clickable {
                                 onDeleteIconClick(listItem)
                             }
                     )
                 } else {
-                    if(isShareButtonVisible) {
-                        /* will remove later once share list available*/
                         Icon(painter = painterResource(id = listDataState.shareIcon),
                             contentDescription = "Share List",
                             modifier = Modifier
@@ -98,7 +102,6 @@ fun MyListItemRowView(
                                     onShareIconClick(listItem)
                                 }
                         )
-                    }
 
                     Icon(
                         painter = painterResource(id = listDataState.openIcon),
@@ -113,11 +116,30 @@ fun MyListItemRowView(
             }
         }
 
-        if (listItem.productImageList.isNotEmpty()) {
+        Row () {
+            if (listItem.numOfCollaborators != 0) {
+                Text(
+                    text = listItem.numOfCollaborators.toString() + "\t" + stringResource(id = R.string.collaborators),
+                    style = TextStyle(
+                        fontSize = 11.sp,
+                        lineHeight = 16.5.sp,
+                        fontFamily = OpenSansFontFamily,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xFF666666),
+                        letterSpacing = 0.22.sp,
+                    ),
+                    modifier = Modifier.clickable {
+                        onDetailsArrowClick(listItem)
+                    }
+                )
+            }
+        }
 
+        if (listItem.productImageURLs.isNotEmpty()) {
             Spacer(modifier = Modifier.height(15.dp))
-
-            ListOfImagesView(listItem, onImageItemClick = {})
+            ListOfImagesView(listItem, onImageItemClick = {
+                onDetailsArrowClick(listItem)
+            })
         }
     }
 }
@@ -131,13 +153,22 @@ private fun MyListItemRowPreview() {
             listName = "Test"
             listCount = 14
             modifiedListCount = "(14)"
-            productImageList = listOf("https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&")
+            val productListDetails = ProductListDetails().apply {
+                imgUrl =
+                    "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&"
+            }
+
+            val mockListDetails = ArrayList<ProductListDetails>()
+            mockListDetails.add(productListDetails)
+            mockListDetails.add(productListDetails)
+            mockListDetails.add(productListDetails)
+          //  productImageList = mockListDetails
         }
         val mockListData: List<ShoppingList> = emptyList()
         mockListData.plus(mockList)
         val listData =
             ListDataState(
-                mockListData, emptyList(), R.drawable.ic_share, R.drawable
+                mockListData, emptyList(), emptyList(), R.drawable.ic_share, R.drawable
                     .ic_white_chevron_right,
                 isEditMode = true
             )

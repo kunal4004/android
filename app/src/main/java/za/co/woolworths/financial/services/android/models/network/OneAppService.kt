@@ -761,8 +761,32 @@ open class OneAppService(
             mApiInterface.getShoppingListItems(
                 getSessionToken(),
                 getDeviceIdentityToken(),
-                listId
+                listId,
             )
+        }
+    }
+
+    suspend fun getItemsInSharedShoppingList(
+        listId: String,
+        viewOnlyType: Boolean
+    ): retrofit2.Response<ShoppingListItemsResponse> {
+        return withContext(Dispatchers.IO) {
+            if (viewOnlyType) {
+                mApiInterface.getItemsInViewOnlySharedShoppingList(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    listId,
+                    true,
+                )
+            } else {
+                mApiInterface.getItemsInEditSharedShoppingList(
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    listId,
+                    true,
+                )
+            }
+
         }
     }
 

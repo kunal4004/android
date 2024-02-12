@@ -11,6 +11,8 @@ import java.util.List;
 public class ShoppingListsResponse {
 	public int httpCode;
 	public Response response;
+	@SerializedName("sharedLists")
+	public List<ShoppingList> sharedLists;
 	@SerializedName("data")
 	public List<ShoppingList> lists;
 }

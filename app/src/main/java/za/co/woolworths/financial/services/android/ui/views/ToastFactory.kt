@@ -10,7 +10,6 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
 import android.text.Spannable
-import android.text.style.StyleSpan
 import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -21,13 +20,12 @@ import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.compose.ui.text.font.Typeface
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.LayoutEditShoppingListBinding
 import com.awfs.coordination.databinding.LayoutSnackbarAddToListBinding
 import com.google.gson.JsonObject
 import kotlinx.coroutines.GlobalScope
@@ -184,6 +182,69 @@ class ToastFactory {
             return popupWindow
         }
 
+        fun buildShoppingListEditOptions(
+            activity: Activity,
+            viewLocation: View,
+            message: String,
+            editOperation:String = "",
+            buttonIsVisible: Boolean = false,
+            onButtonClick: () -> Unit
+        ): PopupWindow? {
+
+            val context = WoolworthsApplication.getAppContext()
+            context ?: return null
+            val binding = LayoutEditShoppingListBinding.inflate(LayoutInflater.from(context))
+
+            binding.apply {
+
+                val start = message.indexOf(editOperation)
+                val end = start + editOperation.length
+
+                txtMessage.text = buildSpannedString {
+                    append(message)
+                    val typeface = ResourcesCompat.getFont(context, R.font.futura_bold_ttf)
+                    if (editOperation.isNotEmpty()) {
+                        setSpan(
+                            CustomTypefaceSpan("futura", typeface),
+                            start,
+                            end,
+                            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                        )
+                    }
+                }
+
+                if (buttonIsVisible) {
+                    txtAction.visibility = VISIBLE
+                    txtMessage.gravity = Gravity.START
+                } else {
+                    txtAction.visibility = GONE
+                    txtMessage.gravity = Gravity.CENTER
+                }
+            }
+
+            // initialize your popupWindow and use your custom layout as the view
+            val popupWindow = PopupWindow(
+                binding.root,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, true
+            )
+            binding.txtAction.setOnClickListener {
+                onButtonClick()
+                popupWindow.dismiss()
+            }
+            popupWindow.isFocusable = false
+
+            // dismiss the popup window after 3sec
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+            popupWindow.showAtLocation(
+                viewLocation,
+                Gravity.BOTTOM,
+                0,
+                convertDpToPixel(getDeviceHeight(activity), context)
+            )
+            return popupWindow
+        }
+
         fun buildShoppingListFromSearchResultToast(
             activity: Activity,
             viewLocation: View,
@@ -306,6 +367,7 @@ class ToastFactory {
             viewLocation: View,
             buttonIsVisible: Boolean,
             activity: Activity,
+            message: String = "",
             toastInterface: IToastInterface?
         ): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
@@ -326,7 +388,7 @@ class ToastFactory {
 
             tvButtonClick?.visibility = if (buttonIsVisible) VISIBLE else GONE
             tvBoldTitle?.visibility = GONE
-            tvAddedTo?.text = context.getString(R.string.toast_added_to_cart)
+            tvAddedTo?.text = message
             tvAddedTo?.isAllCaps = true
 
             tvButtonClick?.setOnClickListener {
