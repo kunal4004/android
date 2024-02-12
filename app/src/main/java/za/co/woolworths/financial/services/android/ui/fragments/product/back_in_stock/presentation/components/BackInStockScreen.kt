@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.back_in
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -99,7 +101,7 @@ fun BackInStockScreen(
                     .padding(bottom = 24.dp)
                     .height(50.dp),
                 text = stringResource(id = R.string.confirm).uppercase(),
-                enabled = backToStockUiState.isColourOrSizeSelected
+                enabled = backToStockUiState.isColourSizeEmailSelected
             ) {
                 onEvent(BackInStockScreenEvents.ConfirmClick)
             }
@@ -242,29 +244,40 @@ private fun AddBISView(
                 .fillMaxWidth()
         )
 
-        var text by remember { mutableStateOf(AppInstanceObject.getCurrentUsersID()) }
-        TextField(
-            value = text,
-            onValueChange = { text = it },
-            readOnly = true,
-            enabled = false,
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = colorResource(R.color.color_F3F3F3),
-                focusedContainerColor = colorResource(R.color.color_F3F3F3),
-                disabledContainerColor = colorResource(R.color.color_F3F3F3)
-            ),
-            modifier = Modifier
-                .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
-                .border(width = 1.dp, color = colorResource(R.color.color_D8D8D8))
-                .fillMaxWidth(),
-            textStyle = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 21.sp,
-                fontFamily = FontFamily(Font(R.font.opensans_medium)),
-                fontWeight = FontWeight(400),
-                color = Color(0xFF000000)
-            )
+        var textEmailAddress by remember { mutableStateOf(AppInstanceObject.getCurrentUsersID()) }
+        onEvent(BackInStockScreenEvents.OnEmailChanged(textEmailAddress))
+
+        val customTextSelectionColors = TextSelectionColors(
+            handleColor = colorResource(id = R.color.color_007778),
+            backgroundColor = colorResource(id = R.color.color_95C6C7)
         )
+        CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
+            TextField(
+                value = textEmailAddress,
+                onValueChange = { afterTextChanged ->
+                    textEmailAddress = afterTextChanged
+                    onEvent(BackInStockScreenEvents.OnEmailChanged(textEmailAddress))
+                },
+                readOnly = false,
+                enabled = true,
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    cursorColor = Color.Black
+                ),
+                modifier = Modifier
+                    .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
+                    .border(width = 1.dp, color = colorResource(R.color.color_EEEEEE))
+                    .fillMaxWidth(),
+                textStyle = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 21.sp,
+                    fontFamily = FontFamily(Font(R.font.opensans_medium)),
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFF000000)
+                )
+            )
+        }
     }
 }
 
@@ -280,6 +293,7 @@ fun SpinnerColourView(
 
     var selectedColour by remember { mutableStateOf(preselectedColour) }
     var expanded by remember { mutableStateOf(false) } // initial value
+    onSelectionChanged(selectedColour)
 
     Box {
         ExposedDropdownMenuBox(
@@ -396,6 +410,7 @@ fun SpinnerSizeView(
     }
     var selectedSize by remember { mutableStateOf(preselectedSizeString) }
     var expanded by remember { mutableStateOf(false) } // initial value
+    onSelectionChanged(selectedSize)
 
     Box {
         ExposedDropdownMenuBox(
