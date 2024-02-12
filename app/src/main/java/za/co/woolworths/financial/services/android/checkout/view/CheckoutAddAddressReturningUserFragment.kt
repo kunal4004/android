@@ -1166,18 +1166,15 @@ class CheckoutAddAddressReturningUserFragment :
 
     private fun preparePaymentPageViewRequest(orderTotalValue: Double) {
         config = NetworkConfig(AppContextProviderImpl())
-        if (getDyServerId() != null)
-            dyServerId = getDyServerId()
-        if (getDySessionId() != null)
-            dySessionId = getDySessionId()
+        getDyServerId()?.let { dyServerId = it }
+        getDySessionId()?.let { dySessionId = it }
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
         val dataOther = DataOther(null,null,ZAR,"",orderTotalValue,null)
-        val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
-        dataOtherArray?.add(dataOther)
+        val dataOtherArray = ArrayList<DataOther>().apply { add(dataOther) }
         val page = Page(null, PAYMENT_PAGE, Utils.OTHER, null, dataOtherArray)
-        val context = Context(device, page, Utils.DY_CHANNEL)
+        val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
         dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)

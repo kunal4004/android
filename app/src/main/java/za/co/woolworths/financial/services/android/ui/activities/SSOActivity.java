@@ -48,7 +48,9 @@ import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -791,8 +793,7 @@ public class SSOActivity extends WebViewActivity {
 		Context context = new Context(device,null, DY_CHANNEL,null);
 		Properties properties = new Properties(null,null,LOGIN_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,LOGIN,properties);
-		ArrayList<Event> eventArrayList = new ArrayList<>();
-		eventArrayList.add(event);
+		List<Event> eventArrayList = Collections.singletonList(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
 				context,
 				eventArrayList,
@@ -810,8 +811,7 @@ public class SSOActivity extends WebViewActivity {
 		Context context = new Context(device,null, DY_CHANNEL,null);
 		Properties properties = new Properties(null,null,IDENTIFY_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,IDENTIFY,properties);
-		ArrayList<Event> eventArrayList = new ArrayList<>();
-		eventArrayList.add(event);
+		List<Event> eventArrayList = Collections.singletonList(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
 				context,
 				eventArrayList,
@@ -828,8 +828,7 @@ public class SSOActivity extends WebViewActivity {
 		Context context = new Context(device,null, DY_CHANNEL,null);
 		Properties properties = new Properties(null,null,SIGNUP_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,SIGNUP,properties);
-		ArrayList<Event> eventArrayList = new ArrayList<>();
-		eventArrayList.add(event);
+		List<Event> eventArrayList = Collections.singletonList(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
 				context,
 				eventArrayList,
@@ -1019,7 +1018,7 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void callDyPageView() {
-		if (Boolean.TRUE.equals(Objects.requireNonNull(AppConfigSingleton.getDynamicYieldConfig()).isDynamicYieldEnabled())) {
+		if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()) {
 			prepareDynamicYieldRequestEvent();
 		}
 	}

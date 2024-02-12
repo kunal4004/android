@@ -1359,10 +1359,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 showRecommendedProducts()
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        if (getDyServerId() != null)
-                            dyServerId = getDyServerId()
-                        if (getDySessionId() != null)
-                            dySessionId = getDySessionId()
+                        getDyServerId()?.let { dyServerId = it }
+                        getDySessionId()?.let { dySessionId = it }
                         prepareDynamicYieldCartViewRequestEvent()
                         prepareSyncCartRequestEvent()
                     }
@@ -1418,7 +1416,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareDynamicYieldCartViewRequestEvent() {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
         val productList: ArrayList<String>? = ArrayList()
         cartItems?.let { cartItems ->
             for (cartItemGroup: CartItemGroup in cartItems) {
@@ -2366,7 +2364,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         onChangeQuantityComplete()
                     }
                     mChangeQuantityList?.removeFirstOrNull()
-                    prepareSyncCartRequestEvent()
+                    AppConfigSingleton.dynamicYieldConfig?.apply {
+                        if (isDynamicYieldEnabled == true) {
+                            prepareSyncCartRequestEvent()
+                        }
+                    }
                 }
 
                 Status.ERROR -> {
@@ -2466,10 +2468,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareDynamicYieldCheckoutRequest(deliveryType: Delivery?) {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(Utils.IPAddress, config?.getDeviceModel())
-        val productList: ArrayList<DataOther> = ArrayList()
-        val dataOther = DataOther(null,null,null,null,null, deliveryType?.type)
-        productList.add(dataOther)
+        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
+        val productList = ArrayList<DataOther>().apply {
+            add(DataOther(null, null, null, null, null, deliveryType?.type))
+        }
         val page = Page(null, DY_CHECKOUT, OTHER, null,productList)
         val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
@@ -2480,7 +2482,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareDyRemoveFromCartRequestEvent(mCommerceItem: CommerceItem?) {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel())
+        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
         val context = Context(device, null, DY_CHANNEL)
         val cartLinesValue: MutableList<Cart> = arrayListOf()
         cartItems?.let { cartItems ->
@@ -2546,7 +2548,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareSyncCartRequestEvent() {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel())
+        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
         val context = Context(device, null, DY_CHANNEL)
         val cartLinesValue: MutableList<Cart> = arrayListOf()
         cartItems?.let { cartItems ->

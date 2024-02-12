@@ -302,8 +302,7 @@ class AddToListViewModel @Inject constructor(
             Utils.ADD_TO_WISH_LIST_DY_TYPE,null,null,null,null,skuID,null,null,null,size,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,
             Utils.ADD_TO_WISH_LIST_EVENT_NAME,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareAddToWishListRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,

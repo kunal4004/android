@@ -17,8 +17,8 @@ class DyChangeAttributeViewModel @Inject constructor(
     fun createDyChangeAttributeRequest(reportEventRequest: PrepareChangeAttributeRequestEvent) {
         viewModelScope.launch {
             val response = dyReportEventRepository.getDyReportEventResponse(reportEventRequest)
-            if (response.status == Status.SUCCESS) {
-                var value = response.data?.response?.desc
+            response.data?.response?.let {
+                val value = it.desc
             }
         }
     }

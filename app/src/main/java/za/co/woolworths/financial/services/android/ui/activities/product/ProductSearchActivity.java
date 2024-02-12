@@ -42,6 +42,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,7 +82,6 @@ public class ProductSearchActivity extends AppCompatActivity
     private DyChangeAttributeViewModel dyKeywordSearchViewModel;
     private String dyServerId = null;
     private String dySessionId = null;
-    private NetworkConfig config = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,7 @@ public class ProductSearchActivity extends AppCompatActivity
     }
 
     private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
-        config = new NetworkConfig(new AppContextProviderImpl());
+        NetworkConfig config = new NetworkConfig(new AppContextProviderImpl());
         if (Utils.getDyServerId() != null)
             dyServerId = Utils.getDyServerId();
         if (Utils.getDySessionId() != null)
@@ -124,8 +124,7 @@ public class ProductSearchActivity extends AppCompatActivity
         Context context = new Context(device,null,DY_CHANNEL,null);
         Properties properties = new Properties(null,null,KEYWORD_SEARCH_V1,searchProductBrand,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         Event events = new Event(null,null,null,null,null,null,null,null,null,null,null,null,KEYWORD_SEARCH_EVENT_NAME,properties);
-        ArrayList<Event> event = new ArrayList<>();
-        event.add(events);
+        List<Event> event = Collections.singletonList(events);
         PrepareChangeAttributeRequestEvent dyKeywordSearchRequestEvent = new PrepareChangeAttributeRequestEvent(
                 context,
                 event,
@@ -198,7 +197,7 @@ public class ProductSearchActivity extends AppCompatActivity
                     intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
-            if (Boolean.TRUE.equals(Objects.requireNonNull(AppConfigSingleton.getDynamicYieldConfig()).isDynamicYieldEnabled())) {
+            if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()) {
                 dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
                 prepareDyKeywordSearchRequestEvent(searchProductBrand);
             }
