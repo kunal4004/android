@@ -548,7 +548,15 @@ fun QuantitySelectionView(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircleIcon(leftIcon, leftIconEnabled, cdLeftIcon, background = ShimmerColor) {
+        CircleIcon(
+            modifier = Modifier
+                .size(12.dp)
+                .padding(if (leftIcon == R.drawable.ic_minus_black) 3.dp else 0.dp),
+            icon = leftIcon,
+            isEnabled = leftIconEnabled,
+            background = ShimmerColor,
+            contentDesc = cdLeftIcon
+        ) {
             onLeftIconClick()
         }
         SpacerWidth8dp()
@@ -557,7 +565,12 @@ fun QuantitySelectionView(
             text = productItem.quantity.toString()
         )
         SpacerWidth8dp()
-        CircleIcon(rightIcon, rightIconEnabled, cdRightIcon, ShimmerColor) {
+        CircleIcon(
+            icon = rightIcon,
+            isEnabled = rightIconEnabled,
+            contentDesc = cdRightIcon,
+            background = ShimmerColor
+        ) {
             onRightIconClick()
         }
     }
@@ -588,13 +601,13 @@ fun EmptyScreen(
 
         SpacerHeight24dp()
         FuturaTextH1(
-            modifier = Modifier.padding(horizontal = 54.dp),
+            modifier = Modifier.padding(horizontal = 24.dp),
             text = title,
             textAlign = TextAlign.Center
         )
         SpacerHeight8dp()
         OpenSansText14(
-            modifier = Modifier.padding(horizontal = 54.dp),
+            modifier = Modifier.padding(horizontal = 24.dp),
             text = subTitle,
             color = Color444444,
             textAlign = TextAlign.Center
@@ -629,7 +642,14 @@ private fun PreviewOrderAgainScreen() {
 @Composable
 private fun PreviewEmptyScreen() {
     OneAppTheme {
-        EmptyScreen(Modifier.background(White)) {}
+        EmptyScreen(
+            Modifier.background(White),
+            title = stringResource(id = R.string.order_again_empty_title),
+            subTitle = stringResource(id = R.string.order_again_empty_desc),
+            actionText = stringResource(id = R.string.start_shopping)
+        ) {
+
+        }
     }
 }
 

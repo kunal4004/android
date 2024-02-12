@@ -390,7 +390,7 @@ class SubCategoryFragment :
     }
 
     private fun notifyOrderAgainUpdate() {
-        if (AppConstant.FOOD_CATEGORY_ID.equals(mRootCategory?.categoryId)) {
+        if (AppConstant.FOOD_CATEGORY_ID.equals(mRootCategory?.catId)) {
             // 1: Index Position for Order Again
             mAdapter?.notifyItemChanged(1)
         }
