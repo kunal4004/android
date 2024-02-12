@@ -40,6 +40,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface, PermissionResultCall
     @Inject
     lateinit var notificationPermission: NotificationPermission
     private lateinit var permissionUtils: PermissionUtils
+    private var firstTimeLoading: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,13 +175,24 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface, PermissionResultCall
 
     override fun onResume() {
         super.onResume()
-        activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.WTODAY) }
+        if(firstTimeLoading||isVisible) {
+            activity?.let {
+                Utils.setScreenName(
+                    it,
+                    FirebaseManagerAnalyticsProperties.ScreenNames.WTODAY
+                )
+            }
+            firstTimeLoading=false
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         when (hidden) {
-            false -> (activity as? BottomNavigationActivity)?.hideToolbar()
+            false -> {
+                (activity as? BottomNavigationActivity)?.hideToolbar()
+                activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.WTODAY) }
+            }
             true -> cancelPDPRequest()
         }
     }

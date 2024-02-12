@@ -149,6 +149,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SDK_INIT_FAIL
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.STOCK_AVAILABILITY_0
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
@@ -285,9 +286,11 @@ class ProductDetailsFragment :
     private var substitutionProductItem: ProductList? = null
     private var kiboItem: Item? = null
     private var isSubstiuteItemAdded = false
+    private val SSO_REQUEST_CART_NOT_LOGIN = 1014
 
     private val recommendationViewModel: RecommendationViewModel by viewModels()
     private var bottomSheetWebView: PayFlexBottomSheetDialog? =null
+    private var stockAvailable: Int? = null
 
     @OpenTermAndLighting
     @Inject
@@ -332,6 +335,7 @@ class ProductDetailsFragment :
         const val STR_BRAND_HEADER = "strBandHeaderDesc"
         const val IS_BROWSING = "isBrowsing"
         const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
+        const val STR_STOCK_AVAILABLE = "STR_STOCK_AVAILABLE"
 
         const val PRODUCTLIST = "PRODUCT_LIST"
         fun newInstance(
@@ -363,6 +367,7 @@ class ProductDetailsFragment :
             mFetchFromJson = getBoolean("fetchFromJson")
             isUserBrowsing = getBoolean(IS_BROWSING, false)
             productList = getSerializable(PRODUCTLIST) as? ProductList?
+            stockAvailable = getInt(STR_STOCK_AVAILABLE)
         }
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
         productId = productDetails?.productId
@@ -825,7 +830,15 @@ class ProductDetailsFragment :
 
 
     private fun openCart() {
-        (activity as? BottomNavigationActivity)?.navigateToTabIndex(INDEX_CART, null)
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSigninActivity(
+                activity,
+                SSO_REQUEST_CART_NOT_LOGIN,
+                isUserBrowsing
+            )
+        } else {
+            (activity as? BottomNavigationActivity)?.navigateToTabIndex(INDEX_CART, null)
+        }
     }
 
     private fun onQuantitySelector() {
@@ -888,6 +901,16 @@ class ProductDetailsFragment :
                     isUserBrowsing
                 )
             )
+        }
+        setOutOfStock()
+    }
+
+    private fun setOutOfStock() {
+        AppConfigSingleton.outOfStock?.apply {
+                if (stockAvailable == STOCK_AVAILABILITY_0 && isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                    binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                    binding.productImagesViewPager.alpha = 0.5f
+                }
         }
     }
 
@@ -2774,6 +2797,9 @@ class ProductDetailsFragment :
                             // request cart summary to get the user's location.
                             productDetailsPresenter?.loadCartSummary()
                         }
+                    }
+                    SSO_REQUEST_CART_NOT_LOGIN -> {
+                        (activity as? BottomNavigationActivity)?.navigateToTabIndex(INDEX_CART, null)
                     }
                     SSO_REQUEST_ADD_TO_SHOPPING_LIST -> {
                         addItemToShoppingList()

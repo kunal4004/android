@@ -46,7 +46,7 @@ fun MoreOptionDialog(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 24.dp, start = 24.dp, end = 24.dp)
+            .padding(start = 24.dp, end = 24.dp)
     ) {
 
         Spacer(
@@ -76,7 +76,7 @@ fun MoreOptionDialog(
         }
 
         Box(
-            modifier = Modifier.padding(top = 48.dp, bottom = 8.dp)
+            modifier = Modifier.padding(top = 40.dp, bottom = 8.dp)
                 .align(Alignment.CenterHorizontally),
             contentAlignment = Alignment.BottomCenter,
         ) {

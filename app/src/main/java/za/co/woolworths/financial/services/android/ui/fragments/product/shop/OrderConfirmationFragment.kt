@@ -18,9 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.DeliveringToCollectionFromBinding
 import com.awfs.coordination.databinding.FragmentOrderConfirmationBinding
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +27,7 @@ import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.endlessaisle.utils.getBarcodeMessage
+import za.co.woolworths.financial.services.android.endlessaisle.utils.isEndlessAisleAvailable
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
@@ -60,6 +59,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
 import za.co.woolworths.financial.services.android.util.analytics.dto.toAnalyticItem
@@ -86,11 +86,18 @@ class OrderConfirmationFragment :
     private var isEndlessAisleJourney: Boolean? = false
     private val dyChooseVariationViewModel: DyChooseVariationCallViewModel by viewModels()
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
+    private var isOrderFetched: Boolean = false
+    private lateinit var submittedOrderResponse: SubmittedOrderResponse
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isEndlessAisleJourney = arguments?.getBoolean(BundleKeysConstants.IS_ENDLESS_AISLE_JOURNEY)
-        getOrderDetails()
+        if (!isOrderFetched) {
+            getOrderDetails()
+        } else {
+            updateUi(submittedOrderResponse)
+        }
         addFragmentResultListener()
     }
 
@@ -121,14 +128,19 @@ class OrderConfirmationFragment :
                         is SubmittedOrderResponse -> {
                             when (response.httpCode) {
                                 AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
-                                    response.orderSummary?.orderId?.let { setToolbar(it) }
-                                    setupDeliveryOrCollectionDetails(response)
-                                    setupOrderTotalDetails(response)
+                                    submittedOrderResponse=response
+                                    updateUi(response)
                                     displayVocifNeeded(response)
+
+                                    val isEndlessAisle = isEndlessAisleJourney == true &&
+                                            response?.orderSummary?.endlessAisleOrder == true &&
+                                            !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()
                                     if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
                                     {
-                                        showPurchaseEvent(response)
+                                        FirebaseAnalyticsEventHelper.purchase(response)
                                         isPurchaseEventTriggered = false
+                                    } else if (isEndlessAisle) {
+                                        showEndlessAisleEvent()
                                     }
 
                                     //Make this call to recommendation API after receiving the 200 or 201 from the order
@@ -140,9 +152,7 @@ class OrderConfirmationFragment :
                                         }
                                     }
                                     // Update Layout depending on endless aisle journey is enabled or not
-                                    if(isEndlessAisleJourney == true &&
-                                        response?.orderSummary?.endlessAisleOrder == true &&
-                                        !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()){
+                                    if(isEndlessAisle){
                                         updateLayoutForEndlessAisleJourney(response)
                                     }
                                 }
@@ -200,57 +210,10 @@ class OrderConfirmationFragment :
         dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
     }
 
-    private fun showPurchaseEvent(response: SubmittedOrderResponse) {
-        val purchaseItemParams = Bundle()
-        purchaseItemParams.putString(
-            FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-        )
-        purchaseItemParams.putString(
-            FirebaseAnalytics.Param.AFFILIATION,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
-        )
-        purchaseItemParams.putString(
-            FirebaseAnalytics.Param.TRANSACTION_ID,
-            response.orderSummary?.orderId
-        )
-        response.orderSummary?.total?.let {
-            purchaseItemParams.putDouble(
-                FirebaseAnalytics.Param.VALUE,
-                it
-            )
-        }
-        purchaseItemParams.putString(
-            FirebaseAnalytics.Param.SHIPPING,
-            response.deliveryDetails?.shippingAmount.toString()
-        )
-
-        val purchaseItem = Bundle()
-        purchaseItem.putString(
-            FirebaseAnalytics.Param.ITEM_ID,
-            response.items?.other?.get(0)?.commerceItemInfo?.productId
-        )
-        purchaseItem.putString(
-            FirebaseAnalytics.Param.ITEM_NAME,
-            response.items?.other?.get(0)?.commerceItemInfo?.productDisplayName
-        )
-        purchaseItem.putString(
-            FirebaseAnalytics.Param.QUANTITY,
-            response.items?.other?.get(0)?.commerceItemInfo?.quantity.toString()
-        )
-        response.items?.other?.get(0)?.priceInfo?.amount?.let {
-            purchaseItem.putDouble(
-                FirebaseAnalytics.Param.PRICE,
-                it
-            )
-        }
-        purchaseItem.putString(
-            FirebaseAnalytics.Param.ITEM_VARIANT,
-            response.items?.other?.get(0)?.color
-        )
-        purchaseItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(purchaseItem))
-
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, purchaseItemParams)
+    private fun showEndlessAisleEvent() {
+        val params = Bundle()
+        params.putString(FirebaseManagerAnalyticsProperties.PropertyNames.PAYMENT_TYPE, FirebaseManagerAnalyticsProperties.PropertyValues.IN_STORE)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ENDLESS_AISLE, params)
     }
 
     private fun displayVocifNeeded(response: SubmittedOrderResponse) {
@@ -280,6 +243,7 @@ class OrderConfirmationFragment :
             orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
             btnClose.setOnClickListener { requireActivity().onBackPressed() }
             helpTextView.setOnClickListener {
+                isOrderFetched=true
                 findNavController()?.navigate(R.id.action_OrderConfirmationFragment_to_helpAndSupportFragment)
             }
         }
@@ -681,19 +645,21 @@ class OrderConfirmationFragment :
     }
 
     private fun initialiseItemsOrder(items: OrderItems?) {
-        if (!items?.other.isNullOrEmpty()) {
-            itemsOrder?.addAll(items?.other!!)
-        }
-        if (!items?.food.isNullOrEmpty()) {
-            itemsOrder?.addAll(items?.food!!)
+        if (itemsOrder.isNullOrEmpty()) {
+            if (!items?.other.isNullOrEmpty()) {
+                itemsOrder?.addAll(items?.other!!)
+            }
+            if (!items?.food.isNullOrEmpty()) {
+                itemsOrder?.addAll(items?.food!!)
+            }
         }
     }
 
     private fun initialiseCncItemsOrder(items: OrderItems?) {
-        if (!items?.other.isNullOrEmpty()) {
+        if (!items?.other.isNullOrEmpty()&&cncOtherItemsOrder.isNullOrEmpty()) {
             cncOtherItemsOrder?.addAll(items?.other!!)
         }
-        if (!items?.food.isNullOrEmpty()) {
+        if (!items?.food.isNullOrEmpty()&&cncFoodItemsOrder.isNullOrEmpty()) {
             cncFoodItemsOrder?.addAll(items?.food!!)
         }
     }
@@ -853,5 +819,11 @@ class OrderConfirmationFragment :
                 }
             }
         }
+    }
+
+    private fun updateUi(response: SubmittedOrderResponse){
+        response.orderSummary?.orderId?.let { setToolbar(it) }
+        setupDeliveryOrCollectionDetails(response)
+        setupOrderTotalDetails(response)
     }
 }

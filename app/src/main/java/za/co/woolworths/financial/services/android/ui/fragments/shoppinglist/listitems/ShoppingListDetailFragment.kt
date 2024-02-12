@@ -1407,7 +1407,9 @@ class ShoppingListDetailFragment : Fragment(), View.OnClickListener, EmptyCartIn
     override fun onResume() {
         super.onResume()
         requireActivity().apply {
-            Utils.setScreenName(this, SHOPPING_LIST_ITEMS)
+            if(isVisible) {
+                Utils.setScreenName(this, SHOPPING_LIST_ITEMS)
+            }
             registerReceiver(
                 mConnectionBroadcast,
                 IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")

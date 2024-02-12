@@ -5,9 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/transparent"
-    android:paddingLeft="@dimen/twelve_dp"
-    android:paddingRight="@dimen/twelve_dp"
-    android:paddingBottom="@dimen/eight_dp">
+    android:padding="@dimen/eight_dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toastView"
