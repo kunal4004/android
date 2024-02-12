@@ -1419,7 +1419,7 @@ class ProductDetailsFragment :
     }
 
     private fun showEnhancedSubstitutionOutOfStock() {
-        if ((KotlinUtils.getDeliveryType()?.deliveryType != Delivery.DASH.type || isEnhanceSubstitutionFeatureEnable() == false)
+        if ((KotlinUtils.isDeliveryOptionDash() || isEnhanceSubstitutionFeatureEnable() == false)
             || (productDetails?.fulfillmentType != getString(R.string.fullfilment_type_01) && productDetails?.productType != getString(
                 R.string.food_product_type
             ))
