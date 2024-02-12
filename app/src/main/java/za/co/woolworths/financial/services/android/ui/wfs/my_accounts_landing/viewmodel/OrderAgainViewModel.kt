@@ -180,6 +180,7 @@ class OrderAgainViewModel @Inject constructor(
     }
 
     private fun onSelectAllClick() {
+        collapseItems()
         viewModelScope.launch(Dispatchers.Default) {
 
             _onScreenEvent.update {
@@ -218,6 +219,7 @@ class OrderAgainViewModel @Inject constructor(
         viewModelScope.launch {
             _orderAgainUiState.update {
                 val newList = it.revealedList.toMutableList()
+                newList.clear()
                 if (item.quantityInStock > 1) {
                     newList.add(item.id)
                 }
@@ -236,8 +238,17 @@ class OrderAgainViewModel @Inject constructor(
         }
     }
 
+    fun collapseItems() {
+        viewModelScope.launch {
+            _orderAgainUiState.update {
+                it.copy(revealedList = emptyList())
+            }
+        }
+    }
+
 
     private fun onChangeProductQuantity(count: Int, productItem: ProductItem) {
+        collapseItems()
         viewModelScope.launch {
             orderList.find { item -> item.id == productItem.id }?.let { item ->
                 if (item.id == productItem.id) {
@@ -327,38 +338,42 @@ class OrderAgainViewModel @Inject constructor(
             }
 
             orderAgainUC(plistId).collectLatest {
-                _orderAgainUiState.update { state ->
-                    when (it.status) {
-                        Status.SUCCESS -> {
-                            // Get all product Ids for inventory call.
-                            val productIds = getProductIds(it.data)
 
-                            val items = getOrderList(it.data)
-                            val updatedList = items.map { it.toProductItem() }
-                            orderList.clear()
-                            orderList.addAll(updatedList)
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        // Get all product Ids for inventory call.
+                        val productIds = getProductIds(it.data)
 
-                            // Firebase event
-                            FirebaseAnalyticsEventHelper.sendViewItemListOrderAgainEvent(updatedList, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
+                        val items = getOrderList(it.data)
+                        val updatedList = items.map { it.toProductItem() }
+                        orderList.clear()
+                        orderList.addAll(updatedList)
 
-                            // If no food product available in response show empty screen.
-                            if (productIds.isEmpty()) {
-                                state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen())
-                            } else {
-
-                                // get all product ids and make inventory call
-                                callInventoryApi(productIds)
-                                state.copy(
-                                    screenState = OrderAgainScreenState.Loading
-                                )
-                            }
-                        }
-
-                        Status.ERROR -> state.copy(
-                            screenState = OrderAgainScreenState.ShowErrorScreen()
+                        // Firebase event
+                        FirebaseAnalyticsEventHelper.sendViewItemListOrderAgainEvent(
+                            updatedList,
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN
                         )
 
-                        Status.LOADING -> state.copy(
+                        // If no food product available in response show empty screen.
+                        if (productIds.isEmpty()) {
+                            _orderAgainUiState.update { state ->
+                                state.copy(screenState = OrderAgainScreenState.ShowEmptyScreen())
+                            }
+                        } else {
+                            // get all product ids and make inventory call
+                            callInventoryApi(productIds)
+                        }
+                    }
+
+                    Status.ERROR -> _orderAgainUiState.update { state ->
+                        state.copy(
+                            screenState = OrderAgainScreenState.ShowErrorScreen()
+                        )
+                    }
+
+                    Status.LOADING -> _orderAgainUiState.update { state ->
+                        state.copy(
                             screenState = OrderAgainScreenState.Loading,
                             headerState = state.headerState.copy(
                                 rightButtonRes = R.string.empty
@@ -384,14 +399,18 @@ class OrderAgainViewModel @Inject constructor(
             val skuIds = productIds.joinToString("-")
             // Fetching store id for fulfillment type 01 since all are food items
             val storeId = Utils.retrieveStoreId("01")
-            // If store id is not found meaning all product are unavailable.
-            if (storeId.isNullOrEmpty()) {
-                _orderAgainUiState.value = _orderAgainUiState.value.copy(
-                    screenState = OrderAgainScreenState.ShowErrorScreen()
-                )
+            _orderAgainUiState.update {
+                // If store id is not found meaning all product are unavailable.
+                if (storeId.isNullOrEmpty())
+                    _orderAgainUiState.value.copy(
+                        screenState = OrderAgainScreenState.ShowErrorScreen()
+                    )
+                else _orderAgainUiState.value.copy(screenState = OrderAgainScreenState.Loading)
+            }
+            
+            if(storeId.isNullOrEmpty()) {
                 return@launch
             }
-
             orderAgainInventoryUC(storeId, skuIds).collectLatest {
                 _orderAgainUiState.value = when (it.status) {
                     Status.SUCCESS -> {
@@ -464,6 +483,7 @@ class OrderAgainViewModel @Inject constructor(
     }
 
     private fun onProductCheckedChange(isChecked: Boolean, productItem: ProductItem) {
+        collapseItems()
         _orderAgainUiState.update {
             orderList.find { item -> item.id == productItem.id }?.let { item ->
                 item.quantity = item.quantity.coerceAtLeast(1).coerceAtMost(item.quantityInStock)
@@ -522,13 +542,15 @@ class OrderAgainViewModel @Inject constructor(
 
                         //Firebase event
                         FirebaseAnalyticsEventHelper.sendAddToWishListOrderAgainEvent(itemsToBeAdded, copyToLists)
+                        unselectItems()
 
                         _orderAgainUiState.update {
                             val item = copyToLists.singleOrNull()
                             it.copy(
+                                showAddToCart = false,
                                 snackbarData = it.snackbarData.copy(
                                     count = copyItems.size,
-                                    errorTitle = R.string.copy_to_list_error_msg,
+                                    errorTitle = R.string.empty,
                                     listName = item?.listName ?: "",
                                     listId = item?.listId ?: ""
                                 )
@@ -567,6 +589,17 @@ class OrderAgainViewModel @Inject constructor(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun unselectItems() {
+        viewModelScope.launch {
+            // Unselect Selected items
+            orderList.filter {
+                it.isSelected
+            }.map {
+                it.isSelected = false
             }
         }
     }
