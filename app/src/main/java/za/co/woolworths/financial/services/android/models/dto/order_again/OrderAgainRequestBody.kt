@@ -4,4 +4,4 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class OrderAgainRequestBody(val priceListId: String = "") : Parcelable
+data class OrderAgainRequestBody(val priceListId: String = "", val monetateId: String) : Parcelable
