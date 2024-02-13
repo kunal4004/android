@@ -473,7 +473,8 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     }
 
                     // Show Substitute AwarenessModal if user uncheck dont show again
-                    if(!KotlinUtils.isCheckedSubstituteAwarenessModal() && KotlinUtils.isDeliveryOptionDash()) {
+                    val isSubstitutionRemaining = isProductSubstitutionPending()
+                    if(!KotlinUtils.isCheckedSubstituteAwarenessModal() && KotlinUtils.isDeliveryOptionDash() && isSubstitutionRemaining) {
                         val bottomSheetDialog = AwarenessModalFragment().apply {
                             arguments = bundleOf(
                                 AppConstant.MODAL_NAME to AwarenessModalNames.SUBSTITUTIONS
@@ -491,6 +492,19 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
 
             else -> {}
         }
+    }
+
+    private fun isProductSubstitutionPending(): Boolean {
+        var value = false
+        cartProductAdapter?.cartItems?.forEach {
+            value = it.commerceItems.any {
+                it.substitutionInfo == null || it.substitutionInfo.displayName.isNullOrEmpty()
+            }
+            if(value) {
+                return@forEach
+            }
+        }
+        return value
     }
 
     private fun toggleCartMode() {
