@@ -185,6 +185,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dashTimeSlotsAdapter = CollectionTimeSlotsAdapter(this)
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -1141,8 +1143,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 }
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        dyServerId = getDyServerId()
-                        dySessionId = getDySessionId()
                         if (dyServerId != null && dySessionId != null && orderTotalValue != 0.0)
                             preparePaymentPageViewRequest(orderTotalValue)
                     }

@@ -107,10 +107,8 @@ class OrderConfirmationFragment :
             binding.root
         ) {}
         config = NetworkConfig(AppContextProviderImpl())
-        if (getDyServerId() != null)
-            dyServerId = getDyServerId()
-        if (getDySessionId() != null)
-            dySessionId = getDySessionId()
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

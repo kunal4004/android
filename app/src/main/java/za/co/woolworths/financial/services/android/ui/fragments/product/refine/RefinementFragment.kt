@@ -66,6 +66,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         } catch (e: ClassCastException) {
             throw ClassCastException("Calling fragment must implement Callback interface")
         }
+        dyServerId = Utils.getDyServerId()
+        dySessionId = Utils.getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -192,10 +194,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
             if (item is Refinement && it.isSelected) {
                 selectedItems.add(item.label)
                 AppConfigSingleton.dynamicYieldConfig?.apply {
-                    if (isDynamicYieldEnabled == true) {
-                            dyServerId = Utils.getDyServerId()
-                            dySessionId = Utils.getDySessionId()
-                        if (dyServerId != null && dySessionId != null)
+                    if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null) {
                             prepareFilterRequestEvent(item.label, item.displayName)
                     }
                 }

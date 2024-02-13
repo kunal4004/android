@@ -198,10 +198,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             isBackPressed = false
         }
         config = NetworkConfig(AppContextProviderImpl())
-        if (getDyServerId() != null)
-            dyServerId = getDyServerId()
-        if (getDySessionId() != null)
-            dySessionId = getDySessionId()
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -650,8 +648,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         mProductAdapter?.notifyDataSetChanged()
         AppConfigSingleton.dynamicYieldConfig?.apply {
             if (isDynamicYieldEnabled == true) {
-                dyServerId = getDyServerId()
-                dySessionId = getDySessionId()
                 if (dyServerId != null && dySessionId != null && mSearchType?.value != null) {
                     val categoryDyType = if (mSearchType?.value.equals("search"))
                         "OTHER"

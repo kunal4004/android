@@ -110,6 +110,8 @@ public class ProductSearchActivity extends AppCompatActivity
                 mEditSearchProduct.setHint(mSearchTextHint);
             }
         }
+        dyServerId = Utils.getDyServerId();
+        dySessionId = Utils.getDySessionId();
     }
 
     private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
@@ -194,8 +196,6 @@ public class ProductSearchActivity extends AppCompatActivity
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
                 if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()) {
-                    dyServerId = Utils.getDyServerId();
-                    dySessionId = Utils.getDySessionId();
                     dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
                     if (dyServerId != null && dySessionId != null)
                         prepareDyKeywordSearchRequestEvent(searchProductBrand);

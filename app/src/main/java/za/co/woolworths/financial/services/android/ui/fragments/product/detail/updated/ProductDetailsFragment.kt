@@ -1236,7 +1236,7 @@ class ProductDetailsFragment :
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
             AppConfigSingleton.dynamicYieldConfig?.apply {
-                if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null && defaultSku?.quantity != null && defaultSku?.sku != null) {
+                if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null && defaultSku?.quantity != 0 && defaultSku?.sku != null) {
                     prepareDyChangeAttributeQuantityRequestEvent(
                         defaultSku?.quantity.toString(),
                         defaultSku?.sku

@@ -1720,7 +1720,7 @@ public class Utils {
     }
 
     public static String getDyServerId() {
-        String token = "";
+        String token = null;
         try {
             token = Utils.getSessionDaoValue(KEY.DY_SERVER_ID);
         } catch (Exception ignored) {
@@ -1745,7 +1745,7 @@ public class Utils {
     }
 
     public static String getDySessionId() {
-        String token = "";
+        String token = null;
         try {
             token = Utils.getSessionDaoValue(KEY.DY_SESSION_ID);
         } catch (Exception ignored) {

@@ -213,6 +213,8 @@ class CheckoutAddAddressReturningUserFragment :
         }
 
         cartItemList = arguments?.getSerializable(CART_ITEM_LIST) as ArrayList<CommerceItem>?
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
 
         initViews()
     }
@@ -1091,8 +1093,6 @@ class CheckoutAddAddressReturningUserFragment :
                 onCheckoutPaymentClick()
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        dyServerId = getDyServerId()
-                        dySessionId = getDySessionId()
                         if (dyServerId != null && dySessionId != null && orderTotalValue != 0.0)
                             preparePaymentPageViewRequest(orderTotalValue)
                     }

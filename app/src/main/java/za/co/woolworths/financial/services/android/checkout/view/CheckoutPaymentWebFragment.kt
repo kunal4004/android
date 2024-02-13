@@ -89,6 +89,8 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         (activity as? CheckoutActivity)?.apply {
             supportActionBar?.hide()
         }
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -193,8 +195,6 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             paymentArguments[PAYMENT_TYPE] = jsonToAnalyticsList?.payment_type ?: ""
             AppConfigSingleton.dynamicYieldConfig?.apply {
                 if (isDynamicYieldEnabled == true) {
-                    dyServerId = getDyServerId()
-                    dySessionId = getDySessionId()
                     if (dyServerId != null && dySessionId != null && jsonToAnalyticsList != null)
                         preparePaymentPageViewRequest(jsonToAnalyticsList)
                 }

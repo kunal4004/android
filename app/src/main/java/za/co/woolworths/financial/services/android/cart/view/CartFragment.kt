@@ -239,7 +239,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         initializeLoggedInUserCartUI()
         setPriceInformationVisibility(false)
         addScrollListeners()
-        config = NetworkConfig(AppContextProviderImpl())
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -268,6 +267,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 btnDashSetAddress.setOnClickListener(this@CartFragment)
             }
         }
+        config = NetworkConfig(AppContextProviderImpl())
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     private fun launchShopToggleScreen() {
@@ -1359,8 +1361,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 showRecommendedProducts()
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        dyServerId = getDyServerId()
-                        dySessionId = getDySessionId()
                         if (dyServerId != null && dySessionId != null) {
                             prepareDynamicYieldCartViewRequestEvent()
                             prepareSyncCartRequestEvent()
@@ -2251,7 +2251,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         logException(ex)
                     }
                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null) {
+                        if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null && mCommerceItem != null) {
                                 prepareDyRemoveFromCartRequestEvent(mCommerceItem)
                                 prepareSyncCartRequestEvent()
                         }
