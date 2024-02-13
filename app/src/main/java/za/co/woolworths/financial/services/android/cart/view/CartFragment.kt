@@ -473,7 +473,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     }
 
                     // Show Substitute AwarenessModal if user uncheck dont show again
-                    if(!KotlinUtils.isCheckedSubstituteAwarenessModal()) {
+                    if(!KotlinUtils.isCheckedSubstituteAwarenessModal() && KotlinUtils.isDeliveryOptionDash()) {
                         val bottomSheetDialog = AwarenessModalFragment().apply {
                             arguments = bundleOf(
                                 AppConstant.MODAL_NAME to AwarenessModalNames.SUBSTITUTIONS
