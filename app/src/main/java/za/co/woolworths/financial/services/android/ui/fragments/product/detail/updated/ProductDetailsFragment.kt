@@ -3177,6 +3177,7 @@ class ProductDetailsFragment :
             when (SessionUtilities.getInstance().isUserAuthenticated) {
                 true -> if (launchNewToggleScreen) {
                     launchShopToggleScreen()
+                    setOutOfStock()
                 } else {
                     KotlinUtils.presentEditDeliveryGeoLocationActivity(
                         this,
