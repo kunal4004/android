@@ -404,7 +404,7 @@ class ProductDetailsFragment :
     private fun prepareDynamicYieldPageViewRequestEvent() {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress, config?.getDeviceModel())
         val skuIdList: ArrayList<String>? = ArrayList()
         productDetails?.otherSkus?.forEach { otherSkuData ->
             otherSkuData.sku?.let { skuID ->
@@ -2102,7 +2102,7 @@ class ProductDetailsFragment :
     private fun prepareDyChangeAttributeSizeRequestEvent(size: String?, sku: String?) {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress,config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress,config?.getDeviceModel())
         val context = Context(device,null,DY_CHANNEL)
         val properties = Properties(SIZE_ATTRIBUTE, size,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
@@ -2149,7 +2149,7 @@ class ProductDetailsFragment :
     private fun prepareDyChangeAttributeRequestEvent(selectedColor: String?, sku: String?) {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress,config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress,config?.getDeviceModel())
         val context = Context(device,null,DY_CHANNEL)
         val properties = Properties(COLOR_ATTRIBUTE,selectedColor,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
@@ -2311,7 +2311,7 @@ class ProductDetailsFragment :
     private fun prepareDyAddToCartRequestEvent() {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress,config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress,config?.getDeviceModel())
         val context = Context(device,null,DY_CHANNEL)
         val selectedSku = getSelectedSku()
         val cartLinesValue = mutableListOf(Cart(selectedSku?.sku, getSelectedQuantity(), selectedSku?.price?.toString()))
@@ -2440,7 +2440,7 @@ class ProductDetailsFragment :
     private fun prepareDyChangeAttributeQuantityRequestEvent(quantity: String, sku: String?): PrepareChangeAttributeRequestEvent {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress,config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress,config?.getDeviceModel())
         val context = Context(device,null,DY_CHANNEL)
         val properties = Properties(QUANTITY_ATTRIBUTE,quantity,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
@@ -2625,7 +2625,7 @@ class ProductDetailsFragment :
     private fun prepareSyncCartRequestEvent() {
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress, config?.getDeviceModel())
         val context = Context(device, null, DY_CHANNEL)
         val selectedSku = getSelectedSku()
         val cartLinesValue = mutableListOf(Cart(selectedSku?.sku, getSelectedQuantity(), selectedSku?.price?.toString()))

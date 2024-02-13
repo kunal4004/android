@@ -221,6 +221,7 @@ public class Utils {
     public static final String SIGNUP = "Signup";
     public static final String DY_SESSIONID = "_dyjsession";
     public static final String DY_SERVERID = "_dyid_server";
+    public static final String DY_SEARCH = "search";
 
     public static void saveLastLocation(Location loc, Context mContext) {
         try {

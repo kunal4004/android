@@ -308,7 +308,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         config = NetworkConfig(AppContextProviderImpl())
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress, config?.getDeviceModel())
         val dataOther = DataOther(null,null,ZAR,jsonToAnalyticsList?.payment_type,jsonToAnalyticsList?.value,null)
         val dataOtherArray = arrayListOf(dataOther)
         val page = Page(null, PAYMENT_PAGE, OTHER, null, dataOtherArray)

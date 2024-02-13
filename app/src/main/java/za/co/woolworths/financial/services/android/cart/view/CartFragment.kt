@@ -1418,7 +1418,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareDynamicYieldCartViewRequestEvent() {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress, config?.getDeviceModel())
         val productList: ArrayList<String>? = ArrayList()
         cartItems?.let { cartItems ->
             for (cartItemGroup: CartItemGroup in cartItems) {
@@ -2470,7 +2470,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareDynamicYieldCheckoutRequest(deliveryType: Delivery?) {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress, config?.getDeviceModel())
         val productList = ArrayList<DataOther>().apply {
             add(DataOther(null, null, null, null, null, deliveryType?.type))
         }
@@ -2484,7 +2484,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareDyRemoveFromCartRequestEvent(mCommerceItem: CommerceItem?) {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress, config?.getDeviceModel())
         val context = Context(device, null, DY_CHANNEL)
         val cartLinesValue: MutableList<Cart> = arrayListOf()
         cartItems?.let { cartItems ->
@@ -2550,7 +2550,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareSyncCartRequestEvent() {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress, config?.getDeviceModel())
         val context = Context(device, null, DY_CHANNEL)
         val cartLinesValue: MutableList<Cart> = arrayListOf()
         cartItems?.let { cartItems ->

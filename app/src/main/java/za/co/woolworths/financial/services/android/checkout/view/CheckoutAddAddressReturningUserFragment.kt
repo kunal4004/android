@@ -1171,7 +1171,7 @@ class CheckoutAddAddressReturningUserFragment :
         config = NetworkConfig(AppContextProviderImpl())
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(IPAddress, config?.getDeviceModel() ?: "")
+        val device = Device(IPAddress, config?.getDeviceModel())
         val dataOther = DataOther(null,null,ZAR,"",orderTotalValue,null)
         val dataOtherArray = ArrayList<DataOther>().apply { add(dataOther) }
         val page = Page(null, PAYMENT_PAGE, Utils.OTHER, null, dataOtherArray)

@@ -649,10 +649,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         AppConfigSingleton.dynamicYieldConfig?.apply {
             if (isDynamicYieldEnabled == true) {
                 if (dyServerId != null && dySessionId != null && mSearchType?.value != null) {
-                    val categoryDyType = if (mSearchType?.value.equals("search"))
-                        "OTHER"
+                    val categoryDyType = if (mSearchType?.value.equals(DY_SEARCH))
+                        OTHER
                     else
-                        "CATEGORY"
+                        CATEGORY_DY_TYPE
                     prepareCategoryDynamicYieldPageView(response.products,breadCrumbList,categoryDyType)
                 }
             }
