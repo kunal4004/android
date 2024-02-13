@@ -483,7 +483,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         viewModel.getSavedAddress()
                     }
                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true)
+                        if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null)
                             prepareDynamicYieldCheckoutRequest(deliveryType)
                     }
                 }
