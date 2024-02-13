@@ -633,6 +633,7 @@ class ProductDetailsFragment :
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
             R.id.checkInStoreAvailability, R.id.findInStoreAction -> {
+                /*todo need to remove */
                 callProductDetailsApiFroMatchingSet()
             }
             R.id.editDeliveryLocation -> updateDeliveryLocation(launchNewToggleScreen = false)
@@ -4589,7 +4590,7 @@ class ProductDetailsFragment :
             matchingSetViewModel.inventoryForMatchingItemDetails.collectLatest { itemInventoryDetails ->
                 with(itemInventoryDetails) {
                     renderLoading {
-
+                            /*todo show Loading progress bar */
                     }
                     renderSuccess {
                         val detailProduct = Utils.objectToJson(matchingSetViewModel.getProductDetails())
@@ -4607,7 +4608,7 @@ class ProductDetailsFragment :
                         openColorAndSizeBottomSheetFragment(product.product)
                     }
                     renderFailure {
-
+                        /*todo show Loading progress bar and error message */
                     }
                 }
             }
