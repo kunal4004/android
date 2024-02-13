@@ -206,24 +206,26 @@ class NotifyBackInStockViewModel @Inject constructor(
     private fun onEmailChanged(email: String, hasColor: Boolean, hasSize: Boolean) {
         backInStockState = backInStockState.copy(email = email)
         val emailResult = validateEmailUseCase.execute(backInStockState.email)
+        backInStockState = backInStockState.copy(
+            emailError = emailResult.errorMessage,
+            isEmailSelected = emailResult.successful
+        )
         if (hasColor && !hasSize) {
             backInStockState = backInStockState.copy(
-                emailError = emailResult.errorMessage,
-                isEmailSelected = emailResult.successful,
                 isColourSizeEmailSelected = backInStockState.isEmailSelected &&
                         backInStockState.isColorSelected
             )
         } else if (!hasColor && hasSize) {
             backInStockState = backInStockState.copy(
-                emailError = emailResult.errorMessage,
-                isEmailSelected = emailResult.successful,
                 isColourSizeEmailSelected = backInStockState.isEmailSelected &&
                         backInStockState.isSizeSelected
             )
+        } else if (!hasColor && !hasSize) {
+            backInStockState = backInStockState.copy(
+                isColourSizeEmailSelected = backInStockState.isEmailSelected
+            )
         } else {
             backInStockState = backInStockState.copy(
-                emailError = emailResult.errorMessage,
-                isEmailSelected = emailResult.successful,
                 isColourSizeEmailSelected = backInStockState.isEmailSelected
                         && backInStockState.isColorSelected
                         && backInStockState.isSizeSelected
