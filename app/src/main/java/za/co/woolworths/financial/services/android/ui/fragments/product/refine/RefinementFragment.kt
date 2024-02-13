@@ -41,6 +41,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var refinedNavigateState = ""
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
@@ -191,7 +193,10 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
                 selectedItems.add(item.label)
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        prepareFilterRequestEvent(item.label, item.displayName)
+                            dyServerId = Utils.getDyServerId()
+                            dySessionId = Utils.getDySessionId()
+                        if (dyServerId != null && dySessionId != null)
+                            prepareFilterRequestEvent(item.label, item.displayName)
                     }
                 }
             } else if (item is RefinementCrumb && it.isSelected) {
@@ -204,15 +209,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun prepareFilterRequestEvent(label: String, displayName: String) {
-        var dyServerId: String? = null
-        var dySessionId: String? = null
         var config: NetworkConfig? = null
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getDyServerId() != null)
-            dyServerId = Utils.getDyServerId()
-        if (Utils.getDySessionId() != null)
-            dySessionId = Utils.getDySessionId()
-
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config.getDeviceModel())

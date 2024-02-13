@@ -1141,7 +1141,10 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 }
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        preparePaymentPageViewRequest(orderTotalValue)
+                        dyServerId = getDyServerId()
+                        dySessionId = getDySessionId()
+                        if (dyServerId != null && dySessionId != null && orderTotalValue != 0.0)
+                            preparePaymentPageViewRequest(orderTotalValue)
                     }
                 }
 
@@ -1215,10 +1218,6 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     private fun preparePaymentPageViewRequest(orderTotalValue: Double) {
         config = NetworkConfig(AppContextProviderImpl())
-        if (getDyServerId() != null)
-            dyServerId = getDyServerId()
-        if (getDySessionId() != null)
-            dySessionId = getDySessionId()
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel() ?: "")

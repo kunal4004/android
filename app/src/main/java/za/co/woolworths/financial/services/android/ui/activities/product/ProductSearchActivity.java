@@ -114,10 +114,6 @@ public class ProductSearchActivity extends AppCompatActivity
 
     private void prepareDyKeywordSearchRequestEvent(String searchProductBrand) {
         NetworkConfig config = new NetworkConfig(new AppContextProviderImpl());
-        if (Utils.getDyServerId() != null)
-            dyServerId = Utils.getDyServerId();
-        if (Utils.getDySessionId() != null)
-            dySessionId = Utils.getDySessionId();
         User user = new User(dyServerId, dyServerId);
         Session session = new Session(dySessionId);
         Device device = new Device(IPAddress,config.getDeviceModel());
@@ -197,9 +193,12 @@ public class ProductSearchActivity extends AppCompatActivity
                     intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_RESULT_CODE);
 				}
-            if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()) {
-                dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
-                prepareDyKeywordSearchRequestEvent(searchProductBrand);
+                if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()) {
+                    dyServerId = Utils.getDyServerId();
+                    dySessionId = Utils.getDySessionId();
+                    dyKeywordSearchViewModel = new ViewModelProvider(this).get(DyChangeAttributeViewModel.class);
+                    if (dyServerId != null && dySessionId != null)
+                        prepareDyKeywordSearchRequestEvent(searchProductBrand);
             }
 		}
 	}

@@ -663,16 +663,11 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void extractFormDataAndCloseSSOIfNeeded(String ssoActivityEvent){
-		if (Utils.getDyServerId() != null) {
+		if (Utils.getDyServerId() != null)
 			dyServerId = Utils.getDyServerId();
-		} else {
-			dyServerId = "";
-		}
-		if (Utils.getDySessionId() != null) {
+		if (Utils.getDySessionId() != null)
 			dySessionId = Utils.getDySessionId();
-		} else {
-			dySessionId = "";
-		}
+
 		SSOActivity.this.webView.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 			@Override
 			public void onReceiveValue(String value) {
@@ -741,23 +736,23 @@ public class SSOActivity extends WebViewActivity {
 					setStSParameters();
 				}
 				if (ssoActivityEvent == "SIGNIN") {
-					if (Boolean.TRUE.equals(Objects.requireNonNull(AppConfigSingleton.getDynamicYieldConfig()).isDynamicYieldEnabled())) {
+					if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled() && jwtDecodedModel != null) {
 						String hexvalue = null;
-						if (jwtDecodedModel != null) {
-							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						if (dyServerId != null && dySessionId != null) {
+							prepareDySigninRequestEvent(hexvalue);
+							prepareDyIdentifyUserRequestEvent(hexvalue);
 						}
-						prepareDySigninRequestEvent(hexvalue);
-						prepareDyIdentifyUserRequestEvent(hexvalue);
 					}
 
 				}else if (ssoActivityEvent == "REGISTER") {
-					if (Boolean.TRUE.equals(Objects.requireNonNull(AppConfigSingleton.getDynamicYieldConfig()).isDynamicYieldEnabled())) {
+					if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled() && jwtDecodedModel != null) {
 						String hexvalue = null;
-						if (jwtDecodedModel != null) {
-							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						if (dyServerId != null && dySessionId != null) {
+							prepareDyRegisterRequestEvent(hexvalue);
+							prepareDyIdentifyUserRequestEvent(hexvalue);
 						}
-						prepareDyRegisterRequestEvent(hexvalue);
-						prepareDyIdentifyUserRequestEvent(hexvalue);
 					}
 				}
 			}
@@ -1018,7 +1013,7 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void callDyPageView() {
-		if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled()) {
+		if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled() && dyServerId == null && dySessionId == null) {
 			prepareDynamicYieldRequestEvent();
 		}
 	}

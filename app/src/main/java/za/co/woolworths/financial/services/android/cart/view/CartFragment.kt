@@ -1359,10 +1359,12 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 showRecommendedProducts()
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        getDyServerId()?.let { dyServerId = it }
-                        getDySessionId()?.let { dySessionId = it }
-                        prepareDynamicYieldCartViewRequestEvent()
-                        prepareSyncCartRequestEvent()
+                        dyServerId = getDyServerId()
+                        dySessionId = getDySessionId()
+                        if (dyServerId != null && dySessionId != null) {
+                            prepareDynamicYieldCartViewRequestEvent()
+                            prepareSyncCartRequestEvent()
+                        }
                     }
                 }
             }
@@ -2249,9 +2251,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         logException(ex)
                     }
                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true) {
-                            prepareDyRemoveFromCartRequestEvent(mCommerceItem)
-                            prepareSyncCartRequestEvent()
+                        if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null) {
+                                prepareDyRemoveFromCartRequestEvent(mCommerceItem)
+                                prepareSyncCartRequestEvent()
                         }
                     }
                 }
@@ -2365,7 +2367,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     }
                     mChangeQuantityList?.removeFirstOrNull()
                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true) {
+                        if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null) {
                             prepareSyncCartRequestEvent()
                         }
                     }

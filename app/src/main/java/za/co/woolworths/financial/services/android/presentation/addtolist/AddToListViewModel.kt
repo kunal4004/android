@@ -67,6 +67,8 @@ class AddToListViewModel @Inject constructor(
 
     private val _addedToListState = MutableStateFlow(emptyList<AddedToListState>())
     val addedToList: StateFlow<List<AddedToListState>> = _addedToListState.asStateFlow()
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
 
     companion object {
         const val ARG_ITEMS_TO_BE_ADDED = "ARG_ITEMS_TO_BE_ADDED"
@@ -237,11 +239,15 @@ class AddToListViewModel @Inject constructor(
                                 )
                                 AppConfigSingleton.dynamicYieldConfig?.apply {
                                     if (isDynamicYieldEnabled == true) {
-                                        items.forEach { item ->
-                                            prepareDyAddToWishListRequestEvent(
-                                                item.skuID,
-                                                item.size
-                                            )
+                                        dyServerId = Utils.getDyServerId()
+                                        dySessionId = Utils.getDySessionId()
+                                        if (dyServerId != null && dySessionId != null) {
+                                            items.forEach { item ->
+                                                prepareDyAddToWishListRequestEvent(
+                                                    item.skuID,
+                                                    item.size
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -285,15 +291,7 @@ class AddToListViewModel @Inject constructor(
     }
 
     private fun prepareDyAddToWishListRequestEvent(skuID: String?, size: String?) {
-        var dyServerId: String? = null
-        var dySessionId: String? = null
         val config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getDyServerId() != null) {
-            dyServerId = Utils.getDyServerId()
-        }
-        if (Utils.getDySessionId() != null) {
-            dySessionId = Utils.getDySessionId()
-        }
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress,config.getDeviceModel())
@@ -357,8 +355,15 @@ class AddToListViewModel @Inject constructor(
 
                             AppConfigSingleton.dynamicYieldConfig?.apply {
                                 if (isDynamicYieldEnabled == true) {
-                                    items.forEach { item ->
-                                        prepareDyAddToWishListRequestEvent(item.skuID, item.size)
+                                    dyServerId = Utils.getDyServerId()
+                                    dySessionId = Utils.getDySessionId()
+                                    if (dyServerId != null && dySessionId != null) {
+                                        items.forEach { item ->
+                                            prepareDyAddToWishListRequestEvent(
+                                                item.skuID,
+                                                item.size
+                                            )
+                                        }
                                     }
                                 }
                             }

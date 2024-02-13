@@ -1091,7 +1091,10 @@ class CheckoutAddAddressReturningUserFragment :
                 onCheckoutPaymentClick()
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        preparePaymentPageViewRequest(orderTotalValue)
+                        dyServerId = getDyServerId()
+                        dySessionId = getDySessionId()
+                        if (dyServerId != null && dySessionId != null && orderTotalValue != 0.0)
+                            preparePaymentPageViewRequest(orderTotalValue)
                     }
                 }
             }
@@ -1166,8 +1169,6 @@ class CheckoutAddAddressReturningUserFragment :
 
     private fun preparePaymentPageViewRequest(orderTotalValue: Double) {
         config = NetworkConfig(AppContextProviderImpl())
-        getDyServerId()?.let { dyServerId = it }
-        getDySessionId()?.let { dySessionId = it }
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel() ?: "")
