@@ -85,6 +85,7 @@ object AppConfigSingleton {
     @JvmStatic
     var dynamicYieldConfig : DynamicYieldConfig? = null
     var outOfStock: OutOfStock? = null
+    var backInStock: ConfigBackInStock? = null
 
     init {
         initialiseFromCache()
@@ -279,6 +280,9 @@ object AppConfigSingleton {
                         Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                     outOfStock = this
                 }
+            }
+            appConfig.backInStock?.apply {
+                backInStock = this
             }
         }
     }
