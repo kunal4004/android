@@ -4,6 +4,7 @@ import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Retrofit
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
@@ -1053,6 +1054,29 @@ interface ApiInterface {
         @Query("deliveryType") deliveryType: String?,
         @Query("deliveryDetails") deliveryDetails: String?,
     ): Call<ProductDetailResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/productsV2/{productId}")
+    suspend fun matchingSetProductDetail(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("productId") productId: String,
+        @Query("sku") sku: String,
+        @Query("suburbId") suburbId: String?,
+        @Query("storeId") storeId: String?,
+        @Query("deliveryType") deliveryType: String?,
+        @Query("deliveryDetails") deliveryDetails: String?
+    ): retrofit2.Response<ProductDetailResponse>
+
+    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
+    suspend fun inventoryForMatchingItemDetails(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String,
+    ): retrofit2.Response<SkusInventoryForStoreResponse>
 
     @Headers(
         "Content-Type: application/json",

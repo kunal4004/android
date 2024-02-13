@@ -44,6 +44,8 @@ import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
@@ -104,6 +106,11 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.ui.fragments.colorandsize.ColorAndSizeBottomSheetListener
+import za.co.woolworths.financial.services.android.ui.fragments.colorandsize.ColorAndSizeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.payflex.PayFlexBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
@@ -196,7 +203,7 @@ class ProductDetailsFragment :
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,
     View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
     FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
-    EnhancedSubstitutionListener {
+    EnhancedSubstitutionListener, ColorAndSizeBottomSheetListener {
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -390,7 +397,7 @@ class ProductDetailsFragment :
             wfsShoptimiserProduct.addProductDetails(it)
         }
         setUpCartCountPDP()
-
+        addSubscribeEvents()
     }
 
     fun showEnhancedSubstitutionDialog() {
@@ -625,7 +632,9 @@ class ProductDetailsFragment :
             R.id.addToCartAction -> addItemToCart()
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
-            R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
+            R.id.checkInStoreAvailability, R.id.findInStoreAction -> {
+                callProductDetailsApiFroMatchingSet()
+            }
             R.id.editDeliveryLocation -> updateDeliveryLocation(launchNewToggleScreen = false)
             R.id.productDetailsInformation -> showDetailsInformation(
                 ProductInformationActivity.ProductInformationType.DETAILS
@@ -4568,6 +4577,47 @@ class ProductDetailsFragment :
         }
     }
 
+    private fun callProductDetailsApiFroMatchingSet() {
+        val productRequest = ProductRequest( productDetails?.productId, productDetails?.sku,isUserBrowsing)
+        lifecycleScope.launch {
+            matchingSetViewModel.callProductDetailAPI(productRequest)
+        }
+    }
+
+    private fun addSubscribeEvents(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            matchingSetViewModel.inventoryForMatchingItemDetails.collectLatest { itemInventoryDetails ->
+                with(itemInventoryDetails) {
+                    renderLoading {
+
+                    }
+                    renderSuccess {
+                        val detailProduct = Utils.objectToJson(matchingSetViewModel.getProductDetails())
+                        val product =
+                            Utils.strToJson(detailProduct, WProduct::class.java) as WProduct
+                        val otherSkus = product.product.otherSkus
+                        otherSkus?.forEach { otherSku ->
+                            output.skuInventory.forEach { skuInventory ->
+                                if (otherSku.sku.equals(skuInventory.sku, ignoreCase = true)) {
+                                    otherSku.quantity = skuInventory.quantity
+                                    return@forEach
+                                }
+                            }
+                        }
+                        openColorAndSizeBottomSheetFragment(product.product)
+                    }
+                    renderFailure {
+
+                    }
+                }
+            }
+        }
+    }
+
+    private fun openColorAndSizeBottomSheetFragment(productItem: WProductDetail) {
+        ColorAndSizeFragment.getInstance(this, productItem).show(requireActivity().supportFragmentManager, tag)
+    }
+
     private fun listenerForUnsellable(){
         setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
             // Proceed with add to cart as we have moved unsellable items to List.
@@ -4595,4 +4645,13 @@ class ProductDetailsFragment :
             }
         }
     }
+
+    override fun setSelectedSkuFromDialog(selectedSku: OtherSkus) {
+        // not required
+    }
+
+    override fun onCancelColorAndSize() {
+        // not required
+    }
+
 }
