@@ -893,15 +893,17 @@ class ProductDetailsFragment :
                 )
             )
         }
-        setOutOfStock()
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true) {
+                setOutOfStock()
+            }
+        }
     }
 
     private fun setOutOfStock() {
-        AppConfigSingleton.outOfStock?.apply {
-                if (stockAvailable == STOCK_AVAILABILITY_0 && isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+        if (stockAvailable == STOCK_AVAILABILITY_0 && productDetails?.productType.equals(getString(R.string.food_product_type))) {
                     binding.pdpOutOfStockTag.visibility = View.VISIBLE
                     binding.productImagesViewPager.alpha = 0.5f
-                }
         }
     }
 
@@ -3177,7 +3179,6 @@ class ProductDetailsFragment :
             when (SessionUtilities.getInstance().isUserAuthenticated) {
                 true -> if (launchNewToggleScreen) {
                     launchShopToggleScreen()
-                    setOutOfStock()
                 } else {
                     KotlinUtils.presentEditDeliveryGeoLocationActivity(
                         this,
@@ -3373,9 +3374,8 @@ class ProductDetailsFragment :
 
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
         AppConfigSingleton.outOfStock?.apply {
-            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
-                binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                binding.productImagesViewPager.alpha = 0.5f
+            if (isOutOfStockEnabled == true) {
+               setOutOfStock()
             } else {
                 if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
                     isOutOfStockFragmentAdded = true
