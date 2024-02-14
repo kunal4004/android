@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtil
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
@@ -163,7 +164,9 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
                         }
                         if (totalItemCount!=0) {
                             triggerFirebaseEventForSearchResultEvent(requestParams.searchTerm)
-                            triggerFirebaseEventForViewItemList(searchProductSubstitutionAdapter?.snapshot()?.items)
+                            FirebaseAnalyticsEventHelper.viewItemList(
+                                products = searchProductSubstitutionAdapter?.snapshot()?.items,
+                                category = FirebaseManagerAnalyticsProperties.PropertyValues.SUBSTITUTE)
                         }
                     }
                 }
@@ -203,59 +206,6 @@ class SearchSubstitutionFragment : BaseFragmentBinding<LayoutSearchSubstitutionF
         searchBundle.putString(FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM, searchTerm)
         searchBundle.putString(FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TYPE, searchType)
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.SEARCH, searchBundle)
-    }
-
-    fun triggerFirebaseEventForViewItemList(productList: List<ProductList>?) {
-        val productListParams = Bundle()
-        productListParams.apply {
-
-            productList?.let {
-                val itemArrayEvent = arrayListOf<Bundle>()
-                for (product in it) {
-                    val productListItem = Bundle()
-                    productListItem.apply {
-                        putString(
-                            FirebaseAnalytics.Param.ITEM_ID, product.productId
-                        )
-
-                        putString(
-                            FirebaseAnalytics.Param.ITEM_NAME, product.productName
-                        )
-
-                        product.price?.let { it1 ->
-                            putFloat(
-                                FirebaseAnalytics.Param.PRICE, it1
-                            )
-                        }
-
-                        putString(
-                            FirebaseAnalytics.Param.ITEM_BRAND, product.brandText
-                        )
-
-                        putString(
-                            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_RATING,
-                            product.averageRating
-                        )
-
-                        putString(
-                            FirebaseManagerAnalyticsProperties.PropertyNames.LOCATION_ID,
-                            KotlinUtils.getPreferredPlaceId()
-                        )
-
-                        itemArrayEvent.add(this)
-                    }
-                }
-                putParcelableArray(
-                    FirebaseAnalytics.Param.ITEMS,
-                    itemArrayEvent.toTypedArray()
-                )
-            }
-
-            AnalyticsManager.logEvent(
-                FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,
-                this
-            )
-        }
     }
 
     private fun formattedProductCount(count: Int): Spanned {

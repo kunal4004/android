@@ -666,7 +666,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     private fun viewItemListAnalytics(products: List<ProductList>, category: String?) {
-        FirebaseAnalyticsEventHelper.viewItemList(products = products, category = category)
+        FirebaseAnalyticsEventHelper.viewItemList(products = products, category = category, breadCrumbs = breadCrumbList)
     }
 
     private fun onChanelSuccess(response: ProductView) {

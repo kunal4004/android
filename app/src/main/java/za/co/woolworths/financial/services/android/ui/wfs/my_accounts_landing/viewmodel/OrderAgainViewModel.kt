@@ -350,10 +350,7 @@ class OrderAgainViewModel @Inject constructor(
                         orderList.addAll(updatedList)
 
                         // Firebase event
-                        FirebaseAnalyticsEventHelper.sendViewItemListOrderAgainEvent(
-                            updatedList,
-                            FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN
-                        )
+                        FirebaseAnalyticsEventHelper.viewItemList(items, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
 
                         // If no food product available in response show empty screen.
                         if (productIds.isEmpty()) {
