@@ -41,6 +41,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var refinedNavigateState = ""
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
@@ -64,6 +66,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         } catch (e: ClassCastException) {
             throw ClassCastException("Calling fragment must implement Callback interface")
         }
+        dyServerId = Utils.getDyServerId()
+        dySessionId = Utils.getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -190,8 +194,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
             if (item is Refinement && it.isSelected) {
                 selectedItems.add(item.label)
                 AppConfigSingleton.dynamicYieldConfig?.apply {
-                    if (isDynamicYieldEnabled == true) {
-                        prepareFilterRequestEvent(item.label, item.displayName)
+                    if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
+                            prepareFilterRequestEvent(item.label, item.displayName)
                     }
                 }
             } else if (item is RefinementCrumb && it.isSelected) {
@@ -204,15 +208,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun prepareFilterRequestEvent(label: String, displayName: String) {
-        var dyServerId: String? = null
-        var dySessionId: String? = null
         var config: NetworkConfig? = null
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getDyServerId() != null)
-            dyServerId = Utils.getDyServerId()
-        if (Utils.getDySessionId() != null)
-            dySessionId = Utils.getDySessionId()
-
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(Utils.IPAddress, config.getDeviceModel())
@@ -220,8 +217,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         val properties = Properties(null,null, Utils.FILTER_ITEMS_DY_TYPE,null,null,null,null,null,null,null,null,null,null,null,
             label, displayName,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,FILTER_ITEMS_EVENT_NAME,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareDyFilterRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,

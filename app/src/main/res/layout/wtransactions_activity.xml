@@ -37,6 +37,7 @@
                         android:gravity="center"
                         android:letterSpacing="0.11"
                         android:text="@string/recent_transactions_title"
+                        android:contentDescription="@string/toolbar_text"
                         android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="12sp"
@@ -45,6 +46,7 @@
 
                     <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/closeTransactionImageButton"
+                        android:contentDescription="@string/close_button"
                         style="@style/closeIconStyle"
                         android:gravity="end"
                         app:layout_constraintBottom_toBottomOf="parent"

@@ -185,6 +185,8 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dashTimeSlotsAdapter = CollectionTimeSlotsAdapter(this)
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -1139,7 +1141,12 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                         SHIPPING_TIER_VALUE_DASH, orderTotalValue
                     )
                 }
-                preparePaymentPageViewRequest(orderTotalValue)
+                AppConfigSingleton.dynamicYieldConfig?.apply {
+                    if (isDynamicYieldEnabled == true) {
+                        if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && orderTotalValue != 0.0)
+                            preparePaymentPageViewRequest(orderTotalValue)
+                    }
+                }
 
             }
             binding.checkoutCollectingFromLayout.fulfilmentAndLocationLayout.layoutFulfilment.root.id -> launchShopToggleScreen()
@@ -1211,16 +1218,11 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
 
     private fun preparePaymentPageViewRequest(orderTotalValue: Double) {
         config = NetworkConfig(AppContextProviderImpl())
-        if (getDyServerId() != null)
-            dyServerId = getDyServerId()
-        if (getDySessionId() != null)
-            dySessionId = getDySessionId()
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val device = Device(IPAddress, config?.getDeviceModel())
         val dataOther = DataOther(null,null,ZAR,"",orderTotalValue,null)
-        val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
-        dataOtherArray?.add(dataOther)
+        val dataOtherArray= arrayListOf(dataOther)
         val page = Page(null, PAYMENT_PAGE, OTHER, null, dataOtherArray)
         val context = Context(device, page, Utils.DY_CHANNEL)
         val options = Options(true)

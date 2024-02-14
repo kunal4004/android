@@ -16,4 +16,9 @@ sealed class HeaderViewState {
         @DrawableRes val icon: Int = R.drawable.add_black,
         val title: String = ""
     ) : HeaderViewState()
+
+    data class HeaderStateType3(
+        @DrawableRes val icon: Int = R.drawable.icon_close_16,
+        val title: String = ""
+    ) : HeaderViewState()
 }
