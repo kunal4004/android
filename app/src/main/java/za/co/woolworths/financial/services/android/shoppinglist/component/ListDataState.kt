@@ -6,8 +6,9 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 /**
  * Created by Kunal Uttarwar on 29/09/23.
  */
-data class ListDataState(
+data class ListDataState (
     val list: List<ShoppingList> = emptyList(),
+    val shareList: List<ShoppingList> = emptyList(),
     val revealedList: List<String> = emptyList(),
     val shareIcon : Int = R.drawable.ic_share,
     val openIcon: Int = R.drawable.ic_white_chevron_right,
@@ -15,5 +16,4 @@ data class ListDataState(
     val isError: Boolean = false,
     val isSuccessResponse: Boolean = false,
     val isEditMode: Boolean = false
-
 )

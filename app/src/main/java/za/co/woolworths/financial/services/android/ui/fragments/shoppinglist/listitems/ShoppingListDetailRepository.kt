@@ -24,4 +24,6 @@ interface ShoppingListDetailRepository {
 
     suspend fun moveMultipleItemsFromList(moveItemApiRequest: MoveItemApiRequest): Flow<CoreDataSource.IOTaskResult<CopyListResponse>>
 
+
+    suspend fun getItemsInSharedShoppingList(listId: String, viewOnlyType: Boolean) : Resource<ShoppingListItemsResponse>
 }

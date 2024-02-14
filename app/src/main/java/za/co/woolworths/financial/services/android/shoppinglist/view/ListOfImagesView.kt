@@ -44,7 +44,7 @@ fun ListOfImagesView(
 
     val maxImageCount = fetchMaxImageCount()
 
-    val listImages = listItem.productImageList
+    val listImages = listItem.productImageURLs
     LazyRow(
         modifier = Modifier
             .height(70.dp)
@@ -66,7 +66,7 @@ fun ListOfImagesView(
                         .height(64.dp)
                         .width(55.dp)
                         .fillMaxHeight(),
-                    model = listItem.productImageList.get(index),
+                    model = listItem.productImageURLs.get(index),
                     placeholder = painterResource(id = R.drawable.placeholder_product_list),
                     error = painterResource(id = R.drawable.placeholder_product_list),
                     contentDescription = stringResource(id = R.string.description),
@@ -81,7 +81,7 @@ fun ListOfImagesView(
                     .height(64.dp)
                     .width(55.dp)
                     .fillMaxHeight(),
-                model = listItem.productImageList.get(index),
+                model = listItem.productImageURLs.get(index),
                 placeholder = painterResource(id = R.drawable.placeholder_product_list),
                 error = painterResource(id = R.drawable.placeholder_product_list),
                 contentDescription = stringResource(id = R.string.description),
@@ -128,7 +128,7 @@ fun ListOfImagesViewPreview() {
             listName = "Test"
             listCount = 14
             modifiedListCount = "(14)"
-            productImageList = listOf("https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&")
+            productImageURLs = listOf("https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&")
         }
 
         ListOfImagesView(mockList, onImageItemClick = {})

@@ -5,9 +5,14 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,10 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
-import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 import za.co.woolworths.financial.services.android.shoppinglist.component.EmptyStateData
 import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
+import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
 /**
  * Created by Kunal Uttarwar on 11/10/23.
@@ -44,6 +49,7 @@ fun EmptyStateTemplate(
         title = uiState.title,
         description = uiState.description,
         buttonText = uiState.buttonText,
+        isButtonVisible = uiState.isButtonVisible,
         onClickEvent = {
             onClickEvent(uiState.isSignedOut)
         }
@@ -57,12 +63,13 @@ fun EmptyStateTemplateStateless(
     @StringRes title: Int,
     @StringRes description: Int,
     @StringRes buttonText: Int,
+    isButtonVisible: Boolean,
     onClickEvent: () -> Unit,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.color_F3F3F3)),
+            .background(color = colorResource(id = R.color.color_FFFFFF)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -92,23 +99,25 @@ fun EmptyStateTemplateStateless(
             color = colorResource(id = R.color.color_444444)
         )
         Spacer(modifier = Modifier.height(40.dp))
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .padding(horizontal = 24.dp)
-                .background(color = Color.White, shape = RectangleShape),
-            onClick = {
-                onClickEvent()
-            }) {
-            Text(
-                text = stringResource(id = buttonText).uppercase(),
-                letterSpacing = 1.5.sp,
-                fontFamily = FuturaFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = colorResource(id = R.color.black)
-            )
+        if (isButtonVisible) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(horizontal = 24.dp)
+                    .background(color = Color.White, shape = RectangleShape),
+                onClick = {
+                    onClickEvent()
+                }) {
+                Text(
+                    text = stringResource(id = buttonText).uppercase(),
+                    letterSpacing = 1.5.sp,
+                    fontFamily = FuturaFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                    color = colorResource(id = R.color.black)
+                )
+            }
         }
     }
 }
