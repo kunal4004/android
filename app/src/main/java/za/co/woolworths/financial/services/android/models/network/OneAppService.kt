@@ -141,6 +141,8 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.models.NotifyMeRequest
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.models.NotifyMeResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -755,6 +757,11 @@ open class OneAppService(
         withContext(Dispatchers.IO){
             mApiInterface.createNewList(getSessionToken(), getDeviceIdentityToken(), listName)
     }
+
+    suspend fun notifyMe(notifyMeRequest: NotifyMeRequest): retrofit2.Response<NotifyMeResponse> =
+        withContext(Dispatchers.IO){
+            mApiInterface.notifyMe(getSessionToken(), getDeviceIdentityToken(), notifyMeRequest)
+        }
 
     suspend fun getShoppingListItems(listId: String): retrofit2.Response<ShoppingListItemsResponse> {
         return withContext(Dispatchers.IO) {

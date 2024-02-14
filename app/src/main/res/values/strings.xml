@@ -3354,5 +3354,16 @@
     <string name="edit_operation_copied">COPIED</string>
     <string name="edit_operation_moved">MOVED</string>
     <string name="edit_operation_removed">REMOVED</string>
+    <string name="item_out_of_stock">Item Out of Stock?</string>
+    <string name="notify_me">Notify Me</string>
+    <string name="bis_title">Set up Back in Stock notifications</string>
+    <string name="bis_desc">Enter your email address and if this product is back in stock you\'ll be the first to know!</string>
+    <string name="select_color">Select a Colour: *</string>
+    <string name="select_size">Select a Size: *</string>
+    <string name="email_address">Email Address: *</string>
+    <string name="c_description">description</string>
+    <string name="placeholder_select_size">Select a size</string>
+    <string name="placeholder_select_color">Select a colour</string>
+    <string name="notify_me_success_message">You’ll Be Notified When This Product Is Back In Stock</string>
 
 </resources>

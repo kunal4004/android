@@ -58,5 +58,6 @@ data class AppConfig(
     var searchApiSettings: SearchApiSettings?,
     var dynamicYieldConfig: DynamicYieldConfig?,
     var connectOnline: ConnectOnline?,
-    var outOfStock: OutOfStock?
+    var outOfStock: OutOfStock?,
+    var backInStock: ConfigBackInStock
 ) : Parcelable

@@ -7,11 +7,14 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 class ChatCustomerInfo {
 
     companion object {
-        private var instance = ChatCustomerInfo()
+        private var instance: ChatCustomerInfo? = null
 
         fun getInstance(): ChatCustomerInfo {
-            instance.jWTDecodedModel = SessionUtilities.getInstance().jwt
-            return instance
+            if (instance == null) {
+                instance = ChatCustomerInfo()
+            }
+            instance!!.jWTDecodedModel = SessionUtilities.getInstance().jwt
+            return instance!!
         }
     }
 
