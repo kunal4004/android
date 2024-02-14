@@ -3295,6 +3295,12 @@
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
     <string name="substitute_availaibility_msg">Only available when product is in stock.</string>
 
+    <string name="my_list_option">My Lists</string>
+    <string name="share_list_option">Shared With Me</string>
+    <string name="share_list_empty_title">You Don\'t Have Any Shared Lists Yet.</string>
+    <string name="share_list_empty_desc">Once a shopping list has been shared with you, you will be able to access it here.</string>
+    <string name="collaborators">Collaborators</string>
+
     <plurals name="edit_items">
         <item quantity="one">Edit Item </item>
         <item quantity="other"> Edit %d Items</item>
