@@ -245,6 +245,7 @@
     <string name="enquiry_successfully_sent_description">enquiry_successfully_sent_description</string>
     <string name="got_it_button">got_it_button</string>
     <string name="toolbar_text">toolbar_text</string>
+    <string name="close_button">close_button</string>
 
     <string name="chat_to_us_on_whatsapp_image">chat_to_us_on_whatsapp_image</string>
     <string name="chat_to_us_on_title_text">chat_to_us_on_title_text</string>
@@ -344,6 +345,11 @@
     <string name="cd_product_decrease_quantity">productDecreaseQuantity</string>
     <string name="cd_information_icon">Information Icon</string>
     <string name="cd_order_again">Order Again Banner</string>
+
+    <!-- Recent transcations -->
+    <string name="recent_transactions_image_icon">recent_transactions_image_icon</string>
+    <string name="recent_transactions_text">recent_transactions_text</string>
+    <string name="recent_transactions_button">recent_transactions_button</string>
 
     <!--Matching Set-->
     <string name="matching_setImg_main_view">Matching Set Main Image</string>

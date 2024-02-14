@@ -242,6 +242,19 @@ public class ScreenManager {
         bottomNavigationActivity.pushFragment(shoppingListDetailFragment);
 
     }
+    public static void presentShoppingListDetailActivity(String listId, String viewType, Activity activity) {
+        if (!(activity instanceof BottomNavigationActivity)) {
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putString("listId", listId);
+        bundle.putString("viewType", viewType);
+        ShoppingListDetailFragment shoppingListDetailFragment = new ShoppingListDetailFragment();
+        shoppingListDetailFragment.setArguments(bundle);
+        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+        bottomNavigationActivity.pushFragment(shoppingListDetailFragment);
+
+    }
 
     public static void presentShoppingListDetailActivity(Activity activity, String listId, String listName, boolean openFromMyList) {
         if (!(activity instanceof BottomNavigationActivity)) {

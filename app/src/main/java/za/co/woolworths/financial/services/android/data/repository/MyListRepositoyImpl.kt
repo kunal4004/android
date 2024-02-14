@@ -20,7 +20,6 @@ class MyListRepositoryImpl @Inject constructor(
     private val apiInterface: ApiInterface
 ) : MyListRepository, CoreDataSource(), ApiInterface by apiInterface {
 
-
     override suspend fun getMyList(): Response<ShoppingListsResponse> =
         OneAppService().getShoppingList()
 

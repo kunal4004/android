@@ -7,6 +7,7 @@ import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
+import za.co.woolworths.financial.services.android.models.dto.order_again.Item
 
 
 private const val BREAD_CRUMBS_CATEGORY_ZERO = 0
@@ -61,6 +62,22 @@ fun ProductList.toAnalyticItem(category: String?,quantity: Int = 1,index: Int = 
         quantity = quantity, // Required quantity set to 1
         price = price?.toDouble(),
         productType = productType,
+        affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
+        index = index,
+    )
+}
+
+fun Item.toAnalyticItem(category: String?, quantity: Int = 1, index: Int = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE.toInt()): AnalyticProductItem {
+    return  AnalyticProductItem(
+        itemId = id,
+        itemName = title,
+        category = category,
+        itemBrand = null,
+        itemListName = category,
+        itemVariant = null,
+        quantity = quantity,
+        price = price,
+        productType = productClassification,
         affiliation = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE,
         index = index,
     )

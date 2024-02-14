@@ -8,6 +8,8 @@ import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.repository.DyChooseVariationRepository
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.HomePageRequestEvent
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.DY_SERVERID
+import za.co.woolworths.financial.services.android.util.Utils.DY_SESSIONID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,11 +21,12 @@ class DyHomePageViewModel @Inject constructor(
         viewModelScope.launch {
             val response = dyChooseVariationRepository.getDyChooseVariationResponse(chooseVariationRequestEvent)
             if (response.status == Status.SUCCESS) {
-                for (myData in response.data?.cookies!!) {
-                    if (myData.name.equals("_dyid_server")) {
-                        Utils.saveDyServerId(myData.value)
-                    }else if (myData.name.equals("_dyjsession")) {
-                        Utils.saveDySessionId(myData.value)
+                response.data?.cookies?.forEach { myData ->
+                    myData.let {
+                        when (myData.name) {
+                            DY_SERVERID -> Utils.saveDyServerId(myData.value)
+                            DY_SESSIONID -> Utils.saveDySessionId(myData.value)
+                        }
                     }
                 }
             }

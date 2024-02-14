@@ -221,6 +221,7 @@
                 <data android:host="${app_links_host}" />
                 <data android:pathPattern="/cat.*" />
                 <data android:pathPattern="/forgot-password.*" />
+                <data android:pathPattern="/dashboard/shopping-lists.*" />
             </intent-filter>
             <intent-filter
                 android:autoVerify="true"

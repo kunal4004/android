@@ -14,8 +14,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.SWITCH_DELIVERY_MODE
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
-import za.co.woolworths.financial.services.android.models.dto.order_again.ProductItem
-import za.co.woolworths.financial.services.android.models.dto.order_again.toAnalyticItem
+import za.co.woolworths.financial.services.android.models.dto.order_again.Item
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.analytics.dto.*
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -226,24 +225,42 @@ object FirebaseAnalyticsEventHelper {
         )
     }
 
+    /**
+     * To be used in Dash, Recommendations, PLP, Substitutes product catalogues
+     */
     fun viewItemList(
-        products: List<ProductList>?, category: String?, itemListName: String? = null
+        products: List<ProductList>?, category: String?, itemListName: String? = null,
+        breadCrumbs: List<String>? = null
     ) {
         if (products.isNullOrEmpty()) {
             return
         }
 
-        val analyticItems = products.map { it.toAnalyticItem(category = category) }
+        val analyticItems = products.map { it.toAnalyticItem(category = it.productType).apply { fillOtherCategories(breadCrumbs) } }
+        val listName = (itemListName ?: category).valueOrNone()
+        triggerViewItemList(analyticItems = analyticItems, itemListName = listName)
+    }
+
+    /**
+     * To be used for the Order Again products
+     */
+    fun viewItemList(products: List<Item>?, category: String?) {
+        if (products.isNullOrEmpty()) {
+            return
+        }
+
+        val analyticItems = products.map { it.toAnalyticItem(category = it.productClassification)}
+        triggerViewItemList(analyticItems = analyticItems, itemListName = category)
+    }
+
+    private fun triggerViewItemList(analyticItems: List<AnalyticProductItem>, itemListName: String?) {
         val analyticsParams = Bundle()
         analyticsParams.apply {
-            putParcelableArray(
-                FirebaseAnalytics.Param.ITEMS, analyticItems.map { it.toBundle() }.toTypedArray()
-            )
-            category?.let {
-                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, itemListName ?: category)
-            }
+            putParcelableArray(FirebaseAnalytics.Param.ITEMS, analyticItems.map { it.toBundle() }.toTypedArray())
+            putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, itemListName)
             putString(FirebaseAnalytics.Param.ITEM_LIST_ID, FirebaseManagerAnalyticsProperties.PropertyValues.NONE)
         }
+
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
         )
@@ -441,27 +458,6 @@ object FirebaseAnalyticsEventHelper {
             bundleOf(
                 FirebaseManagerAnalyticsProperties.PropertyNames.LOCATION_ID to screenName
             )
-        )
-    }
-
-    fun sendViewItemListOrderAgainEvent(productItems: List<ProductItem>, category: String) {
-        val analyticItems = productItems.map { it.toAnalyticItem(FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN) }
-        triggerViewItemListEvent(analyticItems, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
-    }
-
-    private fun triggerViewItemListEvent(products: List<AnalyticProductItem>, category: String?) {
-        val analyticsParams = Bundle()
-        analyticsParams.apply {
-            putParcelableArray(
-                FirebaseAnalytics.Param.ITEMS, products.map { it.toBundle() }.toTypedArray()
-            )
-            category?.let {
-                putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, category)
-            }
-        }
-
-        AnalyticsManager.logEvent(
-            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST, analyticsParams
         )
     }
 

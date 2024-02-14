@@ -350,10 +350,7 @@ class OrderAgainViewModel @Inject constructor(
                         orderList.addAll(updatedList)
 
                         // Firebase event
-                        FirebaseAnalyticsEventHelper.sendViewItemListOrderAgainEvent(
-                            updatedList,
-                            FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN
-                        )
+                        FirebaseAnalyticsEventHelper.viewItemList(items, FirebaseManagerAnalyticsProperties.PropertyValues.ORDER_AGAIN)
 
                         // If no food product available in response show empty screen.
                         if (productIds.isEmpty()) {
@@ -542,10 +539,12 @@ class OrderAgainViewModel @Inject constructor(
 
                         //Firebase event
                         FirebaseAnalyticsEventHelper.sendAddToWishListOrderAgainEvent(itemsToBeAdded, copyToLists)
+                        unselectItems()
 
                         _orderAgainUiState.update {
                             val item = copyToLists.singleOrNull()
                             it.copy(
+                                showAddToCart = false,
                                 snackbarData = it.snackbarData.copy(
                                     count = copyItems.size,
                                     errorTitle = R.string.empty,
@@ -587,6 +586,17 @@ class OrderAgainViewModel @Inject constructor(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun unselectItems() {
+        viewModelScope.launch {
+            // Unselect Selected items
+            orderList.filter {
+                it.isSelected
+            }.map {
+                it.isSelected = false
             }
         }
     }

@@ -34,8 +34,8 @@ class WTransactionAdapter(private val transactionList: MutableList<Transaction>?
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         transactionList?.get(position)?.apply {
             when (this) {
-                is TransactionHeader -> (holder as? TransactionHeaderViewHolder)?.setTransactionHeader(this as? TransactionHeader)
-                is TransactionItem -> (holder as? TransactionItemViewHolder)?.setTransactionContent(this as? TransactionItem)
+                is TransactionHeader -> (holder as? TransactionHeaderViewHolder)?.setTransactionHeader(this as? TransactionHeader, count)
+                is TransactionItem -> (holder as? TransactionItemViewHolder)?.setTransactionContent(this as? TransactionItem, headerCount, itemCount)
                 else -> throw IllegalStateException("Invalid item type $this")
             }
         }
