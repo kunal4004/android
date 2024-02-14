@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.presentation.common.Descripti
 import za.co.woolworths.financial.services.android.presentation.common.DialogHandle
 import za.co.woolworths.financial.services.android.presentation.common.TitleText
 import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
+import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight16dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight24dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight32dp
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight40dp
@@ -76,6 +77,7 @@ fun AwarenessModalViewStateless(
         ) {
             onEvent(AwarenessScreenEvents.DontShowAgainClicked(it))
         }
+        SpacerHeight16dp()
         BlackButton(text = stringResource(id = uiState.confirmButton).uppercase()) {
             onEvent(AwarenessScreenEvents.ConfirmButtonClick)
         }
