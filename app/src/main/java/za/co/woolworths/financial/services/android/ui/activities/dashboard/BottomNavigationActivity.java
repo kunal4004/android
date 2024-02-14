@@ -17,6 +17,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_STOCK_AVAILABLE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
@@ -580,7 +581,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         pushFragment(productDetailsFragmentNew);
     }
 
-    public void openProductDetailFragment(String productName, ProductList productList, String bannerLabel, String bannerImage, Boolean isUserBrowsing) {
+    public void openProductDetailFragment(String productName, ProductList productList, String bannerLabel, String bannerImage, Boolean isUserBrowsing, int stockAvailability) {
         Gson gson = new Gson();
         String strProductList = gson.toJson(productList);
         Bundle bundle = new Bundle();
@@ -588,6 +589,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         bundle.putString(STR_PRODUCT_CATEGORY, productName);
         bundle.putString(STR_BRAND_HEADER, productList.brandHeaderDescription);
         bundle.putBoolean(IS_BROWSING, isUserBrowsing);
+        bundle.putInt(STR_STOCK_AVAILABLE,stockAvailability);
         bundle.putSerializable(BRAND_NAVIGATION_DETAILS, new BrandNavigationDetails(
                 productList.brandText,
                 bannerLabel,

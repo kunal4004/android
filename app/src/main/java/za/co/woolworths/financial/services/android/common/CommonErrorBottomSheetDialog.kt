@@ -11,6 +11,7 @@ interface CommonErrorBottomSheetDialog {
         title: String,
         desc: String,
         buttonText: String,
-        isDismissButtonNeeded: Boolean
+        isDismissButtonNeeded: Boolean,
+        isCanceledOnTouchOutside : Boolean
     )
 }

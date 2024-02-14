@@ -18,13 +18,13 @@ class MultipleImageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ProductMultipleImagesBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window?.insetsController?.hide(WindowInsets.Type.statusBars())
         } else {
             window?.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         }
-        binding = ProductMultipleImagesBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         getBundle()
         initView()
         setImage()

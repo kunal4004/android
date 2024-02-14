@@ -422,9 +422,11 @@ class KotlinUtils {
 
             val transactionList: MutableList<Transaction> = mutableListOf()
 
-            groupTransactionsByMonth?.forEach { transactionMap ->
-                transactionList.add(TransactionHeader(transactionMap.key))
-                transactionMap.value.forEach { transactionItem ->
+            groupTransactionsByMonth?.onEachIndexed { headerIndex, transactionMap ->
+                transactionList.add(TransactionHeader(transactionMap.key, headerIndex) )
+                transactionMap.value.mapIndexed { itemIndex, transactionItem ->
+                    transactionItem.headerCount = headerIndex
+                    transactionItem.itemCount = itemIndex
                     transactionList.add(
                         transactionItem
                     )
@@ -1111,11 +1113,19 @@ class KotlinUtils {
         }
 
         fun firstLetterCapitalization(name: String?): String? {
-            val capitaliseFirstLetterInName =
-                name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
-            val lowercaseOtherLetterInName =
-                name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
-            return capitaliseFirstLetterInName?.plus(lowercaseOtherLetterInName)
+            name?.let {
+                if (it.isNotEmpty()) {
+                    val capitaliseFirstLetterInName =
+                        it.substring(0, 1).toUpperCase(Locale.getDefault())
+                    val lowercaseOtherLetterInName =
+                        it.substring(1, it.length).toLowerCase(Locale.getDefault())
+                    return capitaliseFirstLetterInName.plus(lowercaseOtherLetterInName)
+                } else {
+                    return null
+                }
+            } ?: kotlin.run {
+                return null
+            }
         }
 
         fun isOperatingHoursForInAppChat(tradingHours: MutableList<ConfigTradingHours>): Boolean? {

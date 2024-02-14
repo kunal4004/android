@@ -40,6 +40,7 @@ class ShopOptimiserViewModel @Inject constructor(
 
     val userAccountsFlow = MutableSharedFlow<NetworkStatusUI<UserAccountResponse>>(replay = 0)
 
+    var isPayFlexViewVisible : Boolean = false
     // Other properties...
     private var pdpProductVariant by mutableStateOf(PdpProductVariant())
     var shoptimiserProductsList = mutableStateMapOf<String, ProductOnDisplay>()
@@ -205,7 +206,7 @@ class ShopOptimiserViewModel @Inject constructor(
      * Checks if the Stand-Alone PayFlex view is enabled for the current product.
      * @return `true` if Stand-Alone PayFlex is enabled, `false` otherwise.
      */
-    fun isStandAlonePayFlexViewEnabled() = isLoggedIn() && isStandAlonePayFlexEnabled(pdpProductVariant.productDetail)
+    fun isStandAlonePayFlexViewEnabled() = isStandAlonePayFlexEnabled(pdpProductVariant.productDetail)
 
     /**
      * Retrieves the PayFlex payment details for display.

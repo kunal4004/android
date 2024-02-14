@@ -666,7 +666,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     }
 
     private fun viewItemListAnalytics(products: List<ProductList>, category: String?) {
-        FirebaseAnalyticsEventHelper.viewItemList(products = products, category = category)
+        FirebaseAnalyticsEventHelper.viewItemList(products = products, category = category, breadCrumbs = breadCrumbList)
     }
 
     private fun onChanelSuccess(response: ProductView) {
@@ -1423,13 +1423,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         state = binding.productsRecyclerView.layoutManager?.onSaveInstanceState()
         triggerFirebaseEvent(productList, position)
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.openProductDetailFragment(
-            title,
-            productList,
-            mBannerLabel,
-            mBannerImage,
-            isUserBrowsing
-        )
+        productList.stockAvailable?.let {
+            (activity as? BottomNavigationActivity)?.openProductDetailFragment(
+                title,
+                productList,
+                mBannerLabel,
+                mBannerImage,
+                isUserBrowsing,
+                it
+            )
+        }
     }
 
     private fun triggerFirebaseEvent(productList: ProductList, index: Int) {
@@ -1475,13 +1478,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
     ) {
         state = binding.productsRecyclerView.layoutManager?.onSaveInstanceState()
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.openProductDetailFragment(
-            title,
-            productList,
-            bannerLabel,
-            bannerImage,
-            isUserBrowsing
-        )
+        productList.stockAvailable?.let {
+            (activity as? BottomNavigationActivity)?.openProductDetailFragment(
+                title,
+                productList,
+                bannerLabel,
+                bannerImage,
+                isUserBrowsing,
+                it
+            )
+        }
     }
 
     override fun setRecyclerViewHolderView(recyclerViewViewHolderItems: RecyclerViewViewHolderItems) {
