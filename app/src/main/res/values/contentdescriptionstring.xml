@@ -345,4 +345,8 @@
     <string name="cd_information_icon">Information Icon</string>
     <string name="cd_order_again">Order Again Banner</string>
 
+    <!--Matching Set-->
+    <string name="matching_setImg_main_view">Matching Set Main Image</string>
+    <string name="matching_setplus_button">Matching Set Quick Shop</string>
+
 </resources>
