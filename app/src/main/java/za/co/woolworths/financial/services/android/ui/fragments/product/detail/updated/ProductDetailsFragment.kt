@@ -893,11 +893,11 @@ class ProductDetailsFragment :
                 )
             )
         }
-        AppConfigSingleton.outOfStock?.apply {
+      /*  AppConfigSingleton.outOfStock?.apply {
             if (isOutOfStockEnabled == true) {
                 setOutOfStock()
             }
-        }
+        }*/
     }
 
     private fun setOutOfStock() {
@@ -2359,6 +2359,8 @@ class ProductDetailsFragment :
         toCartAndFindInStoreLayout.apply {
             groupAddToCartAction?.visibility = View.GONE
             findInStoreAction?.visibility = View.VISIBLE
+            binding.pdpOutOfStockTag.visibility = View.VISIBLE
+            binding.productImagesViewPager.alpha = 0.5f
         }
         if (hasColor) hideLowStockFromSelectedColor()
         if (hasSize) hideLowStockForSize()
@@ -2369,6 +2371,8 @@ class ProductDetailsFragment :
         toCartAndFindInStoreLayout.apply {
             groupAddToCartAction?.visibility = View.VISIBLE
             findInStoreAction?.visibility = View.GONE
+            binding.pdpOutOfStockTag.visibility = View.GONE
+            binding.productImagesViewPager.alpha = 1.0f
         }
         if (isAllProductsOutOfStock() && SessionUtilities.getInstance().isUserAuthenticated && Utils.getPreferredDeliveryLocation() != null) {
             showFindInStore()
@@ -3200,6 +3204,7 @@ class ProductDetailsFragment :
                 //If user is not authenticated or Preferred DeliveryAddress is not available hide this view
                 if (!SessionUtilities.getInstance().isUserAuthenticated || getDeliveryLocation() == null) {
                     deliveryLocationLayout.root.visibility = View.GONE
+                    setOutOfStock()
                     return
                 } else
                     deliveryLocationLayout.root.visibility = View.VISIBLE
@@ -3220,6 +3225,7 @@ class ProductDetailsFragment :
                                     it.address?.address1?.let { convertToTitleCase(it) } ?: ""
                                 defaultLocationPlaceholder.text =
                                     getString(R.string.delivering_to_pdp)
+                                setOutOfStock()
                             }
                             Delivery.DASH -> {
                                 currentDeliveryLocation.text =
