@@ -374,10 +374,8 @@ class ProductDetailsFragment :
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
         productId = productDetails?.productId
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getDyServerId() != null)
-            dyServerId = Utils.getDyServerId()
-        if (Utils.getDySessionId() != null)
-            dySessionId = Utils.getDySessionId()
+        Utils.getDyServerId()?.let { dyServerId = it }
+        Utils.getDySessionId()?.let { dySessionId = it }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -415,10 +413,9 @@ class ProductDetailsFragment :
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
         val skuIdList: ArrayList<String>? = ArrayList()
-        for (othersku in productDetails!!.otherSkus) {
-            if (othersku.sku != null) {
-                var skuID = othersku.sku
-                skuIdList?.add(skuID!!)
+        productDetails?.otherSkus?.forEach { otherSkuData ->
+            otherSkuData.sku?.let { skuID ->
+                skuIdList?.add(skuID)
             }
         }
         val page = Page(skuIdList, PRODUCT_DETAILS_PAGE, PRODUCT_PAGE, null,null)
@@ -1266,7 +1263,7 @@ class ProductDetailsFragment :
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
             AppConfigSingleton.dynamicYieldConfig?.apply {
-                if (isDynamicYieldEnabled == true) {
+                if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && defaultSku?.quantity != 0 && !defaultSku?.sku.isNullOrEmpty()) {
                     prepareDyChangeAttributeQuantityRequestEvent(
                         defaultSku?.quantity.toString(),
                         defaultSku?.sku
@@ -1275,7 +1272,7 @@ class ProductDetailsFragment :
             }
         } else {
             AppConfigSingleton.dynamicYieldConfig?.apply {
-                if (isDynamicYieldEnabled == true) {
+                if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !defaultSku?.colour.isNullOrEmpty()) {
                     var color = defaultSku?.colour
                     prepareDyChangeAttributeRequestEvent(color, defaultSku?.sku)
                 }
@@ -1323,7 +1320,7 @@ class ProductDetailsFragment :
             if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
                 updateDefaultUI(false)
                 hideProductDetailsLoading()
-                prepareDynamicYieldPageViewRequestEvent()
+                callDyProductDetailsPage()
                 return
             }
 
@@ -1353,8 +1350,12 @@ class ProductDetailsFragment :
             showErrorWhileLoadingProductDetails()
         }
         sendRecommendationsDetail()
+        callDyProductDetailsPage()
+    }
+
+    private fun callDyProductDetailsPage() {
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty())
                 prepareDynamicYieldPageViewRequestEvent()
         }
     }
@@ -2192,7 +2193,7 @@ class ProductDetailsFragment :
         binding.showSelectedSize(selectedSku)
         binding.updateUIForSelectedSKU(getSelectedSku())
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !size.isNullOrEmpty() && !selectedSku.sku.isNullOrEmpty())
                 prepareDyChangeAttributeSizeRequestEvent(size, selectedSku.sku)
         }
     }
@@ -2204,8 +2205,7 @@ class ProductDetailsFragment :
         val context = Context(device,null,DY_CHANNEL)
         val properties = Properties(SIZE_ATTRIBUTE, size,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareChangeAttributeRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
@@ -2243,7 +2243,7 @@ class ProductDetailsFragment :
 
         }
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !selectedColor.isNullOrEmpty() && !selectedSku?.sku.isNullOrEmpty())
                 prepareDyChangeAttributeRequestEvent(selectedColor, selectedSku?.sku)
         }
     }
@@ -2255,8 +2255,7 @@ class ProductDetailsFragment :
         val context = Context(device,null,DY_CHANNEL)
         val properties = Properties(COLOR_ATTRIBUTE,selectedColor,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute)
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareChangeAttributeRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
@@ -2418,13 +2417,43 @@ class ProductDetailsFragment :
         val session = Session(dySessionId)
         val device = Device(IPAddress,config?.getDeviceModel())
         val context = Context(device,null,DY_CHANNEL)
-        val cartLinesValue: MutableList<Cart> = arrayListOf()
-        val cart = Cart(getSelectedSku()?.sku, getSelectedQuantity(), getSelectedSku()?.price?.toString())
-        cartLinesValue.add(cart)
-        val properties = Properties(null,null,ADD_TO_CART_V1,null,getSelectedSku()?.price,ZAR,selectedQuantity,getSelectedSku()?.sku,getSelectedSku()?.colour,null,null,null,null,null,null,null,null,cartLinesValue)
-        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,ADD_TO_CART,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val selectedSku = getSelectedSku()
+        val cartLinesValue = mutableListOf(Cart(selectedSku?.sku, getSelectedQuantity(), selectedSku?.price?.toString()))
+        val properties = Properties(
+            null,
+            null,
+            ADD_TO_CART_V1,
+            null,
+            selectedSku?.price,
+            ZAR,
+            selectedQuantity,
+            selectedSku?.sku,
+            selectedSku?.colour,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue)
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ADD_TO_CART,
+            properties)
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareDyAddToCartRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
@@ -2507,7 +2536,7 @@ class ProductDetailsFragment :
         setSelectedQuantity(quantity)
         binding.toCartAndFindInStoreLayout.quantityText?.text = quantity.toString()
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && quantity != 0 && !selectedSku?.sku.isNullOrEmpty())
                 prepareDyChangeAttributeQuantityRequestEvent(quantity.toString(), selectedSku?.sku)
         }
     }
@@ -2519,8 +2548,7 @@ class ProductDetailsFragment :
         val context = Context(device,null,DY_CHANNEL)
         val properties = Properties(QUANTITY_ATTRIBUTE,quantity,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareChangeAttributeQuantityRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
@@ -2691,7 +2719,7 @@ class ProductDetailsFragment :
             }
         }
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true) {
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                 prepareDyAddToCartRequestEvent()
                 prepareSyncCartRequestEvent()
             }
@@ -2703,14 +2731,43 @@ class ProductDetailsFragment :
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
         val context = Context(device, null, DY_CHANNEL)
-        val cartLinesValue: MutableList<Cart> = arrayListOf()
-        val cart = Cart(getSelectedSku()?.sku, getSelectedQuantity(), getSelectedSku()?.price?.toString())
-        cartLinesValue.add(cart)
-        val properties = Properties(null,null,SYNC_CART_V1,null,null,
-            Constants.CURRENCY_VALUE,null,null,null,null,null,null,null,null,null,null,null,cartLinesValue)
-        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,SYNC_CART,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val selectedSku = getSelectedSku()
+        val cartLinesValue = mutableListOf(Cart(selectedSku?.sku, getSelectedQuantity(), selectedSku?.price?.toString()))
+        val properties = Properties(
+            null,
+            null,
+            SYNC_CART_V1,
+            null,
+            null,
+            Constants.CURRENCY_VALUE,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue)
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            SYNC_CART,
+            properties)
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareDySyncCartRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
