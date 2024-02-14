@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.endlessaisle.utils.getBarcodeMessage
+import za.co.woolworths.financial.services.android.endlessaisle.utils.isEndlessAisleAvailable
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
@@ -57,6 +58,7 @@ import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.*
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.dto.AddToWishListFirebaseEventData
@@ -129,10 +131,16 @@ class OrderConfirmationFragment :
                                     submittedOrderResponse=response
                                     updateUi(response)
                                     displayVocifNeeded(response)
+
+                                    val isEndlessAisle = isEndlessAisleJourney == true &&
+                                            response?.orderSummary?.endlessAisleOrder == true &&
+                                            !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()
                                     if (!isPurchaseEventTriggered && isEndlessAisleJourney == false)
                                     {
                                         FirebaseAnalyticsEventHelper.purchase(response)
                                         isPurchaseEventTriggered = false
+                                    } else if (isEndlessAisle) {
+                                        showEndlessAisleEvent()
                                     }
 
                                     //Make this call to recommendation API after receiving the 200 or 201 from the order
@@ -144,9 +152,7 @@ class OrderConfirmationFragment :
                                         }
                                     }
                                     // Update Layout depending on endless aisle journey is enabled or not
-                                    if(isEndlessAisleJourney == true &&
-                                        response?.orderSummary?.endlessAisleOrder == true &&
-                                        !response?.orderSummary?.endlessAisleBarcode.isNullOrEmpty()){
+                                    if(isEndlessAisle){
                                         updateLayoutForEndlessAisleJourney(response)
                                     }
                                 }
@@ -202,6 +208,12 @@ class OrderConfirmationFragment :
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
         dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)
+    }
+
+    private fun showEndlessAisleEvent() {
+        val params = Bundle()
+        params.putString(FirebaseManagerAnalyticsProperties.PropertyNames.PAYMENT_TYPE, FirebaseManagerAnalyticsProperties.PropertyValues.IN_STORE)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ENDLESS_AISLE, params)
     }
 
     private fun displayVocifNeeded(response: SubmittedOrderResponse) {

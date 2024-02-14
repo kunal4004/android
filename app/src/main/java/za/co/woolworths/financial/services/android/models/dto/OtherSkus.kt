@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import java.io.Serializable
 
 @Parcelize
 data class OtherSkus(
@@ -35,7 +36,7 @@ data class OtherSkus(
     var kilogramPrice: String? = null,
 
     var styleIdOnSale: Boolean? = null
-) : Parcelable
+) : Parcelable, Serializable
 
 fun OtherSkus.toAddToListRequest() = AddToListRequest(
     skuID = this.sku,

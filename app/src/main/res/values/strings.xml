@@ -3031,6 +3031,7 @@
     <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
     <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>
 
+    <string name="store_selection">store selection</string>
     <string name="fbh_item_select">only fashion, beauty and home items are\navailable at this collection point</string>
     <string name="food_item_select">only food items are available for\ncollection AT</string>
 
@@ -3329,5 +3330,15 @@
         <item quantity="one">%1$d ITEM MOVED TO %2$s</item>
         <item quantity="other">%1$d ITEMS MOVED TO %2$s</item>
     </plurals>
-
+    <string name="item_out_of_stock">Item Out of Stock?</string>
+    <string name="notify_me">Notify Me</string>
+    <string name="bis_title">Set up Back in Stock notifications</string>
+    <string name="bis_desc">Enter your email address and if this product is back in stock you\'ll be the first to know!</string>
+    <string name="select_color">Select a Colour: *</string>
+    <string name="select_size">Select a Size: *</string>
+    <string name="email_address">Email Address: *</string>
+    <string name="c_description">description</string>
+    <string name="placeholder_select_size">Select a size</string>
+    <string name="placeholder_select_color">Select a colour</string>
+    <string name="notify_me_success_message">You’ll Be Notified When This Product Is Back In Stock</string>
 </resources>

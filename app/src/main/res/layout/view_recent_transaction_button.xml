@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/viewTransactionImageView"
         style="@style/accountPaymentOptionIconImageViewStyle"
-        android:contentDescription="@string/label_recent_transactions"
+        android:contentDescription="@string/recent_transactions_image_icon"
         app:layout_constraintBottom_toTopOf="@+id/viewTransactionTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -19,7 +19,7 @@
     <TextView
         android:id="@+id/viewTransactionTextView"
         style="@style/accountPaymentOptionIconTextViewStyle"
-        android:contentDescription="@string/label_recent_transactions"
+        android:contentDescription="@string/recent_transactions_text"
         android:text="@string/label_recent_transactions"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

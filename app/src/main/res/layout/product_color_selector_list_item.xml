@@ -23,6 +23,14 @@
         android:layout_marginTop="@dimen/five_dp">
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/borderWithOverlay"
+        android:layout_width="@dimen/fourty_dp"
+        android:layout_height="@dimen/fourty_dp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/five_dp">
+    </FrameLayout>
+
     <ImageView
         android:id="@+id/saveLabelImage"
         android:layout_width="match_parent"

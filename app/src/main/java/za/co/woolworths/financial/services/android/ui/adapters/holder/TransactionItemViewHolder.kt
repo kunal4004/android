@@ -10,13 +10,16 @@ import kotlin.math.roundToInt
 
 class TransactionItemViewHolder(val itemBinding: TransactionListChildItemBinding): RecyclerView.ViewHolder(itemBinding.root) {
 
-    fun setTransactionContent(transactionItem: TransactionItem?) {
+    fun setTransactionContent(transactionItem: TransactionItem?, headerCount: Int, itemCount: Int) {
 
         itemBinding.apply {
             transactionItem?.apply {
                 transactionDate?.text = date
+                transactionDate.contentDescription = "month_${headerCount}_transaction_${itemCount}_date"
                 transactionDescription?.text = description
+                transactionDescription.contentDescription = "month_${headerCount}_transaction_${itemCount}_title"
                 transactionAmount?.text = addNegativeSymbolInFront(FontHyperTextParser.getSpannable(amount?.let { amt -> formatTransactionAmount(amt) }, 1))
+                transactionAmount.contentDescription = "month_${headerCount}_transaction_${itemCount}_amount"
             }
         }
     }

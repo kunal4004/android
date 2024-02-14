@@ -27,7 +27,7 @@
 
     <include
         android:id="@+id/layoutLowStockColor"
-        layout="@layout/low_stock_product_details"
+        layout="@layout/low_or_out_of_stock_product_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -99,8 +99,8 @@
 
 
     <include
-        android:id="@+id/layoutLowStockIndicator"
-        layout="@layout/low_stock_product_details"
+        android:id="@+id/layoutStockIndicator"
+        layout="@layout/low_or_out_of_stock_product_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_nine_dp"
