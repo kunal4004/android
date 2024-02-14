@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,37 +48,7 @@ fun MatchingSetMainView(
     matchingSetData: MatchingSetData,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier.weight(1f, true),
-                text = stringResource(id = R.string.matching_set_title),
-                style = TextStyle(
-                    fontFamily = FuturaFontFamily,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.W600,
-                    textAlign = TextAlign.Start,
-                    color = Color.Black,
-                    lineHeight = 27.sp
-                )
-            )
-            Text(
-                text = stringResource(id = R.string.matching_set_see_more_button_text),
-                style = TextStyle(
-                    fontFamily = FuturaFontFamily,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.W500,
-                    textAlign = TextAlign.End,
-                    color = Color.Black,
-                    lineHeight = 18.sp,
-                    letterSpacing = 1.sp
-                )
-            )
-        }
+        MatchingSetHeaderView(modifier)
         LazyColumn(
             state = rememberLazyListState(),
             modifier = modifier,
@@ -87,91 +56,85 @@ fun MatchingSetMainView(
             itemsIndexed(matchingSetData.relatedProducts, key = { _, item ->
                 item.productId
             }) { index, listItem ->
-                Box(
+                Row(
                     modifier = Modifier
+                        .align(Alignment.Start)
                         .fillMaxWidth()
-                        .background(White)
+                        .fillMaxHeight()
+                        .padding(24.dp),
                 ) {
-                    Row(
+                    AsyncImage(
                         modifier = Modifier
-                            .align(Alignment.CenterStart)
-                            .fillMaxWidth()
+                            .height(112.dp)
+                            .width(80.dp)
+                            .fillMaxHeight(),
+                        model = matchingSetData.imgUrlList[index],
+                        placeholder = painterResource(id = R.drawable.placeholder_product_list),
+                        error = painterResource(id = R.drawable.placeholder_product_list),
+                        contentDescription = stringResource(id = R.string.matching_setImg_main_view),
+                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = 5.dp)
                             .fillMaxHeight()
-                            .padding(24.dp),
+                            .fillMaxWidth()
                     ) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .height(112.dp)
-                                .width(80.dp)
-                                .fillMaxHeight(),
-                            model = matchingSetData.imgUrlList[index],
-                            placeholder = painterResource(id = R.drawable.placeholder_product_list),
-                            error = painterResource(id = R.drawable.placeholder_product_list),
-                            contentDescription = stringResource(id = R.string.matching_setImg_main_view),
+                        Text(
+                            text = listItem.productName,
+                            style = TextStyle(
+                                fontFamily = OpenSansFontFamily,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.W400,
+                                textAlign = TextAlign.Start,
+                                color = Color.Black,
+                                lineHeight = 19.5.sp
+                            )
                         )
-                        Column(
+                        Text(
+                            text = matchingSetData.colorNameList[index],
+                            style = TextStyle(
+                                fontFamily = OpenSansFontFamily,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.W600,
+                                textAlign = TextAlign.Start,
+                                color = Color9D9D9D,
+                                lineHeight = 15.sp
+                            )
+                        )
+                        Row(
                             modifier = Modifier
-                                .padding(start = 16.dp, top = 5.dp)
                                 .fillMaxHeight()
                                 .fillMaxWidth()
+                                .padding(top = 30.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = listItem.productName,
+                                modifier = Modifier.weight(1f, true),
+                                text = matchingSetData.priceList[index],
                                 style = TextStyle(
-                                    fontFamily = OpenSansFontFamily,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.W400,
-                                    textAlign = TextAlign.Start,
-                                    color = Color.Black,
-                                    lineHeight = 19.5.sp
-                                )
-                            )
-                            Text(
-                                text = matchingSetData.colorNameList[index],
-                                style = TextStyle(
-                                    fontFamily = OpenSansFontFamily,
-                                    fontSize = 10.sp,
+                                    fontFamily = FuturaFontFamily,
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.W600,
                                     textAlign = TextAlign.Start,
-                                    color = Color9D9D9D,
-                                    lineHeight = 15.sp
+                                    color = Color.Black,
+                                    lineHeight = 21.sp
                                 )
                             )
-                            Row(
+                            Image(
                                 modifier = Modifier
-                                    .fillMaxHeight()
-                                    .fillMaxWidth()
-                                    .padding(top = 30.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    modifier = Modifier.weight(1f, true),
-                                    text = matchingSetData.priceList[index],
-                                    style = TextStyle(
-                                        fontFamily = FuturaFontFamily,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.W600,
-                                        textAlign = TextAlign.Start,
-                                        color = Color.Black,
-                                        lineHeight = 21.sp
-                                    )
-                                )
-                                Image(
-                                    modifier = Modifier
-                                        .clickable { },
-                                    painter = painterResource(id = R.drawable.ic_add_circle),
-                                    contentDescription = stringResource(id = R.string.matching_setplus_button)
-                                )
-                            }
+                                    .clickable { },
+                                painter = painterResource(id = R.drawable.ic_add_circle),
+                                contentDescription = stringResource(id = R.string.matching_setplus_button)
+                            )
                         }
                     }
-                    Spacer(
-                        modifier = Modifier
-                            .height(1.dp)
-                            .fillMaxWidth()
-                            .background(color = colorResource(id = R.color.color_D8D8D8))
-                    )
                 }
+                Spacer(
+                    modifier = Modifier
+                        .height(1.dp)
+                        .fillMaxWidth()
+                        .background(color = colorResource(id = R.color.color_D8D8D8))
+                )
             }
         }
     }
@@ -179,7 +142,7 @@ fun MatchingSetMainView(
 
 @Preview(showBackground = true)
 @Composable
-fun MatchingSetMainView() {
+fun MatchingSetMainViewPreview() {
     OneAppTheme {
         val relatedProducts1 =
             RelatedProducts("Bowl Set 4 Pack", "507106238", null, "", "", "", "", null)
