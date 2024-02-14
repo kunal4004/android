@@ -89,6 +89,8 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
         (activity as? CheckoutActivity)?.apply {
             supportActionBar?.hide()
         }
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -192,8 +194,10 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             paymentArguments[PAYMENT_VALUE] = jsonToAnalyticsList?.value?.toString() ?: "0.0"
             paymentArguments[PAYMENT_TYPE] = jsonToAnalyticsList?.payment_type ?: ""
             AppConfigSingleton.dynamicYieldConfig?.apply {
-                if (isDynamicYieldEnabled == true)
-                    preparePaymentPageViewRequest(jsonToAnalyticsList)
+                if (isDynamicYieldEnabled == true) {
+                    if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && jsonToAnalyticsList != null)
+                        preparePaymentPageViewRequest(jsonToAnalyticsList)
+                }
             }
         }
 
@@ -302,18 +306,13 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
 
     private fun preparePaymentPageViewRequest(jsonToAnalyticsList: PaymentAnalyticsData?) {
         config = NetworkConfig(AppContextProviderImpl())
-        if (getDyServerId() != null)
-            dyServerId = getDyServerId()
-        if (getDySessionId() != null)
-            dySessionId = getDySessionId()
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
-        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val device = Device(IPAddress, config?.getDeviceModel())
         val dataOther = DataOther(null,null,ZAR,jsonToAnalyticsList?.payment_type,jsonToAnalyticsList?.value,null)
-        val dataOtherArray: ArrayList<DataOther>? = ArrayList<DataOther>()
-        dataOtherArray?.add(dataOther)
+        val dataOtherArray = arrayListOf(dataOther)
         val page = Page(null, PAYMENT_PAGE, OTHER, null, dataOtherArray)
-        val context = Context(device, page, Utils.DY_CHANNEL)
+        val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
         val homePageRequestEvent = HomePageRequestEvent(user, session, context, options)
         dyChooseVariationViewModel.createDyRequest(homePageRequestEvent)

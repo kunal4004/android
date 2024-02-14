@@ -48,8 +48,11 @@ import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -571,9 +574,7 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
-			if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
-				prepareDynamicYieldRequestEvent();
-			}
+			callDyPageView();
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -662,16 +663,11 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void extractFormDataAndCloseSSOIfNeeded(String ssoActivityEvent){
-		if (Utils.getDyServerId() != null) {
+		if (Utils.getDyServerId() != null)
 			dyServerId = Utils.getDyServerId();
-		} else {
-			dyServerId = "";
-		}
-		if (Utils.getDySessionId() != null) {
+		if (Utils.getDySessionId() != null)
 			dySessionId = Utils.getDySessionId();
-		} else {
-			dySessionId = "";
-		}
+
 		SSOActivity.this.webView.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 			@Override
 			public void onReceiveValue(String value) {
@@ -740,23 +736,23 @@ public class SSOActivity extends WebViewActivity {
 					setStSParameters();
 				}
 				if (ssoActivityEvent == "SIGNIN") {
-					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+					if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled() && jwtDecodedModel != null) {
 						String hexvalue = null;
-						if (jwtDecodedModel != null) {
-							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						if (dyServerId != null && dySessionId != null) {
+							prepareDySigninRequestEvent(hexvalue);
+							prepareDyIdentifyUserRequestEvent(hexvalue);
 						}
-						prepareDySigninRequestEvent(hexvalue);
-						prepareDyIdentifyUserRequestEvent(hexvalue);
 					}
 
 				}else if (ssoActivityEvent == "REGISTER") {
-					if (Boolean.TRUE.equals(AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled())) {
+					if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled() && jwtDecodedModel != null) {
 						String hexvalue = null;
-						if (jwtDecodedModel != null) {
-							hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						hexvalue = sha256Value(jwtDecodedModel.email.get(0));
+						if (dyServerId != null && dySessionId != null) {
+							prepareDyRegisterRequestEvent(hexvalue);
+							prepareDyIdentifyUserRequestEvent(hexvalue);
 						}
-						prepareDyRegisterRequestEvent(hexvalue);
-						prepareDyIdentifyUserRequestEvent(hexvalue);
 					}
 				}
 			}
@@ -792,8 +788,7 @@ public class SSOActivity extends WebViewActivity {
 		Context context = new Context(device,null, DY_CHANNEL,null);
 		Properties properties = new Properties(null,null,LOGIN_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,LOGIN,properties);
-		ArrayList<Event> eventArrayList = new ArrayList<>();
-		eventArrayList.add(event);
+		List<Event> eventArrayList = Collections.singletonList(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
 				context,
 				eventArrayList,
@@ -811,8 +806,7 @@ public class SSOActivity extends WebViewActivity {
 		Context context = new Context(device,null, DY_CHANNEL,null);
 		Properties properties = new Properties(null,null,IDENTIFY_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,IDENTIFY,properties);
-		ArrayList<Event> eventArrayList = new ArrayList<>();
-		eventArrayList.add(event);
+		List<Event> eventArrayList = Collections.singletonList(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
 				context,
 				eventArrayList,
@@ -829,8 +823,7 @@ public class SSOActivity extends WebViewActivity {
 		Context context = new Context(device,null, DY_CHANNEL,null);
 		Properties properties = new Properties(null,null,SIGNUP_V1,null,null,null,null,null,null,null,hashMail,null,null,null,null,null,null,null);
 		Event event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,SIGNUP,properties);
-		ArrayList<Event> eventArrayList = new ArrayList<>();
-		eventArrayList.add(event);
+		List<Event> eventArrayList = Collections.singletonList(event);
 		PrepareChangeAttributeRequestEvent prepareLoginDYRequestEvent = new PrepareChangeAttributeRequestEvent(
 				context,
 				eventArrayList,
@@ -1017,6 +1010,12 @@ public class SSOActivity extends WebViewActivity {
 		Options options = new Options(true);
 		HomePageRequestEvent homePageRequestEvent = new HomePageRequestEvent(null, null, context, options);
 		dyHomePageViewModel.createDyRequest(homePageRequestEvent);
+	}
+
+	private void callDyPageView() {
+		if (AppConfigSingleton.getDynamicYieldConfig().isDynamicYieldEnabled() && dyServerId == null && dySessionId == null) {
+			prepareDynamicYieldRequestEvent();
+		}
 	}
 
 }

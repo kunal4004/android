@@ -198,10 +198,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             isBackPressed = false
         }
         config = NetworkConfig(AppContextProviderImpl())
-        if (getDyServerId() != null)
-            dyServerId = getDyServerId()
-        if (getDySessionId() != null)
-            dySessionId = getDySessionId()
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -262,13 +260,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         val user = User(dyServerId,dyServerId)
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
-        val skuIds: ArrayList<String>? = ArrayList()
-       for (other in productLists) {
-          if (other.sku != null) {
-              var skuData = other.sku
-              skuIds?.add(skuData!!)
-          }
-       }
+        val skuIds = productLists.toList().mapNotNull { it.sku }
         val page = Page(breadCrumbList, PLP_SCREEN_LOCATION, category_dyType)
         var pageAttributes: PageAttributes = if (breadCrumbList.isNotEmpty()) {
             PageAttributes(breadCrumbList)
@@ -656,11 +648,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         mProductAdapter?.notifyDataSetChanged()
         AppConfigSingleton.dynamicYieldConfig?.apply {
             if (isDynamicYieldEnabled == true) {
-               val categoryDyType = if (mSearchType?.value.equals("search"))
-                    "OTHER"
-                else
-                    "CATEGORY"
-                prepareCategoryDynamicYieldPageView(response.products,breadCrumbList,categoryDyType)
+                if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !mSearchType?.value.isNullOrEmpty()) {
+                    val categoryDyType = if (mSearchType?.value.equals(DY_SEARCH))
+                        OTHER
+                    else
+                        CATEGORY_DY_TYPE
+                    prepareCategoryDynamicYieldPageView(response.products,breadCrumbList,categoryDyType)
+                }
             }
         }
     }
@@ -1198,13 +1192,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             updateProductRequestBodyForSort(sortOption.sortOption)
             reloadProductsWithSortAndFilter()
             AppConfigSingleton.dynamicYieldConfig?.apply {
-                if (isDynamicYieldEnabled == true) {
-                    sortBy = sortOption.label
-                    if (sortBy.equals(SORT_BY)) {
-                        sortBy = ""
-                        prepareSortByRequestEvent(sortBy)
-                    }else
-                        prepareSortByRequestEvent(sortBy)
+                isDynamicYieldEnabled?.let { isEnabled ->
+                    if (isEnabled && !dySessionId.isNullOrEmpty() && !dyServerId.isNullOrEmpty()) {
+                        sortBy = sortOption.label
+                        prepareSortByRequestEvent(if (sortBy == SORT_BY) "" else sortBy)
+                    }
                 }
             }
         }
