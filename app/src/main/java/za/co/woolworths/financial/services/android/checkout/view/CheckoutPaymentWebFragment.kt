@@ -195,7 +195,7 @@ class CheckoutPaymentWebFragment : Fragment(R.layout.fragment_checkout_payment_w
             paymentArguments[PAYMENT_TYPE] = jsonToAnalyticsList?.payment_type ?: ""
             AppConfigSingleton.dynamicYieldConfig?.apply {
                 if (isDynamicYieldEnabled == true) {
-                    if (dyServerId != null && dySessionId != null && jsonToAnalyticsList != null)
+                    if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && jsonToAnalyticsList != null)
                         preparePaymentPageViewRequest(jsonToAnalyticsList)
                 }
             }

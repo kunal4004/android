@@ -1143,7 +1143,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
                 }
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        if (dyServerId != null && dySessionId != null && orderTotalValue != 0.0)
+                        if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && orderTotalValue != 0.0)
                             preparePaymentPageViewRequest(orderTotalValue)
                     }
                 }

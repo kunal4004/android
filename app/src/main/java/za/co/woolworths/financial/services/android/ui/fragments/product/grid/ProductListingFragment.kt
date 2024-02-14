@@ -648,7 +648,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         mProductAdapter?.notifyDataSetChanged()
         AppConfigSingleton.dynamicYieldConfig?.apply {
             if (isDynamicYieldEnabled == true) {
-                if (dyServerId != null && dySessionId != null && mSearchType?.value != null) {
+                if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !mSearchType?.value.isNullOrEmpty()) {
                     val categoryDyType = if (mSearchType?.value.equals(DY_SEARCH))
                         OTHER
                     else
@@ -1193,7 +1193,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
             reloadProductsWithSortAndFilter()
             AppConfigSingleton.dynamicYieldConfig?.apply {
                 isDynamicYieldEnabled?.let { isEnabled ->
-                    if (isEnabled && dySessionId != null && dyServerId != null) {
+                    if (isEnabled && !dySessionId.isNullOrEmpty() && !dyServerId.isNullOrEmpty()) {
                         sortBy = sortOption.label
                         prepareSortByRequestEvent(if (sortBy == SORT_BY) "" else sortBy)
                     }

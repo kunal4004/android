@@ -241,7 +241,7 @@ class AddToListViewModel @Inject constructor(
                                     if (isDynamicYieldEnabled == true) {
                                         dyServerId = Utils.getDyServerId()
                                         dySessionId = Utils.getDySessionId()
-                                        if (dyServerId != null && dySessionId != null) {
+                                        if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                                             items.forEach { item ->
                                                 prepareDyAddToWishListRequestEvent(
                                                     item.skuID,
@@ -357,7 +357,7 @@ class AddToListViewModel @Inject constructor(
                                 if (isDynamicYieldEnabled == true) {
                                     dyServerId = Utils.getDyServerId()
                                     dySessionId = Utils.getDySessionId()
-                                    if (dyServerId != null && dySessionId != null) {
+                                    if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                                         items.forEach { item ->
                                             prepareDyAddToWishListRequestEvent(
                                                 item.skuID,

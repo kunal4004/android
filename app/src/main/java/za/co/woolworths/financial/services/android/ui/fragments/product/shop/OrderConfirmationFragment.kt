@@ -136,7 +136,7 @@ class OrderConfirmationFragment :
                                     //Make this call to recommendation API after receiving the 200 or 201 from the order
                                     orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
                                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                                        if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null) {
+                                        if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                                             prepareDYConfirmationPageViewRequest(response)
                                             prepareDYPurchaseOrderRequest(response)
                                         }

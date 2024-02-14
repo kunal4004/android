@@ -483,7 +483,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         viewModel.getSavedAddress()
                     }
                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null)
+                        if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty())
                             prepareDynamicYieldCheckoutRequest(deliveryType)
                     }
                 }
@@ -1361,7 +1361,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 showRecommendedProducts()
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        if (dyServerId != null && dySessionId != null) {
+                        if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                             prepareDynamicYieldCartViewRequestEvent()
                             prepareSyncCartRequestEvent()
                         }
@@ -2251,7 +2251,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         logException(ex)
                     }
                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null && mCommerceItem != null) {
+                        if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && mCommerceItem != null) {
                                 prepareDyRemoveFromCartRequestEvent(mCommerceItem)
                                 prepareSyncCartRequestEvent()
                         }
@@ -2367,7 +2367,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                     }
                     mChangeQuantityList?.removeFirstOrNull()
                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null) {
+                        if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                             prepareSyncCartRequestEvent()
                         }
                     }

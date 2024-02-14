@@ -194,7 +194,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
             if (item is Refinement && it.isSelected) {
                 selectedItems.add(item.label)
                 AppConfigSingleton.dynamicYieldConfig?.apply {
-                    if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null) {
+                    if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                             prepareFilterRequestEvent(item.label, item.displayName)
                     }
                 }

@@ -1236,7 +1236,7 @@ class ProductDetailsFragment :
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
             AppConfigSingleton.dynamicYieldConfig?.apply {
-                if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null && defaultSku?.quantity != 0 && defaultSku?.sku != null) {
+                if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && defaultSku?.quantity != 0 && !defaultSku?.sku.isNullOrEmpty()) {
                     prepareDyChangeAttributeQuantityRequestEvent(
                         defaultSku?.quantity.toString(),
                         defaultSku?.sku
@@ -1245,7 +1245,7 @@ class ProductDetailsFragment :
             }
         } else {
             AppConfigSingleton.dynamicYieldConfig?.apply {
-                if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null && defaultSku?.colour != null) {
+                if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !defaultSku?.colour.isNullOrEmpty()) {
                     var color = defaultSku?.colour
                     prepareDyChangeAttributeRequestEvent(color, defaultSku?.sku)
                 }
@@ -1328,7 +1328,7 @@ class ProductDetailsFragment :
 
     private fun callDyProductDetailsPage() {
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty())
                 prepareDynamicYieldPageViewRequestEvent()
         }
     }
@@ -2094,7 +2094,7 @@ class ProductDetailsFragment :
         binding.showSelectedSize(selectedSku)
         binding.updateUIForSelectedSKU(getSelectedSku())
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null && size != null && selectedSku.sku != null)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !size.isNullOrEmpty() && !selectedSku.sku.isNullOrEmpty())
                 prepareDyChangeAttributeSizeRequestEvent(size, selectedSku.sku)
         }
     }
@@ -2141,7 +2141,7 @@ class ProductDetailsFragment :
 
         }
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null && selectedColor != null && selectedSku?.sku != null)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !selectedColor.isNullOrEmpty() && !selectedSku?.sku.isNullOrEmpty())
                 prepareDyChangeAttributeRequestEvent(selectedColor, selectedSku?.sku)
         }
     }
@@ -2432,7 +2432,7 @@ class ProductDetailsFragment :
         setSelectedQuantity(quantity)
         binding.toCartAndFindInStoreLayout.quantityText?.text = quantity.toString()
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null && quantity != 0 && selectedSku?.sku != null)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && quantity != 0 && !selectedSku?.sku.isNullOrEmpty())
                 prepareDyChangeAttributeQuantityRequestEvent(quantity.toString(), selectedSku?.sku)
         }
     }
@@ -2615,7 +2615,7 @@ class ProductDetailsFragment :
             }
         }
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true && dyServerId != null && dySessionId != null) {
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                 prepareDyAddToCartRequestEvent()
                 prepareSyncCartRequestEvent()
             }
