@@ -893,17 +893,14 @@ class ProductDetailsFragment :
                 )
             )
         }
-      /*  AppConfigSingleton.outOfStock?.apply {
-            if (isOutOfStockEnabled == true) {
-                setOutOfStock()
-            }
-        }*/
     }
 
     private fun setOutOfStock() {
-        if (stockAvailable == STOCK_AVAILABILITY_0 && productDetails?.productType.equals(getString(R.string.food_product_type))) {
-                    binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                    binding.productImagesViewPager.alpha = 0.5f
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && stockAvailable == STOCK_AVAILABILITY_0 && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                binding.productImagesViewPager.alpha = 0.5f
+            }
         }
     }
 
@@ -1320,7 +1317,10 @@ class ProductDetailsFragment :
                 Utils.retrieveStoreId(productDetails?.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
-                true -> showProductUnavailable()
+                true -> {
+                    setOutOfStockInAddressChange()
+                    showProductUnavailable()
+                }
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
@@ -2359,8 +2359,6 @@ class ProductDetailsFragment :
         toCartAndFindInStoreLayout.apply {
             groupAddToCartAction?.visibility = View.GONE
             findInStoreAction?.visibility = View.VISIBLE
-            binding.pdpOutOfStockTag.visibility = View.VISIBLE
-            binding.productImagesViewPager.alpha = 0.5f
         }
         if (hasColor) hideLowStockFromSelectedColor()
         if (hasSize) hideLowStockForSize()
@@ -2371,8 +2369,6 @@ class ProductDetailsFragment :
         toCartAndFindInStoreLayout.apply {
             groupAddToCartAction?.visibility = View.VISIBLE
             findInStoreAction?.visibility = View.GONE
-            binding.pdpOutOfStockTag.visibility = View.GONE
-            binding.productImagesViewPager.alpha = 1.0f
         }
         if (isAllProductsOutOfStock() && SessionUtilities.getInstance().isUserAuthenticated && Utils.getPreferredDeliveryLocation() != null) {
             showFindInStore()
@@ -2549,7 +2545,10 @@ class ProductDetailsFragment :
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
         storeIdForInventory = Utils.retrieveStoreId(productDetails?.fulfillmentType)
         when (storeIdForInventory.isNullOrEmpty()) {
-            true -> showProductUnavailable()
+            true -> {
+                setOutOfStockInAddressChange()
+                showProductUnavailable()
+            }
             false -> {
                 productDetails?.apply {
                     otherSkus?.let { list ->
@@ -3381,7 +3380,7 @@ class ProductDetailsFragment :
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
         AppConfigSingleton.outOfStock?.apply {
             if (isOutOfStockEnabled == true) {
-               setOutOfStock()
+               setOutOfStockInAddressChange()
             } else {
                 if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
                     isOutOfStockFragmentAdded = true
@@ -4597,6 +4596,14 @@ class ProductDetailsFragment :
                 else {
                     onConfirmLocation()
                 }
+            }
+        }
+    }
+    private fun setOutOfStockInAddressChange() {
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                    binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                    binding.productImagesViewPager.alpha = 0.5f
             }
         }
     }
