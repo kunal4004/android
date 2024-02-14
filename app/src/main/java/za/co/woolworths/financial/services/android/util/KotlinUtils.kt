@@ -1113,11 +1113,19 @@ class KotlinUtils {
         }
 
         fun firstLetterCapitalization(name: String?): String? {
-            val capitaliseFirstLetterInName =
-                name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
-            val lowercaseOtherLetterInName =
-                name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
-            return capitaliseFirstLetterInName?.plus(lowercaseOtherLetterInName)
+            name?.let {
+                if (it.isNotEmpty()) {
+                    val capitaliseFirstLetterInName =
+                        it.substring(0, 1).toUpperCase(Locale.getDefault())
+                    val lowercaseOtherLetterInName =
+                        it.substring(1, it.length).toLowerCase(Locale.getDefault())
+                    return capitaliseFirstLetterInName.plus(lowercaseOtherLetterInName)
+                } else {
+                    return null
+                }
+            } ?: kotlin.run {
+                return null
+            }
         }
 
         fun isOperatingHoursForInAppChat(tradingHours: MutableList<ConfigTradingHours>): Boolean? {
