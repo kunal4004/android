@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -15,6 +16,7 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem
+import za.co.woolworths.financial.services.android.shoppinglist.component.MyListFlowType
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ProductAvailability
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.CONST_NO_SIZE
@@ -276,9 +278,19 @@ class ShoppingListItemsAdapter(
                         R.dimen.seven_dp else R.dimen.ten_dp
                 ).toInt()
                 minusDeleteCountImage.setPadding(padding, padding, padding, padding)
-                minusDeleteCountImage.setImageResource(
-                    if (shoppingListItem.userQuantity == 1) R.drawable.delete_24 else R.drawable.ic_minus_black
-                )
+                if (shoppingListItem.userQuantity == 1) {
+                    if (MyListFlowType.getFlowType() == MyListFlowType.FlowTypeViewOnly) {
+                        minusDeleteCountImage.setImageResource(R.drawable.disabled_delete_icon)
+                        minusDeleteCountImage.isEnabled = false
+                    } else {
+                        minusDeleteCountImage.setImageResource(R.drawable.delete_24)
+                        minusDeleteCountImage.isEnabled = true
+                    }
+                } else {
+                    minusDeleteCountImage.setImageResource(R.drawable.ic_minus_black)
+                    minusDeleteCountImage.isEnabled = true
+                }
+
                 // Add button
                 addCountImage.visibility =
                     if (shoppingListItem.quantityInStock == 1 ||
@@ -309,6 +321,7 @@ class ShoppingListItemsAdapter(
                     navigator.onItemSelectionChange(item.isSelected)
                     notifyItemChanged(position, item)
                 }
+
 
                 minusDeleteCountImage.setOnClickListener {
 

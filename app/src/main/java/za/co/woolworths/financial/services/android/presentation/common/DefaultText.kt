@@ -45,7 +45,8 @@ fun DescriptionText(
             fontWeight = FontWeight.W400,
             fontSize = 13.sp,
             color = colorResource(id = R.color.color_444444),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            lineHeight = 19.5.sp
         )
     )
 }
@@ -62,7 +63,8 @@ fun CheckboxTitleText(
             fontFamily = OpenSansFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 11.sp,
-            color = Color.Black
+            color = Color.Black,
+            lineHeight = 19.5.sp
         )
     )
 }

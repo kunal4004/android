@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import za.co.woolworths.financial.services.android.presentation.common.Descripti
 import za.co.woolworths.financial.services.android.presentation.common.TitleText
 import za.co.woolworths.financial.services.android.presentation.common.UnderlineButton
 import za.co.woolworths.financial.services.android.presentation.common.confirmationdialog.components.ConfirmationUiState
+import za.co.woolworths.financial.services.android.ui.wfs.theme.ColorD8D8D8
 
 @Composable
 fun DeleteListConfirmationView(
@@ -57,12 +59,12 @@ fun DeleteListConfirmationView(
             ) {
                 CheckboxTitleText(text = stringResource(id = data.checkBoxTitle))
                 Checkbox(
-                    modifier = Modifier.scale(0.7f),
+                    modifier = Modifier.scale(0.7f).height(20.dp).width(20.dp),
                     checked = data.isChecked,
                     onCheckedChange = onCheckBoxChange,
                     colors = CheckboxDefaults.colors(
                         checkedColor = Color.Black,
-                        uncheckedColor = Color.Black,
+                        uncheckedColor = ColorD8D8D8,
                         checkmarkColor = Color.White
                     )
                 )
