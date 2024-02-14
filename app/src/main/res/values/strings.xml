@@ -3308,6 +3308,8 @@
     <string name="remove_copy_msg">An error occurred while copying your items. \n Please try again later.</string>
     <string name="remove_move_msg">An error occurred while moving your items. \n Please try again later.</string>
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
+
+    <string name="substitute_availaibility_msg">Only available when product is in stock.</string>
     <string name="my_list_option">My Lists</string>
     <string name="share_list_option">Shared With Me</string>
     <string name="share_list_empty_title">You Don\'t Have Any Shared Lists Yet.</string>
