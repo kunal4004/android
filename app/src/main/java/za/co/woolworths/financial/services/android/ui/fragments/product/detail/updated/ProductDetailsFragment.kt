@@ -903,15 +903,14 @@ class ProductDetailsFragment :
                 )
             )
         }
-        setOutOfStock()
     }
 
     private fun setOutOfStock() {
         AppConfigSingleton.outOfStock?.apply {
-                if (stockAvailable == STOCK_AVAILABILITY_0 && isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
-                    binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                    binding.productImagesViewPager.alpha = 0.5f
-                }
+            if (isOutOfStockEnabled == true && stockAvailable == STOCK_AVAILABILITY_0 && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                binding.productImagesViewPager.alpha = 0.5f
+            }
         }
     }
 
@@ -1328,7 +1327,10 @@ class ProductDetailsFragment :
                 Utils.retrieveStoreId(productDetails?.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
-                true -> showProductUnavailable()
+                true -> {
+                    setOutOfStockInAddressChange()
+                    showProductUnavailable()
+                }
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
@@ -2661,7 +2663,10 @@ class ProductDetailsFragment :
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
         storeIdForInventory = Utils.retrieveStoreId(productDetails?.fulfillmentType)
         when (storeIdForInventory.isNullOrEmpty()) {
-            true -> showProductUnavailable()
+            true -> {
+                setOutOfStockInAddressChange()
+                showProductUnavailable()
+            }
             false -> {
                 productDetails?.apply {
                     otherSkus?.let { list ->
@@ -3352,6 +3357,7 @@ class ProductDetailsFragment :
                 //If user is not authenticated or Preferred DeliveryAddress is not available hide this view
                 if (!SessionUtilities.getInstance().isUserAuthenticated || getDeliveryLocation() == null) {
                     deliveryLocationLayout.root.visibility = View.GONE
+                    setOutOfStock()
                     return
                 } else
                     deliveryLocationLayout.root.visibility = View.VISIBLE
@@ -3372,6 +3378,7 @@ class ProductDetailsFragment :
                                     it.address?.address1?.let { convertToTitleCase(it) } ?: ""
                                 defaultLocationPlaceholder.text =
                                     getString(R.string.delivering_to_pdp)
+                                setOutOfStock()
                             }
                             Delivery.DASH -> {
                                 currentDeliveryLocation.text =
@@ -3526,9 +3533,8 @@ class ProductDetailsFragment :
 
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
         AppConfigSingleton.outOfStock?.apply {
-            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
-                binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                binding.productImagesViewPager.alpha = 0.5f
+            if (isOutOfStockEnabled == true) {
+               setOutOfStockInAddressChange()
             } else {
                 if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
                     isOutOfStockFragmentAdded = true
@@ -4863,5 +4869,13 @@ class ProductDetailsFragment :
             selectedSku = getSelectedSku() // check for both color and unavailable size
         }
         return selectedSku
+    }
+    private fun setOutOfStockInAddressChange() {
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                    binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                    binding.productImagesViewPager.alpha = 0.5f
+            }
+        }
     }
 }
