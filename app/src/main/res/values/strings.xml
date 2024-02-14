@@ -3309,12 +3309,19 @@
     <string name="remove_move_msg">An error occurred while moving your items. \n Please try again later.</string>
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
 
+    <string name="awareness_substitute_title">Don\'t Forget Your Substitutions</string>
+    <string name="awareness_substitute_desc">Remember to choose alternatives for items to ensure you always get what you need, even when your first choice isn’t available. We’ll save your substitution choices for your next shop.</string>
+    <string name="choose_substitutes">Choose Substitutes</string>
+    <string name="continue_to_checkout">Continue To Checkout</string>
+
     <string name="substitute_availaibility_msg">Only available when product is in stock.</string>
+
     <string name="my_list_option">My Lists</string>
     <string name="share_list_option">Shared With Me</string>
     <string name="share_list_empty_title">You Don\'t Have Any Shared Lists Yet.</string>
     <string name="share_list_empty_desc">Once a shopping list has been shared with you, you will be able to access it here.</string>
     <string name="collaborators">Collaborators</string>
+
 
     <plurals name="edit_items">
         <item quantity="one">Edit Item </item>
