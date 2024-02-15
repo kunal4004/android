@@ -86,6 +86,7 @@ class RefinementNavigationAdapter(val context: Activity, val listner: OnRefineme
                         FirebaseManager.logException(InvalidKeyException("navigation state is null."))
                     }
                 }
+            }
         }
     }
 
