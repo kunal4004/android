@@ -109,10 +109,8 @@ class OrderConfirmationFragment :
             binding.root
         ) {}
         config = NetworkConfig(AppContextProviderImpl())
-        if (getDyServerId() != null)
-            dyServerId = getDyServerId()
-        if (getDySessionId() != null)
-            dySessionId = getDySessionId()
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -146,7 +144,7 @@ class OrderConfirmationFragment :
                                     //Make this call to recommendation API after receiving the 200 or 201 from the order
                                     orderConfirmationViewModel.submitRecommendationsOnOrderResponse(response)
                                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                                        if (isDynamicYieldEnabled == true) {
+                                        if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                                             prepareDYConfirmationPageViewRequest(response)
                                             prepareDYPurchaseOrderRequest(response)
                                         }

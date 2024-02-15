@@ -70,6 +70,8 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.request.PrepareWriteAReviewFormRequestEvent
 import za.co.woolworths.financial.services.android.ui.activities.write_a_review.response.WriteAReviewFormResponse
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.models.NotifyMeRequest
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.models.NotifyMeResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Response.DyChangeAttributeResponse
 
@@ -1006,6 +1008,22 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): retrofit2.Response<CartSummaryResponse>
 
+    @GET("wfs/app/v4/list/view-shared-list/{id}")
+    suspend fun getItemsInViewOnlySharedShoppingList(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("id") id: String,
+        @Query("viewOnly") viewOnlyType: Boolean,
+    ): retrofit2.Response<ShoppingListItemsResponse>
+
+    @GET("wfs/app/v4/list/{id}")
+    suspend fun getItemsInEditSharedShoppingList(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("id") id: String,
+        @Query("viewAndEdit") viewOnlyType: Boolean,
+    ): retrofit2.Response<ShoppingListItemsResponse>
+
     @Headers(
         "Content-Type: application/json",
         "Accept: application/json",
@@ -1164,6 +1182,18 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body name: CreateList,
     ): retrofit2.Response<ShoppingListsResponse>
+
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json",
+    )
+    @POST("wfs/app/v4/stockNotification/stockNotification")
+    suspend fun notifyMe(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body notifyMeRequest: NotifyMeRequest,
+    ): retrofit2.Response<NotifyMeResponse>
 
     @Headers(
         "Content-Type: application/json",

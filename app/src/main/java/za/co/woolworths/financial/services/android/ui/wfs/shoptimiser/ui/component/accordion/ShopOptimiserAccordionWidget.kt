@@ -92,24 +92,26 @@ fun ShopOptimiserViewModel.ShopOptimiserAccordionController() {
     val accountResponse by userAccountsFlow.collectAsState(initial = NetworkStatusUI())
 
     // Using derivedStateOf to minimize unnecessary calculations
-    val shouldShowAccordion = remember(accountResponse) {
-        accountResponse.isLoading || isShopOptimiserEnabled()
+    var isAccordionUIVisible = remember(accountResponse) {
+        (accountResponse.isLoading || isShopOptimiserEnabled()) && !isPayFlexViewVisible
     }
 
     // Handle UI updates based on the derived state and events
-    if (shouldShowAccordion) {
-        setAccordionUIVisible()
-    } else {
-        setStandaloneUIVisible()
-    }
-
     LaunchedEffect(accountResponse) {
+        if (isAccordionUIVisible) {
+            setAccordionUIVisible()
+        } else {
+            setStandaloneUIVisible()
+        }
+
         if (accountResponse.isLoading) {
             createShopOptimiserProduct()
         }
 
         accountResponse.data?.let { accountsData ->
             setUserAccountResponse(userAccountResponse = accountsData) { isStandAloneViewVisible ->
+                isAccordionUIVisible = !isStandAloneViewVisible
+                isPayFlexViewVisible = isStandAloneViewVisible
                 if (isStandAloneViewVisible) {
                     setStandaloneUIVisible()
                 } else {
@@ -126,7 +128,8 @@ fun ShopOptimiserViewModel.ShopOptimiserAccordionController() {
     // Another LaunchedEffect for handling product detail page reopening
     LaunchedEffect(key1 = wasProductDetailPageReOpened()) {
         if (wasProductDetailPageReOpened()) {
-            setAccordionUIVisible()
+            if (isAccordionUIVisible)
+                setAccordionUIVisible()
         }
     }
 

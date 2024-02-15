@@ -485,6 +485,7 @@
 
     <!-- new list item-->
     <string name="create_list">create list</string>
+    <string name="share_list">SHARE LIST</string>
     <string name="new_list">new list</string>
     <string name="shopping_search_hint">Add Items To Your List</string>
     <string name="total_item">Total*</string>
@@ -2862,6 +2863,12 @@
         <item quantity="other">ADD %d ITEMS TO CART</item>
     </plurals>
 
+    <string name="add_items_to_list">ADD ITEMS TO LIST</string>
+    <plurals name="add_items_to_list">
+        <item quantity="one">ADD ITEM TO LIST</item>
+        <item quantity="other">ADD ITEMS TO LIST</item>
+    </plurals>
+
     <plurals name="plural_add_to_list">
         <item quantity="one">ADD %d ITEM TO LIST</item>
         <item quantity="other">ADD %d ITEMS TO LIST</item>
@@ -3031,6 +3038,7 @@
     <string name="timeslot_title">All Dash Timeslots Are Fully Booked.</string>
     <string name="timeslot_desc">Check back later to see if any new delivery slots become available.</string>
 
+    <string name="store_selection">store selection</string>
     <string name="fbh_item_select">only fashion, beauty and home items are\navailable at this collection point</string>
     <string name="food_item_select">only food items are available for\ncollection AT</string>
 
@@ -3265,8 +3273,15 @@
     <string name="gift_price">R 0.00</string>
 
     <!--shopping List enhancement-->
+    <string name="pending_collaborators">Pending Collaborators</string>
+    <string name="number_of_collaborators">%s Collaborators</string>
     <string name="view_only_option">View Only</string>
+    <string name="view_only_text">viewOnly</string>
+    <string name="view_edit_text">viewAndEdit</string>
     <string name="view_only_desc">Anyone with a link can view your list without making changes.</string>
+    <string name="edit_empty_state_title">You Don’t Have Any Items In Your List Yet.</string>
+    <string name="view_only_empty_state_title">There Aren’t Any Items In This List Yet.</string>
+    <string name="view_only_empty_state_sub_title">When collaborators save items to this list, they will appear here.</string>
     <string name="edit_option">Edit</string>
     <string name="edit_option_desc">Invited people can add or remove items from your list.</string>
     <string name="share_btn">SHARE</string>
@@ -3277,6 +3292,7 @@
     <string name="remove_from_list">Remove from List </string>
     <string name="confirmation_title">Are You Sure?</string>
     <string name="remove_title">REMOVE</string>
+    <string name="empty_list_description">Add your favourite groceries by using the search bar or tapping the list icon while shopping.</string>
 
     <string name="my_list_delete_this_list">Delete This List?</string>
     <string name="my_list_delete_this_list_desc">If you choose to remove this list, you can still shop for the items in the app.</string>
@@ -3286,12 +3302,19 @@
     <string name="view_only_url_option">viewOnly</string>
     <string name="edit_url_option">viewAndEdit</string>
     <string name="remove_from">Removed from</string>
-    <string name="delete_item_title">Delete these Items?</string>
+    <string name="delete_item_title">Delete These Items?</string>
     <string name="delete_item_desc">If you remove these products from your list, you can \n still shop for them in the app.</string>
     <string name="remove_error_msg">An error occurred while removing your item. \n Please try again later.</string>
     <string name="remove_copy_msg">An error occurred while copying your items. \n Please try again later.</string>
     <string name="remove_move_msg">An error occurred while moving your items. \n Please try again later.</string>
     <string name="copy_to_list_progress_title">Copying Your Items\n to %s</string>
+
+    <string name="substitute_availaibility_msg">Only available when product is in stock.</string>
+    <string name="my_list_option">My Lists</string>
+    <string name="share_list_option">Shared With Me</string>
+    <string name="share_list_empty_title">You Don\'t Have Any Shared Lists Yet.</string>
+    <string name="share_list_empty_desc">Once a shopping list has been shared with you, you will be able to access it here.</string>
+    <string name="collaborators">Collaborators</string>
 
     <plurals name="edit_items">
         <item quantity="one">Edit Item </item>
@@ -3314,6 +3337,7 @@
         <item quantity="other">Moving Your Items to </item>
     </plurals>
 
+
     <plurals name="copy_item_msg">
         <item quantity="one">%1$d ITEM COPIED TO %2$s</item>
         <item quantity="other">%1$d ITEMS COPIED TO %2$s</item>
@@ -3328,5 +3352,20 @@
         <item quantity="one">%1$d ITEM MOVED TO %2$s</item>
         <item quantity="other">%1$d ITEMS MOVED TO %2$s</item>
     </plurals>
+
+    <string name="edit_operation_copied">COPIED</string>
+    <string name="edit_operation_moved">MOVED</string>
+    <string name="edit_operation_removed">REMOVED</string>
+    <string name="item_out_of_stock">Item Out of Stock?</string>
+    <string name="notify_me">Notify Me</string>
+    <string name="bis_title">Set up Back in Stock notifications</string>
+    <string name="bis_desc">Enter your email address and if this product is back in stock you\'ll be the first to know!</string>
+    <string name="select_color">Select a Colour: *</string>
+    <string name="select_size">Select a Size: *</string>
+    <string name="email_address">Email Address: *</string>
+    <string name="c_description">description</string>
+    <string name="placeholder_select_size">Select a size</string>
+    <string name="placeholder_select_color">Select a colour</string>
+    <string name="notify_me_success_message">You’ll Be Notified When This Product Is Back In Stock</string>
 
 </resources>

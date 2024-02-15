@@ -821,5 +821,8 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         const val MY_LIST_LIST_NAME = "listName"
         const val MY_LIST_LIST_ID = "listId"
         const val MY_LIST_SEARCH_TERM = "searchTerm"
+        const val VIEW_TYPE = "viewType"
+        const val VIEW_TYPE_VIEW_ONLY = "viewOnly"
+        const val VIEW_TYPE_EDIT = "Edit"
     }
 }

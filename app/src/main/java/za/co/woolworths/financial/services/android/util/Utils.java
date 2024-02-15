@@ -219,6 +219,9 @@ public class Utils {
     public static final String IDENTIFY = "Identify";
     public static final String SIGNUP_V1 = "signup-v1";
     public static final String SIGNUP = "Signup";
+    public static final String DY_SESSIONID = "_dyjsession";
+    public static final String DY_SERVERID = "_dyid_server";
+    public static final String DY_SEARCH = "search";
 
     public static void saveLastLocation(Location loc, Context mContext) {
         try {
@@ -1718,7 +1721,7 @@ public class Utils {
     }
 
     public static String getDyServerId() {
-        String token = "";
+        String token = null;
         try {
             token = Utils.getSessionDaoValue(KEY.DY_SERVER_ID);
         } catch (Exception ignored) {
@@ -1743,7 +1746,7 @@ public class Utils {
     }
 
     public static String getDySessionId() {
-        String token = "";
+        String token = null;
         try {
             token = Utils.getSessionDaoValue(KEY.DY_SESSION_ID);
         } catch (Exception ignored) {
