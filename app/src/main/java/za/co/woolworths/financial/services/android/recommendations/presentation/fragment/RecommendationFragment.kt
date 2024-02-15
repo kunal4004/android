@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isE
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -99,6 +100,9 @@ class RecommendationFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        config = NetworkConfig(AppContextProviderImpl())
+        dyServerId = Utils.getDyServerId()
+        dySessionId = Utils.getDySessionId()
         getRecommendationDetails()
     }
 
