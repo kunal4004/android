@@ -556,7 +556,7 @@ class ProductDetailsFragment :
 
     private fun ProductDetailsFragmentBinding.updateReportLikeStatus() {
         if (ratingReviewResponse?.reviews?.isNotEmpty() == true) {
-            ratingReviewResponse?.reviews?.get(0)?.let {
+            ratingReviewResponse?.reviews?.getOrNull(0)?.let {
                 if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
                     productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike?.setImageResource(
                         R.drawable.iv_like_selected)
@@ -2221,7 +2221,7 @@ class ProductDetailsFragment :
         setSelectedGroupKey(selectedColor)
         binding.showSelectedColor()
         if (hasSize) updateSizesOnColorSelection() else {
-            setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
+            setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(0))
             binding.updateUIForSelectedSKU(getSelectedSku())
         }
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
@@ -2370,13 +2370,13 @@ class ProductDetailsFragment :
                         getSelectedSku()
                     )
                     if (getSelectedSku() == null) defaultSku =
-                        otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
+                        otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(0)
                     if (getSelectedSku() == null) binding.updateUIForSelectedSKU(defaultSku) else binding.updateUIForSelectedSKU(
                         getSelectedSku()
                     )
                 }
                 else -> {
-                    setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(index))
+                    setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(index))
                     productSizeSelectorAdapter?.setSelection(getSelectedSku())
                     binding.updateUIForSelectedSKU(getSelectedSku())
                 }
@@ -2577,7 +2577,7 @@ class ProductDetailsFragment :
         val auxiliaryImagesForGroupKey = ArrayList<String>()
         val groupKey = getSelectedGroupKey() ?: defaultGroupKey
 
-        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRefV2?.let {
+        otherSKUsByGroupKey[groupKey]?.getOrNull(0)?.externalImageRefV2?.let {
             if (productDetails?.otherSkus?.size!! > 0)
                 auxiliaryImagesForGroupKey.add(it)
         }
@@ -3414,7 +3414,7 @@ class ProductDetailsFragment :
 
     private fun showProductUnavailable() {
         clearStockAvailability()
-        productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
+        productDetails?.otherSkus?.getOrNull(0)?.let { otherSku -> setSelectedSku(otherSku) }
         getSelectedSku()?.quantity = -1
         hideProductDetailsLoading()
         binding.toCartAndFindInStoreLayout.root.visibility = View.GONE
@@ -4617,7 +4617,7 @@ class ProductDetailsFragment :
     }
 
     private fun viewSkinProfileDialog() {
-        val dialog = ratingReviewResponse?.reviews?.get(0)?.let { SkinProfileDialog(it) }
+        val dialog = ratingReviewResponse?.reviews?.getOrNull(0)?.let { SkinProfileDialog(it) }
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
                 .let { fragmentTransaction ->
@@ -4644,7 +4644,7 @@ class ProductDetailsFragment :
                 try {
                     val response = moreReviewViewModel.reviewFeedback(
                         ReviewFeedback(
-                            ratingReviewResponse?.reviews?.get(0)?.id.toString(),
+                            ratingReviewResponse?.reviews?.getOrNull(0)?.id.toString(),
                             SessionUtilities.getInstance().jwt.AtgId.asString,
                             KotlinUtils.REWIEW,
                             KotlinUtils.HELPFULNESS,
@@ -4656,7 +4656,7 @@ class ProductDetailsFragment :
                     if (response.httpCode == 200) {
                         binding.productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike.setImageResource(
                             R.drawable.iv_like_selected)
-                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
+                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.getOrNull(0)?.id.toString())
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -4681,7 +4681,7 @@ class ProductDetailsFragment :
         } else {
             ScreenManager.presentReportReview(activity,
                 ratingReviewResponse?.reportReviewOptions as ArrayList<String>?,
-                ratingReviewResponse?.reviews?.get(0)
+                ratingReviewResponse?.reviews?.getOrNull(0)
             )
         }
     }
