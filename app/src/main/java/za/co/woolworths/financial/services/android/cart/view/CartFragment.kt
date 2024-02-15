@@ -68,6 +68,8 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.network.*
 import za.co.woolworths.financial.services.android.models.service.event.CartState
 import za.co.woolworths.financial.services.android.models.service.event.ProductState
+import za.co.woolworths.financial.services.android.presentation.common.awarenessmodal.AwarenessModalFragment
+import za.co.woolworths.financial.services.android.presentation.common.awarenessmodal.AwarenessModalNames
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CartProducts
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
@@ -239,7 +241,6 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         initializeLoggedInUserCartUI()
         setPriceInformationVisibility(false)
         addScrollListeners()
-        config = NetworkConfig(AppContextProviderImpl())
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -268,6 +269,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 btnDashSetAddress.setOnClickListener(this@CartFragment)
             }
         }
+        config = NetworkConfig(AppContextProviderImpl())
+        dyServerId = getDyServerId()
+        dySessionId = getDySessionId()
     }
 
     private fun launchShopToggleScreen() {
@@ -470,25 +474,39 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         return
                     }
 
-                    // Go to Web checkout journey if...
-                    if (nativeCheckout?.isNativeCheckoutEnabled == false) {
-                        launchCheckoutActivity(Intent(context, CartCheckoutActivity::class.java))
-                    } else {
-                        if (binding.cartProgressBar.visibility == View.VISIBLE) {
-                            return
+                    // Show Substitute AwarenessModal if user uncheck dont show again
+                    val isSubstitutionRemaining = isProductSubstitutionPending()
+                    if(!KotlinUtils.isCheckedSubstituteAwarenessModal() && KotlinUtils.isDeliveryOptionDash() && isSubstitutionRemaining) {
+                        val bottomSheetDialog = AwarenessModalFragment().apply {
+                            arguments = bundleOf(
+                                AppConstant.MODAL_NAME to AwarenessModalNames.SUBSTITUTIONS
+                            )
                         }
-                        // Get list of saved address and navigate to proper Checkout page.
-                        viewModel.getSavedAddress()
-                    }
-                    AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true)
-                            prepareDynamicYieldCheckoutRequest(deliveryType)
+                        bottomSheetDialog.show(
+                            requireActivity().supportFragmentManager,
+                            AwarenessModalFragment::class.java.name
+                        )
+                    } else {
+                        continueToCheckout()
                     }
                 }
             }
 
             else -> {}
         }
+    }
+
+    private fun isProductSubstitutionPending(): Boolean {
+        var value = false
+        cartProductAdapter?.cartItems?.forEach {
+            value = it.commerceItems.any {
+                it.substitutionInfo == null || it.substitutionInfo.displayName.isNullOrEmpty()
+            }
+            if(value) {
+                return@forEach
+            }
+        }
+        return value
     }
 
     private fun toggleCartMode() {
@@ -1359,12 +1377,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                 showRecommendedProducts()
                 AppConfigSingleton.dynamicYieldConfig?.apply {
                     if (isDynamicYieldEnabled == true) {
-                        if (getDyServerId() != null)
-                            dyServerId = getDyServerId()
-                        if (getDySessionId() != null)
-                            dySessionId = getDySessionId()
-                        prepareDynamicYieldCartViewRequestEvent()
-                        prepareSyncCartRequestEvent()
+                        if (!dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
+                            prepareDynamicYieldCartViewRequestEvent()
+                            prepareSyncCartRequestEvent()
+                        }
                     }
                 }
             }
@@ -1418,7 +1434,7 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareDynamicYieldCartViewRequestEvent() {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val device = Device(IPAddress, config?.getDeviceModel())
         val productList: ArrayList<String>? = ArrayList()
         cartItems?.let { cartItems ->
             for (cartItemGroup: CartItemGroup in cartItems) {
@@ -2251,9 +2267,9 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         logException(ex)
                     }
                     AppConfigSingleton.dynamicYieldConfig?.apply {
-                        if (isDynamicYieldEnabled == true) {
-                            prepareDyRemoveFromCartRequestEvent(mCommerceItem)
-                            prepareSyncCartRequestEvent()
+                        if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && mCommerceItem != null) {
+                                prepareDyRemoveFromCartRequestEvent(mCommerceItem)
+                                prepareSyncCartRequestEvent()
                         }
                     }
                 }
@@ -2366,7 +2382,11 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
                         onChangeQuantityComplete()
                     }
                     mChangeQuantityList?.removeFirstOrNull()
-                    prepareSyncCartRequestEvent()
+                    AppConfigSingleton.dynamicYieldConfig?.apply {
+                        if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
+                            prepareSyncCartRequestEvent()
+                        }
+                    }
                 }
 
                 Status.ERROR -> {
@@ -2466,10 +2486,10 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
     private fun prepareDynamicYieldCheckoutRequest(deliveryType: Delivery?) {
         val user = User(dyServerId, dyServerId)
         val session = Session(dySessionId)
-        val device = Device(Utils.IPAddress, config?.getDeviceModel())
-        val productList: ArrayList<DataOther> = ArrayList()
-        val dataOther = DataOther(null,null,null,null,null, deliveryType?.type)
-        productList.add(dataOther)
+        val device = Device(IPAddress, config?.getDeviceModel())
+        val productList = ArrayList<DataOther>().apply {
+            add(DataOther(null, null, null, null, null, deliveryType?.type))
+        }
         val page = Page(null, DY_CHECKOUT, OTHER, null,productList)
         val context = Context(device, page, DY_CHANNEL)
         val options = Options(true)
@@ -2647,6 +2667,39 @@ class CartFragment : BaseFragmentBinding<FragmentCartBinding>(FragmentCartBindin
         setFragmentResultListener(SearchSubstitutionFragment.SELECTED_SUBSTITUTED_PRODUCT) { _, bundle ->
             // User Substitute product from search screen and came back to cart
             loadShoppingCart()
+        }
+
+        setFragmentResultListener(AwarenessModalFragment.REQUEST_AWARENESS_MODAL) {_, bundle ->
+            val resultCode = bundle.getInt(AwarenessModalFragment.RESULT_AWARENESS_MODAL)
+            val isDontAskAgainChecked = bundle.getBoolean(AppConstant.Keys.BUNDLE_KEY_DONT_ASK_AGAIN_CHECKED)
+            KotlinUtils.setCheckedSubstituteAwarenessModal(isDontAskAgainChecked)
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                 // Choose Substitute Do Nothing
+                }
+                Activity.RESULT_CANCELED -> {
+                    continueToCheckout()
+                }
+            }
+        }
+    }
+
+    private fun continueToCheckout() {
+        // Go to Web checkout journey if...
+        if (nativeCheckout?.isNativeCheckoutEnabled == false) {
+            launchCheckoutActivity(Intent(context, CartCheckoutActivity::class.java))
+        } else {
+            if (binding.cartProgressBar.visibility == View.VISIBLE) {
+                return
+            }
+            // Get list of saved address and navigate to proper Checkout page.
+            viewModel.getSavedAddress()
+        }
+        val deliveryType =
+            getType(getPreferredDeliveryLocation().fulfillmentDetails.deliveryType)
+        AppConfigSingleton.dynamicYieldConfig?.apply {
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty())
+                prepareDynamicYieldCheckoutRequest(deliveryType)
         }
     }
 

@@ -61,6 +61,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDe
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.wfs.common.biometric.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_PARAM_FEATURE
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_PARAM_PARAMETERS
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.NotificationUtils
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
@@ -602,10 +604,17 @@ class StartupActivity :
         // 1. check URL
         // 2. navigate to facet that URL corresponds to
         if (appLinkData is Uri) {
-            val bundle = bundleOf(
-                "feature" to AppConstant.DP_LINKING_PRODUCT_LISTING,
-                "parameters" to "{\"url\": \"${appLinkData}\"}",
-            )
+            val bundle = if ((appLinkData).path?.contains("dashboard/shopping-lists") == true){
+                bundleOf(
+                    DP_LINKING_PARAM_FEATURE to AppConstant.DP_LINKING_VIEW_SHOPPING_LIST,
+                    DP_LINKING_PARAM_PARAMETERS to "{\"url\": \"${appLinkData}\"}",
+                )
+            }else {
+                bundleOf(
+                    DP_LINKING_PARAM_FEATURE to AppConstant.DP_LINKING_PRODUCT_LISTING,
+                    DP_LINKING_PARAM_PARAMETERS to "{\"url\": \"${appLinkData}\"}",
+                )
+            }
             ScreenManager.presentMain(this@StartupActivity, bundle)
         } else if (appLinkData is Bundle && appLinkData.containsKey(AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID)) {
             // Push notification created by Messaging Service, when app was active and foreground
@@ -615,8 +624,8 @@ class StartupActivity :
                 channelId,
                 onSuccess = { orderId ->
                     val bundle = bundleOf(
-                        "feature" to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
-                        "parameters" to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}",
+                        DP_LINKING_PARAM_FEATURE to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
+                        DP_LINKING_PARAM_PARAMETERS to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}",
                     )
                     ScreenManager.presentMain(this@StartupActivity, bundle)
                 },
@@ -640,8 +649,8 @@ class StartupActivity :
                 channelId,
                 onSuccess = { orderId ->
                     val bundle = bundleOf(
-                        "feature" to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
-                        "parameters" to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}",
+                        DP_LINKING_PARAM_FEATURE to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
+                        DP_LINKING_PARAM_PARAMETERS to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}",
                     )
                     ScreenManager.presentMain(this@StartupActivity, bundle)
                 },

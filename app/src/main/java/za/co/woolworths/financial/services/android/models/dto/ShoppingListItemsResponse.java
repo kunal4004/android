@@ -9,6 +9,8 @@ import java.util.List;
  */
 
 public class ShoppingListItemsResponse {
+	public String description;
+	public int numOfCollaborators;
 	public int httpCode;
 	public Response response;
 	@SerializedName("data")

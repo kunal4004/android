@@ -374,10 +374,8 @@ class ProductDetailsFragment :
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
         productId = productDetails?.productId
         config = NetworkConfig(AppContextProviderImpl())
-        if (Utils.getDyServerId() != null)
-            dyServerId = Utils.getDyServerId()
-        if (Utils.getDySessionId() != null)
-            dySessionId = Utils.getDySessionId()
+        Utils.getDyServerId()?.let { dyServerId = it }
+        Utils.getDySessionId()?.let { dySessionId = it }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -415,10 +413,9 @@ class ProductDetailsFragment :
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
         val skuIdList: ArrayList<String>? = ArrayList()
-        for (othersku in productDetails!!.otherSkus) {
-            if (othersku.sku != null) {
-                var skuID = othersku.sku
-                skuIdList?.add(skuID!!)
+        productDetails?.otherSkus?.forEach { otherSkuData ->
+            otherSkuData.sku?.let { skuID ->
+                skuIdList?.add(skuID)
             }
         }
         val page = Page(skuIdList, PRODUCT_DETAILS_PAGE, PRODUCT_PAGE, null,null)
@@ -559,7 +556,7 @@ class ProductDetailsFragment :
 
     private fun ProductDetailsFragmentBinding.updateReportLikeStatus() {
         if (ratingReviewResponse?.reviews?.isNotEmpty() == true) {
-            ratingReviewResponse?.reviews?.get(0)?.let {
+            ratingReviewResponse?.reviews?.getOrNull(0)?.let {
                 if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
                     productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike?.setImageResource(
                         R.drawable.iv_like_selected)
@@ -906,15 +903,14 @@ class ProductDetailsFragment :
                 )
             )
         }
-        setOutOfStock()
     }
 
     private fun setOutOfStock() {
         AppConfigSingleton.outOfStock?.apply {
-                if (stockAvailable == STOCK_AVAILABILITY_0 && isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
-                    binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                    binding.productImagesViewPager.alpha = 0.5f
-                }
+            if (isOutOfStockEnabled == true && stockAvailable == STOCK_AVAILABILITY_0 && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                binding.productImagesViewPager.alpha = 0.5f
+            }
         }
     }
 
@@ -1266,7 +1262,7 @@ class ProductDetailsFragment :
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
             AppConfigSingleton.dynamicYieldConfig?.apply {
-                if (isDynamicYieldEnabled == true) {
+                if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && defaultSku?.quantity != 0 && !defaultSku?.sku.isNullOrEmpty()) {
                     prepareDyChangeAttributeQuantityRequestEvent(
                         defaultSku?.quantity.toString(),
                         defaultSku?.sku
@@ -1275,7 +1271,7 @@ class ProductDetailsFragment :
             }
         } else {
             AppConfigSingleton.dynamicYieldConfig?.apply {
-                if (isDynamicYieldEnabled == true) {
+                if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !defaultSku?.colour.isNullOrEmpty()) {
                     var color = defaultSku?.colour
                     prepareDyChangeAttributeRequestEvent(color, defaultSku?.sku)
                 }
@@ -1323,7 +1319,7 @@ class ProductDetailsFragment :
             if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
                 updateDefaultUI(false)
                 hideProductDetailsLoading()
-                prepareDynamicYieldPageViewRequestEvent()
+                callDyProductDetailsPage()
                 return
             }
 
@@ -1331,7 +1327,10 @@ class ProductDetailsFragment :
                 Utils.retrieveStoreId(productDetails?.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
-                true -> showProductUnavailable()
+                true -> {
+                    setOutOfStockInAddressChange()
+                    showProductUnavailable()
+                }
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
@@ -1353,8 +1352,12 @@ class ProductDetailsFragment :
             showErrorWhileLoadingProductDetails()
         }
         sendRecommendationsDetail()
+        callDyProductDetailsPage()
+    }
+
+    private fun callDyProductDetailsPage() {
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty())
                 prepareDynamicYieldPageViewRequestEvent()
         }
     }
@@ -2192,7 +2195,7 @@ class ProductDetailsFragment :
         binding.showSelectedSize(selectedSku)
         binding.updateUIForSelectedSKU(getSelectedSku())
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !size.isNullOrEmpty() && !selectedSku.sku.isNullOrEmpty())
                 prepareDyChangeAttributeSizeRequestEvent(size, selectedSku.sku)
         }
     }
@@ -2204,8 +2207,7 @@ class ProductDetailsFragment :
         val context = Context(device,null,DY_CHANNEL)
         val properties = Properties(SIZE_ATTRIBUTE, size,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareChangeAttributeRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
@@ -2219,7 +2221,7 @@ class ProductDetailsFragment :
         setSelectedGroupKey(selectedColor)
         binding.showSelectedColor()
         if (hasSize) updateSizesOnColorSelection() else {
-            setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
+            setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(0))
             binding.updateUIForSelectedSKU(getSelectedSku())
         }
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
@@ -2243,7 +2245,7 @@ class ProductDetailsFragment :
 
         }
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && !selectedColor.isNullOrEmpty() && !selectedSku?.sku.isNullOrEmpty())
                 prepareDyChangeAttributeRequestEvent(selectedColor, selectedSku?.sku)
         }
     }
@@ -2255,8 +2257,7 @@ class ProductDetailsFragment :
         val context = Context(device,null,DY_CHANNEL)
         val properties = Properties(COLOR_ATTRIBUTE,selectedColor,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute)
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareChangeAttributeRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
@@ -2369,13 +2370,13 @@ class ProductDetailsFragment :
                         getSelectedSku()
                     )
                     if (getSelectedSku() == null) defaultSku =
-                        otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
+                        otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(0)
                     if (getSelectedSku() == null) binding.updateUIForSelectedSKU(defaultSku) else binding.updateUIForSelectedSKU(
                         getSelectedSku()
                     )
                 }
                 else -> {
-                    setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(index))
+                    setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(index))
                     productSizeSelectorAdapter?.setSelection(getSelectedSku())
                     binding.updateUIForSelectedSKU(getSelectedSku())
                 }
@@ -2418,13 +2419,43 @@ class ProductDetailsFragment :
         val session = Session(dySessionId)
         val device = Device(IPAddress,config?.getDeviceModel())
         val context = Context(device,null,DY_CHANNEL)
-        val cartLinesValue: MutableList<Cart> = arrayListOf()
-        val cart = Cart(getSelectedSku()?.sku, getSelectedQuantity(), getSelectedSku()?.price?.toString())
-        cartLinesValue.add(cart)
-        val properties = Properties(null,null,ADD_TO_CART_V1,null,getSelectedSku()?.price,ZAR,selectedQuantity,getSelectedSku()?.sku,getSelectedSku()?.colour,null,null,null,null,null,null,null,null,cartLinesValue)
-        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,ADD_TO_CART,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val selectedSku = getSelectedSku()
+        val cartLinesValue = mutableListOf(Cart(selectedSku?.sku, getSelectedQuantity(), selectedSku?.price?.toString()))
+        val properties = Properties(
+            null,
+            null,
+            ADD_TO_CART_V1,
+            null,
+            selectedSku?.price,
+            ZAR,
+            selectedQuantity,
+            selectedSku?.sku,
+            selectedSku?.colour,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue)
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ADD_TO_CART,
+            properties)
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareDyAddToCartRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
@@ -2507,7 +2538,7 @@ class ProductDetailsFragment :
         setSelectedQuantity(quantity)
         binding.toCartAndFindInStoreLayout.quantityText?.text = quantity.toString()
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true)
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty() && quantity != 0 && !selectedSku?.sku.isNullOrEmpty())
                 prepareDyChangeAttributeQuantityRequestEvent(quantity.toString(), selectedSku?.sku)
         }
     }
@@ -2519,8 +2550,7 @@ class ProductDetailsFragment :
         val context = Context(device,null,DY_CHANNEL)
         val properties = Properties(QUANTITY_ATTRIBUTE,quantity,CHANGE_ATTRIBUTE_DY_TYPE,null,null,null,null,null,null,sku,null,null,null,null,null,null,null,null)
         val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,CHANGE_ATTRIBUTE,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareChangeAttributeQuantityRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
@@ -2547,7 +2577,7 @@ class ProductDetailsFragment :
         val auxiliaryImagesForGroupKey = ArrayList<String>()
         val groupKey = getSelectedGroupKey() ?: defaultGroupKey
 
-        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRefV2?.let {
+        otherSKUsByGroupKey[groupKey]?.getOrNull(0)?.externalImageRefV2?.let {
             if (productDetails?.otherSkus?.size!! > 0)
                 auxiliaryImagesForGroupKey.add(it)
         }
@@ -2633,7 +2663,10 @@ class ProductDetailsFragment :
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
         storeIdForInventory = Utils.retrieveStoreId(productDetails?.fulfillmentType)
         when (storeIdForInventory.isNullOrEmpty()) {
-            true -> showProductUnavailable()
+            true -> {
+                setOutOfStockInAddressChange()
+                showProductUnavailable()
+            }
             false -> {
                 productDetails?.apply {
                     otherSkus?.let { list ->
@@ -2691,7 +2724,7 @@ class ProductDetailsFragment :
             }
         }
         AppConfigSingleton.dynamicYieldConfig?.apply {
-            if (isDynamicYieldEnabled == true) {
+            if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
                 prepareDyAddToCartRequestEvent()
                 prepareSyncCartRequestEvent()
             }
@@ -2703,14 +2736,43 @@ class ProductDetailsFragment :
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
         val context = Context(device, null, DY_CHANNEL)
-        val cartLinesValue: MutableList<Cart> = arrayListOf()
-        val cart = Cart(getSelectedSku()?.sku, getSelectedQuantity(), getSelectedSku()?.price?.toString())
-        cartLinesValue.add(cart)
-        val properties = Properties(null,null,SYNC_CART_V1,null,null,
-            Constants.CURRENCY_VALUE,null,null,null,null,null,null,null,null,null,null,null,cartLinesValue)
-        val eventsDyChangeAttribute = Event(null,null,null,null,null,null,null,null,null,null,null,null,SYNC_CART,properties)
-        val events = ArrayList<Event>()
-        events.add(eventsDyChangeAttribute);
+        val selectedSku = getSelectedSku()
+        val cartLinesValue = mutableListOf(Cart(selectedSku?.sku, getSelectedQuantity(), selectedSku?.price?.toString()))
+        val properties = Properties(
+            null,
+            null,
+            SYNC_CART_V1,
+            null,
+            null,
+            Constants.CURRENCY_VALUE,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue)
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            SYNC_CART,
+            properties)
+        val events = mutableListOf(eventsDyChangeAttribute)
         val prepareDySyncCartRequestEvent = PrepareChangeAttributeRequestEvent(
             context,
             events,
@@ -3295,6 +3357,7 @@ class ProductDetailsFragment :
                 //If user is not authenticated or Preferred DeliveryAddress is not available hide this view
                 if (!SessionUtilities.getInstance().isUserAuthenticated || getDeliveryLocation() == null) {
                     deliveryLocationLayout.root.visibility = View.GONE
+                    setOutOfStock()
                     return
                 } else
                     deliveryLocationLayout.root.visibility = View.VISIBLE
@@ -3315,6 +3378,7 @@ class ProductDetailsFragment :
                                     it.address?.address1?.let { convertToTitleCase(it) } ?: ""
                                 defaultLocationPlaceholder.text =
                                     getString(R.string.delivering_to_pdp)
+                                setOutOfStock()
                             }
                             Delivery.DASH -> {
                                 currentDeliveryLocation.text =
@@ -3350,7 +3414,7 @@ class ProductDetailsFragment :
 
     private fun showProductUnavailable() {
         clearStockAvailability()
-        productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
+        productDetails?.otherSkus?.getOrNull(0)?.let { otherSku -> setSelectedSku(otherSku) }
         getSelectedSku()?.quantity = -1
         hideProductDetailsLoading()
         binding.toCartAndFindInStoreLayout.root.visibility = View.GONE
@@ -3469,9 +3533,8 @@ class ProductDetailsFragment :
 
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
         AppConfigSingleton.outOfStock?.apply {
-            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
-                binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                binding.productImagesViewPager.alpha = 0.5f
+            if (isOutOfStockEnabled == true) {
+               setOutOfStockInAddressChange()
             } else {
                 if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
                     isOutOfStockFragmentAdded = true
@@ -4554,7 +4617,7 @@ class ProductDetailsFragment :
     }
 
     private fun viewSkinProfileDialog() {
-        val dialog = ratingReviewResponse?.reviews?.get(0)?.let { SkinProfileDialog(it) }
+        val dialog = ratingReviewResponse?.reviews?.getOrNull(0)?.let { SkinProfileDialog(it) }
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
                 .let { fragmentTransaction ->
@@ -4581,7 +4644,7 @@ class ProductDetailsFragment :
                 try {
                     val response = moreReviewViewModel.reviewFeedback(
                         ReviewFeedback(
-                            ratingReviewResponse?.reviews?.get(0)?.id.toString(),
+                            ratingReviewResponse?.reviews?.getOrNull(0)?.id.toString(),
                             SessionUtilities.getInstance().jwt.AtgId.asString,
                             KotlinUtils.REWIEW,
                             KotlinUtils.HELPFULNESS,
@@ -4593,7 +4656,7 @@ class ProductDetailsFragment :
                     if (response.httpCode == 200) {
                         binding.productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike.setImageResource(
                             R.drawable.iv_like_selected)
-                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
+                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.getOrNull(0)?.id.toString())
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -4618,7 +4681,7 @@ class ProductDetailsFragment :
         } else {
             ScreenManager.presentReportReview(activity,
                 ratingReviewResponse?.reportReviewOptions as ArrayList<String>?,
-                ratingReviewResponse?.reviews?.get(0)
+                ratingReviewResponse?.reviews?.getOrNull(0)
             )
         }
     }
@@ -4806,5 +4869,13 @@ class ProductDetailsFragment :
             selectedSku = getSelectedSku() // check for both color and unavailable size
         }
         return selectedSku
+    }
+    private fun setOutOfStockInAddressChange() {
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                    binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                    binding.productImagesViewPager.alpha = 0.5f
+            }
+        }
     }
 }

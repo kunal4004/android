@@ -90,6 +90,7 @@ class AppConstant {
         const val KEY_DASH_WOOLIES_DOWNLOAD_LINK: String = "download_link"
 
         const val DP_LINKING_PRODUCT_LISTING = "Product Listing"
+        const val DP_LINKING_VIEW_SHOPPING_LIST = "Shopping List View Edit"
         const val DP_LINKING_PRODUCT_DETAIL = "Product Detail"
         const val DP_LINKING_MY_ACCOUNTS = "Accounts Landing"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT = "Accounts Product"
@@ -100,6 +101,8 @@ class AppConstant {
 
         const val DP_LINKING_PARAM_STREAM_ORDER_ID = "orderId"
         const val DP_LINKING_PARAM_STREAM_CHANNEL_ID = "channelId"
+        const val DP_LINKING_PARAM_FEATURE = "feature"
+        const val DP_LINKING_PARAM_PARAMETERS = "parameters"
 
         const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id="
         const val VTO_FACE_NOT_DETECT = "face_not_detect"
@@ -188,6 +191,9 @@ class AppConstant {
         // Order Again
         const val FROM_SCREEN: String = "fromScreen"
         const val W_CONNECT = "WConnect"
+
+        // Awareness Modal
+        const val MODAL_NAME = "modalName"
     }
 
     class Keys {
