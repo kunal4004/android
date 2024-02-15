@@ -19,6 +19,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.Refinement
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementNavigationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import java.security.InvalidKeyException
 
 class RefinementNavigationAdapter(val context: Activity, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
@@ -62,16 +64,28 @@ class RefinementNavigationAdapter(val context: Activity, val listner: OnRefineme
 
     inner class PromotionHolder(val itemBinding: RefinementsOnPromotionLayoutBinding) : RefinementBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
-            val refinementSelectableItem = dataList[position]
-            itemBinding.promotionSwitch.isChecked = refinementSelectableItem.isSelected
-            itemBinding.promotionSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-                refinementSelectableItem.isSelected = isChecked
-                notifyDataSetChanged()
-                val navigationItem = refinementSelectableItem.item as RefinementNavigation
-                val navigationState = if (navigationItem.multiSelect) navigationItem.refinements[0].navigationState else navigationItem.refinementCrumbs[0].navigationState
-                Utils.triggerFireBaseEvents(if (navigationItem.multiSelect) FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_ON else FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_OFF, context)
-                listner.onBackPressedWithRefinement(navigationState, false)
-            }
+            val refinementSelectableItem = dataList.getOrNull(position)
+            refinementSelectableItem?.let {
+                itemBinding.promotionSwitch.isChecked = refinementSelectableItem.isSelected
+                itemBinding.promotionSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+                    refinementSelectableItem.isSelected = isChecked
+                    notifyDataSetChanged()
+                    val navigationItem = refinementSelectableItem.item as RefinementNavigation
+                    val navigationState = if (navigationItem.multiSelect)
+                        navigationItem.refinements.getOrNull(0)?.navigationState
+                    else
+                        navigationItem.refinementCrumbs.getOrNull(0)?.navigationState
+                    Utils.triggerFireBaseEvents(
+                        if (navigationItem.multiSelect) FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_ON
+                        else FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_OFF,
+                        context
+                    )
+                    if (navigationState != null) {
+                        listner.onBackPressedWithRefinement(navigationState, false)
+                    } else {
+                        FirebaseManager.logException(InvalidKeyException("navigation state is null."))
+                    }
+                }
         }
     }
 
