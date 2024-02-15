@@ -1070,6 +1070,22 @@ interface ApiInterface {
         @Query("deliveryDetails") deliveryDetails: String?
     ): retrofit2.Response<ProductDetailResponse>
 
+    @GET("wfs/app/v4/productsV2/{productId}")
+    fun matchingSetProductDetail(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("longitude") longitude: Double,
+        @Header("latitude") latitude: Double,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("productId") productId: String,
+        @Query("sku") sku: String,
+        @Query("suburbId") suburbId: String?,
+        @Query("storeId") storeId: String?,
+        @Query("deliveryType") deliveryType: String?,
+        @Query("deliveryDetails") deliveryDetails: String?,
+    ): retrofit2.Response<ProductDetailResponse>
+
     @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
     suspend fun inventoryForMatchingItemDetails(
         @Header("sessionToken") sessionToken: String,

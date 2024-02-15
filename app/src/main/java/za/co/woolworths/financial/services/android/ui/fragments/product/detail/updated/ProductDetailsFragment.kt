@@ -44,7 +44,6 @@ import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
@@ -632,10 +631,7 @@ class ProductDetailsFragment :
             R.id.addToCartAction -> addItemToCart()
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
-            R.id.checkInStoreAvailability, R.id.findInStoreAction -> {
-                /*todo need to remove */
-                callProductDetailsApiFroMatchingSet()
-            }
+            R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
             R.id.editDeliveryLocation -> updateDeliveryLocation(launchNewToggleScreen = false)
             R.id.productDetailsInformation -> showDetailsInformation(
                 ProductInformationActivity.ProductInformationType.DETAILS
@@ -4578,7 +4574,7 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun callProductDetailsApiFroMatchingSet() {
+    private fun callProductDetailsApiForMatchingSet() {
         val productRequest = ProductRequest( productDetails?.productId, productDetails?.sku,isUserBrowsing)
         lifecycleScope.launch {
             matchingSetViewModel.callProductDetailAPI(productRequest)

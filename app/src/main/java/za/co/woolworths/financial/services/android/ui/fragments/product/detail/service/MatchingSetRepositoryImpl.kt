@@ -5,9 +5,10 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetailRespo
 import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.network.ApiInterface
+import za.co.woolworths.financial.services.android.models.network.AppContextProviderImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 /**
@@ -20,23 +21,42 @@ class MatchingSetRepositoryImpl @Inject constructor(private val apiInterface: Ap
         productsDetailsRequest: ProductRequest
     ): Flow<IOTaskResult<ProductDetailResponse>> {
 
+        val loc = getMyLocation()
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
-        val deliveryType =
-            if (productsDetailsRequest.isUserBrowsing) KotlinUtils.browsingDeliveryType?.type else Delivery.STANDARD.type
+        val deliveryType = KotlinUtils.getPreferredDeliveryType()?.type ?:""
 
-        return executeSafeNetworkApiCall {
-            matchingSetProductDetail(
-                "",
-                "",
-                getSessionToken(),
-                getDeviceIdentityToken(),
-                productsDetailsRequest.productId,
-                productsDetailsRequest.skuId,
-                suburbId,
-                storeId,
-                deliveryType = deliveryType,
-                deliveryDetails = KotlinUtils.getDeliveryDetails(productsDetailsRequest.isUserBrowsing)
-            )
+         if (Utils.isLocationEnabled(AppContextProviderImpl().appContext())) {
+            return executeSafeNetworkApiCall {
+                matchingSetProductDetail(
+                    "",
+                    "",
+                    loc.longitude,
+                    loc.latitude,
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    productsDetailsRequest.productId,
+                    productsDetailsRequest.skuId,
+                    suburbId,
+                    storeId,
+                    deliveryType = deliveryType,
+                    deliveryDetails = KotlinUtils.getDeliveryDetails(productsDetailsRequest.isUserBrowsing)
+                )
+            }
+        } else {
+            return executeSafeNetworkApiCall {
+                matchingSetProductDetail(
+                    "",
+                    "",
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    productsDetailsRequest.productId,
+                    productsDetailsRequest.skuId,
+                    suburbId,
+                    storeId,
+                    deliveryType = deliveryType,
+                    deliveryDetails = KotlinUtils.getDeliveryDetails(productsDetailsRequest.isUserBrowsing)
+                )
+            }
         }
     }
 
