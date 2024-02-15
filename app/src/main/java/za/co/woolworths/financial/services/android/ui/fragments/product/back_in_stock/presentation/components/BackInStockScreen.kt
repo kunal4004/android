@@ -201,6 +201,7 @@ private fun AddBISView(
             )
             val selectedGroupKey = backToStockUiState.selectedGroupKey
             val selectedSku = backToStockUiState.selectedSku
+            var otherSKUsByGroupKeyZeroQuantity : LinkedHashMap<String, ArrayList<OtherSkus>>? = linkedMapOf()
             otherSKUsByGroupKey?.get(selectedGroupKey)?.let { otherSKUList ->
                 val zeroQuantityList = ArrayList<OtherSkus>()
                 otherSKUList.forEach { otherSKU ->
@@ -210,12 +211,10 @@ private fun AddBISView(
                 }
                 // remove available item list from map and keep only non available items in map
                 // to display non available items only
-                otherSKUsByGroupKey.remove(selectedGroupKey)?.let {
-                    otherSKUsByGroupKey.put(selectedGroupKey.toString(), zeroQuantityList)
-                }
+                otherSKUsByGroupKeyZeroQuantity?.put(selectedGroupKey.toString(), zeroQuantityList)
             }
             SpinnerSizeView(
-                otherSKUsByGroupKey,
+                otherSKUsByGroupKeyZeroQuantity,
                 selectedGroupKey,
                 modifier = Modifier
                     .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
