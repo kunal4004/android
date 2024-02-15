@@ -26,12 +26,48 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
 
     val matchingSetData = mutableStateOf(MatchingSetData(arrayListOf(), emptyList()))
 
-    fun setMatchingSetData(productDetails: ProductDetails, selectedGroupKey: String?) {
+    fun setMatchingSetData(
+        productDetails: ProductDetails,
+        selectedGroupKey: String?,
+        selectedColor: String?
+    ) {
         if (productDetails.relatedProducts.isNullOrEmpty()) {
             matchingSetData.value = matchingSetData.value.copy()
         } else {
             setRelatedProducts(productDetails.relatedProducts) // set Related product object as it is.
             if (getAuxiliaryImageList(productDetails.auxiliaryImages).size > 1) {
+                // If primary product has multiple colors.
+                for (relatedProducts in productDetails.relatedProducts) {
+                    val matchingSetDetailsList = arrayListOf<MatchingSetDetails>()
+                    val relatedProductAuxImage = relatedProducts.auxiliaryImages?.let {
+                        getAuxiliaryImageList(it)
+                    }
+                    relatedProductAuxImage?.forEach {
+                        if (selectedGroupKey?.let { selectedColor ->
+                                it.key.contains(
+                                    selectedColor,
+                                    true
+                                )
+                            } == true) {
+
+                            val colorSkusList = relatedProducts.colourSKUsPrices?.let { it1 ->
+                                getColorSKUPrices(it1)
+                            }
+                            colorSkusList?.entries?.forEach { colorSku ->
+                                if (colorSku.key.equals(it.value.styleId)) {
+                                    val matchingSetDetails = MatchingSetDetails(
+                                        it.value.externalImageRefV2,
+                                        it.value.styleId,
+                                        selectedColor ?: "",
+                                        colorSku.value.priceMin.toString()
+                                    )
+                                    matchingSetDetailsList.add(matchingSetDetails)
+                                }
+                            }
+                        }
+                        setMatchingSetDetails(matchingSetDetailsList)
+                    }
+                }
 
             } else {
                 // If main product has single color then show all matching sets.
@@ -48,7 +84,7 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                             val matchingSetDetails = MatchingSetDetails(
                                 it.value.externalImageRefV2,
                                 it.value.styleId,
-                                "Kunal",
+                                selectedColor ?: "",
                                 colorSku.value.priceMin.toString()
                             )
                             matchingSetDetailsList.add(matchingSetDetails)
@@ -79,7 +115,8 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
     }
 
     private fun setMatchingSetDetails(matchingSetDetailsList: ArrayList<MatchingSetDetails>) {
-        matchingSetData.value = matchingSetData.value.copy(matchingSetDetails = matchingSetDetailsList)
+        matchingSetData.value =
+            matchingSetData.value.copy(matchingSetDetails = matchingSetDetailsList)
     }
 
     /*private fun getImageUrlList(
