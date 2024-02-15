@@ -3534,7 +3534,7 @@ class ProductDetailsFragment :
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
         AppConfigSingleton.outOfStock?.apply {
             if (isOutOfStockEnabled == true) {
-               setOutOfStockInAddressChange()
+               setOutOfStock()
             } else {
                 if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
                     isOutOfStockFragmentAdded = true
@@ -4782,6 +4782,7 @@ class ProductDetailsFragment :
             clearStockAvailability()
             showProductUnavailable()
             reloadFragment()
+            setOutOfStockInAddressChange()
             return
         }
 
@@ -4790,6 +4791,7 @@ class ProductDetailsFragment :
         ) {
             updateStockAvailability(true)
             reloadFragment()
+            removeOutOfStockInAddressChange()
         }
     }
 
@@ -4875,6 +4877,14 @@ class ProductDetailsFragment :
             if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
                     binding.pdpOutOfStockTag.visibility = View.VISIBLE
                     binding.productImagesViewPager.alpha = 0.5f
+            }
+        }
+    }
+    private fun removeOutOfStockInAddressChange() {
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.GONE
+                binding.productImagesViewPager.alpha = 1.0f
             }
         }
     }

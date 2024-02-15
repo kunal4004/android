@@ -76,10 +76,12 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Cart
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants.EVENT_TYPE_PAGEVIEW
 import za.co.woolworths.financial.services.android.ui.views.*
@@ -1668,6 +1670,106 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         }, SkusInventoryForStoreResponse::class.java))
     }
 
+    private fun prepareSyncCartRequestEvent(addItemToCart: AddItemToCart?) {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress, config?.getDeviceModel())
+        val context = Context(device, null, DY_CHANNEL)
+        val cartLinesValue = mutableListOf(Cart(addItemToCart?.catalogRefId, addItemToCart?.quantity, "0.0"))
+        val properties = Properties(
+            null,
+            null,
+            SYNC_CART_V1,
+            null,
+            null,
+            Constants.CURRENCY_VALUE,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue)
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            SYNC_CART,
+            properties)
+        val events = mutableListOf(eventsDyChangeAttribute)
+        val prepareDySyncCartRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDySyncCartRequestEvent)
+    }
+
+    private fun prepareDyAddToCartRequestEvent(addItemToCart: AddItemToCart?) {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(IPAddress,config?.getDeviceModel())
+        val context = Context(device,null,DY_CHANNEL)
+        val cartLinesValue = mutableListOf(Cart(addItemToCart?.catalogRefId, addItemToCart?.quantity, mSelectedProductList?.price.toString()))
+        val properties = Properties(
+            null,
+            null,
+            ADD_TO_CART_V1,
+            null,
+            mSelectedProductList?.price.toString(),
+            ZAR,
+            addItemToCart?.quantity,
+            addItemToCart?.catalogRefId,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue)
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ADD_TO_CART,
+            properties)
+        val events = mutableListOf(eventsDyChangeAttribute)
+        val prepareDyAddToCartRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDyAddToCartRequestEvent)
+    }
+
     private fun onFailureHandler(error: Throwable) {
         activity?.let { activity ->
             when (error) {
@@ -1780,6 +1882,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
                                 Handler().postDelayed({
                                     addToCartBalloon.dismiss()
                                 }, 3000)
+                            }
+                            //dy add to cart call
+                            AppConfigSingleton.dynamicYieldConfig?.apply {
+                                if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
+                                    prepareDyAddToCartRequestEvent(addItemToCart)
+                                    prepareSyncCartRequestEvent(addItemToCart)
+                                }
                             }
                         }
 
