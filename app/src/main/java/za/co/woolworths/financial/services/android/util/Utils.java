@@ -223,6 +223,12 @@ public class Utils {
     public static final String DY_SERVERID = "_dyid_server";
     public static final String DY_SEARCH = "search";
 
+    public static final Float BLER_IMAGE = 0.5f;
+    public static final Float CLEAR_IMAGE = 1.0f;
+    public static final String AMOUNT = "1";
+
+
+
     public static void saveLastLocation(Location loc, Context mContext) {
         try {
             JSONObject locationJson = new JSONObject();

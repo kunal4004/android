@@ -157,20 +157,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
-import za.co.woolworths.financial.services.android.util.Utils.ADD_TO_CART
-import za.co.woolworths.financial.services.android.util.Utils.ADD_TO_CART_V1
-import za.co.woolworths.financial.services.android.util.Utils.CHANGE_ATTRIBUTE
-import za.co.woolworths.financial.services.android.util.Utils.CHANGE_ATTRIBUTE_DY_TYPE
-import za.co.woolworths.financial.services.android.util.Utils.COLOR_ATTRIBUTE
-import za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL
-import za.co.woolworths.financial.services.android.util.Utils.IPAddress
-import za.co.woolworths.financial.services.android.util.Utils.PRODUCT_DETAILS_PAGE
-import za.co.woolworths.financial.services.android.util.Utils.PRODUCT_PAGE
-import za.co.woolworths.financial.services.android.util.Utils.QUANTITY_ATTRIBUTE
-import za.co.woolworths.financial.services.android.util.Utils.SIZE_ATTRIBUTE
-import za.co.woolworths.financial.services.android.util.Utils.SYNC_CART
-import za.co.woolworths.financial.services.android.util.Utils.SYNC_CART_V1
-import za.co.woolworths.financial.services.android.util.Utils.ZAR
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
@@ -3534,7 +3521,7 @@ class ProductDetailsFragment :
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
         AppConfigSingleton.outOfStock?.apply {
             if (isOutOfStockEnabled == true) {
-               setOutOfStockInAddressChange()
+               setOutOfStock()
             } else {
                 if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
                     isOutOfStockFragmentAdded = true
@@ -4782,6 +4769,7 @@ class ProductDetailsFragment :
             clearStockAvailability()
             showProductUnavailable()
             reloadFragment()
+            setOutOfStockInAddressChange()
             return
         }
 
@@ -4790,6 +4778,7 @@ class ProductDetailsFragment :
         ) {
             updateStockAvailability(true)
             reloadFragment()
+            removeOutOfStockInAddressChange()
         }
     }
 
@@ -4874,7 +4863,15 @@ class ProductDetailsFragment :
         AppConfigSingleton.outOfStock?.apply {
             if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
                     binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                    binding.productImagesViewPager.alpha = 0.5f
+                    binding.productImagesViewPager.alpha = BLER_IMAGE
+            }
+        }
+    }
+    private fun removeOutOfStockInAddressChange() {
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.GONE
+                binding.productImagesViewPager.alpha = CLEAR_IMAGE
             }
         }
     }
