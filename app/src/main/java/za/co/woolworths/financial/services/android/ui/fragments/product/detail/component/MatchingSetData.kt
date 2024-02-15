@@ -7,8 +7,5 @@ import za.co.woolworths.financial.services.android.models.dto.RelatedProducts
  */
 data class MatchingSetData(
     val relatedProducts: ArrayList<RelatedProducts> = arrayListOf(),
-    val imgUrlList: List<String>,
-    val styleIdList: List<String>,
-    val colorNameList: List<String>,
-    val priceList: List<String>
+    val matchingSetDetails: List<MatchingSetDetails>
 )

@@ -111,7 +111,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.viewmodel.MatchingSetViewModel
@@ -1312,6 +1311,10 @@ class ProductDetailsFragment :
 
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
+
+        val selectedGroupKey = getSelectedGroupKey() ?: defaultGroupKey
+        matchingSetViewModel.setMatchingSetData(productDetails, selectedGroupKey) // update Matching Set Data.
+        initialiseMachingSetLayout()
 
         Utils.getPreferredDeliveryLocation()?.let {
             updateDefaultUI(false)
