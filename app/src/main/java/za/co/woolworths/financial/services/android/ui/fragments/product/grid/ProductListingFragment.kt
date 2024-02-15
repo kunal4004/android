@@ -1675,7 +1675,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(GridLayoutBi
         val session = Session(dySessionId)
         val device = Device(IPAddress, config?.getDeviceModel())
         val context = Context(device, null, DY_CHANNEL)
-        val cartLinesValue = mutableListOf(Cart(addItemToCart?.catalogRefId, addItemToCart?.quantity, "0.0"))
+        val cartLinesValue = mutableListOf(Cart(addItemToCart?.catalogRefId, addItemToCart?.quantity, mSelectedProductList?.price.toString()))
         val properties = Properties(
             null,
             null,

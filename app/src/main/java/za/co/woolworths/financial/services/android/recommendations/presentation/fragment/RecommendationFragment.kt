@@ -20,12 +20,15 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.enhancedSubstitution.util.isEnhanceSubstitutionFeatureAvailable
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.recommendations.data.response.getresponse.Action
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.CommonRecommendationEvent
+import za.co.woolworths.financial.services.android.recommendations.data.response.request.Event
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationEvent
 import za.co.woolworths.financial.services.android.recommendations.data.response.request.RecommendationRequest
 import za.co.woolworths.financial.services.android.recommendations.presentation.RecommendationEventHandler
@@ -36,11 +39,21 @@ import za.co.woolworths.financial.services.android.recommendations.presentation.
 import za.co.woolworths.financial.services.android.recommendations.presentation.viewmodel.RecommendationViewModel
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Context
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Device
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.Session
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.DynamicYield.request.User
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Cart
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.PrepareChangeAttributeRequestEvent
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.Properties
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.usecase.Constants
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.Utils.AMOUNT
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
@@ -68,6 +81,10 @@ class RecommendationFragment :
     private var recommendationLayoutManager: LinearLayoutManager? = null
     private var isViewItemListEventTriggeredOnPageLoad = false
     private var recyclerViewHolder: MyRecycleViewHolder? = null
+    private var dyServerId: String? = null
+    private var dySessionId: String? = null
+    private var config: NetworkConfig? = null
+    private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -507,6 +524,12 @@ class RecommendationFragment :
 
                                 showAddToCartSuccess(addItemToCart)
                             }
+                            AppConfigSingleton.dynamicYieldConfig?.apply {
+                                if (isDynamicYieldEnabled == true && !dyServerId.isNullOrEmpty() && !dySessionId.isNullOrEmpty()) {
+                                    prepareDyAddToCartRequestEvent(addItemToCart)
+                                    prepareSyncCartRequestEvent(addItemToCart)
+                                }
+                            }
                         }
 
                         AppConstant.HTTP_EXPECTATION_FAILED_417 -> resources?.let {
@@ -555,6 +578,106 @@ class RecommendationFragment :
                 activity?.runOnUiThread { dismissProgressBar() }
             }
         })
+    }
+
+    private fun prepareSyncCartRequestEvent(addItemToCart: AddItemToCart?) {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress, config?.getDeviceModel())
+        val context = Context(device, null, Utils.DY_CHANNEL)
+        val cartLinesValue = mutableListOf(Cart(addItemToCart?.catalogRefId, addItemToCart?.quantity, AMOUNT))
+        val properties = Properties(
+            null,
+            null,
+            Utils.SYNC_CART_V1,
+            null,
+            null,
+            Constants.CURRENCY_VALUE,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue)
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            Utils.SYNC_CART,
+            properties)
+        val events = mutableListOf(eventsDyChangeAttribute)
+        val prepareDySyncCartRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDySyncCartRequestEvent)
+    }
+
+    private fun prepareDyAddToCartRequestEvent(addItemToCart: AddItemToCart?) {
+        val user = User(dyServerId,dyServerId)
+        val session = Session(dySessionId)
+        val device = Device(Utils.IPAddress,config?.getDeviceModel())
+        val context = Context(device,null, Utils.DY_CHANNEL)
+        val cartLinesValue = mutableListOf(Cart(addItemToCart?.catalogRefId, addItemToCart?.quantity, AMOUNT))
+        val properties = Properties(
+            null,
+            null,
+            Utils.ADD_TO_CART_V1,
+            null,
+            AMOUNT,
+            Utils.ZAR,
+            addItemToCart?.quantity,
+            addItemToCart?.catalogRefId,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            cartLinesValue)
+        val eventsDyChangeAttribute = Event(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            Utils.ADD_TO_CART,
+            properties)
+        val events = mutableListOf(eventsDyChangeAttribute)
+        val prepareDyAddToCartRequestEvent = PrepareChangeAttributeRequestEvent(
+            context,
+            events,
+            session,
+            user
+        )
+        dyReportEventViewModel.createDyChangeAttributeRequest(prepareDyAddToCartRequestEvent)
     }
 
     private fun notifyItemAddedToCart(): Boolean {

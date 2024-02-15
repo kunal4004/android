@@ -4876,7 +4876,7 @@ class ProductDetailsFragment :
         AppConfigSingleton.outOfStock?.apply {
             if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
                     binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                    binding.productImagesViewPager.alpha = 0.5f
+                    binding.productImagesViewPager.alpha = BLER_IMAGE
             }
         }
     }
@@ -4884,7 +4884,7 @@ class ProductDetailsFragment :
         AppConfigSingleton.outOfStock?.apply {
             if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
                 binding.pdpOutOfStockTag.visibility = View.GONE
-                binding.productImagesViewPager.alpha = 1.0f
+                binding.productImagesViewPager.alpha = CLEAR_IMAGE
             }
         }
     }
