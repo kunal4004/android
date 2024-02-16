@@ -88,6 +88,7 @@ public class AppInstanceObject {
         public boolean isVirtualTemporaryStoreCardPopupShown;
         public boolean didShowDeliverySelectionModal;
         public boolean isLinkConfirmationScreenShown;
+        public boolean isCheckedSubstituteAwarenessModal;
         public Long linkedDeviceIdentityId;
         public String mId;
 

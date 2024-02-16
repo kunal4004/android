@@ -36,7 +36,6 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
 import com.facebook.FacebookSdk.getApplicationContext
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
@@ -164,21 +163,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
-import za.co.woolworths.financial.services.android.util.Utils.ADD_TO_CART
-import za.co.woolworths.financial.services.android.util.Utils.ADD_TO_CART_V1
-import za.co.woolworths.financial.services.android.util.Utils.CHANGE_ATTRIBUTE
-import za.co.woolworths.financial.services.android.util.Utils.CHANGE_ATTRIBUTE_DY_TYPE
-import za.co.woolworths.financial.services.android.util.Utils.COLOR_ATTRIBUTE
-import za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL
-import za.co.woolworths.financial.services.android.util.Utils.IPAddress
-import za.co.woolworths.financial.services.android.util.Utils.PRODUCT_DETAILS_PAGE
-import za.co.woolworths.financial.services.android.util.Utils.PRODUCT_PAGE
-import za.co.woolworths.financial.services.android.util.Utils.QUANTITY_ATTRIBUTE
-import za.co.woolworths.financial.services.android.util.Utils.SIZE_ATTRIBUTE
-import za.co.woolworths.financial.services.android.util.Utils.SYNC_CART
-import za.co.woolworths.financial.services.android.util.Utils.SYNC_CART_V1
-import za.co.woolworths.financial.services.android.util.Utils.ZAR
-import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
@@ -190,6 +175,28 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashMap
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.MutableList
+import kotlin.collections.any
+import kotlin.collections.arrayListOf
+import kotlin.collections.containsKey
+import kotlin.collections.forEach
+import kotlin.collections.forEachIndexed
+import kotlin.collections.get
+import kotlin.collections.getOrNull
+import kotlin.collections.hashMapOf
+import kotlin.collections.isEmpty
+import kotlin.collections.isNotEmpty
+import kotlin.collections.isNullOrEmpty
+import kotlin.collections.joinToString
+import kotlin.collections.linkedMapOf
+import kotlin.collections.listOf
+import kotlin.collections.listOfNotNull
+import kotlin.collections.mutableListOf
 import kotlin.collections.set
 
 
@@ -564,7 +571,7 @@ class ProductDetailsFragment :
 
     private fun ProductDetailsFragmentBinding.updateReportLikeStatus() {
         if (ratingReviewResponse?.reviews?.isNotEmpty() == true) {
-            ratingReviewResponse?.reviews?.get(0)?.let {
+            ratingReviewResponse?.reviews?.getOrNull(0)?.let {
                 if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
                     productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike?.setImageResource(
                         R.drawable.iv_like_selected)
@@ -911,15 +918,14 @@ class ProductDetailsFragment :
                 )
             )
         }
-        setOutOfStock()
     }
 
     private fun setOutOfStock() {
         AppConfigSingleton.outOfStock?.apply {
-                if (stockAvailable == STOCK_AVAILABILITY_0 && isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
-                    binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                    binding.productImagesViewPager.alpha = 0.5f
-                }
+            if (isOutOfStockEnabled == true && stockAvailable == STOCK_AVAILABILITY_0 && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                binding.productImagesViewPager.alpha = 0.5f
+            }
         }
     }
 
@@ -1336,7 +1342,10 @@ class ProductDetailsFragment :
                 Utils.retrieveStoreId(productDetails?.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
-                true -> showProductUnavailable()
+                true -> {
+                    setOutOfStockInAddressChange()
+                    showProductUnavailable()
+                }
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
@@ -1457,7 +1466,7 @@ class ProductDetailsFragment :
     }
 
     private fun showEnhancedSubstitutionOutOfStock() {
-        if ((KotlinUtils.isDeliveryOptionDash() || isEnhanceSubstitutionFeatureEnable() == false)
+        if ((!KotlinUtils.isDeliveryOptionDash() || isEnhanceSubstitutionFeatureEnable() == false)
             || (productDetails?.fulfillmentType != getString(R.string.fullfilment_type_01) && productDetails?.productType != getString(
                 R.string.food_product_type
             ))
@@ -1847,7 +1856,7 @@ class ProductDetailsFragment :
         isInventoryCalled: Boolean,
         substitutionProductItem: ProductList? = null
     ) {
-        if ((KotlinUtils.isDeliveryOptionDash() || isEnhanceSubstitutionFeatureEnable() == false)
+        if ((!KotlinUtils.isDeliveryOptionDash() || isEnhanceSubstitutionFeatureEnable() == false)
             || (productDetails?.fulfillmentType != getString(R.string.fullfilment_type_01) && productDetails?.productType != getString(
                 R.string.food_product_type
             ))
@@ -2227,7 +2236,7 @@ class ProductDetailsFragment :
         setSelectedGroupKey(selectedColor)
         binding.showSelectedColor()
         if (hasSize) updateSizesOnColorSelection() else {
-            setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
+            setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(0))
             binding.updateUIForSelectedSKU(getSelectedSku())
         }
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
@@ -2376,13 +2385,13 @@ class ProductDetailsFragment :
                         getSelectedSku()
                     )
                     if (getSelectedSku() == null) defaultSku =
-                        otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
+                        otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(0)
                     if (getSelectedSku() == null) binding.updateUIForSelectedSKU(defaultSku) else binding.updateUIForSelectedSKU(
                         getSelectedSku()
                     )
                 }
                 else -> {
-                    setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(index))
+                    setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(index))
                     productSizeSelectorAdapter?.setSelection(getSelectedSku())
                     binding.updateUIForSelectedSKU(getSelectedSku())
                 }
@@ -2583,7 +2592,7 @@ class ProductDetailsFragment :
         val auxiliaryImagesForGroupKey = ArrayList<String>()
         val groupKey = getSelectedGroupKey() ?: defaultGroupKey
 
-        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRefV2?.let {
+        otherSKUsByGroupKey[groupKey]?.getOrNull(0)?.externalImageRefV2?.let {
             if (productDetails?.otherSkus?.size!! > 0)
                 auxiliaryImagesForGroupKey.add(it)
         }
@@ -2669,7 +2678,10 @@ class ProductDetailsFragment :
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
         storeIdForInventory = Utils.retrieveStoreId(productDetails?.fulfillmentType)
         when (storeIdForInventory.isNullOrEmpty()) {
-            true -> showProductUnavailable()
+            true -> {
+                setOutOfStockInAddressChange()
+                showProductUnavailable()
+            }
             false -> {
                 productDetails?.apply {
                     otherSkus?.let { list ->
@@ -3360,6 +3372,7 @@ class ProductDetailsFragment :
                 //If user is not authenticated or Preferred DeliveryAddress is not available hide this view
                 if (!SessionUtilities.getInstance().isUserAuthenticated || getDeliveryLocation() == null) {
                     deliveryLocationLayout.root.visibility = View.GONE
+                    setOutOfStock()
                     return
                 } else
                     deliveryLocationLayout.root.visibility = View.VISIBLE
@@ -3380,6 +3393,7 @@ class ProductDetailsFragment :
                                     it.address?.address1?.let { convertToTitleCase(it) } ?: ""
                                 defaultLocationPlaceholder.text =
                                     getString(R.string.delivering_to_pdp)
+                                setOutOfStock()
                             }
                             Delivery.DASH -> {
                                 currentDeliveryLocation.text =
@@ -3415,7 +3429,7 @@ class ProductDetailsFragment :
 
     private fun showProductUnavailable() {
         clearStockAvailability()
-        productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
+        productDetails?.otherSkus?.getOrNull(0)?.let { otherSku -> setSelectedSku(otherSku) }
         getSelectedSku()?.quantity = -1
         hideProductDetailsLoading()
         binding.toCartAndFindInStoreLayout.root.visibility = View.GONE
@@ -3534,9 +3548,8 @@ class ProductDetailsFragment :
 
     private fun productOutOfStockErrorMessage(isClickOnChangeButton:Boolean = false) {
         AppConfigSingleton.outOfStock?.apply {
-            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
-                binding.pdpOutOfStockTag.visibility = View.VISIBLE
-                binding.productImagesViewPager.alpha = 0.5f
+            if (isOutOfStockEnabled == true) {
+               setOutOfStock()
             } else {
                 if (!isOutOfStockFragmentAdded || isClickOnChangeButton) {
                     isOutOfStockFragmentAdded = true
@@ -4619,7 +4632,7 @@ class ProductDetailsFragment :
     }
 
     private fun viewSkinProfileDialog() {
-        val dialog = ratingReviewResponse?.reviews?.get(0)?.let { SkinProfileDialog(it) }
+        val dialog = ratingReviewResponse?.reviews?.getOrNull(0)?.let { SkinProfileDialog(it) }
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
                 .let { fragmentTransaction ->
@@ -4646,7 +4659,7 @@ class ProductDetailsFragment :
                 try {
                     val response = moreReviewViewModel.reviewFeedback(
                         ReviewFeedback(
-                            ratingReviewResponse?.reviews?.get(0)?.id.toString(),
+                            ratingReviewResponse?.reviews?.getOrNull(0)?.id.toString(),
                             SessionUtilities.getInstance().jwt.AtgId.asString,
                             KotlinUtils.REWIEW,
                             KotlinUtils.HELPFULNESS,
@@ -4658,7 +4671,7 @@ class ProductDetailsFragment :
                     if (response.httpCode == 200) {
                         binding.productDetailOptionsAndInformation.customerReview.reviewHelpfulReport.ivLike.setImageResource(
                             R.drawable.iv_like_selected)
-                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
+                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.getOrNull(0)?.id.toString())
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -4683,7 +4696,7 @@ class ProductDetailsFragment :
         } else {
             ScreenManager.presentReportReview(activity,
                 ratingReviewResponse?.reportReviewOptions as ArrayList<String>?,
-                ratingReviewResponse?.reviews?.get(0)
+                ratingReviewResponse?.reviews?.getOrNull(0)
             )
         }
     }
@@ -4784,6 +4797,7 @@ class ProductDetailsFragment :
             clearStockAvailability()
             showProductUnavailable()
             reloadFragment()
+            setOutOfStockInAddressChange()
             return
         }
 
@@ -4792,6 +4806,7 @@ class ProductDetailsFragment :
         ) {
             updateStockAvailability(true)
             reloadFragment()
+            removeOutOfStockInAddressChange()
         }
     }
 
@@ -4912,6 +4927,22 @@ class ProductDetailsFragment :
             selectedSku = getSelectedSku() // check for both color and unavailable size
         }
         return selectedSku
+    }
+    private fun setOutOfStockInAddressChange() {
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                    binding.pdpOutOfStockTag.visibility = View.VISIBLE
+                    binding.productImagesViewPager.alpha = BLER_IMAGE
+            }
+        }
+    }
+    private fun removeOutOfStockInAddressChange() {
+        AppConfigSingleton.outOfStock?.apply {
+            if (isOutOfStockEnabled == true && productDetails?.productType.equals(getString(R.string.food_product_type))) {
+                binding.pdpOutOfStockTag.visibility = View.GONE
+                binding.productImagesViewPager.alpha = CLEAR_IMAGE
+            }
+        }
     }
 
     override fun setSelectedSkuFromDialog(selectedSku: OtherSkus) {
