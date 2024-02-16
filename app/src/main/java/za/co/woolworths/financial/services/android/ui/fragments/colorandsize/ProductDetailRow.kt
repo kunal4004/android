@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import coil.compose.AsyncImage
+import za.co.woolworths.financial.services.android.ui.wfs.theme.Black
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OpenSansFontFamily
 
 @Composable
@@ -29,7 +30,9 @@ fun ProductDetailRow(productUrl: String, productName: String, productPrice: Stri
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().padding(top = 24.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp)
     ) {
             AsyncImage(
                 modifier = Modifier
@@ -45,13 +48,15 @@ fun ProductDetailRow(productUrl: String, productName: String, productPrice: Stri
 
             Text(
                 text = productName, overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(.7f).padding(start = 16.dp, end = 8.dp),
+                modifier = Modifier
+                    .weight(.7f)
+                    .padding(start = 16.dp, end = 8.dp),
                 maxLines = 2, style = TextStyle(
                     fontSize = 12.sp,
                     lineHeight = 15.6.sp,
                     fontFamily = OpenSansFontFamily,
                     fontWeight = FontWeight(400),
-                    color = Color(0xFF000000),
+                    color = Black,
                 )
             )
 
@@ -63,7 +68,7 @@ fun ProductDetailRow(productUrl: String, productName: String, productPrice: Stri
                 lineHeight = 19.5.sp,
                 fontFamily = OpenSansFontFamily,
                 fontWeight = FontWeight(600),
-                color = Color(0xFF000000)
+                color = Color.Black
             )
         )
     }
