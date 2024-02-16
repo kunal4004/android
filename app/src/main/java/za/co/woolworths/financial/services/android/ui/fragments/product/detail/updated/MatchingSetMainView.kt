@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.RelatedProducts
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetDetails
 import za.co.woolworths.financial.services.android.ui.wfs.component.SpacerHeight8dp
@@ -55,7 +54,7 @@ fun MatchingSetMainView(
         Column(
             modifier = modifier.wrapContentHeight(),
         ) {
-            matchingSetData.relatedProducts.forEachIndexed { index, listItem ->
+            matchingSetData.matchingSetDetails.forEachIndexed { index, listItem ->
                 Row(
                     modifier = Modifier
                         .align(Alignment.Start)
@@ -142,39 +141,20 @@ fun MatchingSetMainView(
 @Composable
 fun MatchingSetMainViewPreview() {
     OneAppTheme {
-        val relatedProducts1 =
-            RelatedProducts("Bowl Set 4 Pack", "507106238", null, "", "", "", "", null)
-        val relatedProducts2 =
-            RelatedProducts("Nordic Stoneware Bowl", "507106239", null, "", "", "", "", null)
-        val relatedProducts3 =
-            RelatedProducts(
-                "Nordic Stoneware Dinner Plate",
-                "507106237",
-                null,
-                "",
-                "",
-                "",
-                "",
-                null
-            )
-        val relatedProductsList = ArrayList<RelatedProducts>()
-        relatedProductsList.add(relatedProducts1)
-        relatedProductsList.add(relatedProducts2)
-        relatedProductsList.add(relatedProducts3)
-
         val matchingSetDetailsList = ArrayList<MatchingSetDetails>()
-        for (i in relatedProductsList) {
+        for(i in 0 .. 3) {
             val imgUrl =
                 "https://assets.woolworthsstatic.co.za/Bowl-Set-4-Pack-507106238.jpg?V=k@lx&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTA3LTIxLzUwNzEwNjIzOF9YQkxVRV9oZXJvLmpwZyJ9&"
             val styleId = "102865767"
             val colorName = "Red"
             val price = "R 499.00"
-            val matchingSetDetails = MatchingSetDetails(imgUrl, styleId, colorName, price)
+            val productName = "Nordic Stoneware Dinner Plate"
+            val matchingSetDetails = MatchingSetDetails(imgUrl, styleId, colorName, price, productName)
             matchingSetDetailsList.add(matchingSetDetails)
         }
 
         val matchingSetData =
-            MatchingSetData(relatedProductsList, matchingSetDetailsList)
+            MatchingSetData(matchingSetDetailsList)
         MatchingSetMainView(Modifier.background(color = White), matchingSetData)
     }
 }

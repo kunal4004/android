@@ -1313,7 +1313,7 @@ class ProductDetailsFragment :
             setSelectedGroupKey(defaultGroupKey)
 
         val selectedGroupKey = getSelectedGroupKey() ?: defaultGroupKey
-        matchingSetViewModel.setMatchingSetData(productDetails, selectedGroupKey, getSelectedGroupKey()) // update Matching Set Data.
+        matchingSetViewModel.setMatchingSetData(productDetails, selectedGroupKey) // update Matching Set Data.
         initialiseMachingSetLayout()
 
         Utils.getPreferredDeliveryLocation()?.let {
@@ -2246,7 +2246,7 @@ class ProductDetailsFragment :
         setSelectedGroupKey(selectedColor)
 
         val selectedGroupKey = getSelectedGroupKey() ?: defaultGroupKey
-        this.productDetails?.let { matchingSetViewModel.setMatchingSetData(it, selectedGroupKey, getSelectedGroupKey()) } // update Matching Set Data.
+        this.productDetails?.let { matchingSetViewModel.setMatchingSetData(it, selectedGroupKey) } // update Matching Set Data.
         binding.showSelectedColor()
         if (hasSize) updateSizesOnColorSelection() else {
             setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
