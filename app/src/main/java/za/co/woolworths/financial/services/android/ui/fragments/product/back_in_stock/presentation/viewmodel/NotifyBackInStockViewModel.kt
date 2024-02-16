@@ -59,6 +59,11 @@ class NotifyBackInStockViewModel @Inject constructor(
             selectedGroupKey = selectedGroupKey,
             otherSKUsByGroupKey = otherSKUsByGroupKey
         )
+        if (selectedSku != null && selectedSku.quantity == 0) {
+            backInStockState = backInStockState.copy(
+                preSelectedSize = selectedSku.size.toString()
+            )
+        }
     }
 
     data class BackToStockUiState(
@@ -71,6 +76,7 @@ class NotifyBackInStockViewModel @Inject constructor(
         val isSizeSelected: Boolean = false,
         val isEmailSelected: Boolean = false,
         val errorMessage: String = "",
+        val preSelectedSize: String = "",
         val email: String = AppInstanceObject.getCurrentUsersID(),
         val emailError: String? = null,
         var selectedSku: OtherSkus? = null,
@@ -99,6 +105,7 @@ class NotifyBackInStockViewModel @Inject constructor(
                 hasSize
             )
             is BackInStockScreenEvents.ConfirmClick -> notifyMe(productId, storeId)
+            is BackInStockScreenEvents.OnPreSelectedSize -> updatePreselectedSize(event.preselectedSize)
             is BackInStockScreenEvents.OnEmailChanged -> onEmailChanged(
                 event.email,
                 hasColor,
@@ -106,6 +113,12 @@ class NotifyBackInStockViewModel @Inject constructor(
             )
             else -> {}
         }
+    }
+
+    private fun updatePreselectedSize(preselectedSize: String) {
+        backInStockState = backInStockState.copy(
+            preSelectedSize = preselectedSize
+        )
     }
 
     private fun notifyMe(productId: String?, storeId: String?) {
