@@ -8,16 +8,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductSizeSelectorListItemBinding
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsContract
 
 class SizeAdapter(
     val context: Context,
     var dataList: ArrayList<OtherSkus>,
-    var listener: ColorAndSizeListener
+    var listener: ColorAndSizeListener,
+    var matchingSetDetailsFlow: Boolean
 ) : RecyclerView.Adapter<SizeAdapter.ViewHolder>() {
 
     init {
-        dataList.map { it.quantity = 1 }
+        if (!matchingSetDetailsFlow) {
+            dataList.map { it.quantity = 1 }
+        }
     }
 
     var selectedSize: OtherSkus? = null
@@ -49,12 +51,23 @@ class SizeAdapter(
                 itemBinding.size.apply {
                     text = size
                     setTextColor(ContextCompat.getColor(context, R.color.black))
-                    setBackgroundResource(
-                        if (selectedSize?.sku.equals(otherSku.sku))
-                            R.drawable.product_available_size_selected_background
-                        else
-                            R.drawable.product_available_size_un_selected_background
-                    )
+                    if (matchingSetDetailsFlow) {
+                        when {
+                            quantity == 0 -> {
+                                itemBinding.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_no_stock_size_selected_background else R.drawable.product_no_stock_size_un_selected_background)
+                            }
+                            else -> {
+                                setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_available_size_selected_background else R.drawable.product_available_size_un_selected_background)
+                            }
+                        }
+                    } else {
+                        setBackgroundResource(
+                            if (selectedSize?.sku.equals(otherSku.sku))
+                                R.drawable.product_available_size_selected_background
+                            else
+                                R.drawable.product_available_size_un_selected_background
+                        )
+                    }
                 }
             }
             itemBinding.root.setOnClickListener {

@@ -10,6 +10,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -25,7 +26,9 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.extension.underline
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 
 interface ColorAndSizeBottomSheetListener {
@@ -33,7 +36,8 @@ interface ColorAndSizeBottomSheetListener {
     fun onCancelColorAndSize()
 }
 
-class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener {
+class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener,
+    QuantitySelectorFragment.IQuantitySelector {
 
     private var colorAdapter: ColorAdapter? = null
     private var sizeAdapter: SizeAdapter? = null
@@ -43,8 +47,13 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
 
     private val viewModel: ColorAndSizeViewModel by viewModels()
 
+    private var matchingSetDetailsFlow: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.apply {
+            matchingSetDetailsFlow = getBoolean(MATCHING_SET_DETAILS_FLOW, false)
+        }
 
         viewModel.uiSizeState
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
@@ -95,6 +104,41 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
             viewModel.selectedSku?.let { it1 -> colorAndSizeBottomSheetListener.setSelectedSkuFromDialog(it1) }
             dismiss()
         }
+
+        if (matchingSetDetailsFlow) {
+            initMatchingSetDetails()
+        } else {
+            binding.productDetailView.visibility = GONE
+            binding.addToCartLayout.root.visibility = GONE
+        }
+    }
+
+    private fun initMatchingSetDetails() {
+        binding.productDetailView.visibility = VISIBLE
+        binding.addToCartLayout.let {
+            it.root.visibility = VISIBLE
+            it.addToCartAction.isEnabled = false
+            it.quantitySelector.isEnabled = false
+        }
+        binding.productDetailView.setContent {
+            viewModel.productItem?.let {
+                ProductDetailRow(it.externalImageRefV2, it.productName, CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.price))
+            }
+        }
+        binding.addToCartLayout.quantitySelector.setOnClickListener {
+            onQuantitySelector()
+        }
+    }
+
+    private fun onQuantitySelector() {
+        activity?.supportFragmentManager?.apply {
+            viewModel.selectedSku?.quantity?.let {
+                if (it > 0) {
+                    QuantitySelectorFragment.newInstance(it, this@ColorAndSizeFragment)
+                        .show(this, QuantitySelectorFragment::class.java.simpleName)
+                }
+            }
+        }
     }
 
     private fun initSizeList(
@@ -109,7 +153,8 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
             sizeAdapter = SizeAdapter(
                 requireActivity(),
                 ArrayList(sizeList),
-                listener = this@ColorAndSizeFragment
+                listener = this@ColorAndSizeFragment,
+                matchingSetDetailsFlow
             )
             sizeSelectorRecycleView.apply {
                 adapter = sizeAdapter
@@ -190,7 +235,24 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
         binding.tvConfirmButton.isEnabled = true
         binding.tvConfirmButton.alpha = 1f
         viewModel.selectedSku = selectedSku
+        showMatchingSetConfirmButton(selectedSku)
         showSelectedSize()
+    }
+
+    private fun showMatchingSetConfirmButton(selectedSku: OtherSkus) {
+        if (matchingSetDetailsFlow && binding.addToCartLayout.root.isVisible) {
+            binding.addToCartLayout.let {
+                if (selectedSku.quantity != 0) {
+                    it.addToCartAction.isEnabled = true
+                    it.quantitySelector.isEnabled = true
+                    it.addToCartAction.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+                } else {
+                    it.addToCartAction.isEnabled = false
+                    it.quantitySelector.isEnabled = false
+                    it.addToCartAction.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_9D9D9D))
+                }
+            }
+        }
     }
 
     private fun initColorList(colorList: List<OtherSkus>) {
@@ -287,13 +349,17 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
     companion object {
         private const val ARG_PRODUCT_ITEM = "productItem"
         private const val CONST_HYPHEN_SEPARATOR = "  -  "
+        private const val MATCHING_SET_DETAILS_FLOW = "matchingSetFlowDetails"
+
 
         fun getInstance(
             listener: ColorAndSizeBottomSheetListener,
             productItem: WProductDetail,
+            matchingSetFlowDetails: Boolean = false
         ): ColorAndSizeFragment {
             val bundle = Bundle().apply {
                 putString(ARG_PRODUCT_ITEM, Gson().toJson(productItem))
+                putBoolean(MATCHING_SET_DETAILS_FLOW, matchingSetFlowDetails)
             }
             return ColorAndSizeFragment().apply {
                 arguments = bundle
@@ -307,6 +373,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
         showSelectedColor()
         viewModel.selectedSku?.let { sizeAdapter?.setSelection(it) } ?: sizeAdapter?.clearSelection()
         showSelectedSize()
+        selectedColor?.let { showMatchingSetConfirmButton(it) }
     }
 
     private fun showSelectedSize() {
@@ -319,5 +386,9 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
                 ContextCompat.getColor(requireContext(), R.color.black)
             )
         }
+    }
+
+    override fun onQuantitySelection(quantity: Int) {
+        binding.addToCartLayout.quantityText.text = quantity.toString()
     }
 }

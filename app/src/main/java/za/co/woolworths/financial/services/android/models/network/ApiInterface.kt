@@ -1089,7 +1089,7 @@ interface ApiInterface {
     ): retrofit2.Response<ProductDetailResponse>
 
     @GET("wfs/app/v4/productsV2/{productId}")
-    fun matchingSetProductDetail(
+    suspend fun matchingSetProductDetail(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("longitude") longitude: Double,
