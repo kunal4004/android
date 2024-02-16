@@ -6,6 +6,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import za.co.woolworths.financial.services.android.models.dto.AuxiliaryImage
 import za.co.woolworths.financial.services.android.models.dto.ColourSKUsPrices
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
@@ -23,6 +25,8 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
     ViewModel() {
 
     val matchingSetData = mutableStateOf(MatchingSetData(arrayListOf()))
+    private var _seeMoreClicked = MutableStateFlow(false)
+    val seeMoreClicked = _seeMoreClicked.asStateFlow()
 
     fun setMatchingSetData(
         productDetails: ProductDetails,
@@ -31,6 +35,7 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         if (productDetails.relatedProducts.isNullOrEmpty()) {
             matchingSetData.value = matchingSetData.value.copy()
         } else {
+            updateSeeMoreValue(false) // Make it default value.
             val matchingSetDetailsList = arrayListOf<MatchingSetDetails>()
             val mainAuxImgList = getAuxiliaryImageList(productDetails.auxiliaryImages)
             for (relatedProducts in productDetails.relatedProducts) {
@@ -117,8 +122,10 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                 }
             }
         }
-
         return imageCodesList
     }
 
+    fun updateSeeMoreValue(value: Boolean){
+        _seeMoreClicked.value = value
+    }
 }

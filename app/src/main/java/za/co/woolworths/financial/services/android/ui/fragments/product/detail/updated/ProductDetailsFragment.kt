@@ -111,6 +111,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetsUIEvents
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.viewmodel.MatchingSetViewModel
@@ -1314,7 +1315,7 @@ class ProductDetailsFragment :
 
         val selectedGroupKey = getSelectedGroupKey() ?: defaultGroupKey
         matchingSetViewModel.setMatchingSetData(productDetails, selectedGroupKey) // update Matching Set Data.
-        initialiseMachingSetLayout()
+        initialiseMatchingSetLayout()
 
         Utils.getPreferredDeliveryLocation()?.let {
             updateDefaultUI(false)
@@ -3829,10 +3830,20 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun initialiseMachingSetLayout() {
+    private fun initialiseMatchingSetLayout() {
         // This will show matching set view.
         binding.matchingSetLayout.setContent {
-            MatchingSetMainView(Modifier.background(color = androidx.compose.ui.graphics.Color.White), matchingSetViewModel.matchingSetData.value)
+            MatchingSetMainView(
+                Modifier.background(color = androidx.compose.ui.graphics.Color.White),
+                matchingSetViewModel.matchingSetData.value,
+                matchingSetViewModel.seeMoreClicked,
+                onEvent = {
+                    when (it) {
+                        is MatchingSetsUIEvents.seeMoreClick -> {
+                            matchingSetViewModel.updateSeeMoreValue(it.isSeeMore)
+                        }
+                    }
+                })
         }
     }
 
