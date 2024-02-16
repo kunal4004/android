@@ -470,7 +470,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
             when {
                 containsColorAndSize -> noSizeColorIntent(objProduct.sku)
                 objProduct?.otherSkus?.size == 1 -> {
-                    objProduct?.otherSkus?.getOrNull(0)?.let { setSelectedSku(it) }
+                    objProduct?.otherSkus?.getOrNull(0)?.let { setSelectedSkuFromDialog(it) }
                         ?: noSizeColorIntent(objProduct.sku)
                 }
 
@@ -803,7 +803,7 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         updateAddToListCount()
     }
 
-    override fun setSelectedSku(selectedSku: OtherSkus) {
+    override fun setSelectedSkuFromDialog(selectedSku: OtherSkus) {
         selectedProduct?.let {
             productAdapter?.setSelectedSku(
                 it, selectedSku

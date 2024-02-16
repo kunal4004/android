@@ -31,7 +31,7 @@ import javax.inject.Inject
 class NotifyBackInStockFragment : Fragment() {
 
     private val viewModel: NotifyBackInStockViewModel by viewModels()
-    private var otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>> = linkedMapOf()
+    private var otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>? = linkedMapOf()
     private var selectedSku: OtherSkus? = null
     private var selectedGroupKey: String? = null
     private var productId: String? = null
@@ -63,17 +63,11 @@ class NotifyBackInStockFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.arguments?.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                otherSKUsByGroupKey = getSerializable(
-                    OTHER_SKUSBYGROUP_KEY,
-                    OtherSkus::class.java
-                ) as LinkedHashMap<String, ArrayList<OtherSkus>>
-                selectedSku = getParcelable(SELECTED_SKU, OtherSkus::class.java)
-            } else {
-                otherSKUsByGroupKey =
-                    getSerializable(OTHER_SKUSBYGROUP_KEY) as LinkedHashMap<String, ArrayList<OtherSkus>>
-                selectedSku = getParcelable<OtherSkus>(SELECTED_SKU)
-            }
+
+            otherSKUsByGroupKey =
+                getSerializable(OTHER_SKUSBYGROUP_KEY) as? LinkedHashMap<String, ArrayList<OtherSkus>>
+            selectedSku = getParcelable<OtherSkus>(SELECTED_SKU)
+
             selectedGroupKey = getString(SELECTED_GROUP_KEY)
             productId = getString(PRODUCT_ID)
             storeId = getString(STORE_ID)

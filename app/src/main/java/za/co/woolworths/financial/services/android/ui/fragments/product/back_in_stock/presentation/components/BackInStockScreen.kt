@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 fun BackInStockScreen(
     modifier: Modifier = Modifier,
     backToStockUiState: BackToStockUiState,
-    otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
+    otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>?,
     selectedGroupKey: String?,
     selectedSku: OtherSkus?,
     hasColor: Boolean,
@@ -114,7 +114,7 @@ fun BackInStockScreen(
 private fun AddBISView(
     modifier: Modifier = Modifier,
     backToStockUiState: BackToStockUiState,
-    otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
+    otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>?,
     //selectedGroupKey: String?,
     //selectedSku: OtherSkus?,
     hasColor: Boolean,
@@ -201,21 +201,19 @@ private fun AddBISView(
             )
             val selectedGroupKey = backToStockUiState.selectedGroupKey
             val selectedSku = backToStockUiState.selectedSku
-            otherSKUsByGroupKey[selectedGroupKey]?.let { otherSKUList ->
+            var otherSKUsByGroupKeyZeroQuantity : LinkedHashMap<String, ArrayList<OtherSkus>>? = linkedMapOf()
+            otherSKUsByGroupKey?.get(selectedGroupKey)?.let { otherSKUList ->
                 val zeroQuantityList = ArrayList<OtherSkus>()
                 otherSKUList.forEach { otherSKU ->
                     if (otherSKU.quantity == 0) {
                         zeroQuantityList.add(otherSKU)
                     }
                 }
-                // remove available item list from map and keep only non available items in map
                 // to display non available items only
-                otherSKUsByGroupKey.remove(selectedGroupKey)?.let {
-                    otherSKUsByGroupKey.put(selectedGroupKey.toString(), zeroQuantityList)
-                }
+                otherSKUsByGroupKeyZeroQuantity?.put(selectedGroupKey.toString(), zeroQuantityList)
             }
             SpinnerSizeView(
-                otherSKUsByGroupKey,
+                otherSKUsByGroupKeyZeroQuantity,
                 selectedGroupKey,
                 modifier = Modifier
                     .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
@@ -284,7 +282,7 @@ private fun AddBISView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpinnerColourView(
-    otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
+    otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>?,
     selectedGroupKey: String?,
     modifier: Modifier = Modifier,
     preselectedColour: String,
@@ -347,7 +345,7 @@ fun SpinnerColourView(
                 properties = PopupProperties(focusable = false),
                 onDismissRequest = { expanded = false }) {
                 val colourNames = ArrayList<String>()
-                otherSKUsByGroupKey.forEach { entry ->
+                otherSKUsByGroupKey?.forEach { entry ->
                     val otherSKUList = otherSKUsByGroupKey[entry.key]
                     val isZeroQuantity = otherSKUList?.any {
                         (it.quantity == 0) // show colours which have zero quantity
@@ -395,7 +393,7 @@ fun SpinnerColourView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpinnerSizeView(
-    otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>,
+    otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>?,
     selectedGroupKey: String?,
     modifier: Modifier = Modifier,
     preselectedOtherSkus: OtherSkus?,
@@ -463,7 +461,7 @@ fun SpinnerSizeView(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }) {
 
-                val otherSKUList = otherSKUsByGroupKey[selectedGroupKey]
+                val otherSKUList = otherSKUsByGroupKey?.get(selectedGroupKey)
                 otherSKUList?.forEach { otherSKU ->
                     DropdownMenuItem(
                         modifier = Modifier
