@@ -41,6 +41,7 @@ val ColorF9E0DB = Color(0xFFF9E0DB)
 val ErrorLabel = Color(0xFFD0021B)
 val ErrorBackground = Color(0xFFE2624D)
 val ColorFEE600 = Color(0xFFFEE600)
+val Color9D9D9D = Color(0xFF9D9D9D)
 
 
 val HyperTextlinkBlue = Color(0xff4284C3)

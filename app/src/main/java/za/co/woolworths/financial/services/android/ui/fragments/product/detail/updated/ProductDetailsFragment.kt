@@ -22,6 +22,8 @@ import android.view.*
 import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.ui.Modifier
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -115,6 +117,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.viewmodel.MatchingSetViewModel
@@ -163,6 +166,20 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.Utils.ADD_TO_CART
+import za.co.woolworths.financial.services.android.util.Utils.ADD_TO_CART_V1
+import za.co.woolworths.financial.services.android.util.Utils.CHANGE_ATTRIBUTE
+import za.co.woolworths.financial.services.android.util.Utils.CHANGE_ATTRIBUTE_DY_TYPE
+import za.co.woolworths.financial.services.android.util.Utils.COLOR_ATTRIBUTE
+import za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL
+import za.co.woolworths.financial.services.android.util.Utils.IPAddress
+import za.co.woolworths.financial.services.android.util.Utils.PRODUCT_DETAILS_PAGE
+import za.co.woolworths.financial.services.android.util.Utils.PRODUCT_PAGE
+import za.co.woolworths.financial.services.android.util.Utils.QUANTITY_ATTRIBUTE
+import za.co.woolworths.financial.services.android.util.Utils.SIZE_ATTRIBUTE
+import za.co.woolworths.financial.services.android.util.Utils.SYNC_CART
+import za.co.woolworths.financial.services.android.util.Utils.SYNC_CART_V1
+import za.co.woolworths.financial.services.android.util.Utils.ZAR
 import za.co.woolworths.financial.services.android.util.Utils.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
@@ -3817,6 +3834,13 @@ class ProductDetailsFragment :
             setTitle(null)
             setCancelable(true)
             show()
+        }
+    }
+
+    private fun initialiseMachingSetLayout() {
+        // This will show matching set view.
+        binding.matchingSetLayout.setContent {
+            MatchingSetMainView(Modifier.background(color = androidx.compose.ui.graphics.Color.White), matchingSetViewModel.matchingSetData.value)
         }
     }
 
