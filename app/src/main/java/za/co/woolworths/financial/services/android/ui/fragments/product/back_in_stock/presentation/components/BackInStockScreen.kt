@@ -180,6 +180,9 @@ private fun AddBISView(
                     preselectedColour = selectedGroupKey
                 ) { selectedColour ->
                     onEvent(BackInStockScreenEvents.OnColorSelected(selectedColour))
+                    if (selectedGroupKey != selectedColour) {
+                        onEvent(BackInStockScreenEvents.OnPreSelectedSize(""))
+                    }
                 }
             }
         }
@@ -200,8 +203,9 @@ private fun AddBISView(
                     .fillMaxWidth()
             )
             val selectedGroupKey = backToStockUiState.selectedGroupKey
-            val selectedSku = backToStockUiState.selectedSku
-            var otherSKUsByGroupKeyZeroQuantity : LinkedHashMap<String, ArrayList<OtherSkus>>? = linkedMapOf()
+            // val selectedSku = backToStockUiState.selectedSku
+            var otherSKUsByGroupKeyZeroQuantity: LinkedHashMap<String, ArrayList<OtherSkus>>? =
+                linkedMapOf()
             otherSKUsByGroupKey?.get(selectedGroupKey)?.let { otherSKUList ->
                 val zeroQuantityList = ArrayList<OtherSkus>()
                 otherSKUList.forEach { otherSKU ->
@@ -218,7 +222,10 @@ private fun AddBISView(
                 modifier = Modifier
                     .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
                     .fillMaxWidth(),
-                preselectedOtherSkus = selectedSku,
+                backToStockUiState = backToStockUiState,
+                onPreSelectedSize = { preselectedSize ->
+                    onEvent(BackInStockScreenEvents.OnPreSelectedSize(preselectedSize))
+                },
                 onSelectionChanged = { selectedSize ->
                     onEvent(BackInStockScreenEvents.OnSizeSelected(selectedSize))
                 },
@@ -396,19 +403,13 @@ fun SpinnerSizeView(
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>?,
     selectedGroupKey: String?,
     modifier: Modifier = Modifier,
-    preselectedOtherSkus: OtherSkus?,
     onSelectionChanged: (selectedSize: String) -> Unit,
-    onOtherSkusChanged: (otherSkus: OtherSkus) -> Unit
+    onOtherSkusChanged: (otherSkus: OtherSkus) -> Unit,
+    onPreSelectedSize: (preselectedSize: String) -> Unit,
+    backToStockUiState: BackToStockUiState
 ) {
-    var preselectedSizeString = ""
-    if (preselectedOtherSkus != null && preselectedOtherSkus.quantity == 0) {
-        preselectedSizeString = preselectedOtherSkus.size.toString()
-    } else {
-        preselectedSizeString = ""
-    }
-    var selectedSize by remember { mutableStateOf(preselectedSizeString) }
     var expanded by remember { mutableStateOf(false) } // initial value
-    onSelectionChanged(selectedSize)
+    onSelectionChanged(backToStockUiState.preSelectedSize)
 
     Box {
         ExposedDropdownMenuBox(
@@ -419,7 +420,7 @@ fun SpinnerSizeView(
             }
         ) {
             TextField(
-                value = selectedSize,
+                value = backToStockUiState.preSelectedSize,
                 onValueChange = onSelectionChanged,
                 modifier = Modifier
                     .menuAnchor()
@@ -470,10 +471,10 @@ fun SpinnerSizeView(
                             .background(Color.White),
                         //   interactionSource = NoRippleInteractionSource(),
                         onClick = {
-                            selectedSize = otherSKU.size.toString()
                             expanded = false
-                            onSelectionChanged(selectedSize)
+                            onSelectionChanged(otherSKU.size.toString())
                             onOtherSkusChanged(otherSKU)
+                            onPreSelectedSize(otherSKU.size.toString())
                         },
                         text = {
                             Text(
