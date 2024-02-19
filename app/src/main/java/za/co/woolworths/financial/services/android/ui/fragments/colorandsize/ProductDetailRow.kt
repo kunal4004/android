@@ -43,7 +43,7 @@ fun ProductDetailRow(productUrl: String, productName: String, productPrice: Stri
                 model = productUrl,
                 placeholder = painterResource(id = R.drawable.placeholder_product_list),
                 error = painterResource(id = R.drawable.placeholder_product_list),
-                contentDescription = stringResource(id = R.string.description),
+                contentDescription = productName
             )
 
             Text(
