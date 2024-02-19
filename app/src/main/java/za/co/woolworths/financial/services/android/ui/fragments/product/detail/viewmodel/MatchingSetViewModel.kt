@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetDetails
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.service.MatchingSetRepository
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import javax.inject.Inject
 
 /**
@@ -57,7 +58,9 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                                             it.value.externalImageRefV2,
                                             it.value.styleId,
                                             selectedGroupKey ?: "",
-                                            colorSku.value.priceMin.toString(),
+                                            CurrencyFormatter.formatAmountToRandAndCentWithSpace(
+                                                colorSku.value.priceMin
+                                            ),
                                             relatedProducts.productName
                                         )
                                         matchingSetDetailsList.add(matchingSetDetails)
@@ -76,7 +79,7 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                                 it.value.externalImageRefV2,
                                 it.value.styleId,
                                 selectedGroupKey ?: "",
-                                colorSku.value.priceMin.toString(),
+                                CurrencyFormatter.formatAmountToRandAndCentWithSpace(colorSku.value.priceMin.toString()),
                                 relatedProducts.productName
                             )
                             matchingSetDetailsList.add(matchingSetDetails)
@@ -125,7 +128,7 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         return imageCodesList
     }
 
-    fun updateSeeMoreValue(value: Boolean){
+    fun updateSeeMoreValue(value: Boolean) {
         _seeMoreClicked.value = value
     }
 }

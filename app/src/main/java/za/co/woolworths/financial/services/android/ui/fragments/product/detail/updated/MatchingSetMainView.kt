@@ -51,97 +51,103 @@ fun MatchingSetMainView(
     isSeeMore: StateFlow<Boolean>,
     onEvent: (event: MatchingSetsUIEvents) -> Unit,
 ) {
-    val seeMoreClicked = isSeeMore.collectAsState()
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        SpacerHeight8dp(bgColor = colorResource(id = R.color.default_background))
-        MatchingSetHeaderView(modifier, onEvent = {
-            onEvent(it)
-        }, if (seeMoreClicked.value) R.string.matching_set_see_less_button_text else  R.string.matching_set_see_more_button_text)
+    if (!matchingSetData.matchingSetDetails.isNullOrEmpty()) {
+        val seeMoreClicked = isSeeMore.collectAsState()
         Column(
-            modifier = modifier.wrapContentHeight(),
+            modifier = modifier
+                .fillMaxWidth()
         ) {
-            matchingSetData.matchingSetDetails.forEachIndexed { index, listItem ->
-                if (seeMoreClicked.value || (!seeMoreClicked.value && index < 2)) {
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.Start)
-                            .fillMaxWidth()
-                            .padding(24.dp),
-                    ) {
-                        AsyncImage(
+            SpacerHeight8dp(bgColor = colorResource(id = R.color.default_background))
+            MatchingSetHeaderView(
+                modifier,
+                onEvent = {
+                    onEvent(it)
+                },
+                if (seeMoreClicked.value) R.string.matching_set_see_less_button_text else R.string.matching_set_see_more_button_text
+            )
+            Column(
+                modifier = modifier.wrapContentHeight(),
+            ) {
+                matchingSetData.matchingSetDetails.forEachIndexed { index, listItem ->
+                    if (seeMoreClicked.value || (!seeMoreClicked.value && index < 2)) {
+                        Row(
                             modifier = Modifier
-                                .height(112.dp)
-                                .width(80.dp),
-                            model = matchingSetData.matchingSetDetails.getOrNull(index)?.imgUrl,
-                            placeholder = painterResource(id = R.drawable.placeholder_product_list),
-                            error = painterResource(id = R.drawable.placeholder_product_list),
-                            contentDescription = stringResource(id = R.string.matching_setImg_main_view),
-                        )
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 16.dp, top = 5.dp)
+                                .align(Alignment.Start)
                                 .fillMaxWidth()
+                                .padding(24.dp),
                         ) {
-                            Text(
-                                text = listItem.productName,
-                                style = TextStyle(
-                                    fontFamily = OpenSansFontFamily,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.W400,
-                                    textAlign = TextAlign.Start,
-                                    color = Color.Black,
-                                    lineHeight = 19.5.sp
-                                )
-                            )
-                            Text(
-                                text = matchingSetData.matchingSetDetails.getOrNull(index)?.colorName
-                                    ?: "",
-                                style = TextStyle(
-                                    fontFamily = OpenSansFontFamily,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.W600,
-                                    textAlign = TextAlign.Start,
-                                    color = Color9D9D9D,
-                                    lineHeight = 15.sp
-                                )
-                            )
-                            Row(
+                            AsyncImage(
                                 modifier = Modifier
+                                    .height(112.dp)
+                                    .width(80.dp),
+                                model = matchingSetData.matchingSetDetails.getOrNull(index)?.imgUrl,
+                                placeholder = painterResource(id = R.drawable.placeholder_product_list),
+                                error = painterResource(id = R.drawable.placeholder_product_list),
+                                contentDescription = stringResource(id = R.string.matching_setImg_main_view),
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, top = 5.dp)
                                     .fillMaxWidth()
-                                    .padding(top = 30.dp),
-                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    modifier = Modifier.weight(1f, true),
-                                    text = matchingSetData.matchingSetDetails.getOrNull(index)?.price
-                                        ?: "",
+                                    text = listItem.productName,
                                     style = TextStyle(
-                                        fontFamily = FuturaFontFamily,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.W600,
+                                        fontFamily = OpenSansFontFamily,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.W400,
                                         textAlign = TextAlign.Start,
                                         color = Color.Black,
-                                        lineHeight = 21.sp
+                                        lineHeight = 19.5.sp
                                     )
                                 )
-                                Image(
-                                    modifier = Modifier
-                                        .clickable { },
-                                    painter = painterResource(id = R.drawable.ic_add_circle),
-                                    contentDescription = stringResource(id = R.string.matching_setplus_button)
+                                Text(
+                                    text = matchingSetData.matchingSetDetails.getOrNull(index)?.colorName
+                                        ?: "",
+                                    style = TextStyle(
+                                        fontFamily = OpenSansFontFamily,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.W600,
+                                        textAlign = TextAlign.Start,
+                                        color = Color9D9D9D,
+                                        lineHeight = 15.sp
+                                    )
                                 )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 30.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        modifier = Modifier.weight(1f, true),
+                                        text = matchingSetData.matchingSetDetails.getOrNull(index)?.price
+                                            ?: "",
+                                        style = TextStyle(
+                                            fontFamily = FuturaFontFamily,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.W600,
+                                            textAlign = TextAlign.Start,
+                                            color = Color.Black,
+                                            lineHeight = 21.sp
+                                        )
+                                    )
+                                    Image(
+                                        modifier = Modifier
+                                            .clickable { },
+                                        painter = painterResource(id = R.drawable.ic_add_circle),
+                                        contentDescription = stringResource(id = R.string.matching_setplus_button)
+                                    )
+                                }
                             }
                         }
+                        Spacer(
+                            modifier = Modifier
+                                .height(1.dp)
+                                .fillMaxWidth()
+                                .background(color = colorResource(id = R.color.color_D8D8D8))
+                        )
                     }
-                    Spacer(
-                        modifier = Modifier
-                            .height(1.dp)
-                            .fillMaxWidth()
-                            .background(color = colorResource(id = R.color.color_D8D8D8))
-                    )
                 }
             }
         }
@@ -153,19 +159,24 @@ fun MatchingSetMainView(
 fun MatchingSetMainViewPreview() {
     OneAppTheme {
         val matchingSetDetailsList = ArrayList<MatchingSetDetails>()
-        for(i in 0 .. 3) {
+        for (i in 0..3) {
             val imgUrl =
                 "https://assets.woolworthsstatic.co.za/Bowl-Set-4-Pack-507106238.jpg?V=k@lx&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTA3LTIxLzUwNzEwNjIzOF9YQkxVRV9oZXJvLmpwZyJ9&"
             val styleId = "102865767"
             val colorName = "Red"
             val price = "R 499.00"
             val productName = "Nordic Stoneware Dinner Plate"
-            val matchingSetDetails = MatchingSetDetails(imgUrl, styleId, colorName, price, productName)
+            val matchingSetDetails =
+                MatchingSetDetails(imgUrl, styleId, colorName, price, productName)
             matchingSetDetailsList.add(matchingSetDetails)
         }
         val isSeeMore = MutableStateFlow(false)
         val matchingSetData =
             MatchingSetData(matchingSetDetailsList)
-        MatchingSetMainView(Modifier.background(color = White), matchingSetData, isSeeMore, onEvent = {})
+        MatchingSetMainView(
+            Modifier.background(color = White),
+            matchingSetData,
+            isSeeMore,
+            onEvent = {})
     }
 }
