@@ -159,7 +159,7 @@ fun MatchingSetMainView(
 fun MatchingSetMainViewPreview() {
     OneAppTheme {
         val matchingSetDetailsList = ArrayList<MatchingSetDetails>()
-        for (i in 0..3) {
+        for(i in 0..3) {
             val imgUrl =
                 "https://assets.woolworthsstatic.co.za/Bowl-Set-4-Pack-507106238.jpg?V=k@lx&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTA3LTIxLzUwNzEwNjIzOF9YQkxVRV9oZXJvLmpwZyJ9&"
             val styleId = "102865767"

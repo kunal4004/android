@@ -7,6 +7,7 @@ import za.co.woolworths.financial.services.android.models.dto.order_again.OrderA
 import za.co.woolworths.financial.services.android.models.dto.order_again.OrderAgainResponse
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.convertToResource
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 class OrderAgainUC @Inject constructor(
@@ -19,7 +20,8 @@ class OrderAgainUC @Inject constructor(
         convertToResource {
             orderAgainRepository.getOrderAgainList(
                 OrderAgainRequestBody(
-                    priceListId = plist
+                    priceListId = plist,
+                    monetateId = Utils.getMonetateId()
                 )
             )
         }.collect {

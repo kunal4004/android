@@ -5,16 +5,28 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import za.co.woolworths.financial.services.android.models.dto.AuxiliaryImage
 import za.co.woolworths.financial.services.android.models.dto.ColourSKUsPrices
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductRequest
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetDetails
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.service.MatchingSetRepository
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 /**
@@ -28,6 +40,13 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
     val matchingSetData = mutableStateOf(MatchingSetData(arrayListOf()))
     private var _seeMoreClicked = MutableStateFlow(false)
     val seeMoreClicked = _seeMoreClicked.asStateFlow()
+
+    private val _inventoryForMatchingItemDetails =
+        MutableSharedFlow<ViewState<SkusInventoryForStoreResponse>>(0)
+    val inventoryForMatchingItemDetails: SharedFlow<ViewState<SkusInventoryForStoreResponse>> =
+        _inventoryForMatchingItemDetails
+
+    private var productDetails: ProductDetailResponse? = null
 
     fun setMatchingSetData(
         productDetails: ProductDetails,
@@ -131,4 +150,36 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
     fun updateSeeMoreValue(value: Boolean) {
         _seeMoreClicked.value = value
     }
+
+    suspend fun callProductDetailAPI(productRequest: ProductRequest) {
+        viewModelScope.launch {
+            mapNetworkCallToViewStateFlow {
+                matchingSetRepository.getMatchingItemDetail(productRequest)
+            }.collectLatest { productDetailResponse ->
+                with(productDetailResponse) {
+                    renderSuccess {
+                        productDetails = output
+                        val storeIdForInventory =
+                            Utils.retrieveStoreId(output.product.fulfillmentType) ?: ""
+                        val multiSKUs =
+                            output.product.otherSkus?.joinToString(separator = "-") { it.sku.toString() }
+                                ?: ""
+                        callProductDetailsInventoryAPi(storeIdForInventory, multiSKUs)
+                    }
+                }
+            }
+        }
+    }
+
+    fun callProductDetailsInventoryAPi(storeId: String, multipleSku: String) {
+        viewModelScope.launch {
+            mapNetworkCallToViewStateFlow {
+                matchingSetRepository.getInventoryForMatchingItems(storeId, multipleSku)
+            }.collectLatest {
+                _inventoryForMatchingItemDetails.emit(it)
+            }
+        }
+    }
+
+    fun getProductDetails() = productDetails
 }

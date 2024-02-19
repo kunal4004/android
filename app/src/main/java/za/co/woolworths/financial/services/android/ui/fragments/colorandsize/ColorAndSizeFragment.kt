@@ -29,7 +29,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
 import za.co.woolworths.financial.services.android.util.Utils
 
 interface ColorAndSizeBottomSheetListener {
-    fun setSelectedSku(selectedSku: OtherSkus)
+    fun setSelectedSkuFromDialog(selectedSku: OtherSkus)
     fun onCancelColorAndSize()
 }
 
@@ -92,7 +92,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener 
         super.onViewCreated(view, savedInstanceState)
 
         binding.tvConfirmButton.setOnClickListener {
-            viewModel.selectedSku?.let { it1 -> colorAndSizeBottomSheetListener.setSelectedSku(it1) }
+            viewModel.selectedSku?.let { it1 -> colorAndSizeBottomSheetListener.setSelectedSkuFromDialog(it1) }
             dismiss()
         }
     }
