@@ -656,7 +656,7 @@ class ProductDetailsFragment :
             R.id.addToCartAction -> addItemToCart()
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
-            R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
+            R.id.checkInStoreAvailability, R.id.findInStoreAction -> callProductDetailsApiForMatchingSet()  //findItemInStore()
             R.id.editDeliveryLocation -> updateDeliveryLocation(launchNewToggleScreen = false)
             R.id.productDetailsInformation -> showDetailsInformation(
                 ProductInformationActivity.ProductInformationType.DETAILS
@@ -4872,7 +4872,7 @@ class ProductDetailsFragment :
     }
 
     private fun openColorAndSizeBottomSheetFragment(productItem: WProductDetail) {
-        ColorAndSizeFragment.getInstance(this, productItem).show(requireActivity().supportFragmentManager, tag)
+        ColorAndSizeFragment.getInstance(this, productItem, true).show(requireActivity().supportFragmentManager, tag)
     }
 
     private fun listenerForUnsellable(){
