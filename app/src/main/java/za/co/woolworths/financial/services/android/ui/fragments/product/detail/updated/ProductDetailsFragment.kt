@@ -117,7 +117,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetData
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetsUIEvents
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.viewmodel.MatchingSetViewModel
@@ -1320,6 +1320,10 @@ class ProductDetailsFragment :
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
 
+        val selectedGroupKey = getSelectedGroupKey() ?: defaultGroupKey
+        matchingSetViewModel.setMatchingSetData(productDetails, selectedGroupKey) // update Matching Set Data.
+        initialiseMatchingSetLayout()
+
         Utils.getPreferredDeliveryLocation()?.let {
             updateDefaultUI(false)
             if (!this.productDetails?.productType.equals(
@@ -2251,6 +2255,9 @@ class ProductDetailsFragment :
 
     override fun onColorSelection(selectedColor: String?, isFeature: Boolean) {
         setSelectedGroupKey(selectedColor)
+
+        val selectedGroupKey = getSelectedGroupKey() ?: defaultGroupKey
+        this.productDetails?.let { matchingSetViewModel.setMatchingSetData(it, selectedGroupKey) } // update Matching Set Data.
         binding.showSelectedColor()
         if (hasSize) updateSizesOnColorSelection() else {
             setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(0))
@@ -3837,10 +3844,20 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun initialiseMachingSetLayout() {
+    private fun initialiseMatchingSetLayout() {
         // This will show matching set view.
         binding.matchingSetLayout.setContent {
-            MatchingSetMainView(Modifier.background(color = androidx.compose.ui.graphics.Color.White), matchingSetViewModel.matchingSetData.value)
+            MatchingSetMainView(
+                Modifier.background(color = androidx.compose.ui.graphics.Color.White),
+                matchingSetViewModel.matchingSetData.value,
+                matchingSetViewModel.seeMoreClicked,
+                onEvent = {
+                    when (it) {
+                        is MatchingSetsUIEvents.seeMoreClick -> {
+                            matchingSetViewModel.updateSeeMoreValue(it.isSeeMore)
+                        }
+                    }
+                })
         }
     }
 
