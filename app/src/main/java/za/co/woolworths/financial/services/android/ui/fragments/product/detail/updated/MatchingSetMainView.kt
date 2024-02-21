@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -69,17 +70,17 @@ fun MatchingSetMainView(
                 modifier = modifier.wrapContentHeight(),
             ) {
                 matchingSetData.matchingSetDetails.forEachIndexed { index, listItem ->
-                    if (seeMoreClicked.value || (!seeMoreClicked.value && index < 2)) {
+                    if (seeMoreClicked.value || (!seeMoreClicked.value && index < matchingSetData.noOfProductsToShow)) {
                         Row(
                             modifier = Modifier
                                 .align(Alignment.Start)
                                 .fillMaxWidth()
-                                .padding(24.dp),
+                                .padding(dimensionResource(id = R.dimen.twenty_four_dp)),
                         ) {
                             AsyncImage(
                                 modifier = Modifier
-                                    .height(112.dp)
-                                    .width(80.dp),
+                                    .height(dimensionResource(id = R.dimen.hundred_and_twelve_dp))
+                                    .width(dimensionResource(id = R.dimen.eighty_dp)),
                                 model = matchingSetData.matchingSetDetails.getOrNull(index)?.imgUrl,
                                 placeholder = painterResource(id = R.drawable.placeholder_product_list),
                                 error = painterResource(id = R.drawable.placeholder_product_list),
@@ -87,7 +88,10 @@ fun MatchingSetMainView(
                             )
                             Column(
                                 modifier = Modifier
-                                    .padding(start = 16.dp, top = 5.dp)
+                                    .padding(
+                                        start = dimensionResource(id = R.dimen.sixteen_dp),
+                                        top = dimensionResource(id = R.dimen.five_dp)
+                                    )
                                     .fillMaxWidth()
                             ) {
                                 Text(
@@ -116,7 +120,7 @@ fun MatchingSetMainView(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 30.dp),
+                                        .padding(top = dimensionResource(id = R.dimen.thirty_dp)),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
@@ -159,7 +163,7 @@ fun MatchingSetMainView(
 fun MatchingSetMainViewPreview() {
     OneAppTheme {
         val matchingSetDetailsList = ArrayList<MatchingSetDetails>()
-        for(i in 0..3) {
+        for (i in 0..3) {
             val imgUrl =
                 "https://assets.woolworthsstatic.co.za/Bowl-Set-4-Pack-507106238.jpg?V=k@lx&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIzLTA3LTIxLzUwNzEwNjIzOF9YQkxVRV9oZXJvLmpwZyJ9&"
             val styleId = "102865767"
@@ -172,7 +176,7 @@ fun MatchingSetMainViewPreview() {
         }
         val isSeeMore = MutableStateFlow(false)
         val matchingSetData =
-            MatchingSetData(matchingSetDetailsList)
+            MatchingSetData(matchingSetDetailsList, 2)
         MatchingSetMainView(
             Modifier.background(color = White),
             matchingSetData,
