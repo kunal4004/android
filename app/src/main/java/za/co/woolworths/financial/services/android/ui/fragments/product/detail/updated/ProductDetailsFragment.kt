@@ -656,7 +656,7 @@ class ProductDetailsFragment :
             R.id.addToCartAction -> addItemToCart()
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
-            R.id.checkInStoreAvailability, R.id.findInStoreAction -> callProductDetailsApiForMatchingSet()  //findItemInStore()
+            R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
             R.id.editDeliveryLocation -> updateDeliveryLocation(launchNewToggleScreen = false)
             R.id.productDetailsInformation -> showDetailsInformation(
                 ProductInformationActivity.ProductInformationType.DETAILS
@@ -3856,6 +3856,13 @@ class ProductDetailsFragment :
                         is MatchingSetsUIEvents.seeMoreClick -> {
                             matchingSetViewModel.updateSeeMoreValue(it.isSeeMore)
                         }
+                        is MatchingSetsUIEvents.quickShopClick -> {
+                            /*todo add login conditions to check */
+                            /*todo add localation conditions to check*/
+                            lifecycleScope.launch {
+                                matchingSetViewModel.callProductDetailAPI(it.productRequest)
+                            }
+                        }
                     }
                 })
         }
@@ -4863,7 +4870,7 @@ class ProductDetailsFragment :
             matchingSetViewModel.inventoryForMatchingItemDetails.collectLatest { itemInventoryDetails ->
                 with(itemInventoryDetails) {
                     renderLoading {
-                            /*todo show Loading progress bar */
+                     /*todo loading progress bar */
                     }
                     renderSuccess {
                         val detailProduct = Utils.objectToJson(matchingSetViewModel.getProductDetails())
@@ -4881,7 +4888,7 @@ class ProductDetailsFragment :
                         openColorAndSizeBottomSheetFragment(product.product)
                     }
                     renderFailure {
-                        /*todo show Loading progress bar and error message */
+                        /*todo show loading and error message */
                     }
                 }
             }

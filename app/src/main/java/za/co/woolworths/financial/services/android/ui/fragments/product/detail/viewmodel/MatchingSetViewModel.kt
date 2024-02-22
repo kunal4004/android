@@ -86,7 +86,8 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                                             CurrencyFormatter.formatAmountToRandAndCentWithSpace(
                                                 colorSku.value.priceMin
                                             ),
-                                            relatedProducts.productName
+                                            relatedProducts.productName,
+                                            relatedProducts.productId
                                         )
                                         matchingSetDetailsList.add(matchingSetDetails)
                                     }
@@ -105,7 +106,8 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                                 it.value.styleId,
                                 selectedGroupKey ?: "",
                                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(colorSku.value.priceMin.toString()),
-                                relatedProducts.productName
+                                relatedProducts.productName,
+                                relatedProducts.productId
                             )
                             matchingSetDetailsList.add(matchingSetDetails)
                         }
