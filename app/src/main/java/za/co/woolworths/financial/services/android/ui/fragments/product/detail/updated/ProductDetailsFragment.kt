@@ -4863,6 +4863,32 @@ class ProductDetailsFragment :
 
     private fun addSubscribeEvents(){
         viewLifecycleOwner.lifecycleScope.launch {
+            matchingSetViewModel.productDetailsForMatchingItem.collectLatest { productDetails ->
+                with(productDetails) {
+                    renderLoading {
+                        if (isLoading) {
+                            showProgressBar()
+                        } else {
+                            hideProgressBar()
+                        }
+                    }
+                    renderSuccess {
+                        matchingSetViewModel.setProductDetails(productDetailResponse = output)
+                        val storeIdForInventory = retrieveStoreId(output.product.fulfillmentType) ?: ""
+                        val multiSKUs =
+                            output.product.otherSkus?.joinToString(separator = "-") { it.sku.toString() }
+                                ?: ""
+                        matchingSetViewModel.callProductDetailsInventoryAPi(storeIdForInventory,multiSKUs)
+                    }
+                    renderFailure {
+                        /*todo show loading and error message */
+                        hideProgressBar()
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
             matchingSetViewModel.inventoryForMatchingItemDetails.collectLatest { itemInventoryDetails ->
                 with(itemInventoryDetails) {
                     renderLoading {

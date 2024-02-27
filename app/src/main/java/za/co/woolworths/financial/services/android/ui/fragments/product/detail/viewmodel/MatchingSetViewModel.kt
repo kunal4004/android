@@ -44,6 +44,11 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
     private var _seeMoreClicked = MutableStateFlow(false)
     val seeMoreClicked = _seeMoreClicked.asStateFlow()
 
+    private val _productDetailsForMatchingItem =
+        MutableSharedFlow<ViewState<ProductDetailResponse>>(0)
+    val productDetailsForMatchingItem: SharedFlow<ViewState<ProductDetailResponse>> =
+        _productDetailsForMatchingItem
+
     private val _inventoryForMatchingItemDetails =
         MutableSharedFlow<ViewState<SkusInventoryForStoreResponse>>(0)
     val inventoryForMatchingItemDetails: SharedFlow<ViewState<SkusInventoryForStoreResponse>> =
@@ -191,18 +196,8 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         viewModelScope.launch {
             mapNetworkCallToViewStateFlow {
                 matchingSetRepository.getMatchingItemDetail(productRequest)
-            }.collectLatest { productDetailResponse ->
-                with(productDetailResponse) {
-                    renderSuccess {
-                        productDetails = output
-                        val storeIdForInventory =
-                            Utils.retrieveStoreId(output.product.fulfillmentType) ?: ""
-                        val multiSKUs =
-                            output.product.otherSkus?.joinToString(separator = "-") { it.sku.toString() }
-                                ?: ""
-                        callProductDetailsInventoryAPi(storeIdForInventory, multiSKUs)
-                    }
-                }
+            }.collectLatest {
+                _productDetailsForMatchingItem.emit(it)
             }
         }
     }
@@ -226,6 +221,10 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                 _addToCartResponseForMatchingItemDetails.emit(it)
             }
         }
+    }
+
+    fun setProductDetails(productDetailResponse: ProductDetailResponse) {
+        productDetails = productDetailResponse
     }
     fun getProductDetails() = productDetails
 }
