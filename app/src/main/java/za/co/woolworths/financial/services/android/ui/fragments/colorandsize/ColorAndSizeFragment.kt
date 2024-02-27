@@ -267,8 +267,6 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener,
 
         binding.sizeColorSelectorLayout.apply {
             colorPlaceholder.text = requireContext().getString(R.string.color)
-          //  divider1.visibility = GONE
-
             val spanCount = Utils.calculateNoOfColumns(activity, 55F)
 
             colorAdapter = ColorAdapter(
@@ -344,7 +342,6 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener,
         if (!isAdded) return
         with(binding.sizeColorSelectorLayout) {
             colorSelectorLayout.visibility = visibility
-           // divider1.visibility = GONE // always gone as per UI
         }
     }
 

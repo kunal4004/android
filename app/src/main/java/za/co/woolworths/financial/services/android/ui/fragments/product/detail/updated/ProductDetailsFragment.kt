@@ -4913,7 +4913,7 @@ class ProductDetailsFragment :
                         openColorAndSizeBottomSheetFragment(product.product)
                     }
                     renderFailure {
-                        /*todo show loading and error message */
+                        /*todo show error message */
                         hideProgressBar()
                     }
                 }
