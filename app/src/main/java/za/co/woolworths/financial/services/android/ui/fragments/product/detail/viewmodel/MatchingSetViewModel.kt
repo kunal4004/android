@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
@@ -46,6 +48,11 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         MutableSharedFlow<ViewState<SkusInventoryForStoreResponse>>(0)
     val inventoryForMatchingItemDetails: SharedFlow<ViewState<SkusInventoryForStoreResponse>> =
         _inventoryForMatchingItemDetails
+
+    private val _addToCartResponseForMatchingItemDetails =
+        MutableSharedFlow<ViewState<AddItemToCartResponse>>(0)
+    val addToCartResponseForMatchingItemDetails: SharedFlow<ViewState<AddItemToCartResponse>> =
+        _addToCartResponseForMatchingItemDetails
 
     private var productDetails: ProductDetailResponse? = null
 
@@ -210,5 +217,15 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         }
     }
 
+
+    fun callAddToCartForMatchingSets(addToCart: MutableList<AddItemToCart>) {
+        viewModelScope.launch {
+            mapNetworkCallToViewStateFlow {
+                matchingSetRepository.addToCartForMatchingItems(addToCart)
+            }.collectLatest {
+                _addToCartResponseForMatchingItemDetails.emit(it)
+            }
+        }
+    }
     fun getProductDetails() = productDetails
 }

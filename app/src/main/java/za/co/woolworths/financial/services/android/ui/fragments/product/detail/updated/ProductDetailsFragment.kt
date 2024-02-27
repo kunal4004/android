@@ -28,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -130,6 +131,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.Co
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.Companion.ADD_TO_CART_SUCCESS_RESULT
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollViewV2
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductDetailsFindInStoreDialog
@@ -324,6 +326,7 @@ class ProductDetailsFragment :
     private val recommendationViewModel: RecommendationViewModel by viewModels()
     private var bottomSheetWebView: PayFlexBottomSheetDialog? =null
     private var stockAvailable: Int? = null
+    private var addItemToCartCount = 0
 
     @OpenTermAndLighting
     @Inject
@@ -4858,24 +4861,20 @@ class ProductDetailsFragment :
         }
     }
 
-    private fun callProductDetailsApiForMatchingSet() {
-        val productRequest = ProductRequest( productDetails?.productId, productDetails?.sku,isUserBrowsing)
-        lifecycleScope.launch {
-            matchingSetViewModel.callProductDetailAPI(productRequest)
-        }
-    }
-
     private fun addSubscribeEvents(){
         viewLifecycleOwner.lifecycleScope.launch {
             matchingSetViewModel.inventoryForMatchingItemDetails.collectLatest { itemInventoryDetails ->
                 with(itemInventoryDetails) {
                     renderLoading {
-                     /*todo loading progress bar */
+                        if (isLoading) {
+                            showProgressBar()
+                        } else {
+                           hideProgressBar()
+                        }
                     }
                     renderSuccess {
-                        val detailProduct = Utils.objectToJson(matchingSetViewModel.getProductDetails())
-                        val product =
-                            Utils.strToJson(detailProduct, WProduct::class.java) as WProduct
+                        val detailProduct = objectToJson(matchingSetViewModel.getProductDetails())
+                        val product = strToJson(detailProduct, WProduct::class.java) as WProduct
                         val otherSkus = product.product.otherSkus
                         otherSkus?.forEach { otherSku ->
                             output.skuInventory.forEach { skuInventory ->
@@ -4889,6 +4888,34 @@ class ProductDetailsFragment :
                     }
                     renderFailure {
                         /*todo show loading and error message */
+                        hideProgressBar()
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            matchingSetViewModel.addToCartResponseForMatchingItemDetails.collectLatest { addToCartResponse ->
+                with(addToCartResponse) {
+                    renderLoading {
+                        if (isLoading) {
+                            showProgressBar()
+                        } else {
+                            hideProgressBar()
+                        }
+                    }
+                    renderSuccess {
+                        output.data.getOrNull(0)?.let {
+                            ToastFactory.showItemsLimitToastOnAddToCart(
+                                binding.toCartAndFindInStoreLayout.addToCartAction,
+                                it.productCountMap,
+                                requireActivity(),
+                                addItemToCartCount
+                            )
+                        }
+                    }
+                    renderFailure {
+                        /*show error message*/
                     }
                 }
             }
@@ -4998,7 +5025,17 @@ class ProductDetailsFragment :
     }
 
     override fun onCancelColorAndSize() {
-        // not required
+       if (binding.progressBar.isVisible == true) {
+           hideProgressBar()
+       }
     }
 
+    override fun onAddToCartClickAction(addItemToCart: AddItemToCart) {
+        val addItemToCartList: MutableList<AddItemToCart> = mutableListOf()
+        addItemToCartList.add(addItemToCart)
+        addItemToCartCount = addItemToCartList.size
+        lifecycleScope.launch {
+            matchingSetViewModel.callAddToCartForMatchingSets(addItemToCartList)
+        }
+    }
 }

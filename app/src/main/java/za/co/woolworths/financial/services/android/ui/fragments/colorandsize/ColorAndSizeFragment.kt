@@ -21,6 +21,7 @@ import com.awfs.coordination.databinding.FragmentColorAndSizeBinding
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail
@@ -34,6 +35,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 interface ColorAndSizeBottomSheetListener {
     fun setSelectedSkuFromDialog(selectedSku: OtherSkus)
     fun onCancelColorAndSize()
+    fun onAddToCartClickAction(addItemToCart: AddItemToCart)
 }
 
 class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener,
@@ -108,25 +110,30 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener,
         if (matchingSetDetailsFlow) {
             initMatchingSetDetails()
         } else {
-            binding.productDetailView.visibility = GONE
             binding.addToCartLayout.root.visibility = GONE
         }
-    }
 
-    private fun initMatchingSetDetails() {
-        binding.productDetailView.visibility = VISIBLE
-        binding.addToCartLayout.let {
-            it.root.visibility = VISIBLE
-            it.addToCartAction.isEnabled = false
-            it.quantitySelector.isEnabled = false
-        }
         binding.productDetailView.setContent {
             viewModel.productItem?.let {
                 ProductDetailRow(it.externalImageRefV2, it.productName, CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.price))
             }
         }
+    }
+
+    private fun initMatchingSetDetails() {
+        binding.addToCartLayout.let {
+            it.root.visibility = VISIBLE
+            it.addToCartAction.isEnabled = false
+            it.quantitySelector.isEnabled = false
+        }
         binding.addToCartLayout.quantitySelector.setOnClickListener {
             onQuantitySelector()
+        }
+        binding.addToCartLayout.addToCartAction.setOnClickListener {
+            dismiss()
+            val quantity = binding.addToCartLayout.quantityText.text.toString().toInt()
+            val addItemToCart = AddItemToCart(viewModel.productItem?.productId ,viewModel.selectedSku?.sku, quantity)
+            colorAndSizeBottomSheetListener.onAddToCartClickAction(addItemToCart)
         }
     }
 
@@ -260,7 +267,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener,
 
         binding.sizeColorSelectorLayout.apply {
             colorPlaceholder.text = requireContext().getString(R.string.color)
-            divider1.visibility = GONE
+          //  divider1.visibility = GONE
 
             val spanCount = Utils.calculateNoOfColumns(activity, 55F)
 
@@ -337,7 +344,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener,
         if (!isAdded) return
         with(binding.sizeColorSelectorLayout) {
             colorSelectorLayout.visibility = visibility
-            divider1.visibility = GONE // always gone as per UI
+           // divider1.visibility = GONE // always gone as per UI
         }
     }
 

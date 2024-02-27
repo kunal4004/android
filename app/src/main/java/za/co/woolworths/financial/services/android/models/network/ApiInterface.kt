@@ -928,6 +928,13 @@ interface ApiInterface {
         @Body addItemToCart: MutableList<AddItemToCart>,
     ): Call<AddItemToCartResponse>
 
+    @POST("wfs/app/v4/cart/{deliveryType}/itemV2")
+    suspend fun addItemToCartForMatchingSet(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("deliveryType") deliveryType: String,
+        @Body addItemToCart: MutableList<AddItemToCart>,
+    ): retrofit2.Response<AddItemToCartResponse>
+
     @Headers(
         "Content-Type: application/json",
         "Accept: application/json",
