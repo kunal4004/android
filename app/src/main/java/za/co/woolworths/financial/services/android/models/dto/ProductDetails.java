@@ -15,6 +15,8 @@ public class ProductDetails {
 	@SerializedName("productName")
 	@Expose
 	public String productName;
+	@SerializedName("relatedProducts")
+	public ArrayList<RelatedProducts> relatedProducts;
 	@SerializedName("range")
 	@Expose
 	public String range;

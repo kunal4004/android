@@ -8,4 +8,5 @@ public class AuxiliaryImage {
 	public String mimeType;
 	public String externalImageRefV2;
 	public String imagePath;
+	public String styleId;
 }

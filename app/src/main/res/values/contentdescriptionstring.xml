@@ -352,4 +352,8 @@
     <string name="recent_transactions_text">recent_transactions_text</string>
     <string name="recent_transactions_button">recent_transactions_button</string>
 
+    <!--Matching Set-->
+    <string name="matching_setImg_main_view">Matching Set Main Image</string>
+    <string name="matching_setplus_button">Matching Set Quick Shop</string>
+
 </resources>

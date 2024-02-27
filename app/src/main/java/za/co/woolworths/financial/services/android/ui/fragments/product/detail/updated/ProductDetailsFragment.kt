@@ -22,6 +22,8 @@ import android.view.*
 import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.ui.Modifier
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -36,7 +38,6 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ProductDetailsFragmentBinding
 import com.awfs.coordination.databinding.PromotionalImageBinding
 import com.facebook.FacebookSdk.getApplicationContext
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
@@ -44,6 +45,7 @@ import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.cart.view.SubstitutionChoice
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
@@ -105,13 +107,20 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.ui.fragments.colorandsize.ColorAndSizeBottomSheetListener
+import za.co.woolworths.financial.services.android.ui.fragments.colorandsize.ColorAndSizeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.payflex.PayFlexBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.NotifyBackInStockFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.Request.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DyChangeAttribute.ViewModel.DyChangeAttributeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetsUIEvents
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.viewmodel.MatchingSetViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.FoodProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
@@ -157,8 +166,21 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.Utils.ADD_TO_CART
+import za.co.woolworths.financial.services.android.util.Utils.ADD_TO_CART_V1
+import za.co.woolworths.financial.services.android.util.Utils.CHANGE_ATTRIBUTE
+import za.co.woolworths.financial.services.android.util.Utils.CHANGE_ATTRIBUTE_DY_TYPE
+import za.co.woolworths.financial.services.android.util.Utils.COLOR_ATTRIBUTE
+import za.co.woolworths.financial.services.android.util.Utils.DY_CHANNEL
+import za.co.woolworths.financial.services.android.util.Utils.IPAddress
+import za.co.woolworths.financial.services.android.util.Utils.PRODUCT_DETAILS_PAGE
+import za.co.woolworths.financial.services.android.util.Utils.PRODUCT_PAGE
+import za.co.woolworths.financial.services.android.util.Utils.QUANTITY_ATTRIBUTE
+import za.co.woolworths.financial.services.android.util.Utils.SIZE_ATTRIBUTE
+import za.co.woolworths.financial.services.android.util.Utils.SYNC_CART
+import za.co.woolworths.financial.services.android.util.Utils.SYNC_CART_V1
+import za.co.woolworths.financial.services.android.util.Utils.ZAR
 import za.co.woolworths.financial.services.android.util.Utils.*
-import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsEventHelper
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
@@ -170,6 +192,28 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashMap
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.MutableList
+import kotlin.collections.any
+import kotlin.collections.arrayListOf
+import kotlin.collections.containsKey
+import kotlin.collections.forEach
+import kotlin.collections.forEachIndexed
+import kotlin.collections.get
+import kotlin.collections.getOrNull
+import kotlin.collections.hashMapOf
+import kotlin.collections.isEmpty
+import kotlin.collections.isNotEmpty
+import kotlin.collections.isNullOrEmpty
+import kotlin.collections.joinToString
+import kotlin.collections.linkedMapOf
+import kotlin.collections.listOf
+import kotlin.collections.listOfNotNull
+import kotlin.collections.mutableListOf
 import kotlin.collections.set
 
 
@@ -184,7 +228,7 @@ class ProductDetailsFragment :
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,
     View.OnTouchListener, ReviewThumbnailAdapter.ThumbnailClickListener,
     FoodProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
-    EnhancedSubstitutionListener {
+    EnhancedSubstitutionListener, ColorAndSizeBottomSheetListener {
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -304,6 +348,7 @@ class ProductDetailsFragment :
     private val dyReportEventViewModel: DyChangeAttributeViewModel by viewModels()
     private var productId: String? = null
     private val dyChooseVariationViewModel: DyChooseVariationCallViewModel by viewModels()
+    private val matchingSetViewModel: MatchingSetViewModel by viewModels()
     private var dyServerId: String? = null
     private var dySessionId: String? = null
     private var config: NetworkConfig? = null
@@ -376,7 +421,7 @@ class ProductDetailsFragment :
             wfsShoptimiserProduct.addProductDetails(it)
         }
         setUpCartCountPDP()
-
+        addSubscribeEvents()
     }
 
     fun showEnhancedSubstitutionDialog() {
@@ -611,7 +656,7 @@ class ProductDetailsFragment :
             R.id.addToCartAction -> addItemToCart()
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
-            R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
+            R.id.checkInStoreAvailability, R.id.findInStoreAction -> callProductDetailsApiForMatchingSet()  //findItemInStore()
             R.id.editDeliveryLocation -> updateDeliveryLocation(launchNewToggleScreen = false)
             R.id.productDetailsInformation -> showDetailsInformation(
                 ProductInformationActivity.ProductInformationType.DETAILS
@@ -1274,6 +1319,10 @@ class ProductDetailsFragment :
 
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
+
+        val selectedGroupKey = getSelectedGroupKey() ?: defaultGroupKey
+        matchingSetViewModel.setMatchingSetData(productDetails, selectedGroupKey) // update Matching Set Data.
+        initialiseMatchingSetLayout()
 
         Utils.getPreferredDeliveryLocation()?.let {
             updateDefaultUI(false)
@@ -2206,6 +2255,9 @@ class ProductDetailsFragment :
 
     override fun onColorSelection(selectedColor: String?, isFeature: Boolean) {
         setSelectedGroupKey(selectedColor)
+
+        val selectedGroupKey = getSelectedGroupKey() ?: defaultGroupKey
+        this.productDetails?.let { matchingSetViewModel.setMatchingSetData(it, selectedGroupKey) } // update Matching Set Data.
         binding.showSelectedColor()
         if (hasSize) updateSizesOnColorSelection() else {
             setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.getOrNull(0))
@@ -3792,6 +3844,23 @@ class ProductDetailsFragment :
         }
     }
 
+    private fun initialiseMatchingSetLayout() {
+        // This will show matching set view.
+        binding.matchingSetLayout.setContent {
+            MatchingSetMainView(
+                Modifier.background(color = androidx.compose.ui.graphics.Color.White),
+                matchingSetViewModel.matchingSetData.value,
+                matchingSetViewModel.seeMoreClicked,
+                onEvent = {
+                    when (it) {
+                        is MatchingSetsUIEvents.seeMoreClick -> {
+                            matchingSetViewModel.updateSeeMoreValue(it.isSeeMore)
+                        }
+                    }
+                })
+        }
+    }
+
     private fun handlePermissionAction(action: PermissionAction?) {
         when (action) {
             PermissionAction.StoragePermissionsRequested -> PermissionUtil.requestStoragePermission(
@@ -4782,6 +4851,47 @@ class ProductDetailsFragment :
         }
     }
 
+    private fun callProductDetailsApiForMatchingSet() {
+        val productRequest = ProductRequest( productDetails?.productId, productDetails?.sku,isUserBrowsing)
+        lifecycleScope.launch {
+            matchingSetViewModel.callProductDetailAPI(productRequest)
+        }
+    }
+
+    private fun addSubscribeEvents(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            matchingSetViewModel.inventoryForMatchingItemDetails.collectLatest { itemInventoryDetails ->
+                with(itemInventoryDetails) {
+                    renderLoading {
+                            /*todo show Loading progress bar */
+                    }
+                    renderSuccess {
+                        val detailProduct = Utils.objectToJson(matchingSetViewModel.getProductDetails())
+                        val product =
+                            Utils.strToJson(detailProduct, WProduct::class.java) as WProduct
+                        val otherSkus = product.product.otherSkus
+                        otherSkus?.forEach { otherSku ->
+                            output.skuInventory.forEach { skuInventory ->
+                                if (otherSku.sku.equals(skuInventory.sku, ignoreCase = true)) {
+                                    otherSku.quantity = skuInventory.quantity
+                                    return@forEach
+                                }
+                            }
+                        }
+                        openColorAndSizeBottomSheetFragment(product.product)
+                    }
+                    renderFailure {
+                        /*todo show Loading progress bar and error message */
+                    }
+                }
+            }
+        }
+    }
+
+    private fun openColorAndSizeBottomSheetFragment(productItem: WProductDetail) {
+        ColorAndSizeFragment.getInstance(this, productItem, true).show(requireActivity().supportFragmentManager, tag)
+    }
+
     private fun listenerForUnsellable(){
         setFragmentResultListener(UnsellableUtils.ADD_TO_LIST_SUCCESS_RESULT_CODE) { _, _ ->
             // Proceed with add to cart as we have moved unsellable items to List.
@@ -4875,4 +4985,13 @@ class ProductDetailsFragment :
             }
         }
     }
+
+    override fun setSelectedSkuFromDialog(selectedSku: OtherSkus) {
+        // not required
+    }
+
+    override fun onCancelColorAndSize() {
+        // not required
+    }
+
 }
