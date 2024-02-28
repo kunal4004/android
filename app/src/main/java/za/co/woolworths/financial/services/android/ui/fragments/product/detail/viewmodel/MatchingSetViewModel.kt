@@ -46,11 +46,6 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
     private var _seeMoreClicked = MutableStateFlow(false)
     val seeMoreClicked = _seeMoreClicked.asStateFlow()
 
-    private val _productDetailsForMatchingItem =
-        MutableSharedFlow<ViewState<ProductDetailResponse>>(0)
-    val productDetailsForMatchingItem: SharedFlow<ViewState<ProductDetailResponse>> =
-        _productDetailsForMatchingItem
-
     private val _inventoryForMatchingItemDetails =
         MutableSharedFlow<ViewState<SkusInventoryForStoreResponse>>(0)
     val inventoryForMatchingItemDetails: SharedFlow<ViewState<SkusInventoryForStoreResponse>> =
