@@ -4863,29 +4863,12 @@ class ProductDetailsFragment :
 
     private fun addSubscribeEvents(){
         viewLifecycleOwner.lifecycleScope.launch {
-            matchingSetViewModel.productDetailsForMatchingItem.collectLatest { productDetails ->
-                with(productDetails) {
-                    renderLoading {
-                        if (isLoading) {
-                            showProgressBar()
-                        } else {
-                            hideProgressBar()
-                        }
-                    }
-                    renderSuccess {
-                        matchingSetViewModel.setProductDetails(productDetailResponse = output)
-                        val storeIdForInventory = retrieveStoreId(output.product.fulfillmentType) ?: ""
-                        val multiSKUs =
-                            output.product.otherSkus?.joinToString(separator = "-") { it.sku.toString() }
-                                ?: ""
-                        matchingSetViewModel.callProductDetailsInventoryAPi(storeIdForInventory,multiSKUs)
-                    }
-                    renderFailure {
-                        /*todo show loading and error message */
-                        hideProgressBar()
-                    }
-                }
-            }
+             matchingSetViewModel.isLoading.collectLatest {  isLoading ->
+                 if (isLoading) {
+                     showProgressBar()
+                 } else
+                     hideProgressBar()
+             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -4899,17 +4882,7 @@ class ProductDetailsFragment :
                         }
                     }
                     renderSuccess {
-                        val detailProduct = objectToJson(matchingSetViewModel.getProductDetails())
-                        val product = strToJson(detailProduct, WProduct::class.java) as WProduct
-                        val otherSkus = product.product.otherSkus
-                        otherSkus?.forEach { otherSku ->
-                            output.skuInventory.forEach { skuInventory ->
-                                if (otherSku.sku.equals(skuInventory.sku, ignoreCase = true)) {
-                                    otherSku.quantity = skuInventory.quantity
-                                    return@forEach
-                                }
-                            }
-                        }
+                        val product = matchingSetViewModel.getProductDetailsWithInventory(output)
                         openColorAndSizeBottomSheetFragment(product.product)
                     }
                     renderFailure {

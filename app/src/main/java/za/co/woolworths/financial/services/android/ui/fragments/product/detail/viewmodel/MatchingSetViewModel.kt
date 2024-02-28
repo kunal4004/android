@@ -21,12 +21,16 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCartRespo
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.dto.WProduct
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetDetails
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.service.MatchingSetRepository
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 /**
@@ -56,6 +60,9 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         MutableSharedFlow<ViewState<AddItemToCartResponse>>(0)
     val addToCartResponseForMatchingItemDetails: SharedFlow<ViewState<AddItemToCartResponse>> =
         _addToCartResponseForMatchingItemDetails
+
+    private var _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     private var productDetails: ProductDetailResponse? = null
 
@@ -194,8 +201,25 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         viewModelScope.launch {
             mapNetworkCallToViewStateFlow {
                 matchingSetRepository.getMatchingItemDetail(productRequest)
-            }.collectLatest {
-                _productDetailsForMatchingItem.emit(it)
+            }.collectLatest { productDetails ->
+                with(productDetails) {
+                    renderLoading {
+                        _isLoading.value = this.isLoading
+                    }
+                    renderSuccess {
+                        setProductDetails(productDetailResponse = output)
+                        val storeIdForInventory =
+                            Utils.retrieveStoreId(output.product.fulfillmentType)
+                                ?: ""
+                        val multiSKUs =
+                            output.product.otherSkus?.joinToString(separator = "-") { it.sku.toString() }
+                                ?: ""
+                       callProductDetailsInventoryAPi(
+                            storeIdForInventory,
+                            multiSKUs
+                        )
+                    }
+                }
             }
         }
     }
@@ -223,6 +247,21 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
 
     fun setProductDetails(productDetailResponse: ProductDetailResponse) {
         productDetails = productDetailResponse
+    }
+
+    fun getProductDetailsWithInventory(skusInventoryForStoreResponse: SkusInventoryForStoreResponse): WProduct {
+        val detailProduct = Utils.objectToJson(getProductDetails())
+        val wProduct = Utils.strToJson(detailProduct, WProduct::class.java) as WProduct
+        val otherSkus = wProduct.product.otherSkus
+        otherSkus?.forEach { otherSku ->
+            skusInventoryForStoreResponse.skuInventory.forEach { skuInventory ->
+                if (otherSku.sku.equals(skuInventory.sku, ignoreCase = true)) {
+                    otherSku.quantity = skuInventory.quantity
+                    return@forEach
+                }
+            }
+        }
+        return wProduct
     }
     fun getProductDetails() = productDetails
 }
