@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
@@ -811,6 +812,10 @@ class SearchResultFragment : Fragment(), SearchResultNavigator, View.OnClickList
         }
         toggleAddToListBtn(true)
         mProductList?.let { minOneItemSelected(it) }
+    }
+
+    override fun onAddToCartClickAction(addItemToCart: AddItemToCart) {
+       /*not requried*/
     }
 
     companion object {

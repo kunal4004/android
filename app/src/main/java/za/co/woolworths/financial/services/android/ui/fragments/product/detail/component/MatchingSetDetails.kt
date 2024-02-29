@@ -8,5 +8,6 @@ data class MatchingSetDetails(
     val styleId: String,
     val colorName: String,
     val price: String,
-    val productName: String
+    val productName: String,
+    val productId: String,
 )
