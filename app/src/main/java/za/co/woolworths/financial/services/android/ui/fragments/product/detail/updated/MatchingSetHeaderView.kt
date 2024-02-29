@@ -28,7 +28,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.theme.FuturaFontFamily
 fun MatchingSetHeaderView(
     modifier: Modifier = Modifier,
     onEvent: (event: MatchingSetsUIEvents) -> Unit,
-    seeMoreText: Int
+    seeMoreText: Int,
+    noOfProductsToShow: Int
 ) {
     Row(
         modifier = modifier
@@ -49,20 +50,22 @@ fun MatchingSetHeaderView(
                 lineHeight = 27.sp
             )
         )
-        Text(
-            text = stringResource(id = seeMoreText),
-            style = TextStyle(
-                fontFamily = FuturaFontFamily,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.W500,
-                textAlign = TextAlign.End,
-                color = Color.Black,
-                lineHeight = 18.sp,
-                letterSpacing = 1.sp,
-            ),
-            modifier = Modifier.clickable {
-                onEvent(MatchingSetsUIEvents.seeMoreClick(seeMoreText != R.string.matching_set_see_less_button_text))
-            }
-        )
+        if (noOfProductsToShow > 2) {
+            Text(
+                text = stringResource(id = seeMoreText),
+                style = TextStyle(
+                    fontFamily = FuturaFontFamily,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.W500,
+                    textAlign = TextAlign.End,
+                    color = Color.Black,
+                    lineHeight = 18.sp,
+                    letterSpacing = 1.sp,
+                ),
+                modifier = Modifier.clickable {
+                    onEvent(MatchingSetsUIEvents.seeMoreClick(seeMoreText != R.string.matching_set_see_less_button_text))
+                }
+            )
+        }
     }
 }

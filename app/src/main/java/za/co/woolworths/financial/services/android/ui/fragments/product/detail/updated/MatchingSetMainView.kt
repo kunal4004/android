@@ -65,7 +65,8 @@ fun MatchingSetMainView(
                 onEvent = {
                     onEvent(it)
                 },
-                if (seeMoreClicked.value) R.string.matching_set_see_less_button_text else R.string.matching_set_see_more_button_text
+                if (seeMoreClicked.value) R.string.matching_set_see_less_button_text else R.string.matching_set_see_more_button_text,
+                matchingSetData.noOfProductsToShow
             )
             Column(
                 modifier = modifier.wrapContentHeight(),
@@ -182,7 +183,7 @@ fun MatchingSetMainViewPreview() {
         }
         val isSeeMore = MutableStateFlow(false)
         val matchingSetData =
-            MatchingSetData(matchingSetDetailsList, 2)
+            MatchingSetData(matchingSetDetailsList, 3)
         MatchingSetMainView(
             Modifier.background(color = White),
             matchingSetData,
