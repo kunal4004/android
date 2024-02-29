@@ -31,6 +31,7 @@ import coil.compose.AsyncImage
 import com.awfs.coordination.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetDetails
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetsUIEvents
@@ -138,7 +139,11 @@ fun MatchingSetMainView(
                                     )
                                     Image(
                                         modifier = Modifier
-                                            .clickable { },
+                                            .clickable {
+                                                onEvent(MatchingSetsUIEvents.quickShopClick(
+                                                    ProductRequest(matchingSetData.matchingSetDetails.getOrNull(index)?.productId, matchingSetData.matchingSetDetails.getOrNull(index)?.productId, false)
+                                                ))
+                                            },
                                         painter = painterResource(id = R.drawable.ic_add_circle),
                                         contentDescription = stringResource(id = R.string.matching_setplus_button)
                                     )
@@ -170,8 +175,9 @@ fun MatchingSetMainViewPreview() {
             val colorName = "Red"
             val price = "R 499.00"
             val productName = "Nordic Stoneware Dinner Plate"
+            val productId =  "502117700"
             val matchingSetDetails =
-                MatchingSetDetails(imgUrl, styleId, colorName, price, productName)
+                MatchingSetDetails(imgUrl, styleId, colorName, price, productName, productId)
             matchingSetDetailsList.add(matchingSetDetails)
         }
         val isSeeMore = MutableStateFlow(false)

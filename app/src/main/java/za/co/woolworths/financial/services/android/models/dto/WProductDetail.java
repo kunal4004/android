@@ -14,6 +14,7 @@ public class WProductDetail {
 	public boolean isnAvailable;
 	public String imagePath;
 	public Float fromPrice;
+	public String price;
 	public String sku;
 	public String fulfillmentType;
 	public String saveText;

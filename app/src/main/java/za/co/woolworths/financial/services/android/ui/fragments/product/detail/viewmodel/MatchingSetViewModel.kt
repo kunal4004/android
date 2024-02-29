@@ -16,11 +16,15 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.dto.WProduct
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.mapNetworkCallToViewStateFlow
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetData
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetDetails
@@ -46,6 +50,14 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         MutableSharedFlow<ViewState<SkusInventoryForStoreResponse>>(0)
     val inventoryForMatchingItemDetails: SharedFlow<ViewState<SkusInventoryForStoreResponse>> =
         _inventoryForMatchingItemDetails
+
+    private val _addToCartResponseForMatchingItemDetails =
+        MutableSharedFlow<ViewState<AddItemToCartResponse>>(0)
+    val addToCartResponseForMatchingItemDetails: SharedFlow<ViewState<AddItemToCartResponse>> =
+        _addToCartResponseForMatchingItemDetails
+
+    private var _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     private var productDetails: ProductDetailResponse? = null
 
@@ -86,7 +98,8 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                                             CurrencyFormatter.formatAmountToRandAndCentWithSpace(
                                                 colorSku.value.priceMin
                                             ),
-                                            relatedProducts.productName
+                                            relatedProducts.productName,
+                                            relatedProducts.productId
                                         )
                                         matchingSetDetailsList.add(matchingSetDetails)
                                     }
@@ -105,7 +118,8 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                                 it.value.styleId,
                                 selectedGroupKey ?: "",
                                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(colorSku.value.priceMin.toString()),
-                                relatedProducts.productName
+                                relatedProducts.productName,
+                                relatedProducts.productId
                             )
                             matchingSetDetailsList.add(matchingSetDetails)
                         }
@@ -182,16 +196,23 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         viewModelScope.launch {
             mapNetworkCallToViewStateFlow {
                 matchingSetRepository.getMatchingItemDetail(productRequest)
-            }.collectLatest { productDetailResponse ->
-                with(productDetailResponse) {
+            }.collectLatest { productDetails ->
+                with(productDetails) {
+                    renderLoading {
+                        _isLoading.value = this.isLoading
+                    }
                     renderSuccess {
-                        productDetails = output
+                        setProductDetails(productDetailResponse = output)
                         val storeIdForInventory =
-                            Utils.retrieveStoreId(output.product.fulfillmentType) ?: ""
+                            Utils.retrieveStoreId(output.product.fulfillmentType)
+                                ?: ""
                         val multiSKUs =
                             output.product.otherSkus?.joinToString(separator = "-") { it.sku.toString() }
                                 ?: ""
-                        callProductDetailsInventoryAPi(storeIdForInventory, multiSKUs)
+                       callProductDetailsInventoryAPi(
+                            storeIdForInventory,
+                            multiSKUs
+                        )
                     }
                 }
             }
@@ -208,5 +229,34 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         }
     }
 
+
+    fun callAddToCartForMatchingSets(addToCart: MutableList<AddItemToCart>) {
+        viewModelScope.launch {
+            mapNetworkCallToViewStateFlow {
+                matchingSetRepository.addToCartForMatchingItems(addToCart)
+            }.collectLatest {
+                _addToCartResponseForMatchingItemDetails.emit(it)
+            }
+        }
+    }
+
+    fun setProductDetails(productDetailResponse: ProductDetailResponse) {
+        productDetails = productDetailResponse
+    }
+
+    fun getProductDetailsWithInventory(skusInventoryForStoreResponse: SkusInventoryForStoreResponse): WProduct {
+        val detailProduct = Utils.objectToJson(getProductDetails())
+        val wProduct = Utils.strToJson(detailProduct, WProduct::class.java) as WProduct
+        val otherSkus = wProduct.product.otherSkus
+        otherSkus?.forEach { otherSku ->
+            skusInventoryForStoreResponse.skuInventory.forEach { skuInventory ->
+                if (otherSku.sku.equals(skuInventory.sku, ignoreCase = true)) {
+                    otherSku.quantity = skuInventory.quantity
+                    return@forEach
+                }
+            }
+        }
+        return wProduct
+    }
     fun getProductDetails() = productDetails
 }
