@@ -3856,15 +3856,19 @@ class ProductDetailsFragment :
                 matchingSetViewModel.seeMoreClicked,
                 onEvent = {
                     when (it) {
-                        is MatchingSetsUIEvents.seeMoreClick -> {
+                        is MatchingSetsUIEvents.SeeMoreClick -> {
                             matchingSetViewModel.updateSeeMoreValue(it.isSeeMore)
                         }
-                        is MatchingSetsUIEvents.quickShopClick -> {
+                        is MatchingSetsUIEvents.QuickShopClick -> {
                             /*todo add login conditions to check */
-                            /*todo add localation conditions to check*/
+                            /*todo add location conditions to check*/
                             lifecycleScope.launch {
                                 matchingSetViewModel.callProductDetailAPI(it.productRequest)
                             }
+                        }
+
+                        else -> {
+                            // Do nothing
                         }
                     }
                 })
@@ -4963,11 +4967,8 @@ class ProductDetailsFragment :
             val fragment = NotifyBackInStockFragment()
             val bundle = Bundle()
             bundle.putSerializable(NotifyBackInStockFragment.OTHER_SKUSBYGROUP_KEY, otherSKUsByGroupKey)
-            bundle.putString(NotifyBackInStockFragment.SELECTED_GROUP_KEY, checkSelectedGroupKeyWithQuantity() ?: "")
-            bundle.putParcelable(NotifyBackInStockFragment.SELECTED_SKU, checkSelectedSkuWithQuantity())
             bundle.putBoolean(NotifyBackInStockFragment.HAS_COLOR, hasColor)
             bundle.putBoolean(NotifyBackInStockFragment.HAS_SIZE, hasSize)
-
             bundle.putString(NotifyBackInStockFragment.PRODUCT_ID, productId)
             bundle.putString(NotifyBackInStockFragment.STORE_ID, storeIdForInventory)
 

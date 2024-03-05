@@ -6,6 +6,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductRequest
  * Created by Kunal Uttarwar on 17/02/24.
  */
 sealed class MatchingSetsUIEvents {
-    data class seeMoreClick(val isSeeMore: Boolean) : MatchingSetsUIEvents()
-    data class quickShopClick(val productRequest: ProductRequest) : MatchingSetsUIEvents()
+    data class SeeMoreClick(val isSeeMore: Boolean) : MatchingSetsUIEvents()
+    data class QuickShopClick(val productRequest: ProductRequest) : MatchingSetsUIEvents()
+    object NotifyMeClick : MatchingSetsUIEvents()
 }

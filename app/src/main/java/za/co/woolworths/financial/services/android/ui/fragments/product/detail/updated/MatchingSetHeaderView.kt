@@ -63,7 +63,7 @@ fun MatchingSetHeaderView(
                     letterSpacing = 1.sp,
                 ),
                 modifier = Modifier.clickable {
-                    onEvent(MatchingSetsUIEvents.seeMoreClick(seeMoreText != R.string.matching_set_see_less_button_text))
+                    onEvent(MatchingSetsUIEvents.SeeMoreClick(seeMoreText != R.string.matching_set_see_less_button_text))
                 }
             )
         }

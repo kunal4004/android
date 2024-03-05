@@ -73,7 +73,7 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         if (productDetails.relatedProducts.isNullOrEmpty()) {
             matchingSetData.value = matchingSetData.value.copy()
         } else {
-            updateSeeMoreValue(false) // Make it default value.
+            this.updateSeeMoreValue(false) // Make it default value.
             val matchingSetDetailsList = arrayListOf<MatchingSetDetails>()
             val mainAuxImgList = getAuxiliaryImageList(productDetails.auxiliaryImages)
             for (relatedProducts in productDetails.relatedProducts) {
@@ -209,7 +209,7 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
                         val multiSKUs =
                             output.product.otherSkus?.joinToString(separator = "-") { it.sku.toString() }
                                 ?: ""
-                       callProductDetailsInventoryAPi(
+                        callProductDetailsInventoryAPi(
                             storeIdForInventory,
                             multiSKUs
                         )
@@ -219,7 +219,7 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         }
     }
 
-    fun callProductDetailsInventoryAPi(storeId: String, multipleSku: String) {
+    private fun callProductDetailsInventoryAPi(storeId: String, multipleSku: String) {
         viewModelScope.launch {
             mapNetworkCallToViewStateFlow {
                 matchingSetRepository.getInventoryForMatchingItems(storeId, multipleSku)
@@ -240,7 +240,7 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         }
     }
 
-    fun setProductDetails(productDetailResponse: ProductDetailResponse) {
+    private fun setProductDetails(productDetailResponse: ProductDetailResponse) {
         productDetails = productDetailResponse
     }
 
@@ -258,5 +258,6 @@ class MatchingSetViewModel @Inject constructor(private val matchingSetRepository
         }
         return wProduct
     }
-    fun getProductDetails() = productDetails
+
+    private fun getProductDetails() = productDetails
 }

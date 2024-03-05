@@ -1,16 +1,25 @@
 package za.co.woolworths.financial.services.android.ui.fragments.colorandsize
 
+import android.text.TextUtils
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.CONST_NO_SIZE
+import za.co.woolworths.financial.services.android.util.Utils
 
 class ColorAndSizeViewModel(
     private val savedStateHandle: SavedStateHandle?
@@ -33,6 +42,7 @@ class ColorAndSizeViewModel(
         initialValue = UiState.Loading,
         started = SharingStarted.WhileSubscribed(5000L)
     )
+    private var otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>> = linkedMapOf()
 
     init {
         viewModelScope.launch {
@@ -61,24 +71,70 @@ class ColorAndSizeViewModel(
 
     var selectedSku: OtherSkus? = null
 
-    private fun getColorAndSizeAvailability(): Pair<Boolean, Boolean> {
+    fun getColorAndSizeAvailability(): Pair<Boolean, Boolean> {
         return when (ColourSizeVariants.find(productItem?.colourSizeVariants ?: "")) {
             ColourSizeVariants.DEFAULT, ColourSizeVariants.NO_VARIANT -> {
                 Pair(false, false)
             }
+
             ColourSizeVariants.COLOUR_VARIANT -> {
                 Pair(true, false)
             }
+
             ColourSizeVariants.SIZE_VARIANT, ColourSizeVariants.COLOUR_SIZE_VARIANT -> {
                 Pair(true, true)
             }
+
             ColourSizeVariants.NO_COLOUR_SIZE_VARIANT -> {
                 Pair(false, true)
             }
+
             else -> {
                 Pair(false, false)
             }
         }
+    }
+
+    fun getProductStoreId(): String {
+        return Utils.retrieveStoreId(productItem?.fulfillmentType)
+            ?: ""
+    }
+
+    fun getOtherSkuByGroupKey(): LinkedHashMap<String, ArrayList<OtherSkus>> {
+        otherSKUsByGroupKey = groupOtherSKUsByColor(productItem?.otherSkus)
+        return otherSKUsByGroupKey
+    }
+
+    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): LinkedHashMap<String, ArrayList<OtherSkus>> {
+        if (otherSKUsList != null) {
+            val variant = ColourSizeVariants.find(productItem?.colourSizeVariants ?: "")
+            for (otherSkuObj in otherSKUsList) {
+                var groupKey =
+                    if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                        otherSkuObj.size?.trim()
+                    } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(
+                            otherSkuObj.size
+                        )
+                    ) {
+                        otherSkuObj.colour?.trim()
+                    } else {
+                        otherSkuObj.colour?.trim()
+                    }
+
+                if (variant == ColourSizeVariants.NO_COLOUR_SIZE_VARIANT) {
+                    otherSkuObj.apply { size = colour }
+                    groupKey = "N/A"
+                }
+
+                if (!otherSKUsByGroupKey.containsKey(groupKey) && !groupKey.isNullOrEmpty()) {
+                    this.otherSKUsByGroupKey[groupKey] = ArrayList()
+                }
+                if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(
+                    otherSkuObj
+                )
+            }
+        }
+        return otherSKUsByGroupKey
     }
 
     private fun getColorsList(): Flow<List<OtherSkus>> = flow {

@@ -39,8 +39,6 @@ fun BackInStockScreen(
     modifier: Modifier = Modifier,
     backToStockUiState: BackToStockUiState,
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>?,
-    selectedGroupKey: String?,
-    selectedSku: OtherSkus?,
     hasColor: Boolean,
     hasSize: Boolean,
     onEvent: (event: BackInStockScreenEvents) -> Unit
@@ -75,11 +73,8 @@ fun BackInStockScreen(
         ) {
 
             AddBISView(
-                modifier = modifier,
                 backToStockUiState,
                 otherSKUsByGroupKey,
-                //  selectedGroupKey,
-                //  selectedSku,
                 hasColor,
                 hasSize
             ) { backInStockEvents ->
@@ -112,11 +107,8 @@ fun BackInStockScreen(
 
 @Composable
 private fun AddBISView(
-    modifier: Modifier = Modifier,
     backToStockUiState: BackToStockUiState,
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>?,
-    //selectedGroupKey: String?,
-    //selectedSku: OtherSkus?,
     hasColor: Boolean,
     hasSize: Boolean,
     onEvent: (event: BackInStockScreenEvents) -> Unit
@@ -173,7 +165,6 @@ private fun AddBISView(
             if (selectedGroupKey != null) {
                 SpinnerColourView(
                     otherSKUsByGroupKey,
-                    selectedGroupKey,
                     modifier = Modifier
                         .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
                         .fillMaxWidth(),
@@ -203,8 +194,7 @@ private fun AddBISView(
                     .fillMaxWidth()
             )
             val selectedGroupKey = backToStockUiState.selectedGroupKey
-            // val selectedSku = backToStockUiState.selectedSku
-            var otherSKUsByGroupKeyZeroQuantity: LinkedHashMap<String, ArrayList<OtherSkus>>? =
+            val otherSKUsByGroupKeyZeroQuantity: LinkedHashMap<String, ArrayList<OtherSkus>> =
                 linkedMapOf()
             otherSKUsByGroupKey?.get(selectedGroupKey)?.let { otherSKUList ->
                 val zeroQuantityList = ArrayList<OtherSkus>()
@@ -290,7 +280,6 @@ private fun AddBISView(
 @Composable
 fun SpinnerColourView(
     otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>?,
-    selectedGroupKey: String?,
     modifier: Modifier = Modifier,
     preselectedColour: String,
     onSelectionChanged: (selectedColour: String) -> Unit
@@ -505,12 +494,13 @@ fun SpinnerColourPreview() {
     MaterialTheme {
         SpinnerColourView(
             linkedMapOf(),
-            "",
             modifier = Modifier
                 .padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 0.dp)
                 .fillMaxWidth(),
             preselectedColour = "White"
-        ) { selectedColour -> /* do something with selected */ }
+        ) {
+
+        }
     }
 }
 
@@ -522,8 +512,6 @@ fun BackInStockScreenPreview() {
             modifier = Modifier,
             backToStockUiState = BackToStockUiState(),
             linkedMapOf(),
-            selectedGroupKey = "selectedGroupKey",
-            OtherSkus(),
             hasColor = true,
             hasSize = true
         ) { }
@@ -531,7 +519,7 @@ fun BackInStockScreenPreview() {
 }
 
 @Composable
-fun showProgressDialog(
+fun ShowProgressDialog(
     backToStockUiState: BackToStockUiState,
     onEvent: (event: BackInStockScreenEvents) -> Unit
 ) {
@@ -581,7 +569,7 @@ fun showProgressDialog(
 }
 
 @Composable
-fun showSuccessDialog(
+fun ShowSuccessDialog(
     backToStockUiState: BackToStockUiState,
     onEvent: (event: BackInStockScreenEvents) -> Unit
 ) {

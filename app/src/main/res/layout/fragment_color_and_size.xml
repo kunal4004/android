@@ -80,7 +80,17 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/rlConfirmation" />
+        app:layout_constraintBottom_toTopOf="@id/notifyMeLayout" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/notifyMeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fourty_eight_dp"
+        app:layout_constraintBottom_toTopOf="@+id/rlConfirmation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
     <include
         android:visibility="gone"

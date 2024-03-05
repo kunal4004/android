@@ -141,7 +141,7 @@ fun MatchingSetMainView(
                                     Image(
                                         modifier = Modifier
                                             .clickable {
-                                                onEvent(MatchingSetsUIEvents.quickShopClick(
+                                                onEvent(MatchingSetsUIEvents.QuickShopClick(
                                                     ProductRequest(matchingSetData.matchingSetDetails.getOrNull(index)?.productId, matchingSetData.matchingSetDetails.getOrNull(index)?.productId, false)
                                                 ))
                                             },

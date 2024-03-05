@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -21,8 +20,8 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.BackInStockScreen
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.BackInStockScreenEvents
-import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.showProgressDialog
-import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.showSuccessDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.ShowProgressDialog
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.components.ShowSuccessDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.viewmodel.NotifyBackInStockViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import javax.inject.Inject
@@ -32,8 +31,6 @@ class NotifyBackInStockFragment : Fragment() {
 
     private val viewModel: NotifyBackInStockViewModel by viewModels()
     private var otherSKUsByGroupKey: LinkedHashMap<String, ArrayList<OtherSkus>>? = linkedMapOf()
-    private var selectedSku: OtherSkus? = null
-    private var selectedGroupKey: String? = null
     private var productId: String? = null
     private var storeId: String? = null
     private var hasColor: Boolean = false
@@ -66,9 +63,6 @@ class NotifyBackInStockFragment : Fragment() {
 
             otherSKUsByGroupKey =
                 getSerializable(OTHER_SKUSBYGROUP_KEY) as? LinkedHashMap<String, ArrayList<OtherSkus>>
-            selectedSku = getParcelable<OtherSkus>(SELECTED_SKU)
-
-            selectedGroupKey = getString(SELECTED_GROUP_KEY)
             productId = getString(PRODUCT_ID)
             storeId = getString(STORE_ID)
             hasColor = getBoolean(HAS_COLOR)
@@ -88,14 +82,14 @@ class NotifyBackInStockFragment : Fragment() {
 
             when {
                 notifyMeState.isSuccess -> {
-                    showSuccessDialog(backToStockUiState = backInStockState,
+                    ShowSuccessDialog(backToStockUiState = backInStockState,
                         onEvent = {
                             navigateToPreviousScreen()
                         })
 
                 }
                 notifyMeState.isLoading -> {
-                    showProgressDialog(backToStockUiState = backInStockState,
+                    ShowProgressDialog(backToStockUiState = backInStockState,
                         onEvent = {
                             navigateToPreviousScreen()
                         })
@@ -111,8 +105,6 @@ class NotifyBackInStockFragment : Fragment() {
                             .fillMaxHeight(),
                         backToStockUiState = backInStockState,
                         otherSKUsByGroupKey,
-                        selectedGroupKey,
-                        selectedSku,
                         hasColor,
                         hasSize
                     ) { event ->

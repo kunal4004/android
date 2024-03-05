@@ -25,11 +25,16 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.extension.underline
+import za.co.woolworths.financial.services.android.ui.fragments.product.back_in_stock.presentation.NotifyBackInStockFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.component.MatchingSetsUIEvents
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 interface ColorAndSizeBottomSheetListener {
@@ -50,6 +55,7 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener,
     private val viewModel: ColorAndSizeViewModel by viewModels()
 
     private var matchingSetDetailsFlow: Boolean = false
+    private val SSO_REQUEST_ADD_TO_CART = 1010
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +123,42 @@ class ColorAndSizeFragment : WBottomSheetDialogFragment(), ColorAndSizeListener,
             viewModel.productItem?.let {
                 ProductDetailRow(it.externalImageRefV2, it.productName, CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.price))
             }
+        }
+        binding.notifyMeLayout.setContent {
+            viewModel.productItem?.let { productDetails ->
+                NotifyMeRow(productDetails.productName, onEvent = {
+                    when(it){
+                        is MatchingSetsUIEvents.NotifyMeClick -> {
+                            dismiss()
+                            navigateToNotifyMeScreen()
+                        }
+                        else -> {
+                            // Do Nothing
+                        }
+                    }
+                })
+            }
+        }
+    }
+
+    private fun navigateToNotifyMeScreen() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSigninActivity(activity,
+                SSO_REQUEST_ADD_TO_CART,
+                false)
+            return
+        } else {
+            val (hasColor, hasSize) = viewModel.getColorAndSizeAvailability()
+            val fragment = NotifyBackInStockFragment()
+            val bundle = Bundle()
+            bundle.putSerializable(NotifyBackInStockFragment.OTHER_SKUSBYGROUP_KEY, viewModel.getOtherSkuByGroupKey())
+            bundle.putBoolean(NotifyBackInStockFragment.HAS_COLOR, hasColor)
+            bundle.putBoolean(NotifyBackInStockFragment.HAS_SIZE, hasSize)
+            bundle.putString(NotifyBackInStockFragment.PRODUCT_ID, viewModel.productItem?.productId)
+            bundle.putString(NotifyBackInStockFragment.STORE_ID, viewModel.getProductStoreId())
+
+            fragment.arguments = bundle
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(fragment)
         }
     }
 
